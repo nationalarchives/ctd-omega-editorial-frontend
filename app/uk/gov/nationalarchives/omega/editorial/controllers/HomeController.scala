@@ -1,8 +1,9 @@
-package controllers
+package uk.gov.nationalarchives.omega.editorial.controllers
 
 import javax.inject._
 import play.api._
 import play.api.mvc._
+import uk.gov.nationalarchives.omega.editorial._
 
 /** This controller creates an `Action` to handle HTTP requests to the
   * application's home page.
