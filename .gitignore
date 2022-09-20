@@ -4,3 +4,4 @@ project/target/
 .idea/
 .bsp/
 *.DS_Store
+logs/
