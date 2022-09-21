@@ -1,0 +1,42 @@
+@*
+ * This template is called from the `index` template. This template
+ * handles the rendering of the page header and body tags. It takes
+ * two arguments, a `String` for the title of the page and an `Html`
+ * object to insert into the body of the page.
+ *@
+@(title: String)(content: Html)
+<!DOCTYPE html>
+<html lang="en" class="govuk-template ">
+    <head>
+        <meta charset="utf-8">
+        <title>@title</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+        <meta name="theme-color" content="#0b0c0c">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+        <link rel="shortcut icon" href="@routes.Assets.versioned("images/unbranded.ico")" type="image/x-icon" />
+
+        <!--[if lte IE 8]><link href="@routes.Assets.versioned("stylesheets/main-ie8.css")" rel="stylesheet" type="text/css" /><![endif]-->
+        <!--[if gt IE 8]><!--><link href="@routes.Assets.versioned("stylesheets/main.css")" media="all" rel="stylesheet" type="text/css" /><!--<![endif]-->
+    </head>
+
+
+    <body class="govuk-template__body ">
+        <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
+
+        <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
+
+        <div class="govuk-width-container ">
+
+            <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
+                @* And here's where we render the `Html` object containing
+                * the page content. *@
+               @content
+            </main>
+        </div>
+
+        <!-- Javascript -->
+        <script src="@routes.Assets.versioned("/lib/govuk-frontend/govuk/all.js")"></script>
+    </body>
+</html>

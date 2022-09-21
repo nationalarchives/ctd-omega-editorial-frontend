@@ -1,0 +1,15 @@
+// Import settings first so we can override them before importing all of GOV.UK Frontend
+// If you need to enable compatibility mode or the legacy palette, do that *before* this import.
+@import "lib/govuk-frontend/govuk/settings/all";
+
+// Override the default GOV.UK Frontend font stack
+$govuk-font-family: "HelveticaNeue", "Helvetica Neue", "Arial", "Helvetica", sans-serif;
+
+// Override the canvas background colour, which is normally grey to blend with the GOV.UK footer.
+$govuk-canvas-background-colour: $govuk-body-background-colour;
+
+// global styles for <a> and <p> tags
+$govuk-global-styles: true;
+$govuk-new-link-styles: true;
+
+$govuk-assets-path: "../lib/govuk-frontend/govuk/assets/";

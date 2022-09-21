@@ -2,6 +2,8 @@ package uk.gov.nationalarchives.omega.editorial.controllers
 
 import javax.inject._
 import play.api._
+import play.api.i18n.I18nSupport.RequestWithMessagesApi
+import play.api.i18n.Messages
 import play.api.mvc._
 import uk.gov.nationalarchives.omega.editorial._
 
@@ -9,7 +11,8 @@ import uk.gov.nationalarchives.omega.editorial._
   * application's home page.
   */
 @Singleton
-class HomeController @Inject() (val controllerComponents: ControllerComponents) extends BaseController {
+class HomeController @Inject() (val messagesControllerComponents: MessagesControllerComponents)
+    extends MessagesAbstractController(messagesControllerComponents) {
 
   /** Create an Action to render an HTML page.
     *
@@ -18,6 +21,9 @@ class HomeController @Inject() (val controllerComponents: ControllerComponents) 
     * a path of `/`.
     */
   def index() = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.index())
+    val messages: Messages = request.messages
+    val title: String = messages("index.title")
+    val heading: String = messages("index.heading")
+    Ok(views.html.index(title, heading))
   }
 }
