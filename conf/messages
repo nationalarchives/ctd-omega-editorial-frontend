@@ -1,3 +1,9 @@
 # https://www.playframework.com/documentation/latest/ScalaI18N
 index.title=Catalogue
 index.heading=Welcome to the Catalogue
+login.title=Sign in
+login.heading=Sign in: Pan-Archival Catalogue
+edit-set.title=Edit set
+edit-set.heading=Edit set: COAL 80 Sample
+edit-set.record.edit.title=Edit record
+edit-set.record.edit.heading=TNA reference: COAL 80/80/1
