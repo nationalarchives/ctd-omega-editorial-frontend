@@ -2,7 +2,7 @@ package controllers
 
 import org.scalatestplus.play._
 import org.scalatestplus.play.guice._
-import play.api.mvc.{AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesActionBuilderImpl, DefaultMessagesControllerComponents, MessagesControllerComponents}
+import play.api.mvc.{ AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesActionBuilderImpl, DefaultMessagesControllerComponents, MessagesControllerComponents }
 import play.api.test._
 import play.api.test.Helpers._
 import play.i18n.MessagesApi
@@ -18,18 +18,22 @@ class HomeControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
   "HomeController GET" should {
 
     "render the index page from a new instance of controller" in {
-      val messages: Map[String, Map[String, String]] = Map( "en" -> Map("index.heading" -> "Welcome to the Catalogue"))
+      val messages: Map[String, Map[String, String]] = Map("en" -> Map("index.heading" -> "Welcome to the Catalogue"))
       val mockMessagesApi = stubMessagesApi(messages)
       val stub = stubControllerComponents()
-      val controller = new HomeController(DefaultMessagesControllerComponents(
-        new DefaultMessagesActionBuilderImpl(stubBodyParser(AnyContentAsEmpty), mockMessagesApi)(stub.executionContext),
-        DefaultActionBuilder(stub.actionBuilder.parser)(stub.executionContext),
-        stub.parsers,
-        mockMessagesApi,
-        stub.langs,
-        stub.fileMimeTypes,
-        stub.executionContext
-      ))
+      val controller = new HomeController(
+        DefaultMessagesControllerComponents(
+          new DefaultMessagesActionBuilderImpl(stubBodyParser(AnyContentAsEmpty), mockMessagesApi)(
+            stub.executionContext
+          ),
+          DefaultActionBuilder(stub.actionBuilder.parser)(stub.executionContext),
+          stub.parsers,
+          mockMessagesApi,
+          stub.langs,
+          stub.fileMimeTypes,
+          stub.executionContext
+        )
+      )
       val home = controller.index().apply(FakeRequest(GET, "/"))
 
       status(home) mustBe OK
