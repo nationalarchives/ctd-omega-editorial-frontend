@@ -1,5 +1,30 @@
-@(title: String, heading: String)
+@import helper._
+@import uk.gov.nationalarchives.omega.editorial.models.Credentials
+
+@(title: String, heading: String, credentialsForm: Form[Credentials])(implicit messages: Messages, request: Request[AnyContent])
 
 @template(title) {
   <h1>@heading</h1>
+
+  @helper.form(action=routes.loginController.submit){
+    @CSRF.formField
+    <div class="govuk-form-group">
+      <label class="govuk-label govuk-label--s" for="username">
+        @messages("login.username.label")
+      </label>
+      <input class="govuk-input" id="username" name="username" type="text">
+    </div>
+
+    <div class="govuk-form-group">
+      <label class="govuk-label govuk-label--s" for="password">
+        @messages("login.password.label")
+      </label>
+      <input class="govuk-input" id="password" name="password" type="password">
+    </div>
+
+    <button class="govuk-button" data-module="govuk-button">
+      @messages("login.button.text")
+    </button>
+  }
 }
+

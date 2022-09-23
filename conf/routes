@@ -5,7 +5,8 @@
 
 # An example controller showing a sample home page
 GET     /                                    uk.gov.nationalarchives.omega.editorial.controllers.HomeController.index()
-GET     /login                               uk.gov.nationalarchives.omega.editorial.controllers.LoginController.login()
+GET     /login                               uk.gov.nationalarchives.omega.editorial.controllers.LoginController.view()
+POST    /login                               uk.gov.nationalarchives.omega.editorial.controllers.LoginController.submit()
 GET     /edit-set/:id                        uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.view(id: String)
 GET     /edit-set/:id/record/:recordId/edit  uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.editRecord(id: String, recordId: String)
 
