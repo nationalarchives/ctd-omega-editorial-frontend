@@ -4,7 +4,11 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           uk.gov.nationalarchives.omega.editorial.controllers.HomeController.index()
+GET     /                                    uk.gov.nationalarchives.omega.editorial.controllers.HomeController.index()
+GET     /login                               uk.gov.nationalarchives.omega.editorial.controllers.LoginController.login()
+GET     /edit-set/:id                        uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.view(id: String)
+GET     /edit-set/:id/record/:recordId/edit  uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.editRecord(id: String, recordId: String)
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

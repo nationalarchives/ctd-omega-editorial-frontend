@@ -23,20 +23,12 @@
     </encoder>
   </appender>
 
-  <appender name="ASYNCFILE" class="ch.qos.logback.classic.AsyncAppender">
-    <appender-ref ref="FILE" />
-  </appender>
-
-  <appender name="ASYNCSTDOUT" class="ch.qos.logback.classic.AsyncAppender">
-    <appender-ref ref="STDOUT" />
-  </appender>
-
   <logger name="play" level="INFO" />
-  <logger name="application" level="DEBUG" />
+  <logger name="uk.gov.nationalarchives.omega.editorial" level="INFO"/>
 
   <root level="WARN">
-    <appender-ref ref="ASYNCFILE" />
-    <appender-ref ref="ASYNCSTDOUT" />
+    <appender-ref ref="FILE" />
+    <appender-ref ref="STDOUT" />
   </root>
 
 </configuration>
