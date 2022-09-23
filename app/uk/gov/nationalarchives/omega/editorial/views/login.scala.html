@@ -3,12 +3,18 @@
 
 @(title: String, heading: String, credentialsForm: Form[Credentials])(implicit messages: Messages, request: Request[AnyContent])
 
+credentialsForm.errors
+credentialsForm.errors
+
+
 @template(title) {
   <h1>@heading</h1>
 
-  @helper.form(action=routes.loginController.submit){
+  @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.LoginController.submit) {
     @CSRF.formField
     <div class="govuk-form-group">
+      @if(credentialsForm.error("username")){<h1>There was a username error</h1>}
+      @if(credentialsForm.error("password")){<h1>There was a password error</h1>}
       <label class="govuk-label govuk-label--s" for="username">
         @messages("login.username.label")
       </label>

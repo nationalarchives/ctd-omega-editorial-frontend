@@ -17,7 +17,7 @@ import uk.gov.nationalarchives.omega.editorial.models.Credentials
 class LoginController @Inject() (val messagesControllerComponents: MessagesControllerComponents, langs: Langs)
     extends MessagesAbstractController(messagesControllerComponents) with play.api.i18n.I18nSupport {
 
-  val credentialsForm = Form(
+  val credentialsForm: Form[Credentials] = Form(
     mapping(
       "username" -> nonEmptyText,
       "password" -> nonEmptyText
