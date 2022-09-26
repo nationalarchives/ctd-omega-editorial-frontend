@@ -1,7 +1,5 @@
 package uk.gov.nationalarchives.omega.editorial.controllers
 
-import akka.http.scaladsl.model.headers.LinkParams.title
-
 import javax.inject._
 import play.api.i18n._
 import play.api.mvc._
@@ -14,14 +12,19 @@ import uk.gov.nationalarchives.omega.editorial.models.Credentials
   * application's home page.
   */
 @Singleton
-class LoginController @Inject() (val messagesControllerComponents: MessagesControllerComponents, langs: Langs)
+class LoginController @Inject() (val messagesControllerComponents: MessagesControllerComponents, lang: Langs)
     extends MessagesAbstractController(messagesControllerComponents) with play.api.i18n.I18nSupport {
+
+  val editorialUsername = scala.util.Properties.envOrElse("CTD_EDITORIAL_USERNAME", "1234")
+  val editorialPassword = scala.util.Properties.envOrElse("CTD_EDITORIAL_PASSWORD", "1234")
 
   val credentialsForm: Form[Credentials] = Form(
     mapping(
-      "username" -> nonEmptyText,
-      "password" -> nonEmptyText
+      "username" -> text.verifying(messagesApi("login.missing.username")(Lang.apply("en")), !_.isEmpty),
+      "password" -> text.verifying(messagesApi("login.missing.password")(Lang.apply("en")), !_.isEmpty)
     )(Credentials.apply)(Credentials.unapply)
+      verifying (messagesApi("login.authentication.error")(Lang.apply("en")), credentials =>
+        credentials.username == editorialUsername && credentials.password == editorialPassword)
   )
 
   /** Create an Action for the login page.
@@ -49,7 +52,7 @@ class LoginController @Inject() (val messagesControllerComponents: MessagesContr
           val username = credentials.username
           val password = credentials.password
 
-          if (username != "1234" || password != "1234") {
+          if (username != editorialUsername || password != editorialPassword) {
             BadRequest(views.html.login(title, heading, credentialsForm))
           } else {
             Redirect(controllers.routes.EditSetController.view("1"))
