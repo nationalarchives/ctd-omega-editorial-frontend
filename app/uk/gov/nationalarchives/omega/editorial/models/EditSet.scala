@@ -10,4 +10,5 @@ case class EditSetRecord(
   coveringDates: String,
   formerReferenceDepartment: String,
   startDate: String,
-  endDate: String)
+  endDate: String
+)
