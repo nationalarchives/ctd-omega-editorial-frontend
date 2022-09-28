@@ -12,7 +12,7 @@ import uk.gov.nationalarchives.omega.editorial.models.Credentials
   * application's home page.
   */
 @Singleton
-class LoginController @Inject() (val messagesControllerComponents: MessagesControllerComponents, lang: Langs)
+class LoginController @Inject() (val messagesControllerComponents: MessagesControllerComponents)
     extends MessagesAbstractController(messagesControllerComponents) with play.api.i18n.I18nSupport {
 
   val editorialUsername = scala.util.Properties.envOrElse("CTD_EDITORIAL_USERNAME", "1234")
