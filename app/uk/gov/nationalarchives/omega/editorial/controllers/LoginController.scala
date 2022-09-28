@@ -12,8 +12,8 @@ import uk.gov.nationalarchives.omega.editorial.models.Credentials
   * application's home page.
   */
 @Singleton
-class LoginController @Inject() (val messagesControllerComponents: MessagesControllerComponents)
-    extends MessagesAbstractController(messagesControllerComponents) with play.api.i18n.I18nSupport {
+class LoginController @Inject()(val messagesControllerComponents: MessagesControllerComponents)
+    extends MessagesAbstractController(messagesControllerComponents) with I18nSupport {
 
   val editorialUsername = scala.util.Properties.envOrElse("CTD_EDITORIAL_USERNAME", "1234")
   val editorialPassword = scala.util.Properties.envOrElse("CTD_EDITORIAL_PASSWORD", "1234")
@@ -45,7 +45,8 @@ class LoginController @Inject() (val messagesControllerComponents: MessagesContr
     val title: String = messages("login.title")
     val heading: String = messages("login.heading")
 
-    credentialsForm.bindFromRequest
+    credentialsForm
+      .bindFromRequest()
       .fold(
         formWithErrors => BadRequest(views.html.login(title, heading, formWithErrors)),
         credentials => {
