@@ -2,7 +2,7 @@
 
 <div class="govuk-form-group @if(elements.hasErrors) {govuk-form-group--error}">
     @if(elements.hasErrors){
-        <p id="username-error" class="govuk-error-message">
+        <p id="@elements.id-error" class="govuk-error-message">
             <span class="govuk-visually-hidden">Error:</span> @elements.field.error.map(_.message)
         </p>
     }
