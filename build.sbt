@@ -11,6 +11,7 @@ ThisBuild / versionScheme := Some("semver-spec")
 lazy val root = Project("ctd-omega-editorial-frontend", file("."))
   .enablePlugins(PlayScala)
   .enablePlugins(BuildInfoPlugin)
+  .enablePlugins(AutomateHeaderPlugin)
   .settings(
     Defaults.itSettings,
     organization := "uk.gov.nationalarchives",
