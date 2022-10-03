@@ -1,5 +1,26 @@
-@(title: String, heading: String)
+@import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry }
+
+@(title: String, heading: String, editSet: EditSet)
 
 @template(title) {
   <h1>@heading</h1>
+
+  <table class="govuk-table">
+    <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+      <th scope="col" class="govuk-table__header">CCR</th>
+      <th scope="col" class="govuk-table__header">Scope and Content</th>
+      <th scope="col" class="govuk-table__header">Covering Dates</th>
+    </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+    @for(entry <- editSet.entries) {
+    <tr class="govuk-table__row">
+      <td class="govuk-table__cell">@entry.ccr</td>
+      <td class="govuk-table__cell">@entry.scopeAndContent</td>
+      <td class="govuk-table__cell">@entry.coveringDates</td>
+    </tr>
+    }
+    </tbody>
+  </table>
 }

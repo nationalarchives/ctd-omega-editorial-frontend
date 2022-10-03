@@ -27,12 +27,13 @@ import play.api.i18n.Messages
 import play.api.mvc._
 import play.api.Logger
 import uk.gov.nationalarchives.omega.editorial._
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry }
 
 /** This controller creates an `Action` to handle HTTP requests to the
   * application's home page.
   */
 @Singleton
-class EditSetController @Inject() (val messagesControllerComponents: MessagesControllerComponents)
+class EditSetController @Inject()(val messagesControllerComponents: MessagesControllerComponents)
     extends MessagesAbstractController(messagesControllerComponents) {
 
   val logger: Logger = Logger(this.getClass())
@@ -45,10 +46,27 @@ class EditSetController @Inject() (val messagesControllerComponents: MessagesCon
     */
   def view(id: String) = Action { implicit request: Request[AnyContent] =>
     logger.info(s"The edit set id is $id ")
+    val editSet = getEditSet(id)
     val messages: Messages = request.messages
     val title: String = messages("edit-set.title")
-    val heading: String = messages("edit-set.heading")
-    Ok(views.html.editSet(title, heading))
+    val heading: String = messages("edit-set.heading", editSet.name)
+    Ok(views.html.editSet(title, heading, editSet))
+  }
+
+  def getEditSet(id: String): EditSet = {
+
+    val scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+    val editSetEntry1 =
+      EditSetEntry("COAL 80/80/1", id, scopeAndContent, "1960")
+    val editSetEntry2 =
+      EditSetEntry("COAL 80/80/2", id, scopeAndContent, "1960")
+    val editSetEntry3 =
+      EditSetEntry("COAL 80/80/3", id, scopeAndContent, "1960")
+    val entries = Seq(editSetEntry1, editSetEntry2, editSetEntry3)
+    val editSetName = "COAL 80 Sample"
+    val editSet = EditSet(editSetName, id: String, entries)
+
+    editSet
   }
 
   /** Create an Action for the edit set record edit page.
