@@ -1,5 +1,6 @@
 @import helper._
 @import uk.gov.nationalarchives.omega.editorial.models.Credentials
+@import uk.gov.nationalarchives.omega.editorial.forms.GovukHelpers._
 
 @(title: String, heading: String, credentialsForm: Form[Credentials])(implicit messages: Messages, request: Request[AnyContent])
 
@@ -31,31 +32,8 @@
               @heading
             </h1>
           </legend>
-
-          <div class="govuk-form-group @if(credentialsForm.error("username")) {govuk-form-group--error}">
-            @if(credentialsForm.error("username")){
-                <p id="username-error" class="govuk-error-message">
-                  <span class="govuk-visually-hidden">Error:</span> @credentialsForm.error("username").map(_.message)
-                </p>
-            }
-
-            <label class="govuk-label govuk-label--s" for="username">
-              @messages("login.username.label")
-            </label>
-            <input class="govuk-input" id="username" name="username" type="text" autofocus="autofocus" value="@credentialsForm.data.get("username")">
-          </div>
-
-          <div class="govuk-form-group  @if(credentialsForm.error("password")){govuk-form-group--error}">
-          @if(credentialsForm.error("password")){
-            <p id="password-error" class="govuk-error-message">
-              <span class="govuk-visually-hidden">Error:</span> @credentialsForm.error("password").map(_.message)
-            </p>
-          }
-            <label class="govuk-label govuk-label--s" for="password">
-              @messages("login.password.label")
-            </label>
-            <input class="govuk-input" id="password" name="password" type="password" value="@credentialsForm.data.get("password")">
-          </div>
+          @inputText(credentialsForm("username"), Symbol("class") -> "govuk-input", Symbol("autofocus") -> "autofocus")
+          @inputPassword(credentialsForm("password"), Symbol("class") -> "govuk-input")
           <button class="govuk-button" data-module="govuk-button">
             @messages("login.button.text")
           </button>
