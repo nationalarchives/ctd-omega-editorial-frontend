@@ -26,7 +26,7 @@ import play.api.i18n._
 import play.api.mvc._
 import uk.gov.nationalarchives.omega.editorial._
 import play.api.data._
-import play.api.data.Forms._
+import uk.gov.nationalarchives.omega.editorial.forms.CredentialsFormProvider
 import uk.gov.nationalarchives.omega.editorial.models.Credentials
 
 /** This controller creates an `Action` to handle HTTP requests to the
@@ -36,17 +36,7 @@ import uk.gov.nationalarchives.omega.editorial.models.Credentials
 class LoginController @Inject() (val messagesControllerComponents: MessagesControllerComponents)
     extends MessagesAbstractController(messagesControllerComponents) with I18nSupport {
 
-  val editorialUsername = scala.util.Properties.envOrElse("CTD_EDITORIAL_USERNAME", "1234")
-  val editorialPassword = scala.util.Properties.envOrElse("CTD_EDITORIAL_PASSWORD", "1234")
-
-  val credentialsForm: Form[Credentials] = Form(
-    mapping(
-      "username" -> text.verifying(messagesApi("login.missing.username")(Lang.apply("en")), !_.isEmpty),
-      "password" -> text.verifying(messagesApi("login.missing.password")(Lang.apply("en")), !_.isEmpty)
-    )(Credentials.apply)(Credentials.unapply)
-      verifying (messagesApi("login.authentication.error")(Lang.apply("en")), credentials =>
-        credentials.username == editorialUsername && credentials.password == editorialPassword)
-  )
+  val credentialsForm: Form[Credentials] = CredentialsFormProvider()
 
   /** Create an Action for the login page.
     *
@@ -70,17 +60,7 @@ class LoginController @Inject() (val messagesControllerComponents: MessagesContr
       .bindFromRequest()
       .fold(
         formWithErrors => BadRequest(views.html.login(title, heading, formWithErrors)),
-        credentials => {
-          val username = credentials.username
-          val password = credentials.password
-
-          if (username != editorialUsername || password != editorialPassword) {
-            BadRequest(views.html.login(title, heading, credentialsForm))
-          } else {
-            Redirect(controllers.routes.EditSetController.view("1"))
-          }
-
-        }
+        _ => Redirect(controllers.routes.EditSetController.view("1"))
       )
   }
 }
