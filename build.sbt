@@ -98,13 +98,15 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
     ),
     scalafmtOnCompile := true,
     resolvers ++= Seq(
-      Resolver.mavenLocal
+      Resolver.mavenLocal,
+      MavenRepository("HMRC-open-artefacts-maven2","https://open.artefacts.tax.service.gov.uk/maven2")
     ),
     headerLicense := Some(HeaderLicense.MIT("2022", "The National Archives")),
 
 
     libraryDependencies ++= Seq(guice,
       "org.webjars.npm" % "govuk-frontend" % "4.3.1",
+      "uk.gov.hmrc" %% "play-frontend-hmrc" % "3.30.0-play-28",
       "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
     )
   )
