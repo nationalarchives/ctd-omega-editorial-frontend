@@ -1,0 +1,26 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test-workflows:
+    name: Editorial Tests
+    strategy:
+      fail-fast: false
+      matrix:
+         os: [ubuntu-latest, macos-latest]
+        jdk: [1.8]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Setup JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: zulu
+          java-version: 8
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run tests
+        run: sbt -v +test
