@@ -23,7 +23,14 @@ package uk.gov.nationalarchives.omega.editorial.forms
 import views.html.helper.FieldConstructor
 
 object GovukHelpers {
-  implicit val myFields: FieldConstructor = FieldConstructor(
-    uk.gov.nationalarchives.omega.editorial.views.html.govukInput.f
+
+  /** This is a custom Field Constructor for use in creating login input fields only (i.e. username/password)
+    * See https://www.playframework.com/documentation/2.8.x/ScalaCustomFieldConstructors
+    *
+    * This was necessary to ensure the password field is not repopulated with the entered password in the event
+    * of an error condition. In this case the password would be accessibly in plain text in the source code of the page.
+    */
+  implicit val govukLoginInputFields: FieldConstructor = FieldConstructor(
+    uk.gov.nationalarchives.omega.editorial.views.html.govukLoginInput.f
   )
 }

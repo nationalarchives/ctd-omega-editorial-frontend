@@ -24,9 +24,10 @@ package controllers
 import org.scalatestplus.play._
 import org.scalatestplus.play.guice._
 import play.api.mvc.{ AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesActionBuilderImpl, DefaultMessagesControllerComponents }
-import play.api.test._
 import play.api.test.Helpers._
+import play.api.test._
 import uk.gov.nationalarchives.omega.editorial.controllers.LoginController
+import uk.gov.nationalarchives.omega.editorial.views.html.login
 
 /** Add your spec here.
   * You can mock out a whole application including requests, plugins etc.
@@ -42,6 +43,7 @@ class LoginControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injectin
         Map("en" -> Map("login.heading" -> "Sign in: Pan-Archival Catalogue"))
       val mockMessagesApi = stubMessagesApi(messages)
       val stub = stubControllerComponents()
+      val login = inject[login]
       val controller = new LoginController(
         DefaultMessagesControllerComponents(
           new DefaultMessagesActionBuilderImpl(stubBodyParser(AnyContentAsEmpty), mockMessagesApi)(
@@ -53,13 +55,14 @@ class LoginControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injectin
           stub.langs,
           stub.fileMimeTypes,
           stub.executionContext
-        )
+        ),
+        login
       )
-      val login = controller.view().apply(CSRFTokenHelper.addCSRFToken(FakeRequest(GET, "/login")))
+      val response = controller.view().apply(CSRFTokenHelper.addCSRFToken(FakeRequest(GET, "/login")))
 
-      status(login) mustBe OK
-      contentType(login) mustBe Some("text/html")
-      contentAsString(login) must include("Sign in: Pan-Archival Catalogue")
+      status(response) mustBe OK
+      contentType(response) mustBe Some("text/html")
+      contentAsString(response) must include("Sign in: Pan-Archival Catalogue")
     }
 
     "render the login page from the application" in {
@@ -87,6 +90,7 @@ class LoginControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injectin
         Map("en" -> Map("login.heading" -> "Sign in: Pan-Archival Catalogue"))
       val mockMessagesApi = stubMessagesApi(messages)
       val stub = stubControllerComponents()
+      val login = inject[login]
       val controller = new LoginController(
         DefaultMessagesControllerComponents(
           new DefaultMessagesActionBuilderImpl(stubBodyParser(AnyContentAsEmpty), mockMessagesApi)(
@@ -98,10 +102,11 @@ class LoginControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injectin
           stub.langs,
           stub.fileMimeTypes,
           stub.executionContext
-        )
+        ),
+        login
       )
 
-      val login = controller
+      val response = controller
         .submit()
         .apply(
           CSRFTokenHelper
@@ -109,7 +114,7 @@ class LoginControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injectin
               FakeRequest(POST, "/login").withFormUrlEncodedBody("username" -> "1234", "password" -> "1234")
             )
         )
-      status(login) mustBe SEE_OTHER
+      status(response) mustBe SEE_OTHER
     }
 
     "redirect to result page of the application" in {
