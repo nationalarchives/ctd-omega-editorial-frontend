@@ -28,13 +28,16 @@ import uk.gov.nationalarchives.omega.editorial._
 import play.api.data._
 import uk.gov.nationalarchives.omega.editorial.forms.CredentialsFormProvider
 import uk.gov.nationalarchives.omega.editorial.models.Credentials
+import uk.gov.nationalarchives.omega.editorial.views.html.login
 
 /** This controller creates an `Action` to handle HTTP requests to the
   * application's home page.
   */
 @Singleton
-class LoginController @Inject() (val messagesControllerComponents: MessagesControllerComponents)
-    extends MessagesAbstractController(messagesControllerComponents) with I18nSupport {
+class LoginController @Inject() (
+  val messagesControllerComponents: MessagesControllerComponents,
+  login: login
+) extends MessagesAbstractController(messagesControllerComponents) with I18nSupport {
 
   val credentialsForm: Form[Credentials] = CredentialsFormProvider()
 
@@ -44,14 +47,14 @@ class LoginController @Inject() (val messagesControllerComponents: MessagesContr
     * will be called when the application receives a `GET` request with
     * a path of `/login`.
     */
-  def view() = Action { implicit request: Request[AnyContent] =>
+  def view(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     val messages: Messages = messagesApi.preferred(request)
     val title: String = messages("login.title")
     val heading: String = messages("login.heading")
-    Ok(views.html.login(title, heading, credentialsForm))
+    Ok(login(title, heading, credentialsForm))
   }
 
-  def submit() = Action { implicit request: Request[AnyContent] =>
+  def submit(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     val messages: Messages = messagesApi.preferred(request)
     val title: String = messages("login.title")
     val heading: String = messages("login.heading")
@@ -59,7 +62,7 @@ class LoginController @Inject() (val messagesControllerComponents: MessagesContr
     credentialsForm
       .bindFromRequest()
       .fold(
-        formWithErrors => BadRequest(views.html.login(title, heading, formWithErrors)),
+        formWithErrors => BadRequest(login(title, heading, formWithErrors)),
         _ => Redirect(controllers.routes.EditSetController.view("1"))
       )
   }
