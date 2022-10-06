@@ -33,7 +33,7 @@ import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry }
   * application's home page.
   */
 @Singleton
-class EditSetController @Inject()(val messagesControllerComponents: MessagesControllerComponents)
+class EditSetController @Inject() (val messagesControllerComponents: MessagesControllerComponents)
     extends MessagesAbstractController(messagesControllerComponents) {
 
   val logger: Logger = Logger(this.getClass())
@@ -64,9 +64,7 @@ class EditSetController @Inject()(val messagesControllerComponents: MessagesCont
       EditSetEntry("COAL 80/80/3", id, scopeAndContent, "1960")
     val entries = Seq(editSetEntry1, editSetEntry2, editSetEntry3)
     val editSetName = "COAL 80 Sample"
-    val editSet = EditSet(editSetName, id: String, entries)
-
-    editSet
+    EditSet(editSetName, id: String, entries)
   }
 
   /** Create an Action for the edit set record edit page.
