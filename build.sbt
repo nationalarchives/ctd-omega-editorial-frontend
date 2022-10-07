@@ -12,6 +12,7 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
   .enablePlugins(PlayScala)
   .enablePlugins(BuildInfoPlugin)
   .enablePlugins(AutomateHeaderPlugin)
+  .enablePlugins(RpmPlugin)
   .settings(
     Defaults.itSettings,
     organization := "uk.gov.nationalarchives",
@@ -108,7 +109,10 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
       "org.webjars.npm" % "govuk-frontend" % "4.3.1",
       "uk.gov.hmrc" %% "play-frontend-hmrc" % "3.30.0-play-28",
       "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
-    )
+    ),
+
+    rpmVendor := "nationalarchives.gov.uk",
+    rpmLicense := Some("MIT")
   )
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "uk.gov.nationalarchives.controllers._"
