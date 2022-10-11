@@ -34,7 +34,8 @@ class EditRecordViewSpec extends PlaySpec {
       val editRecordHtml: Html =
         views.html.editSetRecordEdit(title, heading, editSetRecordForm)(
           Helpers.stubMessages(),
-          CSRFTokenHelper.addCSRFToken(FakeRequest()))
+          CSRFTokenHelper.addCSRFToken(FakeRequest())
+        )
 
       contentAsString(editRecordHtml) must include(title)
       contentAsString(editRecordHtml) must include(heading)
@@ -61,7 +62,8 @@ class EditRecordViewSpec extends PlaySpec {
       val editRecordHtml: Html =
         views.html.editSetRecordEdit(title, heading, editSetRecordForm)(
           Helpers.stubMessages(),
-          CSRFTokenHelper.addCSRFToken(FakeRequest()))
+          CSRFTokenHelper.addCSRFToken(FakeRequest())
+        )
 
       contentAsString(editRecordHtml) must include("There is a problem")
       contentAsString(editRecordHtml) must include("Enter the scope and content.")
@@ -84,20 +86,22 @@ class EditRecordViewSpec extends PlaySpec {
           "endDate"                   -> text
         )(EditSetRecord.apply)(EditSetRecord.unapply)
       ).fill(
-          EditSetRecord.apply(
-            "",
-            "",
-            "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-            "",
-            "",
-            "",
-            ""))
-        .withError(FormError("", "Scope and content too long, maximum length 8000 characters"))
+        EditSetRecord.apply(
+          "",
+          "",
+          "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+          "",
+          "",
+          "",
+          ""
+        )
+      ).withError(FormError("", "Scope and content too long, maximum length 8000 characters"))
 
       val editRecordHtml: Html =
         views.html.editSetRecordEdit(title, heading, editSetRecordForm)(
           Helpers.stubMessages(),
-          CSRFTokenHelper.addCSRFToken(FakeRequest()))
+          CSRFTokenHelper.addCSRFToken(FakeRequest())
+        )
 
       contentAsString(editRecordHtml) must include("There is a problem")
       contentAsString(editRecordHtml) must include("Scope and content too long, maximum length 8000 characters")
@@ -119,7 +123,8 @@ class EditRecordViewSpec extends PlaySpec {
           "startDate"                 -> text,
           "endDate"                   -> text
         )(EditSetRecord.apply)(EditSetRecord.unapply)
-      ).fill(EditSetRecord.apply(
+      ).fill(
+        EditSetRecord.apply(
           "",
           "",
           "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
@@ -127,17 +132,19 @@ class EditRecordViewSpec extends PlaySpec {
           "",
           "",
           ""
-        ))
-        .withError(FormError("", "Former reference - Department too long, maximum length 255 characters"))
+        )
+      ).withError(FormError("", "Former reference - Department too long, maximum length 255 characters"))
 
       val editRecordHtml: Html =
         views.html.editSetRecordEdit(title, heading, editSetRecordForm)(
           Helpers.stubMessages(),
-          CSRFTokenHelper.addCSRFToken(FakeRequest()))
+          CSRFTokenHelper.addCSRFToken(FakeRequest())
+        )
 
       contentAsString(editRecordHtml) must include("There is a problem")
       contentAsString(editRecordHtml) must include(
-        "Former reference - Department too long, maximum length 255 characters")
+        "Former reference - Department too long, maximum length 255 characters"
+      )
 
     }
 

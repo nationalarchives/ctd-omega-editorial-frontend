@@ -9,6 +9,7 @@ GET     /login                               uk.gov.nationalarchives.omega.edito
 POST    /login                               uk.gov.nationalarchives.omega.editorial.controllers.LoginController.submit()
 GET     /edit-set/:id                        uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.view(id: String)
 GET     /edit-set/:id/record/:recordId/edit  uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.editRecord(id: String, recordId: String)
+POST    /edit-set/:id/record/:recordId/edit  uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.submit(id: String, recordId: String)
 
 
 # Map static resources from the /public folder to the /assets URL path
