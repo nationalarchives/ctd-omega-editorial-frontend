@@ -101,7 +101,9 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
           stub.executionContext
         )
       )
-      val editRecordPage = controller.editRecord("1", "1").apply(FakeRequest(GET, "/edit-set/1/record/1/edit"))
+      val editRecordPage = controller
+        .editRecord("1", "1")
+        .apply(CSRFTokenHelper.addCSRFToken(FakeRequest(GET, "/edit-set/1/record/1/edit")))
 
       status(editRecordPage) mustBe OK
       contentType(editRecordPage) mustBe Some("text/html")
@@ -110,7 +112,9 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
 
     "render the edit set page from the application" in {
       val controller = inject[EditSetController]
-      val editRecordPage = controller.editRecord("1", "1").apply(FakeRequest(GET, "/edit-set/1/record/1/edit"))
+      val editRecordPage = controller
+        .editRecord("1", "1")
+        .apply(CSRFTokenHelper.addCSRFToken(FakeRequest(GET, "/edit-set/1/record/1/edit")))
 
       status(editRecordPage) mustBe OK
       contentType(editRecordPage) mustBe Some("text/html")
