@@ -1,5 +1,7 @@
 import sbt.Keys.libraryDependencies
 import sbt.url
+import de.heikoseeberger.sbtheader.FileType
+import play.twirl.sbt.Import.TwirlKeys
 
 val Slf4JVersion = "1.7.36"
 
@@ -7,6 +9,10 @@ organization := "uk.gov.nationalarchives"
 
 version := "1.0.0-SNAPSHOT"
 ThisBuild / versionScheme := Some("semver-spec")
+
+headerMappings := headerMappings.value + (FileType("html") -> HeaderCommentStyle.twirlStyleBlockComment)
+
+Compile / headerSources ++= (Compile / TwirlKeys.compileTemplates / sources).value
 
 lazy val root = Project("ctd-omega-editorial-frontend", file("."))
   .enablePlugins(PlayScala)
