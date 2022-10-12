@@ -22,44 +22,56 @@
 @import helper._
 @import uk.gov.nationalarchives.omega.editorial.models.Credentials
 @import uk.gov.nationalarchives.omega.editorial.forms.GovukHelpers._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichErrorSummary
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+
+
+@this(govukFieldset: GovukFieldset, govukButton: GovukButton, govukErrorSummary: GovukErrorSummary)
 
 @(title: String, heading: String, credentialsForm: Form[Credentials])(implicit messages: Messages, request: Request[AnyContent])
+
+@fieldsetContent = {
+  @CSRF.formField
+  @credentialsForm.error("username") match {
+    case Some(_) => {
+      @inputText(credentialsForm("username"), Symbol("class") -> "govuk-input govuk-input--error", Symbol("autofocus") -> "autofocus")
+    }
+    case _ => {
+      @inputText(credentialsForm("username"), Symbol("class") -> "govuk-input", Symbol("autofocus") -> "autofocus")
+    }
+  }
+  @credentialsForm.error("password") match {
+    case Some(_) => {
+      @inputPassword(credentialsForm("password"), Symbol("class") -> "govuk-input govuk-input--error")
+    }
+    case _ => {
+      @inputPassword(credentialsForm("password"), Symbol("class") -> "govuk-input")
+    }
+  }
+  @govukButton(Button(element = Some("button"), content = Text("Sign in")))
+}
 
 @template(title) {
 
   @if(credentialsForm.hasErrors) {
-  <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" data-module="govuk-error-summary">
-    <h2 class="govuk-error-summary__title" id="error-summary-title">
-      There is a problem
-    </h2>
-    <div class="govuk-error-summary__body">
-      <ul class="govuk-list govuk-error-summary__list">
-        @if(credentialsForm.hasGlobalErrors) {
-          @for(error <- credentialsForm.errors) {
-              <li>@error.message</li>
-          }
-        }
-      </ul>
-    </div>
-  </div>
+    @govukErrorSummary(ErrorSummary().withFormErrorsAsText(credentialsForm))
   }
+
   @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.LoginController.submit()) {
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-one-half">
-        <fieldset class="govuk-fieldset">
-          @CSRF.formField
-          <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-            <h1 class="govuk-fieldset__heading">
-              @heading
-            </h1>
-          </legend>
-          @inputText(credentialsForm("username"), Symbol("class") -> "govuk-input", Symbol("autofocus") -> "autofocus")
-          @inputPassword(credentialsForm("password"), Symbol("class") -> "govuk-input")
-          <button class="govuk-button" data-module="govuk-button">
-            @messages("login.button.text")
-          </button>
-        </fieldset>
+        @govukFieldset(Fieldset(
+          legend = Some(Legend(
+            content = Text(heading),
+            classes="govuk-fieldset__legend--m",
+            isPageHeading = true
+          )),
+          html = fieldsetContent
+        ))
+      </div>
     </div>
-  </div>
   }
+
 }
