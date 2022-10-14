@@ -39,6 +39,8 @@ class EditSetController @Inject() (val messagesControllerComponents: MessagesCon
     extends MessagesAbstractController(messagesControllerComponents) with I18nSupport {
 
   val logger: Logger = Logger(this.getClass())
+  val save = "save"
+  val discard = "discard"
 
   var editSetRecordForm: Form[EditSetRecord] = Form(
     mapping(
@@ -125,7 +127,34 @@ class EditSetController @Inject() (val messagesControllerComponents: MessagesCon
       .bindFromRequest()
       .fold(
         formWithErrors => BadRequest(views.html.editSetRecordEdit(title, heading, formWithErrors)),
-        _ => Redirect(controllers.routes.EditSetController.view("1"))
+        _ =>
+          request.body.asFormUrlEncoded.get("action").headOption match {
+            case Some("save")    => Redirect(controllers.routes.EditSetController.save(id, recordId))
+            case Some("discard") => Redirect(controllers.routes.EditSetController.discard(id, recordId))
+            //TODO Below added to handle error flow which could be a redirect to an error page pending configuration
+            case _ => BadRequest("This action is not allowed")
+          }
       )
   }
+
+  def save(id: String, recordId: String) = Action { implicit request: Request[AnyContent] =>
+    val messages: Messages = messagesApi.preferred(request)
+    val title: String = messages("edit-set.record.edit.title")
+    val heading: String = messages("edit-set.record.edit.heading")
+    val message: String = messages("edit-set.record.save.text")
+    logger.info(s"Save changes for record id $recordId edit set id $id")
+
+    Ok(views.html.editSetRecordEditSave(title, heading, message))
+  }
+
+  def discard(id: String, recordId: String) = Action { implicit request: Request[AnyContent] =>
+    val messages: Messages = messagesApi.preferred(request)
+    val title: String = messages("edit-set.record.edit.title")
+    val heading: String = messages("edit-set.record.edit.heading")
+    val message: String = messages("edit-set.record.discard.text")
+    logger.info(s"Discard changes for record id $recordId edit set id $id ")
+
+    Ok(views.html.editSetRecordEditDiscard(title, heading, message))
+  }
+
 }

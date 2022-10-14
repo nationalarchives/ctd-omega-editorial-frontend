@@ -163,7 +163,8 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
                 "formerReferenceDepartment" -> "1234",
                 "coveringDates"             -> "1234",
                 "startDate"                 -> "1234",
-                "endDate"                   -> "1234"
+                "endDate"                   -> "1234",
+                "action"                    -> "save"
               )
             )
         )
@@ -183,7 +184,8 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
               "formerReferenceDepartment" -> "1234",
               "coveringDates"             -> "1234",
               "startDate"                 -> "1234",
-              "endDate"                   -> "1234"
+              "endDate"                   -> "1234",
+              "action"                    -> "discard"
             )
           )
         )
@@ -200,7 +202,8 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
           "formerReferenceDepartment" -> "1234",
           "coveringDates"             -> "1234",
           "startDate"                 -> "1234",
-          "endDate"                   -> "1234"
+          "endDate"                   -> "1234",
+          "action"                    -> "save"
         )
       )
       val editRecordPage = route(app, request).get
