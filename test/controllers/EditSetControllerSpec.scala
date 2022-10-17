@@ -26,7 +26,7 @@ import org.scalatestplus.play.guice._
 import play.api.mvc.{ AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesActionBuilderImpl, DefaultMessagesControllerComponents }
 import play.api.test._
 import play.api.test.Helpers._
-import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController }
+import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, LoginController }
 
 /** Add your spec here.
   * You can mock out a whole application including requests, plugins etc.
@@ -101,7 +101,9 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
           stub.executionContext
         )
       )
-      val editRecordPage = controller.editRecord("1", "1").apply(FakeRequest(GET, "/edit-set/1/record/1/edit"))
+      val editRecordPage = controller
+        .editRecord("1", "1")
+        .apply(CSRFTokenHelper.addCSRFToken(FakeRequest(GET, "/edit-set/1/record/1/edit")))
 
       status(editRecordPage) mustBe OK
       contentType(editRecordPage) mustBe Some("text/html")
@@ -110,7 +112,9 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
 
     "render the edit set page from the application" in {
       val controller = inject[EditSetController]
-      val editRecordPage = controller.editRecord("1", "1").apply(FakeRequest(GET, "/edit-set/1/record/1/edit"))
+      val editRecordPage = controller
+        .editRecord("1", "1")
+        .apply(CSRFTokenHelper.addCSRFToken(FakeRequest(GET, "/edit-set/1/record/1/edit")))
 
       status(editRecordPage) mustBe OK
       contentType(editRecordPage) mustBe Some("text/html")
@@ -124,6 +128,87 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
       status(editRecordPage) mustBe OK
       contentType(editRecordPage) mustBe Some("text/html")
       contentAsString(editRecordPage) must include("TNA reference: COAL 80/80/1")
+    }
+  }
+
+  "EditSetController POST /edit-set/{id}/record/{recordId}/edit" should {
+    "redirect to result page from a new instance of controller" in {
+      val messages: Map[String, Map[String, String]] =
+        Map("en" -> Map("edit-set.record.edit.heading" -> "TNA reference: COAL 80/80/1"))
+      val mockMessagesApi = stubMessagesApi(messages)
+      val stub = stubControllerComponents()
+      val controller = new EditSetController(
+        DefaultMessagesControllerComponents(
+          new DefaultMessagesActionBuilderImpl(stubBodyParser(AnyContentAsEmpty), mockMessagesApi)(
+            stub.executionContext
+          ),
+          DefaultActionBuilder(stub.actionBuilder.parser)(stub.executionContext),
+          stub.parsers,
+          mockMessagesApi,
+          stub.langs,
+          stub.fileMimeTypes,
+          stub.executionContext
+        )
+      )
+
+      val editRecordPage = controller
+        .submit("1", "1")
+        .apply(
+          CSRFTokenHelper
+            .addCSRFToken(
+              FakeRequest(POST, "/edit-set/1/record/1/edit").withFormUrlEncodedBody(
+                "ccr"                       -> "1234",
+                "oci"                       -> "1234",
+                "scopeAndContent"           -> "1234",
+                "formerReferenceDepartment" -> "1234",
+                "coveringDates"             -> "1234",
+                "startDate"                 -> "1234",
+                "endDate"                   -> "1234",
+                "action"                    -> "save"
+              )
+            )
+        )
+      status(editRecordPage) mustBe SEE_OTHER
+    }
+
+    "redirect to result page of the application" in {
+      val controller = inject[EditSetController]
+      val editRecordPage = controller
+        .submit("1", "1")
+        .apply(
+          CSRFTokenHelper.addCSRFToken(
+            FakeRequest(POST, "/edit-set/1/record/1/edit").withFormUrlEncodedBody(
+              "ccr"                       -> "1234",
+              "oci"                       -> "1234",
+              "scopeAndContent"           -> "1234",
+              "formerReferenceDepartment" -> "1234",
+              "coveringDates"             -> "1234",
+              "startDate"                 -> "1234",
+              "endDate"                   -> "1234",
+              "action"                    -> "discard"
+            )
+          )
+        )
+
+      status(editRecordPage) mustBe SEE_OTHER
+    }
+
+    "redirect to result page from the router" in {
+      val request = CSRFTokenHelper.addCSRFToken(
+        FakeRequest(POST, "/edit-set/1/record/1/edit").withFormUrlEncodedBody(
+          "ccr"                       -> "1234",
+          "oci"                       -> "1234",
+          "scopeAndContent"           -> "1234",
+          "formerReferenceDepartment" -> "1234",
+          "coveringDates"             -> "1234",
+          "startDate"                 -> "1234",
+          "endDate"                   -> "1234",
+          "action"                    -> "save"
+        )
+      )
+      val editRecordPage = route(app, request).get
+
+      status(editRecordPage) mustBe SEE_OTHER
     }
   }
 

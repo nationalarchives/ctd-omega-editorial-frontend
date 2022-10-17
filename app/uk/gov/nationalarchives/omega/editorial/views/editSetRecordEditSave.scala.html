@@ -1,0 +1,48 @@
+@*
+ * Copyright (c) 2022 The National Archives
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+ * the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+ * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *@
+
+@import helper._
+
+@(title: String, heading: String, message:String)
+
+@template(title) {
+
+<a class="govuk-back-link" href="/edit-set/1">Back to edit set (COAL 80 Sample)</a>
+
+<div class="govuk-panel govuk-panel--confirmation">
+    <div class="govuk-panel__body">
+        @message
+    </div>
+</div>
+
+
+<legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+    <h1 class=govuk-fieldset__heading">
+        @heading
+    </h1>
+    <h2 class="govuk-fieldset__heading--m">PAC-ID: COAL.2022.V5RJW.P Physical Record</h2>
+</legend>
+<p class="govuk-body">Series: National Coal Board and predecessors: Photographs</p>
+<hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+
+<a class="govuk-back-link" href="/edit-set/1/record/1/edit">Back to edit record</a>
+
+}
