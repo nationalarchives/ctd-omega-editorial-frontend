@@ -19,24 +19,31 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.forms
+package uk.gov.nationalarchives.omega.editorial.controllers.helpers
 
-import play.api.data.Form
-import play.api.data.Forms.{ mapping, text }
-import play.api.i18n.{ Lang, MessagesApi }
+import play.api.mvc._
+
+import java.time.{ LocalDateTime, ZoneOffset }
+import javax.inject.Inject
+import scala.concurrent.{ ExecutionContext, Future }
+import uk.gov.nationalarchives.omega.editorial.models.dao.{ SessionDAO, UserDAO }
 import uk.gov.nationalarchives.omega.editorial.models.Credentials
-import uk.gov.nationalarchives.omega.editorial.models.dao.UserDAO
 
-object CredentialsFormProvider {
+class UserRequest[A](val user: Option[Credentials], request: Request[A]) extends WrappedRequest[A](request)
 
-  def apply()(implicit messagesApi: MessagesApi): Form[Credentials] = Form(
-    mapping(
-      "username" -> text.verifying(messagesApi("login.missing.username")(Lang.apply("en")), _.nonEmpty),
-      "password" -> text.verifying(messagesApi("login.missing.password")(Lang.apply("en")), _.nonEmpty)
-    )(Credentials.apply)(Credentials.unapply)
-      verifying (messagesApi("login.authentication.error")(Lang.apply("en")), credentials => isValidLogin(credentials))
-  )
+class UserAction @Inject() (val parser: BodyParsers.Default)(implicit val executionContext: ExecutionContext)
+    extends ActionBuilder[UserRequest, AnyContent] with ActionTransformer[Request, UserRequest] {
 
-  private def isValidLogin(credentials: Credentials): Boolean =
-    UserDAO.getUser(credentials.username).exists(_.password == credentials.password)
+  def transform[A](request: Request[A]) = Future.successful {
+
+    val sessionTokenOpt = request.session.get("sessionToken")
+
+    val user = sessionTokenOpt
+      .flatMap(token => SessionDAO.getSession(token))
+      .filter(_.expiration.isAfter(LocalDateTime.now(ZoneOffset.UTC)))
+      .map(_.username)
+      .flatMap(UserDAO.getUser)
+
+    new UserRequest(user, request)
+  }
 }

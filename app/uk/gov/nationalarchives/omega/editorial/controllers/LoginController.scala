@@ -28,6 +28,7 @@ import uk.gov.nationalarchives.omega.editorial._
 import play.api.data._
 import uk.gov.nationalarchives.omega.editorial.forms.CredentialsFormProvider
 import uk.gov.nationalarchives.omega.editorial.models.Credentials
+import uk.gov.nationalarchives.omega.editorial.models.dao.SessionDAO
 import uk.gov.nationalarchives.omega.editorial.views.html.login
 
 /** This controller creates an `Action` to handle HTTP requests to the
@@ -63,7 +64,11 @@ class LoginController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => BadRequest(login(title, heading, formWithErrors)),
-        _ => Redirect(controllers.routes.EditSetController.view("1"))
+        _ => {
+          //TODO: pass username from form to generate the token.
+          val token = SessionDAO.generateToken("1234")
+          Redirect(routes.EditSetController.view("1")).withSession(request.session + ("sessionToken" -> token))
+        }
       )
   }
 }

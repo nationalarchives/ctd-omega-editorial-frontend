@@ -29,14 +29,20 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.{ mapping, nonEmptyText, text }
 import uk.gov.nationalarchives.omega.editorial._
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry, EditSetRecord }
+import uk.gov.nationalarchives.omega.editorial.controllers.helpers.UserAction
+import uk.gov.nationalarchives.omega.editorial.models.dao.{ SessionDAO, UserDAO }
+import uk.gov.nationalarchives.omega.editorial.models.{ Credentials, EditSet, EditSetEntry, EditSetRecord }
+
+import java.time.{ LocalDateTime, ZoneOffset }
 
 /** This controller creates an `Action` to handle HTTP requests to the
   * application's home page.
   */
 @Singleton
-class EditSetController @Inject() (val messagesControllerComponents: MessagesControllerComponents)
-    extends MessagesAbstractController(messagesControllerComponents) with I18nSupport {
+class EditSetController @Inject() (
+  val userAction: UserAction,
+  val messagesControllerComponents: MessagesControllerComponents
+) extends MessagesAbstractController(messagesControllerComponents) with I18nSupport {
 
   val logger: Logger = Logger(this.getClass())
   val save = "save"
@@ -81,12 +87,14 @@ class EditSetController @Inject() (val messagesControllerComponents: MessagesCon
     * a path of `/edit-set/{id}`.
     */
   def view(id: String) = Action { implicit request: Request[AnyContent] =>
-    logger.info(s"The edit set id is $id ")
-    val editSet = getEditSet(id)
-    val messages: Messages = request.messages
-    val title: String = messages("edit-set.title")
-    val heading: String = messages("edit-set.heading", editSet.name)
-    Ok(views.html.editSet(title, heading, editSet))
+    withUser { user =>
+      logger.info(s"The edit set id is $id ")
+      val editSet = getEditSet(id)
+      val messages: Messages = request.messages
+      val title: String = messages("edit-set.title")
+      val heading: String = messages("edit-set.heading", editSet.name)
+      Ok(views.html.editSet(title, heading, editSet))
+    }
   }
 
   def getEditSet(id: String): EditSet = {
@@ -157,4 +165,22 @@ class EditSetController @Inject() (val messagesControllerComponents: MessagesCon
     Ok(views.html.editSetRecordEditDiscard(title, heading, message))
   }
 
+  private def withUser[T](block: Credentials => Result)(implicit request: Request[AnyContent]): Result = {
+    val user = extractUser(request)
+
+    user
+      .map(block)
+      .getOrElse(Redirect(routes.LoginController.view()))
+  }
+
+  private def extractUser(req: RequestHeader): Option[Credentials] = {
+
+    val sessionTokenOpt = req.session.get("sessionToken")
+
+    sessionTokenOpt
+      .flatMap(token => SessionDAO.getSession(token))
+      .filter(_.expiration.isAfter(LocalDateTime.now(ZoneOffset.UTC)))
+      .map(_.username)
+      .flatMap(UserDAO.getUser)
+  }
 }

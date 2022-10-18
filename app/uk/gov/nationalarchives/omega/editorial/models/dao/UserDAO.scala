@@ -19,24 +19,21 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.forms
+package uk.gov.nationalarchives.omega.editorial.models.dao
 
-import play.api.data.Form
-import play.api.data.Forms.{ mapping, text }
-import play.api.i18n.{ Lang, MessagesApi }
+import scala.collection.mutable
 import uk.gov.nationalarchives.omega.editorial.models.Credentials
-import uk.gov.nationalarchives.omega.editorial.models.dao.UserDAO
 
-object CredentialsFormProvider {
+object UserDAO {
 
-  def apply()(implicit messagesApi: MessagesApi): Form[Credentials] = Form(
-    mapping(
-      "username" -> text.verifying(messagesApi("login.missing.username")(Lang.apply("en")), _.nonEmpty),
-      "password" -> text.verifying(messagesApi("login.missing.password")(Lang.apply("en")), _.nonEmpty)
-    )(Credentials.apply)(Credentials.unapply)
-      verifying (messagesApi("login.authentication.error")(Lang.apply("en")), credentials => isValidLogin(credentials))
+  private val editorialUsername = scala.util.Properties.envOrElse("CTD_EDITORIAL_USERNAME", "1234")
+  private val editorialPassword = scala.util.Properties.envOrElse("CTD_EDITORIAL_PASSWORD", "1234")
+
+  private val users = mutable.Map(
+    editorialUsername -> Credentials(editorialUsername, editorialPassword)
   )
 
-  private def isValidLogin(credentials: Credentials): Boolean =
-    UserDAO.getUser(credentials.username).exists(_.password == credentials.password)
+  def getUser(username: String): Option[Credentials] =
+    users.get(username)
+
 }

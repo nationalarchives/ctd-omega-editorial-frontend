@@ -19,24 +19,26 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.forms
+package uk.gov.nationalarchives.omega.editorial.models.dao
 
-import play.api.data.Form
-import play.api.data.Forms.{ mapping, text }
-import play.api.i18n.{ Lang, MessagesApi }
-import uk.gov.nationalarchives.omega.editorial.models.Credentials
-import uk.gov.nationalarchives.omega.editorial.models.dao.UserDAO
+import java.time.{ LocalDateTime, ZoneOffset }
+import java.util.UUID
+import scala.collection.mutable
 
-object CredentialsFormProvider {
+case class Session(token: String, username: String, expiration: LocalDateTime)
 
-  def apply()(implicit messagesApi: MessagesApi): Form[Credentials] = Form(
-    mapping(
-      "username" -> text.verifying(messagesApi("login.missing.username")(Lang.apply("en")), _.nonEmpty),
-      "password" -> text.verifying(messagesApi("login.missing.password")(Lang.apply("en")), _.nonEmpty)
-    )(Credentials.apply)(Credentials.unapply)
-      verifying (messagesApi("login.authentication.error")(Lang.apply("en")), credentials => isValidLogin(credentials))
-  )
+object SessionDAO {
 
-  private def isValidLogin(credentials: Credentials): Boolean =
-    UserDAO.getUser(credentials.username).exists(_.password == credentials.password)
+  private val sessions = mutable.Map.empty[String, Session]
+
+  def getSession(token: String): Option[Session] =
+    sessions.get(token)
+
+  def generateToken(username: String): String = {
+    val token = s"$username-token-${UUID.randomUUID().toString}"
+    sessions.put(token, Session(token, username, LocalDateTime.now(ZoneOffset.UTC).plusSeconds(30)))
+
+    token
+  }
+
 }
