@@ -19,7 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *@
 
-@(title: String)(content: Html)
+@(title: String, backLink: Option[Html] = None)(content: Html)
 <!DOCTYPE html>
 <html lang="en" class="govuk-template ">
     <head>
@@ -43,7 +43,7 @@
         <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
 
         <div class="govuk-width-container ">
-
+            @backLink
             <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
                 @* And here's where we render the `Html` object containing
                 * the page content. *@
