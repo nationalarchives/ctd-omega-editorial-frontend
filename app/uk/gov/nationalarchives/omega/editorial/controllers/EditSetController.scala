@@ -30,13 +30,18 @@ import play.api.data.Form
 import play.api.data.Forms.{ mapping, nonEmptyText, text }
 import uk.gov.nationalarchives.omega.editorial._
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry, EditSetRecord }
+import uk.gov.nationalarchives.omega.editorial.views.html.{ editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
 /** This controller creates an `Action` to handle HTTP requests to the
   * application's home page.
   */
 @Singleton
-class EditSetController @Inject() (val messagesControllerComponents: MessagesControllerComponents)
-    extends MessagesAbstractController(messagesControllerComponents) with I18nSupport {
+class EditSetController @Inject() (
+  val messagesControllerComponents: MessagesControllerComponents,
+  editSetRecordEdit: editSetRecordEdit,
+  editSetRecordEditDiscard: editSetRecordEditDiscard,
+  editSetRecordEditSave: editSetRecordEditSave
+) extends MessagesAbstractController(messagesControllerComponents) with I18nSupport {
 
   val logger: Logger = Logger(this.getClass())
   val save = "save"
@@ -114,7 +119,7 @@ class EditSetController @Inject() (val messagesControllerComponents: MessagesCon
     val messages: Messages = request.messages
     val title: String = messages("edit-set.record.edit.title")
     val heading: String = messages("edit-set.record.edit.heading")
-    Ok(views.html.editSetRecordEdit(title, heading, editSetRecordForm))
+    Ok(editSetRecordEdit(title, heading, editSetRecordForm))
   }
 
   def submit(id: String, recordId: String) = Action { implicit request: Request[AnyContent] =>
@@ -126,7 +131,7 @@ class EditSetController @Inject() (val messagesControllerComponents: MessagesCon
     editSetRecordForm
       .bindFromRequest()
       .fold(
-        formWithErrors => BadRequest(views.html.editSetRecordEdit(title, heading, formWithErrors)),
+        formWithErrors => BadRequest(editSetRecordEdit(title, heading, formWithErrors)),
         _ =>
           request.body.asFormUrlEncoded.get("action").headOption match {
             case Some("save")    => Redirect(controllers.routes.EditSetController.save(id, recordId))
@@ -144,7 +149,7 @@ class EditSetController @Inject() (val messagesControllerComponents: MessagesCon
     val message: String = messages("edit-set.record.save.text")
     logger.info(s"Save changes for record id $recordId edit set id $id")
 
-    Ok(views.html.editSetRecordEditSave(title, heading, message))
+    Ok(editSetRecordEditSave(title, heading, message))
   }
 
   def discard(id: String, recordId: String) = Action { implicit request: Request[AnyContent] =>
@@ -154,7 +159,7 @@ class EditSetController @Inject() (val messagesControllerComponents: MessagesCon
     val message: String = messages("edit-set.record.discard.text")
     logger.info(s"Discard changes for record id $recordId edit set id $id ")
 
-    Ok(views.html.editSetRecordEditDiscard(title, heading, message))
+    Ok(editSetRecordEditDiscard(title, heading, message))
   }
 
 }
