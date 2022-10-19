@@ -19,31 +19,34 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.controllers.helpers
+package uk.gov.nationalarchives.omega.editorial.controllers.authentication
 
+import play.api.mvc.Results.{ Redirect }
 import play.api.mvc._
+import uk.gov.nationalarchives.omega.editorial.controllers.routes
+import uk.gov.nationalarchives.omega.editorial.models.Credentials
+import uk.gov.nationalarchives.omega.editorial.models.dao.{ SessionDAO, UserDAO }
 
 import java.time.{ LocalDateTime, ZoneOffset }
-import javax.inject.Inject
-import scala.concurrent.{ ExecutionContext, Future }
-import uk.gov.nationalarchives.omega.editorial.models.dao.{ SessionDAO, UserDAO }
-import uk.gov.nationalarchives.omega.editorial.models.Credentials
 
-class UserRequest[A](val user: Option[Credentials], request: Request[A]) extends WrappedRequest[A](request)
+trait Secured {
 
-class UserAction @Inject() (val parser: BodyParsers.Default)(implicit val executionContext: ExecutionContext)
-    extends ActionBuilder[UserRequest, AnyContent] with ActionTransformer[Request, UserRequest] {
+  def withUser[T](block: Credentials => Result)(implicit request: Request[AnyContent]): Result = {
+    val user = extractUser(request)
 
-  def transform[A](request: Request[A]) = Future.successful {
+    user
+      .map(block)
+      .getOrElse(Redirect(routes.LoginController.view()))
+  }
 
-    val sessionTokenOpt = request.session.get("sessionToken")
+  private def extractUser(req: RequestHeader): Option[Credentials] = {
 
-    val user = sessionTokenOpt
+    val sessionTokenOpt = req.session.get("sessionToken")
+
+    sessionTokenOpt
       .flatMap(token => SessionDAO.getSession(token))
       .filter(_.expiration.isAfter(LocalDateTime.now(ZoneOffset.UTC)))
       .map(_.username)
       .flatMap(UserDAO.getUser)
-
-    new UserRequest(user, request)
   }
 }

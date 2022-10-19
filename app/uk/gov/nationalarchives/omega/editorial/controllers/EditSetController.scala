@@ -22,27 +22,22 @@
 package uk.gov.nationalarchives.omega.editorial.controllers
 
 import javax.inject._
-import play.api.i18n.I18nSupport.RequestWithMessagesApi
 import play.api.i18n.{ I18nSupport, Lang, Messages }
 import play.api.mvc._
 import play.api.Logger
 import play.api.data.Form
-import play.api.data.Forms.{ mapping, nonEmptyText, text }
+import play.api.data.Forms.{ mapping, text }
 import uk.gov.nationalarchives.omega.editorial._
-import uk.gov.nationalarchives.omega.editorial.controllers.helpers.UserAction
-import uk.gov.nationalarchives.omega.editorial.models.dao.{ SessionDAO, UserDAO }
-import uk.gov.nationalarchives.omega.editorial.models.{ Credentials, EditSet, EditSetEntry, EditSetRecord }
-
-import java.time.{ LocalDateTime, ZoneOffset }
+import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry, EditSetRecord }
 
 /** This controller creates an `Action` to handle HTTP requests to the
   * application's home page.
   */
 @Singleton
 class EditSetController @Inject() (
-  val userAction: UserAction,
   val messagesControllerComponents: MessagesControllerComponents
-) extends MessagesAbstractController(messagesControllerComponents) with I18nSupport {
+) extends MessagesAbstractController(messagesControllerComponents) with I18nSupport with Secured {
 
   val logger: Logger = Logger(this.getClass())
   val save = "save"
@@ -118,69 +113,59 @@ class EditSetController @Inject() (
     * a path of `/edit-set/{id}/record/{recordId}/edit`.
     */
   def editRecord(id: String, recordId: String) = Action { implicit request: Request[AnyContent] =>
-    logger.info(s"The edit set id is $id for record id $recordId")
-    val messages: Messages = request.messages
-    val title: String = messages("edit-set.record.edit.title")
-    val heading: String = messages("edit-set.record.edit.heading")
-    Ok(views.html.editSetRecordEdit(title, heading, editSetRecordForm))
+    withUser { user =>
+      logger.info(s"The edit set id is $id for record id $recordId")
+      val messages: Messages = request.messages
+      val title: String = messages("edit-set.record.edit.title")
+      val heading: String = messages("edit-set.record.edit.heading")
+      Ok(views.html.editSetRecordEdit(title, heading, editSetRecordForm))
+    }
   }
 
   def submit(id: String, recordId: String) = Action { implicit request: Request[AnyContent] =>
-    val messages: Messages = messagesApi.preferred(request)
-    val title: String = messages("edit-set.record.edit.title")
-    val heading: String = messages("edit-set.record.edit.heading")
-    logger.info(s"The edit set id is $id for record id $recordId")
+    withUser { user =>
+      val messages: Messages = messagesApi.preferred(request)
+      val title: String = messages("edit-set.record.edit.title")
+      val heading: String = messages("edit-set.record.edit.heading")
+      logger.info(s"The edit set id is $id for record id $recordId")
 
-    editSetRecordForm
-      .bindFromRequest()
-      .fold(
-        formWithErrors => BadRequest(views.html.editSetRecordEdit(title, heading, formWithErrors)),
-        _ =>
-          request.body.asFormUrlEncoded.get("action").headOption match {
-            case Some("save")    => Redirect(controllers.routes.EditSetController.save(id, recordId))
-            case Some("discard") => Redirect(controllers.routes.EditSetController.discard(id, recordId))
-            //TODO Below added to handle error flow which could be a redirect to an error page pending configuration
-            case _ => BadRequest("This action is not allowed")
-          }
-      )
+      editSetRecordForm
+        .bindFromRequest()
+        .fold(
+          formWithErrors => BadRequest(views.html.editSetRecordEdit(title, heading, formWithErrors)),
+          _ =>
+            request.body.asFormUrlEncoded.get("action").headOption match {
+              case Some("save")    => Redirect(controllers.routes.EditSetController.save(id, recordId))
+              case Some("discard") => Redirect(controllers.routes.EditSetController.discard(id, recordId))
+              //TODO Below added to handle error flow which could be a redirect to an error page pending configuration
+              case _ => BadRequest("This action is not allowed")
+            }
+        )
+    }
   }
 
   def save(id: String, recordId: String) = Action { implicit request: Request[AnyContent] =>
-    val messages: Messages = messagesApi.preferred(request)
-    val title: String = messages("edit-set.record.edit.title")
-    val heading: String = messages("edit-set.record.edit.heading")
-    val message: String = messages("edit-set.record.save.text")
-    logger.info(s"Save changes for record id $recordId edit set id $id")
+    withUser { user =>
+      val messages: Messages = messagesApi.preferred(request)
+      val title: String = messages("edit-set.record.edit.title")
+      val heading: String = messages("edit-set.record.edit.heading")
+      val message: String = messages("edit-set.record.save.text")
+      logger.info(s"Save changes for record id $recordId edit set id $id")
 
-    Ok(views.html.editSetRecordEditSave(title, heading, message))
+      Ok(views.html.editSetRecordEditSave(title, heading, message))
+    }
   }
 
   def discard(id: String, recordId: String) = Action { implicit request: Request[AnyContent] =>
-    val messages: Messages = messagesApi.preferred(request)
-    val title: String = messages("edit-set.record.edit.title")
-    val heading: String = messages("edit-set.record.edit.heading")
-    val message: String = messages("edit-set.record.discard.text")
-    logger.info(s"Discard changes for record id $recordId edit set id $id ")
+    withUser { user =>
+      val messages: Messages = messagesApi.preferred(request)
+      val title: String = messages("edit-set.record.edit.title")
+      val heading: String = messages("edit-set.record.edit.heading")
+      val message: String = messages("edit-set.record.discard.text")
+      logger.info(s"Discard changes for record id $recordId edit set id $id ")
 
-    Ok(views.html.editSetRecordEditDiscard(title, heading, message))
+      Ok(views.html.editSetRecordEditDiscard(title, heading, message))
+    }
   }
 
-  private def withUser[T](block: Credentials => Result)(implicit request: Request[AnyContent]): Result = {
-    val user = extractUser(request)
-
-    user
-      .map(block)
-      .getOrElse(Redirect(routes.LoginController.view()))
-  }
-
-  private def extractUser(req: RequestHeader): Option[Credentials] = {
-
-    val sessionTokenOpt = req.session.get("sessionToken")
-
-    sessionTokenOpt
-      .flatMap(token => SessionDAO.getSession(token))
-      .filter(_.expiration.isAfter(LocalDateTime.now(ZoneOffset.UTC)))
-      .map(_.username)
-      .flatMap(UserDAO.getUser)
-  }
 }

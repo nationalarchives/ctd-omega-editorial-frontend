@@ -27,6 +27,7 @@ import play.api.mvc.{ AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesAc
 import play.api.test._
 import play.api.test.Helpers._
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, LoginController }
+import uk.gov.nationalarchives.omega.editorial.models.dao.SessionDAO
 
 /** Add your spec here.
   * You can mock out a whole application including requests, plugins etc.
@@ -35,11 +36,15 @@ import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, 
   */
 class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
 
+  val validSessionToken = SessionDAO.generateToken("1234")
+  val invalidSessionToken = SessionDAO.generateToken("invalid-user")
+
   "EditSetController GET /edit-set/{id}" should {
 
     "render the edit set page from a new instance of controller" in {
+      val defaultLang = play.api.i18n.Lang.defaultLang.code
       val messages: Map[String, Map[String, String]] =
-        Map("en" -> Map("edit-set.heading" -> "Edit set: COAL 80 Sample"))
+        Map(defaultLang -> Map("edit-set.heading" -> "Edit set: COAL 80 Sample"))
       val mockMessagesApi = stubMessagesApi(messages)
       val stub = stubControllerComponents()
       val controller = new EditSetController(
@@ -55,37 +60,66 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
           stub.executionContext
         )
       )
-      val login = controller.view("1").apply(FakeRequest(GET, "/edit-set/1"))
+      val editSet = controller
+        .view("1")
+        .apply(FakeRequest(GET, "/edit-set/1").withSession("sessionToken" -> validSessionToken))
 
-      status(login) mustBe OK
-      contentType(login) mustBe Some("text/html")
-      contentAsString(login) must include("Edit set: COAL 80 Sample")
+      status(editSet) mustBe OK
+      contentType(editSet) mustBe Some("text/html")
+      contentAsString(editSet) must include("Edit set: COAL 80 Sample")
     }
 
     "render the edit set page from the application" in {
       val controller = inject[EditSetController]
-      val login = controller.view("1").apply(FakeRequest(GET, "/edit-set/1"))
+      val editSet = controller
+        .view("1")
+        .apply(
+          FakeRequest(GET, "/edit-set/1")
+            .withSession("sessionToken" -> validSessionToken)
+        )
 
-      status(login) mustBe OK
-      contentType(login) mustBe Some("text/html")
-      contentAsString(login) must include("Edit set: COAL 80 Sample")
+      status(editSet) mustBe OK
+      contentType(editSet) mustBe Some("text/html")
+      contentAsString(editSet) must include("Edit set: COAL 80 Sample")
     }
 
     "render the edit set page from the router" in {
-      val request = FakeRequest(GET, "/edit-set/1")
-      val login = route(app, request).get
+      val request = FakeRequest(GET, "/edit-set/1").withSession("sessionToken" -> validSessionToken)
+      val editSet = route(app, request).get
 
-      status(login) mustBe OK
-      contentType(login) mustBe Some("text/html")
-      contentAsString(login) must include("Edit set: COAL 80 Sample")
+      status(editSet) mustBe OK
+      contentType(editSet) mustBe Some("text/html")
+      contentAsString(editSet) must include("Edit set: COAL 80 Sample")
+    }
+
+    "redirect to the login page from the application when requested with invalid session token" in {
+      val controller = inject[EditSetController]
+      val editSet = controller
+        .view("1")
+        .apply(
+          FakeRequest(GET, "/edit-set/1")
+            .withSession("sessionToken" -> invalidSessionToken)
+        )
+
+      status(editSet) mustBe SEE_OTHER
+      redirectLocation(editSet) mustBe Some("/login")
+    }
+
+    "redirect to the login page from the router when requested with invalid session token" in {
+      val request = FakeRequest(GET, "/edit-set/1").withSession("sessionToken" -> invalidSessionToken)
+      val editSet = route(app, request).get
+
+      status(editSet) mustBe SEE_OTHER
+      redirectLocation(editSet) mustBe Some("/login")
     }
   }
 
   "EditSetController GET /edit-set/{id}/record/{recordId}/edit" should {
 
     "render the edit set page from a new instance of controller" in {
+      val defaultLang = play.api.i18n.Lang.defaultLang.code
       val messages: Map[String, Map[String, String]] =
-        Map("en" -> Map("edit-set.record.edit.heading" -> "TNA reference: COAL 80/80/1"))
+        Map(defaultLang -> Map("edit-set.record.edit.heading" -> "TNA reference: COAL 80/80/1"))
       val mockMessagesApi = stubMessagesApi(messages)
       val stub = stubControllerComponents()
       val controller = new EditSetController(
@@ -103,7 +137,12 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
       )
       val editRecordPage = controller
         .editRecord("1", "1")
-        .apply(CSRFTokenHelper.addCSRFToken(FakeRequest(GET, "/edit-set/1/record/1/edit")))
+        .apply(
+          CSRFTokenHelper.addCSRFToken(
+            FakeRequest(GET, "/edit-set/1/record/1/edit")
+              .withSession("sessionToken" -> validSessionToken)
+          )
+        )
 
       status(editRecordPage) mustBe OK
       contentType(editRecordPage) mustBe Some("text/html")
@@ -114,7 +153,12 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
       val controller = inject[EditSetController]
       val editRecordPage = controller
         .editRecord("1", "1")
-        .apply(CSRFTokenHelper.addCSRFToken(FakeRequest(GET, "/edit-set/1/record/1/edit")))
+        .apply(
+          CSRFTokenHelper.addCSRFToken(
+            FakeRequest(GET, "/edit-set/1/record/1/edit")
+              .withSession("sessionToken" -> validSessionToken)
+          )
+        )
 
       status(editRecordPage) mustBe OK
       contentType(editRecordPage) mustBe Some("text/html")
@@ -122,12 +166,35 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
     }
 
     "render the edit set page from the router" in {
-      val request = FakeRequest(GET, "/edit-set/1/record/1/edit")
+      val request = FakeRequest(GET, "/edit-set/1/record/1/edit").withSession("sessionToken" -> validSessionToken)
       val editRecordPage = route(app, request).get
 
       status(editRecordPage) mustBe OK
       contentType(editRecordPage) mustBe Some("text/html")
       contentAsString(editRecordPage) must include("TNA reference: COAL 80/80/1")
+    }
+
+    "redirect to the login page from the application when requested with invalid session token" in {
+      val controller = inject[EditSetController]
+      val editRecordPage = controller
+        .editRecord("1", "1")
+        .apply(
+          CSRFTokenHelper.addCSRFToken(
+            FakeRequest(GET, "/edit-set/1/record/1/edit")
+              .withSession("sessionToken" -> invalidSessionToken)
+          )
+        )
+
+      status(editRecordPage) mustBe SEE_OTHER
+      redirectLocation(editRecordPage) mustBe Some("/login")
+    }
+
+    "redirect to the login page from the router when requested with invalid session token" in {
+      val request = FakeRequest(GET, "/edit-set/1/record/1/edit").withSession("sessionToken" -> invalidSessionToken)
+      val editRecordPage = route(app, request).get
+
+      status(editRecordPage) mustBe SEE_OTHER
+      redirectLocation(editRecordPage) mustBe Some("/login")
     }
   }
 

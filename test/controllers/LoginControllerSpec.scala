@@ -39,8 +39,9 @@ class LoginControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injectin
   "LoginController GET" should {
 
     "render the login page from a new instance of controller" in {
+      val defaultLang = play.api.i18n.Lang.defaultLang.code
       val messages: Map[String, Map[String, String]] =
-        Map("en" -> Map("login.heading" -> "Sign in: Pan-Archival Catalogue"))
+        Map(defaultLang -> Map("login.heading" -> "Sign in: Pan-Archival Catalogue"))
       val mockMessagesApi = stubMessagesApi(messages)
       val stub = stubControllerComponents()
       val login = inject[login]

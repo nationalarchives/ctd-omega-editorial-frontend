@@ -22,25 +22,16 @@
 package uk.gov.nationalarchives.omega.editorial.controllers
 
 import javax.inject._
-import play.api._
-import play.api.i18n.I18nSupport.RequestWithMessagesApi
-import play.api.i18n.Messages
 import play.api.mvc._
-import uk.gov.nationalarchives.omega.editorial._
-import uk.gov.nationalarchives.omega.editorial.controllers.helpers.UserAction
-import uk.gov.nationalarchives.omega.editorial.models.Credentials
-import uk.gov.nationalarchives.omega.editorial.models.dao.{ SessionDAO, UserDAO }
-
-import java.time.{ LocalDateTime, ZoneOffset }
+import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
 
 /** This controller creates an `Action` to handle HTTP requests to the
   * application's home page.
   */
 @Singleton
 class HomeController @Inject() (
-  val userAction: UserAction,
   val messagesControllerComponents: MessagesControllerComponents
-) extends MessagesAbstractController(messagesControllerComponents) {
+) extends MessagesAbstractController(messagesControllerComponents) with Secured {
 
   /** Create an Action to render an HTML page.
     *
@@ -50,24 +41,6 @@ class HomeController @Inject() (
     */
   def index() = Action { implicit request: Request[AnyContent] =>
     withUser(user => Redirect(routes.EditSetController.view("1")))
-
   }
 
-  private def withUser[T](block: Credentials => Result)(implicit request: Request[AnyContent]): Result = {
-    val user = extractUser(request)
-
-    user
-      .map(block)
-      .getOrElse(Redirect(routes.LoginController.view()))
-  }
-
-  private def extractUser(req: RequestHeader): Option[Credentials] = {
-    val sessionTokenOpt = req.session.get("sessionToken")
-
-    sessionTokenOpt
-      .flatMap(token => SessionDAO.getSession(token))
-      .filter(_.expiration.isAfter(LocalDateTime.now(ZoneOffset.UTC)))
-      .map(_.username)
-      .flatMap(UserDAO.getUser)
-  }
 }

@@ -24,7 +24,6 @@ package uk.gov.nationalarchives.omega.editorial.controllers
 import javax.inject._
 import play.api.i18n._
 import play.api.mvc._
-import uk.gov.nationalarchives.omega.editorial._
 import play.api.data._
 import uk.gov.nationalarchives.omega.editorial.forms.CredentialsFormProvider
 import uk.gov.nationalarchives.omega.editorial.models.Credentials
@@ -64,9 +63,8 @@ class LoginController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => BadRequest(login(title, heading, formWithErrors)),
-        _ => {
-          //TODO: pass username from form to generate the token.
-          val token = SessionDAO.generateToken("1234")
+        credentials => {
+          val token = SessionDAO.generateToken(credentials.username)
           Redirect(routes.EditSetController.view("1")).withSession(request.session + ("sessionToken" -> token))
         }
       )
