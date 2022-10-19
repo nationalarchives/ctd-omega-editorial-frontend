@@ -25,102 +25,82 @@
 
 @(title: String, heading: String, editSetRecordForm: Form[EditSetRecord])(implicit messages: Messages, request: Request[AnyContent])
 
-@template(title) {
-
-<a class="govuk-back-link" href="/edit-set/1">Back to edit set (COAL 80 Sample)</a>
-
-@if(editSetRecordForm.hasErrors) {
-<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" data-module="govuk-error-summary">
-  <h2 class="govuk-error-summary__title" id="error-summary-title">
-    There is a problem
-  </h2>
-  <div class="govuk-error-summary__body">
-    <ul class="govuk-list govuk-error-summary__list">
-      @if(editSetRecordForm.hasGlobalErrors) {
-
-      @editSetRecordForm.globalErrors.map { error =>
-      <li>@error.message</li>
-      }
-      }
-    </ul>
-  </div>
-</div>
+@backLink = {
+  <a class="govuk-back-link" href="/edit-set/1">Back to edit set (COAL 80 Sample)</a>
 }
 
-<legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-<h1 class=govuk-fieldset__heading">
-  @heading
-</h1>
-  <h2 class="govuk-fieldset__heading--m">PAC-ID: COAL.2022.V5RJW.P Physical Record</h2>
-</legend>
-<p class="govuk-body">Series: National Coal Board and predecessors: Photographs</p>
-<hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+@template(title, Some(backLink)) {
 
-@helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetController.submit("1","1")) {
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-one-half">
+  @if(editSetRecordForm.hasErrors) {
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" data-module="govuk-error-summary">
+      <h2 class="govuk-error-summary__title" id="error-summary-title">
+        There is a problem
+      </h2>
+      <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
+          @editSetRecordForm.errors.map { error =>
+            <li><a href="#">@error.message</a></li>
+          }
+        </ul>
+      </div>
+    </div>
+  }
+  <h1 class="govuk-heading-l">@heading</h1>
+  <h2 class="govuk-heading-m">PAC-ID: COAL.2022.V5RJW.P Physical Record</h2>
+  <p class="govuk-body">Series: National Coal Board and predecessors: Photographs</p>
+  <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+  @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetController.submit("1","1")) {
     <fieldset class="govuk-fieldset">
       @CSRF.formField
       <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
         <h3 class="govuk-fieldset__heading">Intellectual properties</h3>
       </legend>
-
-      <div class="govuk-form-group">
+      <div class="govuk-form-group  @if(editSetRecordForm.error("scopeAndContent")){govuk-form-group--error}">
         @if(editSetRecordForm.error("scopeAndContent")){
-        <p id="scope-content-error" class="govuk-error-message">
-          <span class="govuk-visually-hidden">Error:</span> @editSetRecordForm.error("scopeAndContent").map(_.message)
-        </p>
+          <p id="scope-content-error" class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> @editSetRecordForm.error("scopeAndContent").map(_.message)
+          </p>
         }
-        <label class="govuk-label" for="scopeAndContent">
-          @messages("edit-set.record.edit.scope-and-content")
-        </label>
-        <textarea class="govuk-textarea" id="scopeAndContent" name="scopeAndContent" rows="5" autofocus="true">@editSetRecordForm.data.get("scopeAndContent")</textarea>
+        <label class="govuk-label" for="scopeAndContent">@messages("edit-set.record.edit.scope-and-content")</label>
+        <textarea class="govuk-textarea @if(editSetRecordForm.error("scopeAndContent")){govuk-textarea--error}" id="scopeAndContent" name="scopeAndContent" rows="5" autofocus="true">@editSetRecordForm.data.get("scopeAndContent")</textarea>
       </div>
-      <div class="govuk-form-group">
+      <div class="govuk-form-group  @if(editSetRecordForm.error("formerReferenceDepartment")){govuk-form-group--error}">
         @if(editSetRecordForm.error("formerReferenceDepartment")){
-        <p id="formerReferenceDepartment-error" class="govuk-error-message">
-          <span class="govuk-visually-hidden">Error:</span> @editSetRecordForm.error("formerReferenceDepartment").map(_.message)
-        </p>
+          <p id="formerReferenceDepartment-error" class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> @editSetRecordForm.error("formerReferenceDepartment").map(_.message)
+          </p>
         }
         <label class="govuk-label" for="formerReferenceDepartment">@messages("edit-set.record.edit.former-reference")</label>
-        <input class="govuk-input govuk-input--width-20" id="formerReferenceDepartment" name="formerReferenceDepartment" type="text" value="@editSetRecordForm.data.get("formerReferenceDepartment")">
+        <input class="govuk-input govuk-input--width-20 @if(editSetRecordForm.error("formerReferenceDepartment")){govuk-input--error}" id="formerReferenceDepartment" name="formerReferenceDepartment" type="text" value="@editSetRecordForm.data.get("formerReferenceDepartment")">
       </div>
-
       <div class="govuk-form-group">
         <label class="govuk-label" for="coveringDates">@messages("edit-set.record.edit.covering-dates")</label>
         <input class="govuk-input govuk-!-width-one-half" id="coveringDates" name="coveringDates" type="text" readonly="readonly" value="@editSetRecordForm.data.get("coveringDates")"/>
       </div>
-
       <div class="govuk-form-group">
         <label class="govuk-label" for="startDate">
-          @messages("edit-set.record.edit.start-date")
+           @messages("edit-set.record.edit.start-date")
         </label>
         <input class="govuk-input govuk-!-width-one-third" id="startDate" name="startDate" type="text" readonly="readonly" value="@editSetRecordForm.data.get("startDate")"/>
       </div>
-
       <div class="govuk-form-group">
         <label class="govuk-label" for="endDate">
           @messages("edit-set.record.edit.end-date")
         </label>
         <input class="govuk-input govuk-!-width-one-third" id="endDate" name="endDate" type="text" readonly="readonly" value="@editSetRecordForm.data.get("endDate")"/>
       </div>
-
       <div class="govuk-form-group">
         <input class="govuk-input govuk-!-width-one-half" id="ccr" name="ccr" type="text" readonly="readonly" hidden="true" value="@editSetRecordForm.data.get("ccr")"/>
         <input class="govuk-input govuk-!-width-one-half" id="ocr" name="oci" type="text" readonly="readonly" hidden="true" value="@editSetRecordForm.data.get("oci")"/>
       </div>
-
       <div class="govuk-button-group">
         <button class="govuk-button" data-module="govuk-button" name="action" value="save">
           @messages("edit-set.record.save.button")
         </button>
-
         <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="action" value="discard">
           @messages("edit-set.record.discard.button")
         </button>
       </div>
     </fieldset>
-  </div>
-</div>
-}
+  }
 }

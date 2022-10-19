@@ -23,9 +23,11 @@
 
 @(title: String, heading: String, message:String)
 
-@template(title) {
+@backLink = {
+  <a class="govuk-back-link" href="/edit-set/1">Back to edit set (COAL 80 Sample)</a>
+}
 
-<a class="govuk-back-link" href="/edit-set/1">Back to edit set (COAL 80 Sample)</a>
+@template(title, Some(backLink)){
 
 <div class="govuk-panel govuk-panel--confirmation">
     <div class="govuk-panel__body">
