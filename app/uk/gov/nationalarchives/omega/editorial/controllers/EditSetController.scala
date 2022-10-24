@@ -22,21 +22,26 @@
 package uk.gov.nationalarchives.omega.editorial.controllers
 
 import javax.inject._
+import play.api.i18n.I18nSupport.RequestWithMessagesApi
 import play.api.i18n.{ I18nSupport, Lang, Messages }
 import play.api.mvc._
 import play.api.Logger
 import play.api.data.Form
-import play.api.data.Forms.{ mapping, text }
+import play.api.data.Forms.{ mapping, nonEmptyText, text }
 import uk.gov.nationalarchives.omega.editorial._
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry, EditSetRecord }
+import uk.gov.nationalarchives.omega.editorial.views.html.{ editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
 /** This controller creates an `Action` to handle HTTP requests to the
   * application's home page.
   */
 @Singleton
 class EditSetController @Inject() (
-  val messagesControllerComponents: MessagesControllerComponents
+  val messagesControllerComponents: MessagesControllerComponents,
+  editSetRecordEdit: editSetRecordEdit,
+  editSetRecordEditDiscard: editSetRecordEditDiscard,
+  editSetRecordEditSave: editSetRecordEditSave
 ) extends MessagesAbstractController(messagesControllerComponents) with I18nSupport with Secured {
 
   val logger: Logger = Logger(this.getClass())
@@ -118,7 +123,7 @@ class EditSetController @Inject() (
       val messages: Messages = request.messages
       val title: String = messages("edit-set.record.edit.title")
       val heading: String = messages("edit-set.record.edit.heading")
-      Ok(views.html.editSetRecordEdit(title, heading, editSetRecordForm))
+      Ok(editSetRecordEdit(title, heading, editSetRecordForm))
     }
   }
 
@@ -132,7 +137,7 @@ class EditSetController @Inject() (
       editSetRecordForm
         .bindFromRequest()
         .fold(
-          formWithErrors => BadRequest(views.html.editSetRecordEdit(title, heading, formWithErrors)),
+          formWithErrors => BadRequest(editSetRecordEdit(title, heading, formWithErrors)),
           _ =>
             request.body.asFormUrlEncoded.get("action").headOption match {
               case Some("save")    => Redirect(controllers.routes.EditSetController.save(id, recordId))
@@ -152,7 +157,7 @@ class EditSetController @Inject() (
       val message: String = messages("edit-set.record.save.text")
       logger.info(s"Save changes for record id $recordId edit set id $id")
 
-      Ok(views.html.editSetRecordEditSave(title, heading, message))
+      Ok(editSetRecordEditSave(title, heading, message))
     }
   }
 
@@ -164,7 +169,7 @@ class EditSetController @Inject() (
       val message: String = messages("edit-set.record.discard.text")
       logger.info(s"Discard changes for record id $recordId edit set id $id ")
 
-      Ok(views.html.editSetRecordEditDiscard(title, heading, message))
+      Ok(editSetRecordEditDiscard(title, heading, message))
     }
   }
 

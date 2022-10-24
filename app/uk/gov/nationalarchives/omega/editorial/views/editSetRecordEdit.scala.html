@@ -22,105 +22,108 @@
 @import helper._
 @import uk.gov.nationalarchives.omega.editorial.models.EditSetRecord
 @import uk.gov.nationalarchives.omega.editorial.forms.GovukHelpers._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+
+@this(govukButton: GovukButton, govukInput: GovukInput, govukTextarea: GovukTextarea, govukFieldset: GovukFieldset, govukErrorSummary: GovukErrorSummary)
 
 @(title: String, heading: String, editSetRecordForm: Form[EditSetRecord])(implicit messages: Messages, request: Request[AnyContent])
 
-@template(title) {
-
-<a class="govuk-back-link" href="/edit-set/1">Back to edit set (COAL 80 Sample)</a>
-
-@if(editSetRecordForm.hasErrors) {
-<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" data-module="govuk-error-summary">
-  <h2 class="govuk-error-summary__title" id="error-summary-title">
-    There is a problem
-  </h2>
-  <div class="govuk-error-summary__body">
-    <ul class="govuk-list govuk-error-summary__list">
-      @if(editSetRecordForm.hasGlobalErrors) {
-
-      @editSetRecordForm.globalErrors.map { error =>
-      <li>@error.message</li>
-      }
-      }
-    </ul>
-  </div>
-</div>
+@backLink = {
+  <a class="govuk-back-link" href="/edit-set/1">Back to edit set (COAL 80 Sample)</a>
 }
 
-<legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-<h1 class=govuk-fieldset__heading">
-  @heading
-</h1>
-  <h2 class="govuk-fieldset__heading--m">PAC-ID: COAL.2022.V5RJW.P Physical Record</h2>
-</legend>
-<p class="govuk-body">Series: National Coal Board and predecessors: Photographs</p>
-<hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
-
-@helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetController.submit("1","1")) {
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-one-half">
-    <fieldset class="govuk-fieldset">
-      @CSRF.formField
-      <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-        <h3 class="govuk-fieldset__heading">Intellectual properties</h3>
-      </legend>
-
-      <div class="govuk-form-group">
-        @if(editSetRecordForm.error("scopeAndContent")){
-        <p id="scope-content-error" class="govuk-error-message">
-          <span class="govuk-visually-hidden">Error:</span> @editSetRecordForm.error("scopeAndContent").map(_.message)
-        </p>
-        }
-        <label class="govuk-label" for="scopeAndContent">
-          @messages("edit-set.record.edit.scope-and-content")
-        </label>
-        <textarea class="govuk-textarea" id="scopeAndContent" name="scopeAndContent" rows="5" autofocus="true">@editSetRecordForm.data.get("scopeAndContent")</textarea>
-      </div>
-      <div class="govuk-form-group">
-        @if(editSetRecordForm.error("formerReferenceDepartment")){
-        <p id="formerReferenceDepartment-error" class="govuk-error-message">
-          <span class="govuk-visually-hidden">Error:</span> @editSetRecordForm.error("formerReferenceDepartment").map(_.message)
-        </p>
-        }
-        <label class="govuk-label" for="formerReferenceDepartment">@messages("edit-set.record.edit.former-reference")</label>
-        <input class="govuk-input govuk-input--width-20" id="formerReferenceDepartment" name="formerReferenceDepartment" type="text" value="@editSetRecordForm.data.get("formerReferenceDepartment")">
-      </div>
-
-      <div class="govuk-form-group">
-        <label class="govuk-label" for="coveringDates">@messages("edit-set.record.edit.covering-dates")</label>
-        <input class="govuk-input govuk-!-width-one-half" id="coveringDates" name="coveringDates" type="text" readonly="readonly" value="@editSetRecordForm.data.get("coveringDates")"/>
-      </div>
-
-      <div class="govuk-form-group">
-        <label class="govuk-label" for="startDate">
-          @messages("edit-set.record.edit.start-date")
-        </label>
-        <input class="govuk-input govuk-!-width-one-third" id="startDate" name="startDate" type="text" readonly="readonly" value="@editSetRecordForm.data.get("startDate")"/>
-      </div>
-
-      <div class="govuk-form-group">
-        <label class="govuk-label" for="endDate">
-          @messages("edit-set.record.edit.end-date")
-        </label>
-        <input class="govuk-input govuk-!-width-one-third" id="endDate" name="endDate" type="text" readonly="readonly" value="@editSetRecordForm.data.get("endDate")"/>
-      </div>
-
-      <div class="govuk-form-group">
-        <input class="govuk-input govuk-!-width-one-half" id="ccr" name="ccr" type="text" readonly="readonly" hidden="true" value="@editSetRecordForm.data.get("ccr")"/>
-        <input class="govuk-input govuk-!-width-one-half" id="ocr" name="oci" type="text" readonly="readonly" hidden="true" value="@editSetRecordForm.data.get("oci")"/>
-      </div>
-
-      <div class="govuk-button-group">
-        <button class="govuk-button" data-module="govuk-button" name="action" value="save">
-          @messages("edit-set.record.save.button")
-        </button>
-
-        <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="action" value="discard">
-          @messages("edit-set.record.discard.button")
-        </button>
-      </div>
-    </fieldset>
+@fieldsetContent = {
+  @CSRF.formField
+  @govukTextarea(Textarea(
+    id = "scopeAndContent",
+    name = "scopeAndContent",
+    value = editSetRecordForm.data.get("scopeAndContent"),
+    label = Label(forAttr = Some("scopeAndContent"), content = Text(messages("edit-set.record.edit.scope-and-content"))),
+    errorMessage = editSetRecordForm.error("scopeAndContent").map { error =>
+      ErrorMessage(
+        content = Text(error.message),
+        attributes = Map("for" -> "scopeAndContent")
+      )
+    },
+    attributes = Map("rows" -> "5", "autofocus" -> "true")))
+  @govukInput(Input(
+    id = "formerReferenceDepartment",
+    name = "formerReferenceDepartment",
+    value = editSetRecordForm.data.get("formerReferenceDepartment"),
+    label = Label(forAttr = Some("formerReferenceDepartment"), content = Text(messages("edit-set.record.edit.former-reference"))),
+    errorMessage = editSetRecordForm.error("formerReferenceDepartment").map { error =>
+      ErrorMessage(
+        content = Text(error.message),
+        attributes = Map("for" -> "formerReferenceDepartment")
+      )
+    },
+    classes = "govuk-input--width-20"))
+  @govukInput(Input(
+    id = "coveringDates",
+    name = "coveringDates",
+    attributes = Map("readonly" -> "readonly"),
+    value = editSetRecordForm.data.get("coveringDates"),
+    label = Label(forAttr = Some("coveringDates"), content = Text(messages("edit-set.record.edit.covering-dates"))),
+    classes = "govuk-!-width-one-half"))
+  @govukInput(Input(
+    id = "startDate",
+    name = "startDate",
+    attributes = Map("readonly" -> "readonly"),
+    value = editSetRecordForm.data.get("startDate"),
+    label = Label(forAttr = Some("startDate"), content = Text(messages("edit-set.record.edit.start-date"))),
+    classes = "govuk-!-width-one-third"))
+  @govukInput(Input(
+    id = "endDate",
+    name = "endDate",
+    attributes = Map("readonly" -> "readonly"),
+    value = editSetRecordForm.data.get("endDate"),
+    label = Label(forAttr = Some("endDate"), content = Text(messages("edit-set.record.edit.end-date"))),
+    classes = "govuk-!-width-one-third"))
+  <div class="govuk-form-group">
+    <input id="ccr" name="ccr" type="text" readonly="readonly" hidden="true" value="@editSetRecordForm.data.get("ccr")"/>
+    <input id="ocr" name="oci" type="text" readonly="readonly" hidden="true" value="@editSetRecordForm.data.get("oci")"/>
   </div>
-</div>
+  <div class="govuk-button-group">
+  @govukButton(Button(
+    element = Some("button"),
+    name = Some("action"),
+    value = Some("save"),
+    content = Text(messages("edit-set.record.save.button"))))
+  @govukButton(Button(
+    element = Some("button"),
+    name = Some("action"),
+    value = Some("discard"),
+    classes = "govuk-button--secondary",
+    content = Text(messages("edit-set.record.discard.button"))))
 }
+
+@legendContent = {
+  <h3 class="govuk-fieldset__heading">Intellectual properties</h3>
+}
+
+@template(title, Some(backLink)) {
+  @if(editSetRecordForm.hasErrors) {
+    @govukErrorSummary(ErrorSummary(
+      errorList = editSetRecordForm.errors.map { error =>
+        ErrorLink(
+          href = Some("#"),
+          content = Text(error.message),
+        )
+      },
+      title = Text("There is a problem")
+    ))
+  }
+  <h1 class="govuk-heading-l">@heading</h1>
+  <h2 class="govuk-heading-m">PAC-ID: COAL.2022.V5RJW.P Physical Record</h2>
+  <p class="govuk-body">Series: National Coal Board and predecessors: Photographs</p>
+  <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+  @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetController.submit("1","1")) {
+    @govukFieldset(Fieldset(
+      legend = Some(Legend(
+        content = HtmlContent(legendContent),
+        classes = "govuk-fieldset__legend--l")),
+      html = fieldsetContent
+    ))
+  }
 }

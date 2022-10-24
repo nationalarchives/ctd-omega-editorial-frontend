@@ -20,33 +20,28 @@
  *@
 
 @import helper._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+
+@this(govukNotificationBanner: GovukNotificationBanner)
 
 @(title: String, heading: String, message: String)
 
-@template(title) {
+@backLink = {
+  <a class="govuk-back-link" href="/edit-set/1">Back to edit set (COAL 80 Sample)</a>
+}
 
-<a class="govuk-back-link" href="/edit-set/1">Back to edit set (COAL 80 Sample)</a>
+@content = {
+  <h3 class="govuk-notification-banner__heading">@message</h3>
+  <p class="govuk-body"><strong>@heading</strong></p>
+  <p class="govuk-body"><strong>PAC-ID: COAL.2022.V5RJW.P Physical Record</strong></p>
+  <p class="govuk-body">Series: National Coal Board and predecessors: Photographs</p>
+}
 
-<div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
-    <div class="govuk-notification-banner__header">
-        <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-            Changes discarded
-        </h2>
-    </div>
-    <div class="govuk-notification-banner__content">
-        <p class="govuk-notification-banner__heading">@message</p>
-    </div>
-</div>
-
-<legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-    <h1 class=govuk-fieldset__heading">
-        @heading
-    </h1>
-    <h2 class="govuk-fieldset__heading--m">PAC-ID: COAL.2022.V5RJW.P Physical Record</h2>
-</legend>
-<p class="govuk-body">Series: National Coal Board and predecessors: Photographs</p>
-<hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
-
-<a class="govuk-back-link" href="/edit-set/1/record/1/edit">Back to edit record</a>
-
+@template(title, Some(backLink)) {
+  @govukNotificationBanner(NotificationBanner(
+    content = HtmlContent(content),
+    title = Text("Changes discarded")))
+  <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+  <a class="govuk-back-link" href="/edit-set/1/record/1/edit">Back to edit record</a>
 }
