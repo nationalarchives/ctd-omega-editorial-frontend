@@ -21,32 +21,26 @@
 
 package uk.gov.nationalarchives.omega.editorial.controllers.authentication
 
-import play.api.mvc.Results.{ Redirect }
+import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.nationalarchives.omega.editorial.controllers.routes
 import uk.gov.nationalarchives.omega.editorial.models.Credentials
-import uk.gov.nationalarchives.omega.editorial.models.dao.{ SessionDAO, UserDAO }
+import uk.gov.nationalarchives.omega.editorial.models.session.Session
 
 import java.time.{ LocalDateTime, ZoneOffset }
 
 trait Secured {
 
-  def withUser[T](block: Credentials => Result)(implicit request: Request[AnyContent]): Result = {
-    val user = extractUser(request)
-
-    user
+  def withUser[T](block: Credentials => Result)(implicit request: Request[AnyContent]): Result =
+    extractUser(request)
       .map(block)
       .getOrElse(Redirect(routes.LoginController.view()))
-  }
 
-  private def extractUser(req: RequestHeader): Option[Credentials] = {
-
-    val sessionTokenOpt = req.session.get("sessionToken")
-
-    sessionTokenOpt
-      .flatMap(token => SessionDAO.getSession(token))
+  private def extractUser(req: RequestHeader): Option[Credentials] =
+    req.session
+      .get("sessionToken")
+      .flatMap(token => Session.getSession(token))
       .filter(_.expiration.isAfter(LocalDateTime.now(ZoneOffset.UTC)))
       .map(_.username)
-      .flatMap(UserDAO.getUser)
-  }
+      .flatMap(Credentials.getUser)
 }

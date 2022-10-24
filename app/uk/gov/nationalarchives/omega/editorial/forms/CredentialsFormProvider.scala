@@ -25,7 +25,6 @@ import play.api.data.Form
 import play.api.data.Forms.{ mapping, text }
 import play.api.i18n.{ Lang, MessagesApi }
 import uk.gov.nationalarchives.omega.editorial.models.Credentials
-import uk.gov.nationalarchives.omega.editorial.models.dao.UserDAO
 
 object CredentialsFormProvider {
 
@@ -38,5 +37,5 @@ object CredentialsFormProvider {
   )
 
   private def isValidLogin(credentials: Credentials): Boolean =
-    UserDAO.getUser(credentials.username).exists(_.password == credentials.password)
+    Credentials.getUser(credentials.username).exists(_.password == credentials.password)
 }

@@ -28,7 +28,7 @@ import play.api.test._
 import play.api.test.Helpers._
 import play.i18n.MessagesApi
 import uk.gov.nationalarchives.omega.editorial.controllers.HomeController
-import uk.gov.nationalarchives.omega.editorial.models.dao.SessionDAO
+import uk.gov.nationalarchives.omega.editorial.models.session.Session
 
 /** Add your spec here.
   * You can mock out a whole application including requests, plugins etc.
@@ -37,8 +37,8 @@ import uk.gov.nationalarchives.omega.editorial.models.dao.SessionDAO
   */
 class HomeControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
 
-  val validSessionToken = SessionDAO.generateToken("1234")
-  val invalidSessionToken = SessionDAO.generateToken("invalid-user")
+  val validSessionToken = Session.generateToken("1234")
+  val invalidSessionToken = Session.generateToken("invalid-user")
   val landingPagePath = "/edit-set/1"
   val loginPagePath = "/login"
 

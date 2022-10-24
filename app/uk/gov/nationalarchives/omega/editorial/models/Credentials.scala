@@ -21,4 +21,20 @@
 
 package uk.gov.nationalarchives.omega.editorial.models
 
+import scala.collection.mutable
+
 case class Credentials(username: String, password: String)
+
+object Credentials {
+
+  private val editorialUsername = scala.util.Properties.envOrElse("CTD_EDITORIAL_USERNAME", "1234")
+  private val editorialPassword = scala.util.Properties.envOrElse("CTD_EDITORIAL_PASSWORD", "1234")
+
+  private val users = mutable.Map(
+    editorialUsername -> Credentials(editorialUsername, editorialPassword)
+  )
+
+  def getUser(username: String): Option[Credentials] =
+    users.get(username)
+
+}

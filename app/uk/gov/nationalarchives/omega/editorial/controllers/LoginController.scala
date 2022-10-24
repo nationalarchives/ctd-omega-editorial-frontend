@@ -27,7 +27,7 @@ import play.api.mvc._
 import play.api.data._
 import uk.gov.nationalarchives.omega.editorial.forms.CredentialsFormProvider
 import uk.gov.nationalarchives.omega.editorial.models.Credentials
-import uk.gov.nationalarchives.omega.editorial.models.dao.SessionDAO
+import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.views.html.login
 
 /** This controller creates an `Action` to handle HTTP requests to the
@@ -64,7 +64,7 @@ class LoginController @Inject() (
       .fold(
         formWithErrors => BadRequest(login(title, heading, formWithErrors)),
         credentials => {
-          val token = SessionDAO.generateToken(credentials.username)
+          val token = Session.generateToken(credentials.username)
           Redirect(routes.EditSetController.view("1")).withSession(request.session + ("sessionToken" -> token))
         }
       )

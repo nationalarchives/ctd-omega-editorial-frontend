@@ -19,7 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.models.dao
+package uk.gov.nationalarchives.omega.editorial.models.session
 
 import java.time.{ LocalDateTime, ZoneOffset }
 import java.util.UUID
@@ -27,7 +27,7 @@ import scala.collection.mutable
 
 case class Session(token: String, username: String, expiration: LocalDateTime)
 
-object SessionDAO {
+object Session {
 
   private val sessions = mutable.Map.empty[String, Session]
 
