@@ -40,7 +40,7 @@ class HomeController @Inject() (
     * a path of `/`.
     */
   def index() = Action { implicit request: Request[AnyContent] =>
-    withUser(user => Redirect(routes.EditSetController.view("1")))
+    withUser(_ => Redirect(routes.EditSetController.view("1")))
   }
 
 }
