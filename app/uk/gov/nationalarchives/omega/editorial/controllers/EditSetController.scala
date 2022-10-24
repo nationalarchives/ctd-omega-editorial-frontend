@@ -82,7 +82,7 @@ class EditSetController @Inject() (
     * a path of `/edit-set/{id}`.
     */
   def view(id: String) = Action { implicit request: Request[AnyContent] =>
-    withUser { user =>
+    withUser { _ =>
       logger.info(s"The edit set id is $id ")
       val editSet = getEditSet(id)
       val messages: Messages = request.messages
@@ -113,7 +113,7 @@ class EditSetController @Inject() (
     * a path of `/edit-set/{id}/record/{recordId}/edit`.
     */
   def editRecord(id: String, recordId: String) = Action { implicit request: Request[AnyContent] =>
-    withUser { user =>
+    withUser { _ =>
       logger.info(s"The edit set id is $id for record id $recordId")
       val messages: Messages = request.messages
       val title: String = messages("edit-set.record.edit.title")
@@ -123,7 +123,7 @@ class EditSetController @Inject() (
   }
 
   def submit(id: String, recordId: String) = Action { implicit request: Request[AnyContent] =>
-    withUser { user =>
+    withUser { _ =>
       val messages: Messages = messagesApi.preferred(request)
       val title: String = messages("edit-set.record.edit.title")
       val heading: String = messages("edit-set.record.edit.heading")
@@ -145,7 +145,7 @@ class EditSetController @Inject() (
   }
 
   def save(id: String, recordId: String) = Action { implicit request: Request[AnyContent] =>
-    withUser { user =>
+    withUser { _ =>
       val messages: Messages = messagesApi.preferred(request)
       val title: String = messages("edit-set.record.edit.title")
       val heading: String = messages("edit-set.record.edit.heading")
@@ -157,7 +157,7 @@ class EditSetController @Inject() (
   }
 
   def discard(id: String, recordId: String) = Action { implicit request: Request[AnyContent] =>
-    withUser { user =>
+    withUser { _ =>
       val messages: Messages = messagesApi.preferred(request)
       val title: String = messages("edit-set.record.edit.title")
       val heading: String = messages("edit-set.record.edit.heading")
