@@ -22,22 +22,20 @@
 package views
 
 import org.scalatestplus.play.PlaySpec
-import play.api.data.{ Form, FormError }
+import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.data.Forms.{ mapping, text }
-import play.api.i18n.Lang
-import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
-import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout, stubMessagesApi }
-import play.test.WithApplication
+import play.api.data.{ Form, FormError }
+import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
+import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers, Injecting }
 import play.twirl.api.Html
-import uk.gov.nationalarchives.omega.editorial.models.{ Credentials, EditSetRecord }
-import uk.gov.nationalarchives.omega.editorial.views
+import uk.gov.nationalarchives.omega.editorial.models.EditSetRecord
+import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEdit
 
-class EditRecordViewSpec extends PlaySpec {
+class EditRecordViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
 
   "Edit record Html" should {
-    "render the given title and heading" in new WithApplication {
-      val messages: Map[String, Map[String, String]] = Map.empty
-      implicit val messagesApi = stubMessagesApi(messages)
+    "render the given title and heading" in {
+      val editSetRecordEditInstance = inject[editSetRecordEdit]
       val title = "EditRecordTitleTest"
       val heading = "EditRecordHeadingTest"
       val editSetRecordForm: Form[EditSetRecord] = Form(
@@ -53,7 +51,7 @@ class EditRecordViewSpec extends PlaySpec {
       )
 
       val editRecordHtml: Html =
-        views.html.editSetRecordEdit(title, heading, editSetRecordForm)(
+        editSetRecordEditInstance(title, heading, editSetRecordForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -62,9 +60,8 @@ class EditRecordViewSpec extends PlaySpec {
       contentAsString(editRecordHtml) must include(heading)
     }
 
-    "render an error given no scope and content" in new WithApplication {
-      val messages: Map[String, Map[String, String]] = Map.empty
-      implicit val messagesApi = stubMessagesApi(messages)
+    "render an error given no scope and content" in {
+      val editSetRecordEditInstance = inject[editSetRecordEdit]
       val title = "EditRecordTitleTest"
       val heading = "EditRecordHeadingTest"
       val editSetRecordForm: Form[EditSetRecord] = Form(
@@ -81,7 +78,7 @@ class EditRecordViewSpec extends PlaySpec {
         .withError(FormError("", "Enter the scope and content."))
 
       val editRecordHtml: Html =
-        views.html.editSetRecordEdit(title, heading, editSetRecordForm)(
+        editSetRecordEditInstance(title, heading, editSetRecordForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -91,9 +88,8 @@ class EditRecordViewSpec extends PlaySpec {
 
     }
 
-    "render an error when given scope and content is more than 8000 characters" in new WithApplication {
-      val messages: Map[String, Map[String, String]] = Map.empty
-      implicit val messagesApi = stubMessagesApi(messages)
+    "render an error when given scope and content is more than 8000 characters" in {
+      val editSetRecordEditInstance = inject[editSetRecordEdit]
       val title = "EditRecordTitleTest"
       val heading = "EditRecordHeadingTest"
       val editSetRecordForm: Form[EditSetRecord] = Form(
@@ -119,7 +115,7 @@ class EditRecordViewSpec extends PlaySpec {
       ).withError(FormError("", "Scope and content too long, maximum length 8000 characters"))
 
       val editRecordHtml: Html =
-        views.html.editSetRecordEdit(title, heading, editSetRecordForm)(
+        editSetRecordEditInstance(title, heading, editSetRecordForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -129,9 +125,9 @@ class EditRecordViewSpec extends PlaySpec {
 
     }
 
-    "render an error when given former reference department is more than 255 characters" in new WithApplication {
-      val messages: Map[String, Map[String, String]] = Map.empty
-      implicit val messagesApi = stubMessagesApi(messages)
+    "render an error when given former reference department is more than 255 characters" in {
+      val editSetRecordEditInstance = inject[editSetRecordEdit]
+
       val title = "EditRecordTitleTest"
       val heading = "EditRecordHeadingTest"
       val editSetRecordForm: Form[EditSetRecord] = Form(
@@ -157,7 +153,7 @@ class EditRecordViewSpec extends PlaySpec {
       ).withError(FormError("", "Former reference - Department too long, maximum length 255 characters"))
 
       val editRecordHtml: Html =
-        views.html.editSetRecordEdit(title, heading, editSetRecordForm)(
+        editSetRecordEditInstance(title, heading, editSetRecordForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
