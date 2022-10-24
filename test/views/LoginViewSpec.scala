@@ -35,7 +35,10 @@ import uk.gov.nationalarchives.omega.editorial.views.html.login
 class LoginViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
 
   private val errorSummaryTitle = "There is a problem"
-  private val messages: Map[String, Map[String, String]] = Map("en" -> Map("error.summary.title" -> errorSummaryTitle))
+  val defaultLang = play.api.i18n.Lang.defaultLang.code
+  private val messages: Map[String, Map[String, String]] = Map(
+    defaultLang -> Map("error.summary.title" -> errorSummaryTitle)
+  )
   implicit val messagesApi: MessagesApi = stubMessagesApi(messages)
 
   "Login Html" should {

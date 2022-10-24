@@ -24,10 +24,10 @@ package uk.gov.nationalarchives.omega.editorial.controllers
 import javax.inject._
 import play.api.i18n._
 import play.api.mvc._
-import uk.gov.nationalarchives.omega.editorial._
 import play.api.data._
 import uk.gov.nationalarchives.omega.editorial.forms.CredentialsFormProvider
 import uk.gov.nationalarchives.omega.editorial.models.Credentials
+import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.views.html.login
 
 /** This controller creates an `Action` to handle HTTP requests to the
@@ -63,7 +63,10 @@ class LoginController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => BadRequest(login(title, heading, formWithErrors)),
-        _ => Redirect(controllers.routes.EditSetController.view("1"))
+        credentials => {
+          val token = Session.generateToken(credentials.username)
+          Redirect(routes.EditSetController.view("1")).withSession(request.session + ("sessionToken" -> token))
+        }
       )
   }
 }

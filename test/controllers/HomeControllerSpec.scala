@@ -28,6 +28,7 @@ import play.api.test._
 import play.api.test.Helpers._
 import play.i18n.MessagesApi
 import uk.gov.nationalarchives.omega.editorial.controllers.HomeController
+import uk.gov.nationalarchives.omega.editorial.models.session.Session
 
 /** Add your spec here.
   * You can mock out a whole application including requests, plugins etc.
@@ -35,6 +36,11 @@ import uk.gov.nationalarchives.omega.editorial.controllers.HomeController
   * For more information, see https://www.playframework.com/documentation/latest/ScalaTestingWithScalaTest
   */
 class HomeControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
+
+  val validSessionToken = Session.generateToken("1234")
+  val invalidSessionToken = Session.generateToken("invalid-user")
+  val landingPagePath = "/edit-set/1"
+  val loginPagePath = "/login"
 
   "HomeController GET" should {
 
@@ -55,29 +61,58 @@ class HomeControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
           stub.executionContext
         )
       )
-      val home = controller.index().apply(FakeRequest(GET, "/"))
+      val home = controller
+        .index()
+        .apply(
+          FakeRequest(GET, "/")
+            .withSession("sessionToken" -> validSessionToken)
+        )
 
-      status(home) mustBe OK
-      contentType(home) mustBe Some("text/html")
-      contentAsString(home) must include("Welcome to the Catalogue")
+      status(home) mustBe SEE_OTHER
+      redirectLocation(home) mustBe Some(landingPagePath)
     }
 
     "render the index page from the application" in {
       val controller = inject[HomeController]
-      val home = controller.index().apply(FakeRequest(GET, "/"))
+      val home = controller
+        .index()
+        .apply(
+          FakeRequest(GET, "/")
+            .withSession("sessionToken" -> validSessionToken)
+        )
 
-      status(home) mustBe OK
-      contentType(home) mustBe Some("text/html")
-      contentAsString(home) must include("Welcome to the Catalogue")
+      status(home) mustBe SEE_OTHER
+      redirectLocation(home) mustBe Some(landingPagePath)
     }
 
     "render the index page from the router" in {
-      val request = FakeRequest(GET, "/")
+      val request = FakeRequest(GET, "/").withSession("sessionToken" -> validSessionToken)
       val home = route(app, request).get
 
-      status(home) mustBe OK
-      contentType(home) mustBe Some("text/html")
-      contentAsString(home) must include("Welcome to the Catalogue")
+      status(home) mustBe SEE_OTHER
+      redirectLocation(home) mustBe Some(landingPagePath)
     }
   }
+
+  "redirect to the login page from the application when requested with invalid session token" in {
+    val controller = inject[HomeController]
+    val home = controller
+      .index()
+      .apply(
+        FakeRequest(GET, "/")
+          .withSession("sessionToken" -> invalidSessionToken)
+      )
+
+    status(home) mustBe SEE_OTHER
+    redirectLocation(home) mustBe Some(loginPagePath)
+  }
+
+  "redirect to the login page from the router when requested with invalid session token" in {
+    val request = FakeRequest(GET, "/").withSession("sessionToken" -> invalidSessionToken)
+    val home = route(app, request).get
+
+    status(home) mustBe SEE_OTHER
+    redirectLocation(home) mustBe Some(loginPagePath)
+  }
+
 }

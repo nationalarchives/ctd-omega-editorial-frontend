@@ -19,28 +19,26 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.controllers
+package uk.gov.nationalarchives.omega.editorial.models.session
 
-import javax.inject._
-import play.api.mvc._
-import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
+import java.time.{ LocalDateTime, ZoneOffset }
+import java.util.UUID
+import scala.collection.mutable
 
-/** This controller creates an `Action` to handle HTTP requests to the
-  * application's home page.
-  */
-@Singleton
-class HomeController @Inject() (
-  val messagesControllerComponents: MessagesControllerComponents
-) extends MessagesAbstractController(messagesControllerComponents) with Secured {
+case class Session(token: String, username: String, expiration: LocalDateTime)
 
-  /** Create an Action to render an HTML page.
-    *
-    * The configuration in the `routes` file means that this method
-    * will be called when the application receives a `GET` request with
-    * a path of `/`.
-    */
-  def index() = Action { implicit request: Request[AnyContent] =>
-    withUser(_ => Redirect(routes.EditSetController.view("1")))
+object Session {
+
+  private val sessions = mutable.Map.empty[String, Session]
+
+  def getSession(token: String): Option[Session] =
+    sessions.get(token)
+
+  def generateToken(username: String): String = {
+    val token = s"$username-token-${UUID.randomUUID().toString}"
+    sessions.put(token, Session(token, username, LocalDateTime.now(ZoneOffset.UTC).plusSeconds(30)))
+
+    token
   }
 
 }
