@@ -31,7 +31,7 @@ import play.api.data.Forms.{ mapping, nonEmptyText, text }
 import uk.gov.nationalarchives.omega.editorial._
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry, EditSetRecord }
-import uk.gov.nationalarchives.omega.editorial.views.html.{ editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
+import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
 /** This controller creates an `Action` to handle HTTP requests to the
   * application's home page.
@@ -39,6 +39,7 @@ import uk.gov.nationalarchives.omega.editorial.views.html.{ editSetRecordEdit, e
 @Singleton
 class EditSetController @Inject() (
   val messagesControllerComponents: MessagesControllerComponents,
+  editSet: editSet,
   editSetRecordEdit: editSetRecordEdit,
   editSetRecordEditDiscard: editSetRecordEditDiscard,
   editSetRecordEditSave: editSetRecordEditSave
@@ -89,11 +90,11 @@ class EditSetController @Inject() (
   def view(id: String) = Action { implicit request: Request[AnyContent] =>
     withUser { _ =>
       logger.info(s"The edit set id is $id ")
-      val editSet = getEditSet(id)
+      val editSetModels = getEditSet(id)
       val messages: Messages = request.messages
       val title: String = messages("edit-set.title")
-      val heading: String = messages("edit-set.heading", editSet.name)
-      Ok(views.html.editSet(title, heading, editSet))
+      val heading: String = messages("edit-set.heading", editSetModels.name)
+      Ok(editSet(title, heading, editSetModels))
     }
   }
 

@@ -19,28 +19,44 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *@
 
-@import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry }
+@import uk.gov.nationalarchives.omega.editorial.models.{ EditSet }
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+
+@this(govukTable: GovukTable)
 
 @(title: String, heading: String, editSet: EditSet)
 
 @template(title) {
- <table class="govuk-table">
-    <caption class="govuk-table__caption govuk-table__caption--m">@heading</caption>
-    <thead class="govuk-table__head">
-    <tr class="govuk-table__row">
-      <th scope="col" class="govuk-table__header">CCR</th>
-      <th scope="col" class="govuk-table__header">Scope and Content</th>
-      <th scope="col" class="govuk-table__header">Covering Dates</th>
-    </tr>
-    </thead>
-    <tbody class="govuk-table__body">
-    @for(entry <- editSet.entries) {
-    <tr class="govuk-table__row">
-      <td class="govuk-table__cell">@entry.ccr</td>
-      <td class="govuk-table__cell">@entry.scopeAndContent</td>
-      <td class="govuk-table__cell">@entry.coveringDates</td>
-    </tr>
-    }
-    </tbody>
-  </table>
+  @govukTable(Table(
+      rows = editSet.entries.map{
+        entry =>
+            Seq(
+                TableRow (
+                    content = Text(entry.ccr),
+                ),
+                TableRow (
+                    content = Text(entry.scopeAndContent),
+                ),
+                TableRow (
+                    content = Text(entry.coveringDates),
+                )
+            )
+      },
+      head = Some(
+          Seq(
+              HeadCell(
+                  content = Text("CCR")
+              ),
+              HeadCell(
+                  content = Text("Scope and Content")
+              ),
+              HeadCell(
+                  content = Text("Covering Dates")
+              )
+          )
+      ),
+      caption = Some(heading) ,
+    captionClasses = "govuk-table__caption--m",
+  ))
 }
