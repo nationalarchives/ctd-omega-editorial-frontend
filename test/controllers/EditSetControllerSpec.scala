@@ -27,7 +27,7 @@ import play.api.mvc.{ AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesAc
 import play.api.test.Helpers._
 import play.api.test._
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController
-import uk.gov.nationalarchives.omega.editorial.views.html.{ editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
+import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 
 /** Add your spec here.
@@ -47,6 +47,7 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
       val messages: Map[String, Map[String, String]] =
         Map(defaultLang -> Map("edit-set.heading" -> "Edit set: COAL 80 Sample"))
       val mockMessagesApi = stubMessagesApi(messages)
+      val editSetInstance = inject[editSet]
       val editSetRecordEditInstance = inject[editSetRecordEdit]
       val editSetRecordEditDiscardInstance = inject[editSetRecordEditDiscard]
       val editSetRecordEditSaveInstance = inject[editSetRecordEditSave]
@@ -63,6 +64,7 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
           stub.fileMimeTypes,
           stub.executionContext
         ),
+        editSetInstance,
         editSetRecordEditInstance,
         editSetRecordEditDiscardInstance,
         editSetRecordEditSaveInstance
@@ -128,6 +130,7 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
       val messages: Map[String, Map[String, String]] =
         Map(defaultLang -> Map("edit-set.record.edit.heading" -> "TNA reference: COAL 80/80/1"))
       val mockMessagesApi = stubMessagesApi(messages)
+      val editSetInstance = inject[editSet]
       val editSetRecordEditInstance = inject[editSetRecordEdit]
       val editSetRecordEditDiscardInstance = inject[editSetRecordEditDiscard]
       val editSetRecordEditSaveInstance = inject[editSetRecordEditSave]
@@ -144,6 +147,7 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
           stub.fileMimeTypes,
           stub.executionContext
         ),
+        editSetInstance,
         editSetRecordEditInstance,
         editSetRecordEditDiscardInstance,
         editSetRecordEditSaveInstance
@@ -216,6 +220,7 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
       val messages: Map[String, Map[String, String]] =
         Map("en" -> Map("edit-set.record.edit.heading" -> "TNA reference: COAL 80/80/1"))
       val mockMessagesApi = stubMessagesApi(messages)
+      val editSetInstance = inject[editSet]
       val editSetRecordEditInstance = inject[editSetRecordEdit]
       val editSetRecordEditDiscardInstance = inject[editSetRecordEditDiscard]
       val editSetRecordEditSaveInstance = inject[editSetRecordEditSave]
@@ -232,6 +237,7 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
           stub.fileMimeTypes,
           stub.executionContext
         ),
+        editSetInstance,
         editSetRecordEditInstance,
         editSetRecordEditDiscardInstance,
         editSetRecordEditSaveInstance

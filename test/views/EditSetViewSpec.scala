@@ -23,22 +23,25 @@ package views
 
 import org.scalatestplus.play.PlaySpec
 import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
+import play.api.test.Injecting
+import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.test.WithApplication
 import play.twirl.api.Html
 import uk.gov.nationalarchives.omega.editorial._
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
 
-class EditSetViewSpec extends PlaySpec {
+class EditSetViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
 
   "Edit set Html" should {
     "render the given title and heading" in new WithApplication {
 
+      val editSetInstance = inject[editSet]
       val editSet: EditSet = getEditSetTest("1")
       val title = "EditSetTitleTest"
       val heading = editSet.name
 
-      val editSetHtml: Html = views.html.editSet(title, heading, editSet)
+      val editSetHtml: Html = editSetInstance(title, heading, editSet)
       contentAsString(editSetHtml) must include(title)
       contentAsString(editSetHtml) must include(heading)
       contentAsString(editSetHtml) must include(editSet.name)
