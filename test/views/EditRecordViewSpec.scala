@@ -50,14 +50,32 @@ class EditRecordViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
         )(EditSetRecord.apply)(EditSetRecord.unapply)
       )
 
+      val editSetData = new EditSetRecord(
+        "TestCCR",
+        "TestOCI",
+        "TestScopeAndContent",
+        "TestCoveringDates",
+        "TestFormerReferenceDepartment",
+        "TestStartDate",
+        "TestEndDate"
+      )
+
       val editRecordHtml: Html =
-        editSetRecordEditInstance(title, heading, editSetRecordForm)(
+        editSetRecordEditInstance(title, heading, editSetRecordForm.fill(editSetData))(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
 
       contentAsString(editRecordHtml) must include(title)
       contentAsString(editRecordHtml) must include(heading)
+      contentAsString(editRecordHtml) must include(editSetData.ccr)
+      contentAsString(editRecordHtml) must include(editSetData.oci)
+      contentAsString(editRecordHtml) must include(editSetData.scopeAndContent)
+      contentAsString(editRecordHtml) must include(editSetData.coveringDates)
+      contentAsString(editRecordHtml) must include(editSetData.formerReferenceDepartment)
+      contentAsString(editRecordHtml) must include(editSetData.startDate)
+      contentAsString(editRecordHtml) must include(editSetData.endDate)
+
     }
 
     "render an error given no scope and content" in {

@@ -36,9 +36,10 @@ class EditSetRecordEditSaveSpec extends PlaySpec with GuiceOneAppPerTest with In
       val title = "EditRecordTitleTest"
       val heading = "EditRecordHeadingTest"
       val saveChanges = "Your changes have been saved."
+      val oci = "EditRecordOciTest"
 
       val confirmationEditSetRecordEditHtml: Html =
-        editSetRecordEditSaveInstance(title, heading, saveChanges)
+        editSetRecordEditSaveInstance(title, heading, oci, saveChanges)
 
       contentAsString(confirmationEditSetRecordEditHtml) must include(title)
       contentAsString(confirmationEditSetRecordEditHtml) must include(heading)

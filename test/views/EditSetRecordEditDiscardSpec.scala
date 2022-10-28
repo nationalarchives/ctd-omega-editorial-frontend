@@ -37,9 +37,10 @@ class EditSetRecordEditDiscardSpec extends PlaySpec with GuiceOneAppPerTest with
       val title = "EditRecordTitleTest"
       val heading = "EditRecordHeadingTest"
       val discardChanges = "Any changes have been discarded. Showing last saved version."
+      val oci = "EditRecordOciTest"
 
       val confirmationEditSetRecordEditHtml: Html =
-        editSetRecordEditDiscardInstance(title, heading, discardChanges)
+        editSetRecordEditDiscardInstance(title, heading, oci, discardChanges)
 
       contentAsString(confirmationEditSetRecordEditHtml) must include(title)
       contentAsString(confirmationEditSetRecordEditHtml) must include(heading)

@@ -115,10 +115,10 @@
     ))
   }
   <h1 class="govuk-heading-l">@heading</h1>
-  <h2 class="govuk-heading-m">PAC-ID: COAL.2022.V5RJW.P Physical Record</h2>
+  <h2 class="govuk-heading-m">@messages("edit-set.record.edit.id",editSetRecordForm.data.get("oci").get)</h2>
   <p class="govuk-body">Series: National Coal Board and predecessors: Photographs</p>
   <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
-  @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetController.submit("1","1")) {
+  @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetController.submit("1",editSetRecordForm.data.get("oci").get)) {
     @govukFieldset(Fieldset(
       legend = Some(Legend(
         content = HtmlContent(legendContent),

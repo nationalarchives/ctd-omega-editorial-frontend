@@ -28,7 +28,7 @@ import play.api.mvc._
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.{ mapping, nonEmptyText, text }
-import uk.gov.nationalarchives.omega.editorial._
+import uk.gov.nationalarchives.omega.editorial.{ editSetRecords, _ }
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry, EditSetRecord }
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
@@ -47,6 +47,16 @@ class EditSetController @Inject() (
   val logger: Logger = Logger(this.getClass())
   val save = "save"
   val discard = "discard"
+
+  val defaultEditSetRecord = new EditSetRecord(
+    "RecordNotfound",
+    "RecordNotFound",
+    "The requested record for the editset is not found",
+    "",
+    "",
+    "",
+    ""
+  )
 
   var editSetRecordForm: Form[EditSetRecord] = Form(
     mapping(
@@ -67,18 +77,6 @@ class EditSetController @Inject() (
       "endDate"   -> text
     )(EditSetRecord.apply)(EditSetRecord.unapply)
   )
-  //Set default values
-  editSetRecordForm = editSetRecordForm.fill(
-    new EditSetRecord(
-      "COAL 80/80/1",
-      "COAL.2022.V5RJW.P Physical Record",
-      "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-      "1960",
-      "",
-      "",
-      ""
-    )
-  );
 
   /** Create an Action for the edit set page.
     *
@@ -101,11 +99,11 @@ class EditSetController @Inject() (
 
     val scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
     val editSetEntry1 =
-      EditSetEntry("COAL 80/80/1", id, scopeAndContent, "1960")
+      EditSetEntry("COAL 80/80/1", "COAL.2022.V5RJW.P", scopeAndContent, "1960")
     val editSetEntry2 =
-      EditSetEntry("COAL 80/80/2", id, scopeAndContent, "1960")
+      EditSetEntry("COAL 80/80/2", "COAL.2022.V4RJW.P", scopeAndContent, "1960")
     val editSetEntry3 =
-      EditSetEntry("COAL 80/80/3", id, scopeAndContent, "1960")
+      EditSetEntry("COAL 80/80/3", "COAL.2022.V3RJW.P", scopeAndContent, "1960")
     val entries = Seq(editSetEntry1, editSetEntry2, editSetEntry3)
     val editSetName = "COAL 80 Sample"
     EditSet(editSetName, id: String, entries)
@@ -120,10 +118,13 @@ class EditSetController @Inject() (
   def editRecord(id: String, recordId: String) = Action { implicit request: Request[AnyContent] =>
     withUser { _ =>
       logger.info(s"The edit set id is $id for record id $recordId")
+      val record = editSetRecords.getEditSetRecordByOCI(recordId).getOrElse(defaultEditSetRecord)
       val messages: Messages = request.messages
       val title: String = messages("edit-set.record.edit.title")
-      val heading: String = messages("edit-set.record.edit.heading")
-      Ok(editSetRecordEdit(title, heading, editSetRecordForm))
+      val heading: String = messages("edit-set.record.edit.heading", record.ccr)
+
+      val recordForm = editSetRecordForm.fill(record)
+      Ok(editSetRecordEdit(title, heading, recordForm))
     }
   }
 
@@ -138,9 +139,11 @@ class EditSetController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors => BadRequest(editSetRecordEdit(title, heading, formWithErrors)),
-          _ =>
+          editSetRecord =>
             request.body.asFormUrlEncoded.get("action").headOption match {
-              case Some("save")    => Redirect(controllers.routes.EditSetController.save(id, recordId))
+              case Some("save") =>
+                editSetRecords.saveEditSetRecord(editSetRecord)
+                Redirect(controllers.routes.EditSetController.save(id, editSetRecord.oci))
               case Some("discard") => Redirect(controllers.routes.EditSetController.discard(id, recordId))
               //TODO Below added to handle error flow which could be a redirect to an error page pending configuration
               case _ => BadRequest("This action is not allowed")
@@ -149,27 +152,29 @@ class EditSetController @Inject() (
     }
   }
 
-  def save(id: String, recordId: String) = Action { implicit request: Request[AnyContent] =>
+  def save(id: String, oci: String) = Action { implicit request: Request[AnyContent] =>
     withUser { _ =>
       val messages: Messages = messagesApi.preferred(request)
       val title: String = messages("edit-set.record.edit.title")
-      val heading: String = messages("edit-set.record.edit.heading")
+      editSetRecords.getEditSetRecordByOCI(oci).get
+      val heading: String = messages("edit-set.record.edit.heading", editSetRecords.getEditSetRecordByOCI(oci).get.ccr)
       val message: String = messages("edit-set.record.save.text")
-      logger.info(s"Save changes for record id $recordId edit set id $id")
+      logger.info(s"Save changes for record id $oci edit set id $id")
 
-      Ok(editSetRecordEditSave(title, heading, message))
+      Ok(editSetRecordEditSave(title, heading, oci, message))
     }
   }
 
-  def discard(id: String, recordId: String) = Action { implicit request: Request[AnyContent] =>
+  def discard(id: String, oci: String) = Action { implicit request: Request[AnyContent] =>
     withUser { _ =>
       val messages: Messages = messagesApi.preferred(request)
       val title: String = messages("edit-set.record.edit.title")
-      val heading: String = messages("edit-set.record.edit.heading")
+      editSetRecords.getEditSetRecordByOCI(oci).get
+      val heading: String = messages("edit-set.record.edit.heading", editSetRecords.getEditSetRecordByOCI(oci).get.ccr)
       val message: String = messages("edit-set.record.discard.text")
-      logger.info(s"Discard changes for record id $recordId edit set id $id ")
+      logger.info(s"Discard changes for record id $oci edit set id $id ")
 
-      Ok(editSetRecordEditDiscard(title, heading, message))
+      Ok(editSetRecordEditDiscard(title, heading, oci, message))
     }
   }
 
