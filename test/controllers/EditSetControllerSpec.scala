@@ -70,7 +70,7 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
         editSetRecordEditSaveInstance
       )
       val editSet = controller
-        .view("1")
+        .view("COAL.2022.V5RJW.P")
         .apply(FakeRequest(GET, "/edit-set/1").withSession("sessionToken" -> validSessionToken))
 
       status(editSet) mustBe OK
@@ -81,7 +81,7 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
     "render the edit set page from the application" in {
       val controller = inject[EditSetController]
       val editSet = controller
-        .view("1")
+        .view("COAL.2022.V5RJW.P")
         .apply(
           FakeRequest(GET, "/edit-set/1")
             .withSession("sessionToken" -> validSessionToken)
@@ -104,7 +104,7 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
     "redirect to the login page from the application when requested with invalid session token" in {
       val controller = inject[EditSetController]
       val editSet = controller
-        .view("1")
+        .view("COAL.2022.V5RJW.P")
         .apply(
           FakeRequest(GET, "/edit-set/1")
             .withSession("sessionToken" -> invalidSessionToken)
@@ -153,10 +153,10 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
         editSetRecordEditSaveInstance
       )
       val editRecordPage = controller
-        .editRecord("1", "1")
+        .editRecord("COAL.2022.V5RJW.P", "COAL.2022.V5RJW.P")
         .apply(
           CSRFTokenHelper.addCSRFToken(
-            FakeRequest(GET, "/edit-set/1/record/1/edit")
+            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
               .withSession("sessionToken" -> validSessionToken)
           )
         )
@@ -169,10 +169,10 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
     "render the edit set page from the application" in {
       val controller = inject[EditSetController]
       val editRecordPage = controller
-        .editRecord("1", "1")
+        .editRecord("COAL.2022.V5RJW.P", "COAL.2022.V5RJW.P")
         .apply(
           CSRFTokenHelper.addCSRFToken(
-            FakeRequest(GET, "/edit-set/1/record/1/edit")
+            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
               .withSession("sessionToken" -> validSessionToken)
           )
         )
@@ -183,7 +183,8 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
     }
 
     "render the edit set page from the router" in {
-      val request = FakeRequest(GET, "/edit-set/1/record/1/edit").withSession("sessionToken" -> validSessionToken)
+      val request =
+        FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit").withSession("sessionToken" -> validSessionToken)
       val editRecordPage = route(app, request).get
 
       status(editRecordPage) mustBe OK
@@ -194,10 +195,10 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
     "redirect to the login page from the application when requested with invalid session token" in {
       val controller = inject[EditSetController]
       val editRecordPage = controller
-        .editRecord("1", "1")
+        .editRecord("COAL.2022.V5RJW.P", "COAL.2022.V5RJW.P")
         .apply(
           CSRFTokenHelper.addCSRFToken(
-            FakeRequest(GET, "/edit-set/1/record/1/edit")
+            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
               .withSession("sessionToken" -> invalidSessionToken)
           )
         )
@@ -207,7 +208,8 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
     }
 
     "redirect to the login page from the router when requested with invalid session token" in {
-      val request = FakeRequest(GET, "/edit-set/1/record/1/edit").withSession("sessionToken" -> invalidSessionToken)
+      val request =
+        FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit").withSession("sessionToken" -> invalidSessionToken)
       val editRecordPage = route(app, request).get
 
       status(editRecordPage) mustBe SEE_OTHER
@@ -244,11 +246,11 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
       )
 
       val editRecordPage = controller
-        .submit("1", "1")
+        .submit("COAL.2022.V5RJW.P", "COAL.2022.V5RJW.P")
         .apply(
           CSRFTokenHelper
             .addCSRFToken(
-              FakeRequest(POST, "/edit-set/1/record/1/edit").withFormUrlEncodedBody(
+              FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit").withFormUrlEncodedBody(
                 "ccr"                       -> "1234",
                 "oci"                       -> "1234",
                 "scopeAndContent"           -> "1234",
@@ -266,10 +268,10 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
     "redirect to result page of the application" in {
       val controller = inject[EditSetController]
       val editRecordPage = controller
-        .submit("1", "1")
+        .submit("COAL.2022.V5RJW.P", "COAL.2022.V5RJW.P")
         .apply(
           CSRFTokenHelper.addCSRFToken(
-            FakeRequest(POST, "/edit-set/1/record/1/edit").withFormUrlEncodedBody(
+            FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit").withFormUrlEncodedBody(
               "ccr"                       -> "1234",
               "oci"                       -> "1234",
               "scopeAndContent"           -> "1234",
@@ -287,7 +289,7 @@ class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Inject
 
     "redirect to result page from the router" in {
       val request = CSRFTokenHelper.addCSRFToken(
-        FakeRequest(POST, "/edit-set/1/record/1/edit").withFormUrlEncodedBody(
+        FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit").withFormUrlEncodedBody(
           "ccr"                       -> "1234",
           "oci"                       -> "1234",
           "scopeAndContent"           -> "1234",

@@ -25,7 +25,7 @@
 
 @this(govukNotificationBanner: GovukNotificationBanner)
 
-@(title: String, heading: String, message: String)
+@(title: String, heading: String, oci: String, message: String)
 
 @backLink = {
   <a class="govuk-back-link" href="/edit-set/1">Back to edit set (COAL 80 Sample)</a>
@@ -44,5 +44,8 @@
     bannerType = Some("success"),
     title = Text("Changes saved")))
   <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
-  <a class="govuk-back-link" href="/edit-set/1/record/1/edit">Back to edit record</a>
+    @defining("/edit-set/1/record/"+oci+"/edit") { hrefLink =>
+        <a class="govuk-back-link" href=@hrefLink>Back to edit record</a>
+    }
+
 }
