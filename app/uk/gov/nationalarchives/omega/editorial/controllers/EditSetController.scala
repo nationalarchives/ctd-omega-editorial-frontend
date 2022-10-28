@@ -48,16 +48,6 @@ class EditSetController @Inject() (
   val save = "save"
   val discard = "discard"
 
-  val defaultEditSetRecord = new EditSetRecord(
-    "RecordNotfound",
-    "RecordNotFound",
-    "The requested record for the editset is not found",
-    "",
-    "",
-    "",
-    ""
-  )
-
   var editSetRecordForm: Form[EditSetRecord] = Form(
     mapping(
       "ccr" -> text,
@@ -118,13 +108,15 @@ class EditSetController @Inject() (
   def editRecord(id: String, recordId: String) = Action { implicit request: Request[AnyContent] =>
     withUser { _ =>
       logger.info(s"The edit set id is $id for record id $recordId")
-      val record = editSetRecords.getEditSetRecordByOCI(recordId).getOrElse(defaultEditSetRecord)
-      val messages: Messages = request.messages
-      val title: String = messages("edit-set.record.edit.title")
-      val heading: String = messages("edit-set.record.edit.heading", record.ccr)
-
-      val recordForm = editSetRecordForm.fill(record)
-      Ok(editSetRecordEdit(title, heading, recordForm))
+      editSetRecords.getEditSetRecordByOCI(recordId) match {
+        case Some(record) =>
+          val messages: Messages = request.messages
+          val title: String = messages("edit-set.record.edit.title")
+          val heading: String = messages("edit-set.record.edit.heading", record.ccr)
+          val recordForm = editSetRecordForm.fill(record)
+          Ok(editSetRecordEdit(title, heading, recordForm))
+        case None => NotFound
+      }
     }
   }
 

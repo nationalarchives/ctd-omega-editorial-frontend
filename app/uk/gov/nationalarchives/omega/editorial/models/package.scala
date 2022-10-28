@@ -43,7 +43,7 @@ package object editSetRecords {
       "",
       ""
     ),
-    "COAL.2022.V2RJW.P" -> new EditSetRecord(
+    "COAL.2022.V3RJW.P" -> new EditSetRecord(
       "COAL 80/80/3",
       "COAL.2022.V3RJW.P",
       "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
