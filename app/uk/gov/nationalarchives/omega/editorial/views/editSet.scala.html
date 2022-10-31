@@ -27,19 +27,13 @@
 
 @(title: String, heading: String, editSet: EditSet)
 
-@recordLink(ccr: String, oci: String) = {
-    @defining("/edit-set/1/record/"+oci+"/edit") { hrefLink =>
-        <a href=@hrefLink>@ccr</a>
-    }
-}
-
 @template(title) {
   @govukTable(Table(
       rows = editSet.entries.map{
         entry =>
             Seq(
                 TableRow (
-                    content = HtmlContent(recordLink(entry.ccr, entry.oci)),
+                    content = Text(entry.ccr),
                 ),
                 TableRow (
                     content = Text(entry.scopeAndContent),
