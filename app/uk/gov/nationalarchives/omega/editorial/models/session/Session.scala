@@ -36,7 +36,7 @@ object Session {
 
   def generateToken(username: String): String = {
     val token = s"$username-token-${UUID.randomUUID().toString}"
-    sessions.put(token, Session(token, username, LocalDateTime.now(ZoneOffset.UTC).plusSeconds(30)))
+    sessions.put(token, Session(token, username, LocalDateTime.now(ZoneOffset.UTC).plusMinutes(15L)))
 
     token
   }
