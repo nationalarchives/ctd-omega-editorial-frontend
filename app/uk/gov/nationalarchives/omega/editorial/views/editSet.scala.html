@@ -29,7 +29,7 @@
 
 @recordLink(ccr: String, oci: String) = {
     @defining("/edit-set/1/record/"+oci+"/edit") { hrefLink =>
-        <a href=@hrefLink>@ccr</a>
+        <a class="govuk-link govuk-link--no-visited-state" href=@hrefLink>@ccr</a>
     }
 }
 
@@ -63,6 +63,7 @@
           )
       ),
       caption = Some(heading) ,
-    captionClasses = "govuk-table__caption--m",
+      captionClasses = "govuk-table__caption--m",
+      firstCellIsHeader = true
   ))
 }
