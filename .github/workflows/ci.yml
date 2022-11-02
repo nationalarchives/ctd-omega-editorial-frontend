@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  test-workflows:
+  test:
     name: Editorial Tests
     strategy:
       fail-fast: false
@@ -24,3 +24,23 @@ jobs:
         uses: actions/checkout@v2
       - name: Run tests
         run: sbt -v +test
+  dist:
+    name: Create Distribution
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
+        jdk: [ 1.8 ]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Setup JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: zulu
+        java-version: 8
+    - name: Run sbt
+      run: sbt clean dist
+
