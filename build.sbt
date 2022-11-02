@@ -21,6 +21,7 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
   .settings(
     Defaults.itSettings,
     organization := "uk.gov.nationalarchives",
+    maintainer := "webmaster@nationalarchives.gov.uk",
     name := "ctd-omega-editorial-frontend",
     version := "0.1.0-SNAPSHOT",
     scalaVersion := "2.13.9",
