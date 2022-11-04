@@ -21,6 +21,10 @@
 
 package uk.gov.nationalarchives.omega.editorial.models
 
+import play.api.libs.json._
+import play.api.libs.json.Reads._
+import play.api.libs.functional.syntax._
+
 case class EditSetEntry(ccr: String, oci: String, scopeAndContent: String, coveringDates: String)
 case class EditSet(name: String, id: String, entries: Seq[EditSetEntry])
 
@@ -33,3 +37,35 @@ case class EditSetRecord(
   startDate: String,
   endDate: String
 )
+object EditSetRecord {
+  implicit val editSetRecordReads: Reads[EditSetRecord] =
+    (
+      (JsPath \ "ccr").read[String](minLength[String](5)) and
+        (JsPath \ "oci").read[String](minLength[String](5)) and
+        (JsPath \ "scopeAndContent").read[String](minLength[String](10)) and
+        (JsPath \ "coveringDates").read[String](minLength[String](0)) and
+        (JsPath \ "formerReferenceDepartment").read[String](minLength[String](0)) and
+        (JsPath \ "startDate").read[String](minLength[String](0)) and
+        (JsPath \ "endDate").read[String](minLength[String](0))
+    )(EditSetRecord.apply _)
+}
+
+object EditSet {
+  implicit val editSetReads: Reads[EditSet] =
+    (
+      (JsPath \ "name").read[String](minLength[String](5)) and
+        (JsPath \ "id").read[String](minLength[String](1)) and
+        (JsPath \ "entries").read[Seq[EditSetEntry]]
+    )(EditSet.apply _)
+
+}
+
+object EditSetEntry {
+  implicit val editSetEntryReads: Reads[EditSetEntry] =
+    (
+      (JsPath \ "ccr").read[String](minLength[String](5)) and
+        (JsPath \ "oci").read[String](minLength[String](5)) and
+        (JsPath \ "scopeAndContent").read[String](minLength[String](10)) and
+        (JsPath \ "coveringDates").read[String](minLength[String](0))
+    )(EditSetEntry.apply _)
+}

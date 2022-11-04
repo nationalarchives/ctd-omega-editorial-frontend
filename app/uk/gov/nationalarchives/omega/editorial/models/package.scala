@@ -21,39 +21,62 @@
 
 package uk.gov.nationalarchives.omega.editorial
 
-import uk.gov.nationalarchives.omega.editorial.models.EditSetRecord
+import play.api.libs.json._
+import uk.gov.nationalarchives.omega.editorial.editSetRecords.editSetRecordMap
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetRecord }
 
 package object editSetRecords {
-  var editSetRecordMap = Map(
-    "COAL.2022.V5RJW.P" -> new EditSetRecord(
-      "COAL 80/80/1",
-      "COAL.2022.V5RJW.P",
-      "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-      "1960",
-      "",
-      "",
-      ""
-    ),
-    "COAL.2022.V4RJW.P" -> new EditSetRecord(
-      "COAL 80/80/2",
-      "COAL.2022.V4RJW.P",
-      "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-      "1960",
-      "",
-      "",
-      ""
-    ),
-    "COAL.2022.V3RJW.P" -> new EditSetRecord(
-      "COAL 80/80/3",
-      "COAL.2022.V3RJW.P",
-      "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-      "1960",
-      "",
-      "",
-      ""
-    )
-  )
 
+  val editSetRecord1: EditSetRecord = Json
+    .parse(
+      """{
+        |  "ccr" : "COAL 80/80/1",
+        |  "oci" : "COAL.2022.V5RJW.P",
+        |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+        |  "coveringDates" : "1960",
+        |  "formerReferenceDepartment" : "",
+        |  "startDate" : "1960",
+        |  "endDate" : ""
+        |} """.stripMargin
+    )
+    .validate[EditSetRecord]
+    .get
+
+  val editSetRecord2: EditSetRecord = Json
+    .parse(
+      """{
+        |  "ccr" : "COAL 80/80/1",
+        |  "oci" : "COAL.2022.V4RJW.P",
+        |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+        |  "coveringDates" : "1960",
+        |  "formerReferenceDepartment" : "",
+        |  "startDate" : "1960",
+        |  "endDate" : ""
+        |} """.stripMargin
+    )
+    .validate[EditSetRecord]
+    .get
+
+  val editSetRecord3: EditSetRecord = Json
+    .parse(
+      """{
+        |  "ccr" : "COAL 80/80/1",
+        |  "oci" : "COAL.2022.V3RJW.P",
+        |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+        |  "coveringDates" : "1960",
+        |  "formerReferenceDepartment" : "",
+        |  "startDate" : "1960",
+        |  "endDate" : ""
+        |} """.stripMargin
+    )
+    .validate[EditSetRecord]
+    .get
+
+  var editSetRecordMap = Map(
+    "COAL.2022.V5RJW.P" -> editSetRecord1,
+    "COAL.2022.V4RJW.P" -> editSetRecord2,
+    "COAL.2022.V3RJW.P" -> editSetRecord3
+  )
   def getEditSetRecordByOCI(oci: String): Option[EditSetRecord] =
     editSetRecordMap.get(oci)
 
@@ -62,4 +85,40 @@ package object editSetRecords {
     editSetRecordMap -= editSetRecordOCI
     editSetRecordMap += (editSetRecordOCI -> editSetRecord)
   }
+
+}
+
+package object editSets {
+  val editSet1: EditSet = Json
+    .parse(
+      """{
+        |  "name" : "COAL 80 Sample",
+        |  "id" : "1",
+        |  "entries" : [
+        |    {
+        |      "ccr" : "COAL 80/80/1",
+        |      "oci" : "COAL.2022.V5RJW.P",
+        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+        |      "coveringDates" : "1960"
+        |    },
+        |    {
+        |      "ccr" : "COAL 80/80/2",
+        |      "oci" : "COAL.2022.V4RJW.P",
+        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+        |      "coveringDates" : "1960"
+        |    },
+        |    {
+        |      "ccr" : "COAL 80/80/3",
+        |      "oci" : "COAL.2022.V3RJW.P",
+        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+        |      "coveringDates" : "1960"
+        |    }
+        |  ]
+        |}""".stripMargin
+    )
+    .validate[EditSet]
+    .get
+
+  def getEditSet(): EditSet =
+    editSet1
 }
