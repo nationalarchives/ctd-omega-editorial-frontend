@@ -38,34 +38,12 @@ case class EditSetRecord(
   endDate: String
 )
 object EditSetRecord {
-  implicit val editSetRecordReads: Reads[EditSetRecord] =
-    (
-      (JsPath \ "ccr").read[String](minLength[String](5)) and
-        (JsPath \ "oci").read[String](minLength[String](5)) and
-        (JsPath \ "scopeAndContent").read[String](minLength[String](10)) and
-        (JsPath \ "coveringDates").read[String](minLength[String](0)) and
-        (JsPath \ "formerReferenceDepartment").read[String](minLength[String](0)) and
-        (JsPath \ "startDate").read[String](minLength[String](0)) and
-        (JsPath \ "endDate").read[String](minLength[String](0))
-    )(EditSetRecord.apply _)
+  implicit val editSetRecordReads = Json.reads[EditSetRecord]
 }
-
-object EditSet {
-  implicit val editSetReads: Reads[EditSet] =
-    (
-      (JsPath \ "name").read[String](minLength[String](5)) and
-        (JsPath \ "id").read[String](minLength[String](1)) and
-        (JsPath \ "entries").read[Seq[EditSetEntry]]
-    )(EditSet.apply _)
-
-}
-
 object EditSetEntry {
-  implicit val editSetEntryReads: Reads[EditSetEntry] =
-    (
-      (JsPath \ "ccr").read[String](minLength[String](5)) and
-        (JsPath \ "oci").read[String](minLength[String](5)) and
-        (JsPath \ "scopeAndContent").read[String](minLength[String](10)) and
-        (JsPath \ "coveringDates").read[String](minLength[String](0))
-    )(EditSetEntry.apply _)
+  implicit val editSetEntryReads = Json.reads[EditSetEntry]
+}
+object EditSet {
+  implicit val editSetReads = Json.reads[EditSet]
+
 }
