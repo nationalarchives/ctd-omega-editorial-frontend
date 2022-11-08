@@ -2,7 +2,7 @@
 
 This project is an editorial frontend for managing The National Archives Pan-Archival Catalogue (PAC).
 
-The project is developed in Scala Play framework with govuk-frontend toolkit using  Scala Twirl implementation of govuk-frontend and hmrc-frontend for building the frontend web application.
+The project is developed in Scala Play framework with [GOV.UK]( https://design-system.service.gov.uk/) Design System toolkit using Twirl implementation of the design system provided by [HMRC](https://github.com/hmrc/play-frontend-hmrc) for building the frontend web application.
 
 ## Building from Source Code
 
