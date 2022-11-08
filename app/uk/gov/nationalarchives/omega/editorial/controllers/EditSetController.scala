@@ -22,13 +22,12 @@
 package uk.gov.nationalarchives.omega.editorial.controllers
 
 import javax.inject._
-import play.api.i18n.I18nSupport.RequestWithMessagesApi
 import play.api.i18n.{ I18nSupport, Lang, Messages }
 import play.api.mvc._
 import play.api.Logger
 import play.api.data.Form
-import play.api.data.Forms.{ mapping, nonEmptyText, text }
-import uk.gov.nationalarchives.omega.editorial.{ editSetRecords, _ }
+import play.api.data.Forms.{ mapping, text }
+import uk.gov.nationalarchives.omega.editorial.{ editSetRecords, editSets, _ }
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry, EditSetRecord }
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
@@ -78,26 +77,12 @@ class EditSetController @Inject() (
   def view(id: String) = Action { implicit request: Request[AnyContent] =>
     withUser { _ =>
       logger.info(s"The edit set id is $id ")
-      val editSetModels = getEditSet(id)
+      val editSetModels = editSets.getEditSet()
       val messages: Messages = request.messages
       val title: String = messages("edit-set.title")
       val heading: String = messages("edit-set.heading", editSetModels.name)
       Ok(editSet(title, heading, editSetModels))
     }
-  }
-
-  def getEditSet(id: String): EditSet = {
-
-    val scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
-    val editSetEntry1 =
-      EditSetEntry("COAL 80/80/1", "COAL.2022.V5RJW.P", scopeAndContent, "1960")
-    val editSetEntry2 =
-      EditSetEntry("COAL 80/80/2", "COAL.2022.V4RJW.P", scopeAndContent, "1960")
-    val editSetEntry3 =
-      EditSetEntry("COAL 80/80/3", "COAL.2022.V3RJW.P", scopeAndContent, "1960")
-    val entries = Seq(editSetEntry1, editSetEntry2, editSetEntry3)
-    val editSetName = "COAL 80 Sample"
-    EditSet(editSetName, id: String, entries)
   }
 
   /** Create an Action for the edit set record edit page.
