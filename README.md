@@ -1,4 +1,8 @@
-# ctd-omega-editorial-frontend
+# Pan-Archival Editorial Frontend Catalogue
+
+[![Build Status](https://github.com/nationalarchives/ctd-omega-editorial-frontend/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/nationalarchives/ctd-omega-editorial-frontend/actions/workflows/ci.yml)
+[![Scala 2.13](https://img.shields.io/badge/scala-2.13-red.svg)](http://scala-lang.org)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 This project is an editorial frontend for managing The National Archives Pan-Archival Catalogue (PAC).
 
