@@ -1,13 +1,14 @@
-import sbt.Keys.libraryDependencies
+import sbt.Keys.{libraryDependencies, publishMavenStyle}
 import sbt.url
 import de.heikoseeberger.sbtheader.FileType
 import play.twirl.sbt.Import.TwirlKeys
+import sbt.Keys.resolvers
+import ReleaseTransformations._
 
 val Slf4JVersion = "1.7.36"
 
 organization := "uk.gov.nationalarchives"
 
-version := "1.0.0-SNAPSHOT"
 ThisBuild / versionScheme := Some("semver-spec")
 
 headerMappings := headerMappings.value + (FileType("html") -> HeaderCommentStyle.twirlStyleBlockComment)
@@ -22,7 +23,6 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
     Defaults.itSettings,
     organization := "uk.gov.nationalarchives",
     name := "ctd-omega-editorial-frontend",
-    version := "0.1.0-SNAPSHOT",
     scalaVersion := "2.13.9",
     licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT")),
     homepage := Some(
@@ -100,7 +100,9 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
       "-Ywarn-unused:params", // Warn if a value parameter is unused.
       "-Ywarn-unused:patvars", // Warn if a variable bound in a pattern is unused.
       "-Ywarn-unused:privates", // Warn if a private member is unused.
-      "-Ywarn-value-discard" // Warn when non-Unit expression results are unused.  //
+      "-Ywarn-value-discard", // Warn when non-Unit expression results are unused.  //
+      "-target:jvm-1.8",
+      "-encoding", "utf-8"
     ),
     scalafmtOnCompile := true,
     resolvers ++= Seq(
@@ -114,7 +116,34 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
       "org.webjars.npm" % "govuk-frontend" % "4.3.1",
       "uk.gov.hmrc" %% "play-frontend-hmrc" % "3.30.0-play-28",
       "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
-    )
+    ),
+
+      publishMavenStyle := true,
+      credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
+      publishTo := {
+        val nexus = "https://oss.sonatype.org/"
+        if (isSnapshot.value)
+          Some("snapshots" at nexus + "content/repositories/snapshots/")
+        else
+          Some("releases"  at nexus + "service/local/staging/deploy/maven2/")
+      },
+
+      releaseCrossBuild := false,
+      releaseVersionBump := sbtrelease.Version.Bump.Minor,
+      releaseProcess := Seq[ReleaseStep](
+        checkSnapshotDependencies,
+        inquireVersions,
+        runClean,
+        runTest,
+        setReleaseVersion,
+        commitReleaseVersion,
+        tagRelease,
+        releaseStepCommand("publishSigned"),
+        setNextVersion,
+        commitNextVersion,
+        pushChanges
+)
+
   )
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "uk.gov.nationalarchives.controllers._"

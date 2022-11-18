@@ -39,3 +39,10 @@ sbt run
 http://localhost:9000/login
 ```
 6. Enter a valid username and password to access the application
+
+## Publishing a Release to Maven Central
+
+1. Run `sbt clean release`
+2. Answer the questions
+3. Login to https://oss.sonatype.org/ then Close, and Release the Staging Repository
+   25 
