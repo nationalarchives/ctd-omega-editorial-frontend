@@ -101,7 +101,7 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
       "-Ywarn-unused:patvars", // Warn if a variable bound in a pattern is unused.
       "-Ywarn-unused:privates", // Warn if a private member is unused.
       "-Ywarn-value-discard", // Warn when non-Unit expression results are unused.  //
-      "-target:jvm-1.8",
+      "-release:8",
       "-encoding", "utf-8"
     ),
     scalafmtOnCompile := true,
