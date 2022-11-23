@@ -25,8 +25,7 @@ import javax.inject._
 import play.api.mvc._
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
 
-/** This controller creates an `Action` to handle HTTP requests to the
-  * application's home page.
+/** This controller creates an `Action` to handle HTTP requests to the application's home page.
   */
 @Singleton
 class HomeController @Inject() (
@@ -35,9 +34,8 @@ class HomeController @Inject() (
 
   /** Create an Action to render an HTML page.
     *
-    * The configuration in the `routes` file means that this method
-    * will be called when the application receives a `GET` request with
-    * a path of `/`.
+    * The configuration in the `routes` file means that this method will be called when the application receives a `GET`
+    * request with a path of `/`.
     */
   def index() = Action { implicit request: Request[AnyContent] =>
     withUser(_ => Redirect(routes.EditSetController.view("1")))
