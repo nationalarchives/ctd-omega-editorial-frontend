@@ -30,8 +30,7 @@ import uk.gov.nationalarchives.omega.editorial.models.Credentials
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.views.html.login
 
-/** This controller creates an `Action` to handle HTTP requests to the
-  * application's home page.
+/** This controller creates an `Action` to handle HTTP requests to the application's home page.
   */
 @Singleton
 class LoginController @Inject() (
@@ -43,9 +42,8 @@ class LoginController @Inject() (
 
   /** Create an Action for the login page.
     *
-    * The configuration in the `routes` file means that this method
-    * will be called when the application receives a `GET` request with
-    * a path of `/login`.
+    * The configuration in the `routes` file means that this method will be called when the application receives a `GET`
+    * request with a path of `/login`.
     */
   def view(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     val messages: Messages = messagesApi.preferred(request)

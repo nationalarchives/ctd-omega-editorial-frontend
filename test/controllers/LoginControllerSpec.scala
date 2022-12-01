@@ -29,8 +29,7 @@ import play.api.test._
 import uk.gov.nationalarchives.omega.editorial.controllers.LoginController
 import uk.gov.nationalarchives.omega.editorial.views.html.login
 
-/** Add your spec here.
-  * You can mock out a whole application including requests, plugins etc.
+/** Add your spec here. You can mock out a whole application including requests, plugins etc.
   *
   * For more information, see https://www.playframework.com/documentation/latest/ScalaTestingWithScalaTest
   */

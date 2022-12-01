@@ -1,4 +1,4 @@
-import sbt.Keys.{libraryDependencies, publishMavenStyle}
+import sbt.Keys.{ libraryDependencies, publishMavenStyle }
 import sbt.url
 import de.heikoseeberger.sbtheader.FileType
 import play.twirl.sbt.Import.TwirlKeys
@@ -102,48 +102,44 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
       "-Ywarn-unused:privates", // Warn if a private member is unused.
       "-Ywarn-value-discard", // Warn when non-Unit expression results are unused.  //
       "-release:8",
-      "-encoding", "utf-8"
+      "-encoding",
+      "utf-8"
     ),
-    scalafmtOnCompile := true,
     resolvers ++= Seq(
       Resolver.mavenLocal,
-      MavenRepository("HMRC-open-artefacts-maven2","https://open.artefacts.tax.service.gov.uk/maven2")
+      MavenRepository("HMRC-open-artefacts-maven2", "https://open.artefacts.tax.service.gov.uk/maven2")
     ),
     headerLicense := Some(HeaderLicense.MIT("2022", "The National Archives")),
-
-
-    libraryDependencies ++= Seq(guice,
-      "org.webjars.npm" % "govuk-frontend" % "4.3.1",
-      "uk.gov.hmrc" %% "play-frontend-hmrc" % "3.30.0-play-28",
+    libraryDependencies ++= Seq(
+      guice,
+      "org.webjars.npm"         % "govuk-frontend"     % "4.3.1",
+      "uk.gov.hmrc"            %% "play-frontend-hmrc" % "3.30.0-play-28",
       "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
     ),
-
-      publishMavenStyle := true,
-      credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
-      publishTo := {
-        val nexus = "https://oss.sonatype.org/"
-        if (isSnapshot.value)
-          Some("snapshots" at nexus + "content/repositories/snapshots/")
-        else
-          Some("releases"  at nexus + "service/local/staging/deploy/maven2/")
-      },
-
-      releaseCrossBuild := false,
-      releaseVersionBump := sbtrelease.Version.Bump.Minor,
-      releaseProcess := Seq[ReleaseStep](
-        checkSnapshotDependencies,
-        inquireVersions,
-        runClean,
-        runTest,
-        setReleaseVersion,
-        commitReleaseVersion,
-        tagRelease,
-        releaseStepCommand("publishSigned"),
-        setNextVersion,
-        commitNextVersion,
-        pushChanges
-)
-
+    publishMavenStyle := true,
+    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
+    publishTo := {
+      val nexus = "https://oss.sonatype.org/"
+      if (isSnapshot.value)
+        Some("snapshots" at nexus + "content/repositories/snapshots/")
+      else
+        Some("releases" at nexus + "service/local/staging/deploy/maven2/")
+    },
+    releaseCrossBuild := false,
+    releaseVersionBump := sbtrelease.Version.Bump.Minor,
+    releaseProcess := Seq[ReleaseStep](
+      checkSnapshotDependencies,
+      inquireVersions,
+      runClean,
+      runTest,
+      setReleaseVersion,
+      commitReleaseVersion,
+      tagRelease,
+      releaseStepCommand("publishSigned"),
+      setNextVersion,
+      commitNextVersion,
+      pushChanges
+    )
   )
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "uk.gov.nationalarchives.controllers._"

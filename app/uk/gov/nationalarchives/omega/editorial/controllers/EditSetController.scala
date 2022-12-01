@@ -32,8 +32,7 @@ import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secure
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry, EditSetRecord }
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
-/** This controller creates an `Action` to handle HTTP requests to the
-  * application's home page.
+/** This controller creates an `Action` to handle HTTP requests to the application's home page.
   */
 @Singleton
 class EditSetController @Inject() (
@@ -70,9 +69,8 @@ class EditSetController @Inject() (
 
   /** Create an Action for the edit set page.
     *
-    * The configuration in the `routes` file means that this method
-    * will be called when the application receives a `GET` request with
-    * a path of `/edit-set/{id}`.
+    * The configuration in the `routes` file means that this method will be called when the application receives a `GET`
+    * request with a path of `/edit-set/{id}`.
     */
   def view(id: String) = Action { implicit request: Request[AnyContent] =>
     withUser { _ =>
@@ -87,9 +85,8 @@ class EditSetController @Inject() (
 
   /** Create an Action for the edit set record edit page.
     *
-    * The configuration in the `routes` file means that this method
-    * will be called when the application receives a `GET` request with
-    * a path of `/edit-set/{id}/record/{recordId}/edit`.
+    * The configuration in the `routes` file means that this method will be called when the application receives a `GET`
+    * request with a path of `/edit-set/{id}/record/{recordId}/edit`.
     */
   def editRecord(id: String, recordId: String) = Action { implicit request: Request[AnyContent] =>
     withUser { _ =>
@@ -123,7 +120,7 @@ class EditSetController @Inject() (
                 editSetRecords.saveEditSetRecord(editSetRecord)
                 Redirect(controllers.routes.EditSetController.save(id, editSetRecord.oci))
               case Some("discard") => Redirect(controllers.routes.EditSetController.discard(id, recordId))
-              //TODO Below added to handle error flow which could be a redirect to an error page pending configuration
+              // TODO Below added to handle error flow which could be a redirect to an error page pending configuration
               case _ => BadRequest("This action is not allowed")
             }
         )
