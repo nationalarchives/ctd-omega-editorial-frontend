@@ -25,7 +25,7 @@
 
 @this(govukTable: GovukTable)
 
-@(title: String, heading: String, editSet: EditSet)
+@(title: String, heading: String, editSet: EditSet)(implicit messages: Messages)
 
 @recordLink(ccr: String, oci: String) = {
     @defining("/edit-set/1/record/"+oci+"/edit") { hrefLink =>
