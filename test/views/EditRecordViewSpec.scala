@@ -113,8 +113,10 @@ class EditRecordViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
 
-      val headerText = Jsoup.parse(contentAsString(editRecordHtml))
-        .select("div.govuk-header__content").text()
+      val headerText = Jsoup
+        .parse(contentAsString(editRecordHtml))
+        .select("div.govuk-header__content")
+        .text()
       headerText mustEqual "header.title"
     }
 

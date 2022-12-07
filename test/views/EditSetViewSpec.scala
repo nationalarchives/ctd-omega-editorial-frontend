@@ -68,7 +68,8 @@ class EditSetViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
       val user = User("dummy user")
 
       val editSetHtml: Html = editSetInstance(user, title, heading, editSet)
-      val headerText = Jsoup.parse(contentAsString(editSetHtml))
+      val headerText = Jsoup
+        .parse(contentAsString(editSetHtml))
         .select("div.govuk-header__content")
         .text
       headerText mustEqual "header.title"

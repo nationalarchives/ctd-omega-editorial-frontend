@@ -66,8 +66,10 @@ class EditSetRecordEditSaveSpec extends PlaySpec with GuiceOneAppPerTest with In
       val confirmationEditSetRecordEditHtml: Html =
         editSetRecordEditSaveInstance(user, title, heading, oci, saveChanges)
 
-      val headerText = Jsoup.parse(contentAsString(confirmationEditSetRecordEditHtml))
-        .select("div.govuk-header__content").text()
+      val headerText = Jsoup
+        .parse(contentAsString(confirmationEditSetRecordEditHtml))
+        .select("div.govuk-header__content")
+        .text()
       headerText mustEqual "header.title"
     }
 

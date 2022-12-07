@@ -67,8 +67,10 @@ class EditSetRecordEditDiscardSpec extends PlaySpec with GuiceOneAppPerTest with
       val confirmationEditSetRecordEditHtml: Html =
         editSetRecordEditDiscardInstance(user, title, heading, oci, discardChanges)
 
-      val headerText = Jsoup.parse(contentAsString(confirmationEditSetRecordEditHtml))
-        .select("div.govuk-header__content").text()
+      val headerText = Jsoup
+        .parse(contentAsString(confirmationEditSetRecordEditHtml))
+        .select("div.govuk-header__content")
+        .text()
       headerText mustEqual "header.title"
     }
   }

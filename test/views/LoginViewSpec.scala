@@ -40,7 +40,7 @@ class LoginViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
   private val messages: Map[String, Map[String, String]] = Map(
     defaultLang -> Map(
       "error.summary.title" -> errorSummaryTitle,
-      "header.title" -> "This is a dummy header"
+      "header.title"        -> "This is a dummy header"
     )
   )
   implicit val messagesApi: MessagesApi = stubMessagesApi(messages)
@@ -72,8 +72,10 @@ class LoginViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
 
-      val headerText = Jsoup.parse(contentAsString(loginHtml))
-        .select("div.govuk-header__content").text()
+      val headerText = Jsoup
+        .parse(contentAsString(loginHtml))
+        .select("div.govuk-header__content")
+        .text()
       headerText mustEqual "This is a dummy header"
     }
 
