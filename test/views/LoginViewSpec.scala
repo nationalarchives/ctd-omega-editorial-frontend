@@ -37,7 +37,10 @@ class LoginViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
   private val errorSummaryTitle = "There is a problem"
   val defaultLang = play.api.i18n.Lang.defaultLang.code
   private val messages: Map[String, Map[String, String]] = Map(
-    defaultLang -> Map("error.summary.title" -> errorSummaryTitle)
+    defaultLang -> Map(
+      "error.summary.title" -> errorSummaryTitle,
+      "header.title" -> "This is a dummy header"
+    )
   )
   implicit val messagesApi: MessagesApi = stubMessagesApi(messages)
 
@@ -55,6 +58,26 @@ class LoginViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
 
       contentAsString(loginHtml) must include(title)
       contentAsString(loginHtml) must include(heading)
+    }
+
+    "render the header correctly" in new WithApplication {
+      private val title = "TitleTest"
+      private val heading = "HeadingTest"
+      private val credentialsForm: Form[Credentials] = CredentialsFormProvider()
+      private val login = inject[login]
+      private val loginHtml =
+        login(title, heading, credentialsForm)(
+          Helpers.stubMessages(messagesApi),
+          CSRFTokenHelper.addCSRFToken(FakeRequest())
+        )
+
+      val expectedHtml = """
+              <div class="govuk-header__content govuk-header__service-name">
+                This is a dummy header
+              </div>
+      """
+
+      contentAsString(loginHtml) must include(expectedHtml)
     }
 
     "render multiple errors when no username and password given" in new WithApplication {
