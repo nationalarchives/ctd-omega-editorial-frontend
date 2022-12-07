@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright (c) 2022 The National Archives
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -17,10 +17,8 @@
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *@
+ */
 
-@(title: String, heading: String)(implicit messages: Messages)
+package uk.gov.nationalarchives.omega.editorial.models
 
-@template(title) {
-  <h1>@heading</h1>
-}
+case class User(username: String)

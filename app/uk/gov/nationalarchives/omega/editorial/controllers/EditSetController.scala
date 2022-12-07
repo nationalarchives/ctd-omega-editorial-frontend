@@ -73,13 +73,13 @@ class EditSetController @Inject() (
     * request with a path of `/edit-set/{id}`.
     */
   def view(id: String) = Action { implicit request: Request[AnyContent] =>
-    withUser { _ =>
+    withUser { user =>
       logger.info(s"The edit set id is $id ")
       val editSetModels = editSets.getEditSet()
       val messages: Messages = request.messages
       val title: String = messages("edit-set.title")
       val heading: String = messages("edit-set.heading", editSetModels.name)
-      Ok(editSet(title, heading, editSetModels))
+      Ok(editSet(user, title, heading, editSetModels))
     }
   }
 
@@ -89,7 +89,7 @@ class EditSetController @Inject() (
     * request with a path of `/edit-set/{id}/record/{recordId}/edit`.
     */
   def editRecord(id: String, recordId: String) = Action { implicit request: Request[AnyContent] =>
-    withUser { _ =>
+    withUser { user =>
       logger.info(s"The edit set id is $id for record id $recordId")
       editSetRecords.getEditSetRecordByOCI(recordId) match {
         case Some(record) =>
@@ -97,14 +97,14 @@ class EditSetController @Inject() (
           val title: String = messages("edit-set.record.edit.title")
           val heading: String = messages("edit-set.record.edit.heading", record.ccr)
           val recordForm = editSetRecordForm.fill(record)
-          Ok(editSetRecordEdit(title, heading, recordForm))
+          Ok(editSetRecordEdit(user, title, heading, recordForm))
         case None => NotFound
       }
     }
   }
 
   def submit(id: String, recordId: String) = Action { implicit request: Request[AnyContent] =>
-    withUser { _ =>
+    withUser { user =>
       val messages: Messages = messagesApi.preferred(request)
       val title: String = messages("edit-set.record.edit.title")
       val heading: String = messages("edit-set.record.edit.heading")
@@ -113,7 +113,7 @@ class EditSetController @Inject() (
       editSetRecordForm
         .bindFromRequest()
         .fold(
-          formWithErrors => BadRequest(editSetRecordEdit(title, heading, formWithErrors)),
+          formWithErrors => BadRequest(editSetRecordEdit(user, title, heading, formWithErrors)),
           editSetRecord =>
             request.body.asFormUrlEncoded.get("action").headOption match {
               case Some("save") =>
@@ -128,7 +128,7 @@ class EditSetController @Inject() (
   }
 
   def save(id: String, oci: String) = Action { implicit request: Request[AnyContent] =>
-    withUser { _ =>
+    withUser { user =>
       val messages: Messages = messagesApi.preferred(request)
       val title: String = messages("edit-set.record.edit.title")
       editSetRecords.getEditSetRecordByOCI(oci).get
@@ -136,12 +136,12 @@ class EditSetController @Inject() (
       val message: String = messages("edit-set.record.save.text")
       logger.info(s"Save changes for record id $oci edit set id $id")
 
-      Ok(editSetRecordEditSave(title, heading, oci, message))
+      Ok(editSetRecordEditSave(user, title, heading, oci, message))
     }
   }
 
   def discard(id: String, oci: String) = Action { implicit request: Request[AnyContent] =>
-    withUser { _ =>
+    withUser { user =>
       val messages: Messages = messagesApi.preferred(request)
       val title: String = messages("edit-set.record.edit.title")
       editSetRecords.getEditSetRecordByOCI(oci).get
@@ -149,7 +149,7 @@ class EditSetController @Inject() (
       val message: String = messages("edit-set.record.discard.text")
       logger.info(s"Discard changes for record id $oci edit set id $id ")
 
-      Ok(editSetRecordEditDiscard(title, heading, oci, message))
+      Ok(editSetRecordEditDiscard(user, title, heading, oci, message))
     }
   }
 

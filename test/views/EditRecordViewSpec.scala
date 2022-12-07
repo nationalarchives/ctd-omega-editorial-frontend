@@ -28,10 +28,12 @@ import play.api.data.{ Form, FormError }
 import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
 import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers, Injecting }
 import play.twirl.api.Html
-import uk.gov.nationalarchives.omega.editorial.models.EditSetRecord
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, User }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEdit
 
 class EditRecordViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
+
+  lazy val user = User("dummy user")
 
   "Edit record Html" should {
     "render the given title and heading" in {
@@ -61,7 +63,7 @@ class EditRecordViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
       )
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(title, heading, editSetRecordForm.fill(editSetData))(
+        editSetRecordEditInstance(user, title, heading, editSetRecordForm.fill(editSetData))(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -96,7 +98,7 @@ class EditRecordViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
         .withError(FormError("", "Enter the scope and content."))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(title, heading, editSetRecordForm)(
+        editSetRecordEditInstance(user, title, heading, editSetRecordForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -133,7 +135,7 @@ class EditRecordViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
       ).withError(FormError("", "Scope and content too long, maximum length 8000 characters"))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(title, heading, editSetRecordForm)(
+        editSetRecordEditInstance(user, title, heading, editSetRecordForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -171,7 +173,7 @@ class EditRecordViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
       ).withError(FormError("", "Former reference - Department too long, maximum length 255 characters"))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(title, heading, editSetRecordForm)(
+        editSetRecordEditInstance(user, title, heading, editSetRecordForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )

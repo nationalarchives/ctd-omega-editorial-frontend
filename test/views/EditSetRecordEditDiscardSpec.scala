@@ -23,24 +23,30 @@ package views
 
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import play.api.test.Helpers
 import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
 import play.api.test.Injecting
 import play.twirl.api.Html
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEditDiscard
+import uk.gov.nationalarchives.omega.editorial.models.User
+import play.api.i18n.Messages
 
 class EditSetRecordEditDiscardSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
 
   "Edit set record edit discard Html" should {
 
     "render the given title and heading with discard changes message" in {
+      implicit val messages: Messages = Helpers.stubMessages()
+
       val editSetRecordEditDiscardInstance = inject[editSetRecordEditDiscard]
       val title = "EditRecordTitleTest"
+      val user = User("dummy user")
       val heading = "EditRecordHeadingTest"
       val discardChanges = "Any changes have been discarded. Showing last saved version."
       val oci = "EditRecordOciTest"
 
       val confirmationEditSetRecordEditHtml: Html =
-        editSetRecordEditDiscardInstance(title, heading, oci, discardChanges)
+        editSetRecordEditDiscardInstance(user, title, heading, oci, discardChanges)
 
       contentAsString(confirmationEditSetRecordEditHtml) must include(title)
       contentAsString(confirmationEditSetRecordEditHtml) must include(heading)

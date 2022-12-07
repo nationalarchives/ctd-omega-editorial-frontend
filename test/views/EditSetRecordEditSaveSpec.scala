@@ -23,23 +23,29 @@ package views
 
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import play.api.test.Helpers
 import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
 import play.api.test.Injecting
 import play.twirl.api.Html
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEditSave
+import uk.gov.nationalarchives.omega.editorial.models.User
+import play.api.i18n.Messages
 
 class EditSetRecordEditSaveSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
 
   "Edit set record edit save Html" should {
     "render the given title and heading with save changes message" in {
+      implicit val messages: Messages = Helpers.stubMessages()
+
       val editSetRecordEditSaveInstance = inject[editSetRecordEditSave]
+      val user = User("dummy user")
       val title = "EditRecordTitleTest"
       val heading = "EditRecordHeadingTest"
       val saveChanges = "Your changes have been saved."
       val oci = "EditRecordOciTest"
 
       val confirmationEditSetRecordEditHtml: Html =
-        editSetRecordEditSaveInstance(title, heading, oci, saveChanges)
+        editSetRecordEditSaveInstance(user, title, heading, oci, saveChanges)
 
       contentAsString(confirmationEditSetRecordEditHtml) must include(title)
       contentAsString(confirmationEditSetRecordEditHtml) must include(heading)
