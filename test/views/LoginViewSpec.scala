@@ -75,7 +75,7 @@ class LoginViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
         .parse(contentAsString(loginHtml))
         .select("div.govuk-header__content")
         .text()
-      headerText mustEqual "This is a dummy header"
+      headerText mustEqual "header.title"
     }
 
     "render multiple errors when no username and password given" in new WithApplication {
