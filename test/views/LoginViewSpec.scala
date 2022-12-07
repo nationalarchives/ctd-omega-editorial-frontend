@@ -21,6 +21,7 @@
 
 package views
 
+import org.jsoup.Jsoup
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.data.{ Form, FormError }
@@ -60,7 +61,7 @@ class LoginViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
       contentAsString(loginHtml) must include(heading)
     }
 
-    "render the header correctly" in new WithApplication {
+    "render the header" in new WithApplication {
       private val title = "TitleTest"
       private val heading = "HeadingTest"
       private val credentialsForm: Form[Credentials] = CredentialsFormProvider()
@@ -71,13 +72,9 @@ class LoginViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
 
-      val expectedHtml = """
-              <div class="govuk-header__content govuk-header__service-name">
-                This is a dummy header
-              </div>
-      """
-
-      contentAsString(loginHtml) must include(expectedHtml)
+      val headerText = Jsoup.parse(contentAsString(loginHtml))
+        .select("div.govuk-header__content").text()
+      headerText mustEqual "This is a dummy header"
     }
 
     "render multiple errors when no username and password given" in new WithApplication {

@@ -21,6 +21,7 @@
 
 package views
 
+import org.jsoup.Jsoup
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.test.Helpers
@@ -50,6 +51,24 @@ class EditSetRecordEditSaveSpec extends PlaySpec with GuiceOneAppPerTest with In
       contentAsString(confirmationEditSetRecordEditHtml) must include(title)
       contentAsString(confirmationEditSetRecordEditHtml) must include(heading)
       contentAsString(confirmationEditSetRecordEditHtml) must include(saveChanges)
+    }
+
+    "render the header" in {
+      implicit val messages: Messages = Helpers.stubMessages()
+
+      val editSetRecordEditSaveInstance = inject[editSetRecordEditSave]
+      val user = User("dummy user")
+      val title = "EditRecordTitleTest"
+      val heading = "EditRecordHeadingTest"
+      val saveChanges = "Your changes have been saved."
+      val oci = "EditRecordOciTest"
+
+      val confirmationEditSetRecordEditHtml: Html =
+        editSetRecordEditSaveInstance(user, title, heading, oci, saveChanges)
+
+      val headerText = Jsoup.parse(contentAsString(confirmationEditSetRecordEditHtml))
+        .select("div.govuk-header__content").text()
+      headerText mustEqual "header.title"
     }
 
   }

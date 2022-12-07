@@ -21,6 +21,7 @@
 
 package views
 
+import org.jsoup.Jsoup
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.Messages
@@ -57,6 +58,20 @@ class EditSetViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
 
       }
 
+    }
+
+    "render the header" in new WithApplication {
+      val editSetInstance = inject[editSet]
+      val editSet: EditSet = getEditSetTest("1")
+      val title = "EditSetTitleTest"
+      val heading = editSet.name
+      val user = User("dummy user")
+
+      val editSetHtml: Html = editSetInstance(user, title, heading, editSet)
+      val headerText = Jsoup.parse(contentAsString(editSetHtml))
+        .select("div.govuk-header__content")
+        .text
+      headerText mustEqual "header.title"
     }
 
     def getEditSetTest(id: String): EditSet = {

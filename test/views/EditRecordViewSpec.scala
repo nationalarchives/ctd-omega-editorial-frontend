@@ -21,6 +21,7 @@
 
 package views
 
+import org.jsoup.Jsoup
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.data.Forms.{ mapping, text }
@@ -78,6 +79,43 @@ class EditRecordViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
       contentAsString(editRecordHtml) must include(editSetData.startDate)
       contentAsString(editRecordHtml) must include(editSetData.endDate)
 
+    }
+
+    "render the header" in {
+      val editSetRecordEditInstance = inject[editSetRecordEdit]
+      val title = "EditRecordTitleTest"
+      val heading = "EditRecordHeadingTest"
+      val editSetRecordForm: Form[EditSetRecord] = Form(
+        mapping(
+          "ccr"                       -> text,
+          "oci"                       -> text,
+          "scopeAndContent"           -> text,
+          "coveringDates"             -> text,
+          "formerReferenceDepartment" -> text,
+          "startDate"                 -> text,
+          "endDate"                   -> text
+        )(EditSetRecord.apply)(EditSetRecord.unapply)
+      )
+
+      val editSetData = new EditSetRecord(
+        "TestCCR",
+        "TestOCI",
+        "TestScopeAndContent",
+        "TestCoveringDates",
+        "TestFormerReferenceDepartment",
+        "TestStartDate",
+        "TestEndDate"
+      )
+
+      val editRecordHtml: Html =
+        editSetRecordEditInstance(user, title, heading, editSetRecordForm.fill(editSetData))(
+          Helpers.stubMessages(),
+          CSRFTokenHelper.addCSRFToken(FakeRequest())
+        )
+
+      val headerText = Jsoup.parse(contentAsString(editRecordHtml))
+        .select("div.govuk-header__content").text()
+      headerText mustEqual "header.title"
     }
 
     "render an error given no scope and content" in {

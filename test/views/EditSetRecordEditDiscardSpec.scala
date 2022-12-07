@@ -21,6 +21,7 @@
 
 package views
 
+import org.jsoup.Jsoup
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import org.scalatestplus.play.PlaySpec
 import play.api.i18n.Messages
@@ -51,6 +52,24 @@ class EditSetRecordEditDiscardSpec extends PlaySpec with GuiceOneAppPerTest with
       contentAsString(confirmationEditSetRecordEditHtml) must include(title)
       contentAsString(confirmationEditSetRecordEditHtml) must include(heading)
       contentAsString(confirmationEditSetRecordEditHtml) must include(discardChanges)
+    }
+
+    "render the header" in {
+      implicit val messages: Messages = Helpers.stubMessages()
+
+      val editSetRecordEditDiscardInstance = inject[editSetRecordEditDiscard]
+      val title = "EditRecordTitleTest"
+      val user = User("dummy user")
+      val heading = "EditRecordHeadingTest"
+      val discardChanges = "Any changes have been discarded. Showing last saved version."
+      val oci = "EditRecordOciTest"
+
+      val confirmationEditSetRecordEditHtml: Html =
+        editSetRecordEditDiscardInstance(user, title, heading, oci, discardChanges)
+
+      val headerText = Jsoup.parse(contentAsString(confirmationEditSetRecordEditHtml))
+        .select("div.govuk-header__content").text()
+      headerText mustEqual "header.title"
     }
   }
 
