@@ -63,7 +63,7 @@ class LoginController @Inject() (
         formWithErrors => BadRequest(login(title, heading, formWithErrors)),
         credentials => {
           val token = Session.generateToken(credentials.username)
-          Redirect(routes.EditSetController.view("1")).withSession(request.session + ("sessionToken" -> token))
+          Redirect(routes.EditSetController.view("1")).withSession(request.session + (SessionKeys.token -> token))
         }
       )
   }

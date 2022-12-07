@@ -9,3 +9,16 @@
 .govuk-header__container {
   border-bottom-color: #555;
 }
+
+.govuk-header__signout {
+  float: right;
+}
+
+.govuk-header__signout > a {
+  color: white;
+  text-decoration: none;
+}
+
+.hidden {
+  display: none;
+}

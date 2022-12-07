@@ -21,23 +21,18 @@
 
 package views
 
-import org.jsoup.Jsoup
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
-import org.scalatestplus.play.PlaySpec
+import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.test.Helpers
 import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
-import play.api.test.Injecting
 import play.twirl.api.Html
-import uk.gov.nationalarchives.omega.editorial.models.User
+import support.BaseSpec
+import support.CustomMatchers.{ haveHeaderTitle, haveVisibleSignOutLink }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEditDiscard
 
-class EditSetRecordEditDiscardSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
+class EditSetRecordEditDiscardSpec extends BaseSpec {
 
   "Edit set record edit discard Html" should {
-
-    val user = User("dummy user")
-
     "render the given title and heading with discard changes message" in {
       implicit val messages: Messages = Helpers.stubMessages()
 
@@ -56,23 +51,27 @@ class EditSetRecordEditDiscardSpec extends PlaySpec with GuiceOneAppPerTest with
     }
 
     "render the header" in {
-      implicit val messages: Messages = Helpers.stubMessages()
 
-      val editSetRecordEditDiscardInstance = inject[editSetRecordEditDiscard]
-      val title = "EditRecordTitleTest"
-      val heading = "EditRecordHeadingTest"
-      val discardChanges = "Any changes have been discarded. Showing last saved version."
-      val oci = "EditRecordOciTest"
+      val document = generateDocument()
 
-      val confirmationEditSetRecordEditHtml: Html =
-        editSetRecordEditDiscardInstance(user, title, heading, oci, discardChanges)
+      document must haveHeaderTitle
+      document must haveVisibleSignOutLink
 
-      val headerText = Jsoup
-        .parse(contentAsString(confirmationEditSetRecordEditHtml))
-        .select("div.govuk-header__content")
-        .text()
-      headerText mustEqual "header.title"
     }
+  }
+
+  private def generateDocument(): Document = {
+    implicit val messages: Messages = Helpers.stubMessages()
+    val editSetRecordEditDiscardInstance = inject[editSetRecordEditDiscard]
+    asDocument(
+      editSetRecordEditDiscardInstance(
+        user,
+        "EditRecordTitleTest",
+        "EditRecordHeadingTest",
+        "EditRecordOciTest",
+        "Any changes have been discarded. Showing last saved version."
+      )
+    )
   }
 
 }

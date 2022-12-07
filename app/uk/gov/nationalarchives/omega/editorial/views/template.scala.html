@@ -51,6 +51,9 @@
               <div class="govuk-header__content govuk-header__service-name">
                 @messages("header.title")
               </div>
+              <div class="govuk-header__signout @(if (user.isEmpty) "hidden")">
+                <a href="@uk.gov.nationalarchives.omega.editorial.controllers.routes.LogoutController.logout()">@messages("header.signout")</a>
+              </div>
             </div>
           </header>
 

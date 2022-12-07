@@ -21,23 +21,22 @@
 
 package controllers
 
-import org.scalatestplus.play._
-import org.scalatestplus.play.guice._
 import play.api.mvc.{ AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesActionBuilderImpl, DefaultMessagesControllerComponents }
 import play.api.test.Helpers._
 import play.api.test._
+import support.BaseSpec
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController
-import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
+import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
 /** Add your spec here. You can mock out a whole application including requests, plugins etc.
   *
   * For more information, see https://www.playframework.com/documentation/latest/ScalaTestingWithScalaTest
   */
-class EditSetControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
+class EditSetControllerSpec extends BaseSpec {
 
-  val validSessionToken = Session.generateToken("1234")
-  val invalidSessionToken = Session.generateToken("invalid-user")
+  val validSessionToken: String = Session.generateToken("1234")
+  val invalidSessionToken: String = Session.generateToken("invalid-user")
 
   "EditSetController GET /edit-set/{id}" should {
 

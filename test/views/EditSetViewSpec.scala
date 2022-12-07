@@ -21,26 +21,21 @@
 
 package views
 
-import org.jsoup.Jsoup
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
-import org.scalatestplus.play.PlaySpec
+import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.test.Helpers
 import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
-import play.api.test.Injecting
-import play.test.WithApplication
 import play.twirl.api.Html
-import uk.gov.nationalarchives.omega.editorial._
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry, User }
+import support.BaseSpec
+import support.CustomMatchers.{ haveHeaderTitle, haveVisibleSignOutLink }
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
 
-class EditSetViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
+class EditSetViewSpec extends BaseSpec {
 
   "Edit set Html" should {
     implicit val messages: Messages = Helpers.stubMessages()
-    val user = User("dummy user")
-
-    "render the given title and heading" in new WithApplication {
+    "render the given title and heading" in {
 
       val editSetInstance = inject[editSet]
       val editSet: EditSet = getEditSetTest("1")
@@ -60,34 +55,37 @@ class EditSetViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
 
     }
 
-    "render the header" in new WithApplication {
-      val editSetInstance = inject[editSet]
-      val editSet: EditSet = getEditSetTest("1")
-      val title = "EditSetTitleTest"
-      val heading = editSet.name
+    "render the header" in {
 
-      val editSetHtml: Html = editSetInstance(user, title, heading, editSet)
-      val headerText = Jsoup
-        .parse(contentAsString(editSetHtml))
-        .select("div.govuk-header__content")
-        .text
-      headerText mustEqual "header.title"
+      val document: Document = generateDocument()
+
+      document must haveHeaderTitle
+      document must haveVisibleSignOutLink
+
     }
 
-    def getEditSetTest(id: String): EditSet = {
+  }
 
-      val scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
-      val editSetEntry1 =
-        EditSetEntry("COAL 80/80/1", id, scopeAndContent, "1960")
-      val editSetEntry2 =
-        EditSetEntry("COAL 80/80/2", id, scopeAndContent, "1960")
-      val editSetEntry3 =
-        EditSetEntry("COAL 80/80/3", id, scopeAndContent, "1960")
-      val entries = Seq(editSetEntry1, editSetEntry2, editSetEntry3)
-      val editSetName = "COAL 80 Sample"
-      val editSet = EditSet(editSetName, id: String, entries)
+  private def getEditSetTest(id: String): EditSet = {
 
-      editSet
-    }
+    val scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+    val editSetEntry1 =
+      EditSetEntry("COAL 80/80/1", id, scopeAndContent, "1960")
+    val editSetEntry2 =
+      EditSetEntry("COAL 80/80/2", id, scopeAndContent, "1960")
+    val editSetEntry3 =
+      EditSetEntry("COAL 80/80/3", id, scopeAndContent, "1960")
+    val entries = Seq(editSetEntry1, editSetEntry2, editSetEntry3)
+    val editSetName = "COAL 80 Sample"
+    val editSet = EditSet(editSetName, id: String, entries)
+
+    editSet
+  }
+
+  private def generateDocument(): Document = {
+    implicit val messages: Messages = Helpers.stubMessages()
+    val editSetInstance = inject[editSet]
+    val editSet: EditSet = getEditSetTest("1")
+    asDocument(editSetInstance(user, "EditSetTitleTest", editSet.name, editSet))
   }
 }

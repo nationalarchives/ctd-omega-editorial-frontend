@@ -115,6 +115,8 @@ class LoginControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injectin
             )
         )
       status(response) mustBe SEE_OTHER
+      session(response).get("sessionToken") must not be empty
+
     }
 
     "redirect to result page of the application" in {
@@ -128,6 +130,8 @@ class LoginControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injectin
         )
 
       status(login) mustBe SEE_OTHER
+      session(login).get("sessionToken") must not be empty
+
     }
 
     "redirect to result page from the router" in {
@@ -137,6 +141,7 @@ class LoginControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injectin
       val login = route(app, request).get
 
       status(login) mustBe SEE_OTHER
+      session(login).get("sessionToken") must not be empty
     }
   }
 }
