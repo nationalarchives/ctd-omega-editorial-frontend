@@ -27,3 +27,4 @@ edit-set.record.error.scope-and-content=Scope and content too long, maximum leng
 edit-set.record.error.former-reference-department=Former reference - Department too long, maximum length 255 characters
 edit-set.record.save.text=Changes to the following record have been saved:
 edit-set.record.discard.text=Changes to the following record have been discarded:
+header.title=Pan-Archival Catalogue
