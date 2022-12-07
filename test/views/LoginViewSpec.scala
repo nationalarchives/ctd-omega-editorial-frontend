@@ -39,8 +39,7 @@ class LoginViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
   val defaultLang = play.api.i18n.Lang.defaultLang.code
   private val messages: Map[String, Map[String, String]] = Map(
     defaultLang -> Map(
-      "error.summary.title" -> errorSummaryTitle,
-      "header.title"        -> "This is a dummy header"
+      "error.summary.title" -> errorSummaryTitle
     )
   )
   implicit val messagesApi: MessagesApi = stubMessagesApi(messages)

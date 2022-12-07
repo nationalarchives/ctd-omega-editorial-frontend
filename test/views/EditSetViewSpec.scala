@@ -38,6 +38,7 @@ class EditSetViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
 
   "Edit set Html" should {
     implicit val messages: Messages = Helpers.stubMessages()
+    val user = User("dummy user")
 
     "render the given title and heading" in new WithApplication {
 
@@ -45,7 +46,6 @@ class EditSetViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
       val editSet: EditSet = getEditSetTest("1")
       val title = "EditSetTitleTest"
       val heading = editSet.name
-      val user = User("dummy user")
 
       val editSetHtml: Html = editSetInstance(user, title, heading, editSet)
       contentAsString(editSetHtml) must include(title)
@@ -65,7 +65,6 @@ class EditSetViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
       val editSet: EditSet = getEditSetTest("1")
       val title = "EditSetTitleTest"
       val heading = editSet.name
-      val user = User("dummy user")
 
       val editSetHtml: Html = editSetInstance(user, title, heading, editSet)
       val headerText = Jsoup

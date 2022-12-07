@@ -36,12 +36,13 @@ class EditSetRecordEditDiscardSpec extends PlaySpec with GuiceOneAppPerTest with
 
   "Edit set record edit discard Html" should {
 
+    val user = User("dummy user")
+
     "render the given title and heading with discard changes message" in {
       implicit val messages: Messages = Helpers.stubMessages()
 
       val editSetRecordEditDiscardInstance = inject[editSetRecordEditDiscard]
       val title = "EditRecordTitleTest"
-      val user = User("dummy user")
       val heading = "EditRecordHeadingTest"
       val discardChanges = "Any changes have been discarded. Showing last saved version."
       val oci = "EditRecordOciTest"
@@ -59,7 +60,6 @@ class EditSetRecordEditDiscardSpec extends PlaySpec with GuiceOneAppPerTest with
 
       val editSetRecordEditDiscardInstance = inject[editSetRecordEditDiscard]
       val title = "EditRecordTitleTest"
-      val user = User("dummy user")
       val heading = "EditRecordHeadingTest"
       val discardChanges = "Any changes have been discarded. Showing last saved version."
       val oci = "EditRecordOciTest"
