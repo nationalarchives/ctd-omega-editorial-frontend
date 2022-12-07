@@ -21,17 +21,17 @@
 
 package views
 
+import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import org.scalatestplus.play.PlaySpec
+import play.api.i18n.Messages
 import play.api.test.Helpers
 import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
 import play.api.test.Injecting
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.test.WithApplication
 import play.twirl.api.Html
 import uk.gov.nationalarchives.omega.editorial._
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry, User }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
-import play.api.i18n.Messages
 
 class EditSetViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
 
