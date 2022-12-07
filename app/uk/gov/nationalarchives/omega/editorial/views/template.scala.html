@@ -19,7 +19,9 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *@
 
-@(title: String, backLink: Option[Html] = None)(content: Html)
+@import uk.gov.nationalarchives.omega.editorial.models.User
+
+@(user: Option[User], title: String, backLink: Option[Html] = None)(content: Html)(implicit messages: Messages)
 <!DOCTYPE html>
 <html lang="en" class="govuk-template ">
     <head>
@@ -37,8 +39,20 @@
     </head>
 
 
-    <body class="govuk-template__body ">
+    <body class="govuk-template__body">
         <script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
+          <header class="govuk-header" role="banner" data-module="govuk-header">
+            <div class="govuk-header__container govuk-width-container">
+              <div class="govuk-header__logo">
+                <span>
+                  <img src="@routes.Assets.versioned("images/tna-wh-logo.svg")" width="70" height="70">
+                </span>
+              </div>
+              <div class="govuk-header__content govuk-header__service-name">
+                @messages("header.title")
+              </div>
+            </div>
+          </header>
 
         <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
 

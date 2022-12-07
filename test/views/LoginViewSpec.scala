@@ -21,6 +21,7 @@
 
 package views
 
+import org.jsoup.Jsoup
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.data.{ Form, FormError }
@@ -37,7 +38,9 @@ class LoginViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
   private val errorSummaryTitle = "There is a problem"
   val defaultLang = play.api.i18n.Lang.defaultLang.code
   private val messages: Map[String, Map[String, String]] = Map(
-    defaultLang -> Map("error.summary.title" -> errorSummaryTitle)
+    defaultLang -> Map(
+      "error.summary.title" -> errorSummaryTitle
+    )
   )
   implicit val messagesApi: MessagesApi = stubMessagesApi(messages)
 
@@ -55,6 +58,24 @@ class LoginViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
 
       contentAsString(loginHtml) must include(title)
       contentAsString(loginHtml) must include(heading)
+    }
+
+    "render the header" in new WithApplication {
+      private val title = "TitleTest"
+      private val heading = "HeadingTest"
+      private val credentialsForm: Form[Credentials] = CredentialsFormProvider()
+      private val login = inject[login]
+      private val loginHtml =
+        login(title, heading, credentialsForm)(
+          Helpers.stubMessages(messagesApi),
+          CSRFTokenHelper.addCSRFToken(FakeRequest())
+        )
+
+      val headerText = Jsoup
+        .parse(contentAsString(loginHtml))
+        .select("div.govuk-header__content")
+        .text()
+      headerText mustEqual "header.title"
     }
 
     "render multiple errors when no username and password given" in new WithApplication {

@@ -20,14 +20,14 @@
  *@
 
 @import helper._
-@import uk.gov.nationalarchives.omega.editorial.models.EditSetRecord
+@import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, User }
 @import uk.gov.nationalarchives.omega.editorial.forms.GovukHelpers._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(govukButton: GovukButton, govukInput: GovukInput, govukTextarea: GovukTextarea, govukFieldset: GovukFieldset, govukErrorSummary: GovukErrorSummary)
 
-@(title: String, heading: String, editSetRecordForm: Form[EditSetRecord])(implicit messages: Messages, request: Request[AnyContent])
+@(user: User, title: String, heading: String, editSetRecordForm: Form[EditSetRecord])(implicit messages: Messages, request: Request[AnyContent])
 
 @backLink = {
   <a class="govuk-back-link" href="/edit-set/1">Back to edit set (COAL 80 Sample)</a>
@@ -102,7 +102,7 @@
   <h3 class="govuk-fieldset__heading">Intellectual properties</h3>
 }
 
-@template(title, Some(backLink)) {
+@template(Some(user), title, Some(backLink)) {
   @if(editSetRecordForm.hasErrors) {
     @govukErrorSummary(ErrorSummary(
       errorList = editSetRecordForm.errors.map { error =>

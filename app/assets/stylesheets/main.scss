@@ -2,3 +2,10 @@
 
 @import "lib/govuk-frontend/govuk/all";
 
+.govuk-header {
+  background: #26262a;
+}
+
+.govuk-header__container {
+  border-bottom-color: #555;
+}

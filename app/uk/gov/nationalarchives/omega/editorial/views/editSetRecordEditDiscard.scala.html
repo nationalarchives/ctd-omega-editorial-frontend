@@ -20,12 +20,13 @@
  *@
 
 @import helper._
+@import uk.gov.nationalarchives.omega.editorial.models.User
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(govukNotificationBanner: GovukNotificationBanner)
 
-@(title: String, heading: String, oci: String, message: String)
+@(user: User, title: String, heading: String, oci: String, message: String)(implicit messages: Messages)
 
 @backLink = {
   <a class="govuk-back-link" href="/edit-set/1">Back to edit set (COAL 80 Sample)</a>
@@ -38,7 +39,7 @@
   <p class="govuk-body">Series: National Coal Board and predecessors: Photographs</p>
 }
 
-@template(title, Some(backLink)) {
+@template(Some(user), title, Some(backLink)) {
   @govukNotificationBanner(NotificationBanner(
     content = HtmlContent(content),
     title = Text("Changes discarded")))

@@ -21,17 +21,26 @@
 
 package views
 
-import org.scalatestplus.play.PlaySpec
+import org.jsoup.Jsoup
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import org.scalatestplus.play.PlaySpec
+import play.api.i18n.Messages
+import play.api.test.Helpers
 import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
 import play.api.test.Injecting
 import play.twirl.api.Html
+import uk.gov.nationalarchives.omega.editorial.models.User
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEditSave
 
 class EditSetRecordEditSaveSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
 
   "Edit set record edit save Html" should {
+
+    val user = User("dummy user")
+
     "render the given title and heading with save changes message" in {
+      implicit val messages: Messages = Helpers.stubMessages()
+
       val editSetRecordEditSaveInstance = inject[editSetRecordEditSave]
       val title = "EditRecordTitleTest"
       val heading = "EditRecordHeadingTest"
@@ -39,11 +48,30 @@ class EditSetRecordEditSaveSpec extends PlaySpec with GuiceOneAppPerTest with In
       val oci = "EditRecordOciTest"
 
       val confirmationEditSetRecordEditHtml: Html =
-        editSetRecordEditSaveInstance(title, heading, oci, saveChanges)
+        editSetRecordEditSaveInstance(user, title, heading, oci, saveChanges)
 
       contentAsString(confirmationEditSetRecordEditHtml) must include(title)
       contentAsString(confirmationEditSetRecordEditHtml) must include(heading)
       contentAsString(confirmationEditSetRecordEditHtml) must include(saveChanges)
+    }
+
+    "render the header" in {
+      implicit val messages: Messages = Helpers.stubMessages()
+
+      val editSetRecordEditSaveInstance = inject[editSetRecordEditSave]
+      val title = "EditRecordTitleTest"
+      val heading = "EditRecordHeadingTest"
+      val saveChanges = "Your changes have been saved."
+      val oci = "EditRecordOciTest"
+
+      val confirmationEditSetRecordEditHtml: Html =
+        editSetRecordEditSaveInstance(user, title, heading, oci, saveChanges)
+
+      val headerText = Jsoup
+        .parse(contentAsString(confirmationEditSetRecordEditHtml))
+        .select("div.govuk-header__content")
+        .text()
+      headerText mustEqual "header.title"
     }
 
   }

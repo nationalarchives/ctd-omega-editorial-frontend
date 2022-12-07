@@ -21,19 +21,25 @@
 
 package views
 
+import org.jsoup.Jsoup
+import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import org.scalatestplus.play.PlaySpec
+import play.api.i18n.Messages
+import play.api.test.Helpers
 import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
 import play.api.test.Injecting
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.test.WithApplication
 import play.twirl.api.Html
 import uk.gov.nationalarchives.omega.editorial._
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry }
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry, User }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
 
 class EditSetViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
 
   "Edit set Html" should {
+    implicit val messages: Messages = Helpers.stubMessages()
+    val user = User("dummy user")
+
     "render the given title and heading" in new WithApplication {
 
       val editSetInstance = inject[editSet]
@@ -41,7 +47,7 @@ class EditSetViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
       val title = "EditSetTitleTest"
       val heading = editSet.name
 
-      val editSetHtml: Html = editSetInstance(title, heading, editSet)
+      val editSetHtml: Html = editSetInstance(user, title, heading, editSet)
       contentAsString(editSetHtml) must include(title)
       contentAsString(editSetHtml) must include(heading)
       contentAsString(editSetHtml) must include(editSet.name)
@@ -52,6 +58,20 @@ class EditSetViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
 
       }
 
+    }
+
+    "render the header" in new WithApplication {
+      val editSetInstance = inject[editSet]
+      val editSet: EditSet = getEditSetTest("1")
+      val title = "EditSetTitleTest"
+      val heading = editSet.name
+
+      val editSetHtml: Html = editSetInstance(user, title, heading, editSet)
+      val headerText = Jsoup
+        .parse(contentAsString(editSetHtml))
+        .select("div.govuk-header__content")
+        .text
+      headerText mustEqual "header.title"
     }
 
     def getEditSetTest(id: String): EditSet = {

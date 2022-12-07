@@ -21,6 +21,7 @@
 
 package views
 
+import org.jsoup.Jsoup
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.data.Forms.{ mapping, text }
@@ -28,10 +29,12 @@ import play.api.data.{ Form, FormError }
 import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
 import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers, Injecting }
 import play.twirl.api.Html
-import uk.gov.nationalarchives.omega.editorial.models.EditSetRecord
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, User }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEdit
 
 class EditRecordViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
+
+  lazy val user = User("dummy user")
 
   "Edit record Html" should {
     "render the given title and heading" in {
@@ -61,7 +64,7 @@ class EditRecordViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
       )
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(title, heading, editSetRecordForm.fill(editSetData))(
+        editSetRecordEditInstance(user, title, heading, editSetRecordForm.fill(editSetData))(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -76,6 +79,45 @@ class EditRecordViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
       contentAsString(editRecordHtml) must include(editSetData.startDate)
       contentAsString(editRecordHtml) must include(editSetData.endDate)
 
+    }
+
+    "render the header" in {
+      val editSetRecordEditInstance = inject[editSetRecordEdit]
+      val title = "EditRecordTitleTest"
+      val heading = "EditRecordHeadingTest"
+      val editSetRecordForm: Form[EditSetRecord] = Form(
+        mapping(
+          "ccr"                       -> text,
+          "oci"                       -> text,
+          "scopeAndContent"           -> text,
+          "coveringDates"             -> text,
+          "formerReferenceDepartment" -> text,
+          "startDate"                 -> text,
+          "endDate"                   -> text
+        )(EditSetRecord.apply)(EditSetRecord.unapply)
+      )
+
+      val editSetData = new EditSetRecord(
+        "TestCCR",
+        "TestOCI",
+        "TestScopeAndContent",
+        "TestCoveringDates",
+        "TestFormerReferenceDepartment",
+        "TestStartDate",
+        "TestEndDate"
+      )
+
+      val editRecordHtml: Html =
+        editSetRecordEditInstance(user, title, heading, editSetRecordForm.fill(editSetData))(
+          Helpers.stubMessages(),
+          CSRFTokenHelper.addCSRFToken(FakeRequest())
+        )
+
+      val headerText = Jsoup
+        .parse(contentAsString(editRecordHtml))
+        .select("div.govuk-header__content")
+        .text()
+      headerText mustEqual "header.title"
     }
 
     "render an error given no scope and content" in {
@@ -96,7 +138,7 @@ class EditRecordViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
         .withError(FormError("", "Enter the scope and content."))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(title, heading, editSetRecordForm)(
+        editSetRecordEditInstance(user, title, heading, editSetRecordForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -133,7 +175,7 @@ class EditRecordViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
       ).withError(FormError("", "Scope and content too long, maximum length 8000 characters"))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(title, heading, editSetRecordForm)(
+        editSetRecordEditInstance(user, title, heading, editSetRecordForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -171,7 +213,7 @@ class EditRecordViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
       ).withError(FormError("", "Former reference - Department too long, maximum length 255 characters"))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(title, heading, editSetRecordForm)(
+        editSetRecordEditInstance(user, title, heading, editSetRecordForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )

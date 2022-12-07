@@ -24,16 +24,19 @@ package uk.gov.nationalarchives.omega.editorial.controllers.authentication
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.nationalarchives.omega.editorial.controllers.routes
-import uk.gov.nationalarchives.omega.editorial.models.Credentials
+import uk.gov.nationalarchives.omega.editorial.models.{ Credentials, User }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 
 import java.time.{ LocalDateTime, ZoneOffset }
 
 trait Secured {
 
-  def withUser[T](block: Credentials => Result)(implicit request: Request[AnyContent]): Result =
+  def withUser[T](block: User => Result)(implicit request: Request[AnyContent]): Result =
     extractUser(request)
-      .map(block)
+      .map { credentials =>
+        val user = User(credentials.username)
+        block(user)
+      }
       .getOrElse(Redirect(routes.LoginController.view()))
 
   private def extractUser(req: RequestHeader): Option[Credentials] =
