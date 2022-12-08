@@ -24,11 +24,11 @@ package views
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.test.Helpers
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
+import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
 import play.twirl.api.Html
 import support.BaseSpec
-import support.CustomMatchers.{haveHeaderTitle, haveLogoutLink, haveLogoutLinkLabel, haveVisibleLogoutLink}
-import uk.gov.nationalarchives.omega.editorial.models.{EditSet, EditSetEntry}
+import support.CustomMatchers.{ haveHeaderTitle, haveLogoutLink, haveLogoutLinkLabel, haveVisibleLogoutLink }
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
 
 class EditSetViewSpec extends BaseSpec {
@@ -88,6 +88,6 @@ class EditSetViewSpec extends BaseSpec {
     implicit val messages: Messages = Helpers.stubMessages()
     val editSetInstance = inject[editSet]
     val editSet: EditSet = getEditSetTest("1")
-    asDocument(editSetInstance(user, "EditSetTitleTest", editSet.name, editSet))
+    asDocument(editSetInstance(user = user, title = "EditSetTitleTest", heading = editSet.name, editSet = editSet))
   }
 }

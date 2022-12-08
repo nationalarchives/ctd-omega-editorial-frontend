@@ -139,7 +139,7 @@ class LoginViewSpec extends BaseSpec {
   private def generateDocument(): Document = {
     val login = inject[login]
     asDocument(
-      login("TitleTest", "HeadingTest", CredentialsFormProvider())(
+      login(title = "TitleTest", heading = "HeadingTest", credentialsForm = CredentialsFormProvider())(
         Helpers.stubMessages(messagesApi),
         CSRFTokenHelper.addCSRFToken(FakeRequest())
       )

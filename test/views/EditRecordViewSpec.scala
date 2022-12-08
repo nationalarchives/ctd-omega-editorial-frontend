@@ -22,13 +22,13 @@
 package views
 
 import org.jsoup.nodes.Document
-import play.api.data.Forms.{mapping, text}
-import play.api.data.{Form, FormError}
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import play.api.test.{CSRFTokenHelper, FakeRequest, Helpers}
+import play.api.data.Forms.{ mapping, text }
+import play.api.data.{ Form, FormError }
+import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
+import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import play.twirl.api.Html
 import support.BaseSpec
-import support.CustomMatchers.{haveHeaderTitle, haveLogoutLink, haveLogoutLinkLabel, haveVisibleLogoutLink}
+import support.CustomMatchers.{ haveHeaderTitle, haveLogoutLink, haveLogoutLinkLabel, haveVisibleLogoutLink }
 import uk.gov.nationalarchives.omega.editorial.models.EditSetRecord
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEdit
 
@@ -213,18 +213,18 @@ class EditRecordViewSpec extends BaseSpec {
     val editSetRecordEditInstance: editSetRecordEdit = inject[editSetRecordEdit]
     asDocument(
       editSetRecordEditInstance(
-        user,
-        "EditRecordTitleTest",
-        "EditRecordHeadingTest",
-        editSetRecordForm.fill(
+        user = user,
+        title = "EditRecordTitleTest",
+        heading = "EditRecordHeadingTest",
+        editSetRecordForm = editSetRecordForm.fill(
           new EditSetRecord(
-            "TestCCR",
-            "TestOCI",
-            "TestScopeAndContent",
-            "TestCoveringDates",
-            "TestFormerReferenceDepartment",
-            "TestStartDate",
-            "TestEndDate"
+            ccr = "TestCCR",
+            oci = "TestOCI",
+            scopeAndContent = "TestScopeAndContent",
+            coveringDates = "TestCoveringDates",
+            formerReferenceDepartment = "TestFormerReferenceDepartment",
+            startDate = "TestStartDate",
+            endDate = "TestEndDate"
           )
         )
       )(

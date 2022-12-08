@@ -24,10 +24,10 @@ package views
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.test.Helpers
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
+import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
 import play.twirl.api.Html
 import support.BaseSpec
-import support.CustomMatchers.{haveHeaderTitle, haveLogoutLink, haveLogoutLinkLabel, haveVisibleLogoutLink}
+import support.CustomMatchers.{ haveHeaderTitle, haveLogoutLink, haveLogoutLinkLabel, haveVisibleLogoutLink }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEditDiscard
 
 class EditSetRecordEditDiscardSpec extends BaseSpec {
@@ -67,11 +67,11 @@ class EditSetRecordEditDiscardSpec extends BaseSpec {
     val editSetRecordEditDiscardInstance = inject[editSetRecordEditDiscard]
     asDocument(
       editSetRecordEditDiscardInstance(
-        user,
-        "EditRecordTitleTest",
-        "EditRecordHeadingTest",
-        "EditRecordOciTest",
-        "Any changes have been discarded. Showing last saved version."
+        user = user,
+        title = "EditRecordTitleTest",
+        heading = "EditRecordHeadingTest",
+        oci = "EditRecordOciTest",
+        message = "Any changes have been discarded. Showing last saved version."
       )
     )
   }

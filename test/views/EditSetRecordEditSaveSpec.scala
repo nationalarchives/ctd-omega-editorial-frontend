@@ -24,10 +24,10 @@ package views
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.test.Helpers
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
+import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
 import play.twirl.api.Html
 import support.BaseSpec
-import support.CustomMatchers.{haveHeaderTitle, haveLogoutLink, haveLogoutLinkLabel, haveVisibleLogoutLink}
+import support.CustomMatchers.{ haveHeaderTitle, haveLogoutLink, haveLogoutLinkLabel, haveVisibleLogoutLink }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEditSave
 
 class EditSetRecordEditSaveSpec extends BaseSpec {
@@ -66,15 +66,15 @@ class EditSetRecordEditSaveSpec extends BaseSpec {
   private def generateDocument(): Document = {
     implicit val messages: Messages = Helpers.stubMessages()
     val editSetRecordEditSaveInstance = inject[editSetRecordEditSave]
-    val confirmationEditSetRecordEditHtml: Html =
+    asDocument(
       editSetRecordEditSaveInstance(
-        user,
-        "EditRecordTitleTest",
-        "EditRecordHeadingTest",
-        "EditRecordOciTest",
-        "Your changes have been saved."
+        user = user,
+        title = "EditRecordTitleTest",
+        heading = "EditRecordHeadingTest",
+        oci = "EditRecordOciTest",
+        message = "Your changes have been saved."
       )
-    asDocument(confirmationEditSetRecordEditHtml)
+    )
   }
 
 }

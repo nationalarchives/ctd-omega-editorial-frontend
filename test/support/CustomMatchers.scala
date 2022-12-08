@@ -22,7 +22,7 @@
 package support
 
 import org.jsoup.nodes.Document
-import org.scalatest.matchers.{MatchResult, Matcher}
+import org.scalatest.matchers.{ MatchResult, Matcher }
 
 object CustomMatchers {
 
