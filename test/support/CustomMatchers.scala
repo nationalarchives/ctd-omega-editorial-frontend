@@ -39,6 +39,7 @@ object CustomMatchers {
         errorMessageIfNotExpected
       )
     }
+
   }
 
   class HaveVisibleLogoutLink() extends Matcher[Document] {
@@ -53,6 +54,7 @@ object CustomMatchers {
         errorMessageIfNotExpected
       )
     }
+
   }
 
   class HaveLogoutLink(link: String) extends Matcher[Document] {
@@ -67,6 +69,7 @@ object CustomMatchers {
         errorMessageIfNotExpected
       )
     }
+
   }
 
   class HaveLogoutLinkLabel(label: String) extends Matcher[Document] {
@@ -81,6 +84,7 @@ object CustomMatchers {
         errorMessageIfNotExpected
       )
     }
+
   }
 
   def haveHeaderTitle = new HaveHeaderTitle("header.title")
