@@ -41,12 +41,12 @@ object CustomMatchers {
     }
   }
 
-  class HaveVisibleSignOutLink() extends Matcher[Document] {
+  class HaveVisibleLogoutLink() extends Matcher[Document] {
 
     override def apply(document: Document): MatchResult = {
       val isVisible = !document.select("div.govuk-header__signout").hasClass("hidden")
-      val errorMessageIfExpected = "We expected the sign out link to be visible but it was hidden."
-      val errorMessageIfNotExpected = s"We expected the sign out link to be hidden but it was visible."
+      val errorMessageIfExpected = "We expected the logout link to be visible but it was hidden."
+      val errorMessageIfNotExpected = s"We expected the logout link to be hidden but it was visible."
       MatchResult(
         isVisible,
         errorMessageIfExpected,
@@ -55,7 +55,7 @@ object CustomMatchers {
     }
   }
 
-  class HaveSignOutLink(link: String) extends Matcher[Document] {
+  class HaveLogoutLink(link: String) extends Matcher[Document] {
 
     override def apply(document: Document): MatchResult = {
       val actualLink = document.select("div.govuk-header__signout > a").attr("href")
@@ -69,10 +69,26 @@ object CustomMatchers {
     }
   }
 
+  class HaveLogoutLinkLabel(label: String) extends Matcher[Document] {
+
+    override def apply(document: Document): MatchResult = {
+      val actualLabel = document.select("div.govuk-header__signout > a").text()
+      val errorMessageIfExpected = s"We expected the logout link label to be '$label' but it was '$actualLabel'"
+      val errorMessageIfNotExpected = s"We didn't expect the logout link label to be '$label', but it was."
+      MatchResult(
+        label == actualLabel,
+        errorMessageIfExpected,
+        errorMessageIfNotExpected
+      )
+    }
+  }
+
   def haveHeaderTitle = new HaveHeaderTitle("header.title")
 
-  def haveVisibleSignOutLink = new HaveVisibleSignOutLink()
+  def haveVisibleLogoutLink = new HaveVisibleLogoutLink()
 
-  def haveSignOutLink = new HaveSignOutLink("/logout")
+  def haveLogoutLink = new HaveLogoutLink("/logout")
+
+  def haveLogoutLinkLabel = new HaveLogoutLinkLabel("header.logout")
 
 }

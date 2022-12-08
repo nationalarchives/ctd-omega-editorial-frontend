@@ -24,11 +24,11 @@ package views
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.test.Helpers
-import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.Html
 import support.BaseSpec
-import support.CustomMatchers.{ haveHeaderTitle, haveVisibleSignOutLink }
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry }
+import support.CustomMatchers.{haveHeaderTitle, haveLogoutLink, haveLogoutLinkLabel, haveVisibleLogoutLink}
+import uk.gov.nationalarchives.omega.editorial.models.{EditSet, EditSetEntry}
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
 
 class EditSetViewSpec extends BaseSpec {
@@ -60,7 +60,9 @@ class EditSetViewSpec extends BaseSpec {
       val document: Document = generateDocument()
 
       document must haveHeaderTitle
-      document must haveVisibleSignOutLink
+      document must haveVisibleLogoutLink
+      document must haveLogoutLinkLabel
+      document must haveLogoutLink
 
     }
 

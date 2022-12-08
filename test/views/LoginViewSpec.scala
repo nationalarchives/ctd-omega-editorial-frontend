@@ -27,7 +27,7 @@ import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
 import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import support.BaseSpec
-import support.CustomMatchers.{ haveHeaderTitle, haveVisibleSignOutLink }
+import support.CustomMatchers.{ haveHeaderTitle, haveVisibleLogoutLink }
 import uk.gov.nationalarchives.omega.editorial.forms.CredentialsFormProvider
 import uk.gov.nationalarchives.omega.editorial.models.Credentials
 import uk.gov.nationalarchives.omega.editorial.views.html.login
@@ -64,7 +64,7 @@ class LoginViewSpec extends BaseSpec {
       val document = generateDocument()
 
       document must haveHeaderTitle
-      document must not(haveVisibleSignOutLink)
+      document must not(haveVisibleLogoutLink)
 
     }
 

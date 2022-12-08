@@ -24,10 +24,10 @@ package views
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.test.Helpers
-import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.Html
 import support.BaseSpec
-import support.CustomMatchers.{ haveHeaderTitle, haveVisibleSignOutLink }
+import support.CustomMatchers.{haveHeaderTitle, haveLogoutLink, haveLogoutLinkLabel, haveVisibleLogoutLink}
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEditSave
 
 class EditSetRecordEditSaveSpec extends BaseSpec {
@@ -55,7 +55,9 @@ class EditSetRecordEditSaveSpec extends BaseSpec {
       val document = generateDocument()
 
       document must haveHeaderTitle
-      document must haveVisibleSignOutLink
+      document must haveVisibleLogoutLink
+      document must haveLogoutLinkLabel
+      document must haveLogoutLink
 
     }
 
