@@ -63,7 +63,7 @@ class LoginViewSpec extends BaseSpec {
 
       val document = generateDocument()
 
-      document must haveHeaderTitle
+      document must haveHeaderTitle("header.title")
       document must not(haveVisibleLogoutLink)
 
     }
