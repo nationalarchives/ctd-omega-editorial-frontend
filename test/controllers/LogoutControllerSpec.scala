@@ -25,7 +25,7 @@ import org.scalatestplus.play._
 import org.scalatestplus.play.guice._
 import play.api.test.Helpers._
 import play.api.test._
-import uk.gov.nationalarchives.omega.editorial.controllers.LogoutController
+import uk.gov.nationalarchives.omega.editorial.controllers.{ LogoutController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 
 class LogoutControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
@@ -40,11 +40,11 @@ class LogoutControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecti
         val controller = inject[LogoutController]
         val result = controller
           .logout()
-          .apply(FakeRequest().withSession("sessionToken" -> validSessionToken))
+          .apply(FakeRequest().withSession(SessionKeys.token -> validSessionToken))
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(loginPagePath)
-        session(result).get("sessionToken") mustBe empty
+        session(result).get(SessionKeys.token) mustBe empty
 
       }
       "when already logged out" in {
@@ -56,7 +56,7 @@ class LogoutControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecti
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(loginPagePath)
-        session(result).get("sessionToken") mustBe empty
+        session(result).get(SessionKeys.token) mustBe empty
 
       }
 

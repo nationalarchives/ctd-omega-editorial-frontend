@@ -25,7 +25,7 @@ import play.api.mvc.{ AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesAc
 import play.api.test.Helpers._
 import play.api.test._
 import support.BaseSpec
-import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController
+import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
@@ -69,7 +69,7 @@ class EditSetControllerSpec extends BaseSpec {
       )
       val editSet = controller
         .view("COAL.2022.V5RJW.P")
-        .apply(FakeRequest(GET, "/edit-set/1").withSession("sessionToken" -> validSessionToken))
+        .apply(FakeRequest(GET, "/edit-set/1").withSession(SessionKeys.token -> validSessionToken))
 
       status(editSet) mustBe OK
       contentType(editSet) mustBe Some("text/html")
@@ -82,7 +82,7 @@ class EditSetControllerSpec extends BaseSpec {
         .view("COAL.2022.V5RJW.P")
         .apply(
           FakeRequest(GET, "/edit-set/1")
-            .withSession("sessionToken" -> validSessionToken)
+            .withSession(SessionKeys.token -> validSessionToken)
         )
 
       status(editSet) mustBe OK
@@ -91,7 +91,7 @@ class EditSetControllerSpec extends BaseSpec {
     }
 
     "render the edit set page from the router" in {
-      val request = FakeRequest(GET, "/edit-set/1").withSession("sessionToken" -> validSessionToken)
+      val request = FakeRequest(GET, "/edit-set/1").withSession(SessionKeys.token -> validSessionToken)
       val editSet = route(app, request).get
 
       status(editSet) mustBe OK
@@ -105,7 +105,7 @@ class EditSetControllerSpec extends BaseSpec {
         .view("COAL.2022.V5RJW.P")
         .apply(
           FakeRequest(GET, "/edit-set/1")
-            .withSession("sessionToken" -> invalidSessionToken)
+            .withSession(SessionKeys.token -> invalidSessionToken)
         )
 
       status(editSet) mustBe SEE_OTHER
@@ -113,7 +113,7 @@ class EditSetControllerSpec extends BaseSpec {
     }
 
     "redirect to the login page from the router when requested with invalid session token" in {
-      val request = FakeRequest(GET, "/edit-set/1").withSession("sessionToken" -> invalidSessionToken)
+      val request = FakeRequest(GET, "/edit-set/1").withSession(SessionKeys.token -> invalidSessionToken)
       val editSet = route(app, request).get
 
       status(editSet) mustBe SEE_OTHER
@@ -155,7 +155,7 @@ class EditSetControllerSpec extends BaseSpec {
         .apply(
           CSRFTokenHelper.addCSRFToken(
             FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
-              .withSession("sessionToken" -> validSessionToken)
+              .withSession(SessionKeys.token -> validSessionToken)
           )
         )
 
@@ -171,7 +171,7 @@ class EditSetControllerSpec extends BaseSpec {
         .apply(
           CSRFTokenHelper.addCSRFToken(
             FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
-              .withSession("sessionToken" -> validSessionToken)
+              .withSession(SessionKeys.token -> validSessionToken)
           )
         )
 
@@ -182,7 +182,9 @@ class EditSetControllerSpec extends BaseSpec {
 
     "render the edit set page from the router" in {
       val request =
-        FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit").withSession("sessionToken" -> validSessionToken)
+        FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit").withSession(
+          SessionKeys.token -> validSessionToken
+        )
       val editRecordPage = route(app, request).get
 
       status(editRecordPage) mustBe OK
@@ -197,7 +199,7 @@ class EditSetControllerSpec extends BaseSpec {
         .apply(
           CSRFTokenHelper.addCSRFToken(
             FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
-              .withSession("sessionToken" -> invalidSessionToken)
+              .withSession(SessionKeys.token -> invalidSessionToken)
           )
         )
 
@@ -207,7 +209,9 @@ class EditSetControllerSpec extends BaseSpec {
 
     "redirect to the login page from the router when requested with invalid session token" in {
       val request =
-        FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit").withSession("sessionToken" -> invalidSessionToken)
+        FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit").withSession(
+          SessionKeys.token -> invalidSessionToken
+        )
       val editRecordPage = route(app, request).get
 
       status(editRecordPage) mustBe SEE_OTHER
