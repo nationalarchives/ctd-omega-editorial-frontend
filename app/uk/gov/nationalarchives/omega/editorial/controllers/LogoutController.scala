@@ -19,31 +19,18 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.controllers.authentication
+package uk.gov.nationalarchives.omega.editorial.controllers
 
-import play.api.mvc.Results.Redirect
+import javax.inject._
 import play.api.mvc._
-import uk.gov.nationalarchives.omega.editorial.controllers.{ SessionKeys, routes }
-import uk.gov.nationalarchives.omega.editorial.models.session.Session
-import uk.gov.nationalarchives.omega.editorial.models.{ Credentials, User }
 
-import java.time.{ LocalDateTime, ZoneOffset }
+@Singleton
+class LogoutController @Inject() (
+  val controllerComponents: ControllerComponents
+) extends BaseController {
 
-trait Secured {
+  def logout(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
+    Redirect(routes.LoginController.view()).removingFromSession(SessionKeys.token)
+  }
 
-  def withUser[T](block: User => Result)(implicit request: Request[AnyContent]): Result =
-    extractUser(request)
-      .map { credentials =>
-        val user = User(credentials.username)
-        block(user)
-      }
-      .getOrElse(Redirect(routes.LoginController.view()))
-
-  private def extractUser(req: RequestHeader): Option[Credentials] =
-    req.session
-      .get(SessionKeys.token)
-      .flatMap(token => Session.getSession(token))
-      .filter(_.expiration.isAfter(LocalDateTime.now(ZoneOffset.UTC)))
-      .map(_.username)
-      .flatMap(Credentials.getUser)
 }

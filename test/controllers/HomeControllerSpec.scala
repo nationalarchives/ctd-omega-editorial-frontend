@@ -27,7 +27,7 @@ import play.api.mvc.{ AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesAc
 import play.api.test._
 import play.api.test.Helpers._
 import play.i18n.MessagesApi
-import uk.gov.nationalarchives.omega.editorial.controllers.HomeController
+import uk.gov.nationalarchives.omega.editorial.controllers.{ HomeController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 
 /** Add your spec here. You can mock out a whole application including requests, plugins etc.
@@ -64,7 +64,7 @@ class HomeControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
         .index()
         .apply(
           FakeRequest(GET, "/")
-            .withSession("sessionToken" -> validSessionToken)
+            .withSession(SessionKeys.token -> validSessionToken)
         )
 
       status(home) mustBe SEE_OTHER
@@ -77,7 +77,7 @@ class HomeControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
         .index()
         .apply(
           FakeRequest(GET, "/")
-            .withSession("sessionToken" -> validSessionToken)
+            .withSession(SessionKeys.token -> validSessionToken)
         )
 
       status(home) mustBe SEE_OTHER
@@ -85,7 +85,7 @@ class HomeControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
     }
 
     "render the index page from the router" in {
-      val request = FakeRequest(GET, "/").withSession("sessionToken" -> validSessionToken)
+      val request = FakeRequest(GET, "/").withSession(SessionKeys.token -> validSessionToken)
       val home = route(app, request).get
 
       status(home) mustBe SEE_OTHER
@@ -99,7 +99,7 @@ class HomeControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
       .index()
       .apply(
         FakeRequest(GET, "/")
-          .withSession("sessionToken" -> invalidSessionToken)
+          .withSession(SessionKeys.token -> invalidSessionToken)
       )
 
     status(home) mustBe SEE_OTHER
@@ -107,7 +107,7 @@ class HomeControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
   }
 
   "redirect to the login page from the router when requested with invalid session token" in {
-    val request = FakeRequest(GET, "/").withSession("sessionToken" -> invalidSessionToken)
+    val request = FakeRequest(GET, "/").withSession(SessionKeys.token -> invalidSessionToken)
     val home = route(app, request).get
 
     status(home) mustBe SEE_OTHER

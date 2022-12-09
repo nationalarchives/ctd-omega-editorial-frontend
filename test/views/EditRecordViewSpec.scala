@@ -21,20 +21,18 @@
 
 package views
 
-import org.jsoup.Jsoup
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import org.jsoup.nodes.Document
 import play.api.data.Forms.{ mapping, text }
 import play.api.data.{ Form, FormError }
 import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
-import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers, Injecting }
+import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import play.twirl.api.Html
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, User }
+import support.BaseSpec
+import support.CustomMatchers.{ haveHeaderTitle, haveLogoutLink, haveLogoutLinkLabel, haveVisibleLogoutLink }
+import uk.gov.nationalarchives.omega.editorial.models.EditSetRecord
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEdit
 
-class EditRecordViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
-
-  lazy val user = User("dummy user")
+class EditRecordViewSpec extends BaseSpec {
 
   "Edit record Html" should {
     "render the given title and heading" in {
@@ -82,42 +80,14 @@ class EditRecordViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
     }
 
     "render the header" in {
-      val editSetRecordEditInstance = inject[editSetRecordEdit]
-      val title = "EditRecordTitleTest"
-      val heading = "EditRecordHeadingTest"
-      val editSetRecordForm: Form[EditSetRecord] = Form(
-        mapping(
-          "ccr"                       -> text,
-          "oci"                       -> text,
-          "scopeAndContent"           -> text,
-          "coveringDates"             -> text,
-          "formerReferenceDepartment" -> text,
-          "startDate"                 -> text,
-          "endDate"                   -> text
-        )(EditSetRecord.apply)(EditSetRecord.unapply)
-      )
 
-      val editSetData = new EditSetRecord(
-        "TestCCR",
-        "TestOCI",
-        "TestScopeAndContent",
-        "TestCoveringDates",
-        "TestFormerReferenceDepartment",
-        "TestStartDate",
-        "TestEndDate"
-      )
+      val document = generateDocument()
 
-      val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, heading, editSetRecordForm.fill(editSetData))(
-          Helpers.stubMessages(),
-          CSRFTokenHelper.addCSRFToken(FakeRequest())
-        )
+      document must haveHeaderTitle
+      document must haveVisibleLogoutLink
+      document must haveLogoutLinkLabel
+      document must haveLogoutLink
 
-      val headerText = Jsoup
-        .parse(contentAsString(editRecordHtml))
-        .select("div.govuk-header__content")
-        .text()
-      headerText mustEqual "header.title"
     }
 
     "render an error given no scope and content" in {
@@ -224,6 +194,44 @@ class EditRecordViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
       )
 
     }
+
+  }
+
+  private def generateDocument(): Document = {
+    val editSetRecordForm: Form[EditSetRecord] = Form(
+      mapping(
+        "ccr"                       -> text,
+        "oci"                       -> text,
+        "scopeAndContent"           -> text,
+        "coveringDates"             -> text,
+        "formerReferenceDepartment" -> text,
+        "startDate"                 -> text,
+        "endDate"                   -> text
+      )(EditSetRecord.apply)(EditSetRecord.unapply)
+    )
+
+    val editSetRecordEditInstance: editSetRecordEdit = inject[editSetRecordEdit]
+    asDocument(
+      editSetRecordEditInstance(
+        user = user,
+        title = "EditRecordTitleTest",
+        heading = "EditRecordHeadingTest",
+        editSetRecordForm = editSetRecordForm.fill(
+          new EditSetRecord(
+            ccr = "TestCCR",
+            oci = "TestOCI",
+            scopeAndContent = "TestScopeAndContent",
+            coveringDates = "TestCoveringDates",
+            formerReferenceDepartment = "TestFormerReferenceDepartment",
+            startDate = "TestStartDate",
+            endDate = "TestEndDate"
+          )
+        )
+      )(
+        Helpers.stubMessages(),
+        CSRFTokenHelper.addCSRFToken(FakeRequest())
+      )
+    )
 
   }
 }

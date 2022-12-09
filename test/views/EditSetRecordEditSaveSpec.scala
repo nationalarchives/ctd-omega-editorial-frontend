@@ -21,23 +21,18 @@
 
 package views
 
-import org.jsoup.Jsoup
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
-import org.scalatestplus.play.PlaySpec
+import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.test.Helpers
 import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
-import play.api.test.Injecting
 import play.twirl.api.Html
-import uk.gov.nationalarchives.omega.editorial.models.User
+import support.BaseSpec
+import support.CustomMatchers.{ haveHeaderTitle, haveLogoutLink, haveLogoutLinkLabel, haveVisibleLogoutLink }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEditSave
 
-class EditSetRecordEditSaveSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
+class EditSetRecordEditSaveSpec extends BaseSpec {
 
   "Edit set record edit save Html" should {
-
-    val user = User("dummy user")
-
     "render the given title and heading with save changes message" in {
       implicit val messages: Messages = Helpers.stubMessages()
 
@@ -56,24 +51,30 @@ class EditSetRecordEditSaveSpec extends PlaySpec with GuiceOneAppPerTest with In
     }
 
     "render the header" in {
-      implicit val messages: Messages = Helpers.stubMessages()
 
-      val editSetRecordEditSaveInstance = inject[editSetRecordEditSave]
-      val title = "EditRecordTitleTest"
-      val heading = "EditRecordHeadingTest"
-      val saveChanges = "Your changes have been saved."
-      val oci = "EditRecordOciTest"
+      val document = generateDocument()
 
-      val confirmationEditSetRecordEditHtml: Html =
-        editSetRecordEditSaveInstance(user, title, heading, oci, saveChanges)
+      document must haveHeaderTitle
+      document must haveVisibleLogoutLink
+      document must haveLogoutLinkLabel
+      document must haveLogoutLink
 
-      val headerText = Jsoup
-        .parse(contentAsString(confirmationEditSetRecordEditHtml))
-        .select("div.govuk-header__content")
-        .text()
-      headerText mustEqual "header.title"
     }
 
+  }
+
+  private def generateDocument(): Document = {
+    implicit val messages: Messages = Helpers.stubMessages()
+    val editSetRecordEditSaveInstance = inject[editSetRecordEditSave]
+    asDocument(
+      editSetRecordEditSaveInstance(
+        user = user,
+        title = "EditRecordTitleTest",
+        heading = "EditRecordHeadingTest",
+        oci = "EditRecordOciTest",
+        message = "Your changes have been saved."
+      )
+    )
   }
 
 }

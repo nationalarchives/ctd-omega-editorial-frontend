@@ -21,19 +21,18 @@
 
 package views
 
-import org.jsoup.Jsoup
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import org.jsoup.nodes.Document
 import play.api.data.{ Form, FormError }
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
-import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers, Injecting }
-import play.test.WithApplication
+import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
+import support.BaseSpec
+import support.CustomMatchers.{ haveHeaderTitle, haveVisibleLogoutLink }
 import uk.gov.nationalarchives.omega.editorial.forms.CredentialsFormProvider
 import uk.gov.nationalarchives.omega.editorial.models.Credentials
 import uk.gov.nationalarchives.omega.editorial.views.html.login
 
-class LoginViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
+class LoginViewSpec extends BaseSpec {
 
   private val errorSummaryTitle = "There is a problem"
   val defaultLang = play.api.i18n.Lang.defaultLang.code
@@ -45,12 +44,12 @@ class LoginViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
   implicit val messagesApi: MessagesApi = stubMessagesApi(messages)
 
   "Login Html" should {
-    "render the given title and heading" in new WithApplication {
-      private val title = "TitleTest"
-      private val heading = "HeadingTest"
-      private val credentialsForm: Form[Credentials] = CredentialsFormProvider()
-      private val login = inject[login]
-      private val loginHtml =
+    "render the given title and heading" in {
+      val title = "TitleTest"
+      val heading = "HeadingTest"
+      val credentialsForm: Form[Credentials] = CredentialsFormProvider()
+      val login = inject[login]
+      val loginHtml =
         login(title, heading, credentialsForm)(
           Helpers.stubMessages(messagesApi),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
@@ -60,33 +59,24 @@ class LoginViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
       contentAsString(loginHtml) must include(heading)
     }
 
-    "render the header" in new WithApplication {
-      private val title = "TitleTest"
-      private val heading = "HeadingTest"
-      private val credentialsForm: Form[Credentials] = CredentialsFormProvider()
-      private val login = inject[login]
-      private val loginHtml =
-        login(title, heading, credentialsForm)(
-          Helpers.stubMessages(messagesApi),
-          CSRFTokenHelper.addCSRFToken(FakeRequest())
-        )
+    "render the header" in {
 
-      val headerText = Jsoup
-        .parse(contentAsString(loginHtml))
-        .select("div.govuk-header__content")
-        .text()
-      headerText mustEqual "header.title"
+      val document = generateDocument()
+
+      document must haveHeaderTitle
+      document must not(haveVisibleLogoutLink)
+
     }
 
-    "render multiple errors when no username and password given" in new WithApplication {
-      private val title = "TitleTest"
-      private val heading = "HeadingTest"
-      private val userForm: Form[Credentials] = CredentialsFormProvider()
+    "render multiple errors when no username and password given" in {
+      val title = "TitleTest"
+      val heading = "HeadingTest"
+      val userForm: Form[Credentials] = CredentialsFormProvider()
         .fill(Credentials.apply("", ""))
         .withError(FormError("username", "Enter a username"))
         .withError(FormError("password", "Enter a password"))
-      private val login = inject[login]
-      private val loginHtml =
+      val login = inject[login]
+      val loginHtml =
         login(title, heading, userForm)(Helpers.stubMessages(messagesApi), CSRFTokenHelper.addCSRFToken(FakeRequest()))
 
       contentAsString(loginHtml) must include(errorSummaryTitle)
@@ -94,14 +84,14 @@ class LoginViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
       contentAsString(loginHtml) must include("Enter a password")
     }
 
-    "render an error given an incorrect username and/or password " in new WithApplication {
-      private val title = "TitleTest"
-      private val heading = "HeadingTest"
-      private val credentialsForm: Form[Credentials] = CredentialsFormProvider()
+    "render an error given an incorrect username and/or password " in {
+      val title = "TitleTest"
+      val heading = "HeadingTest"
+      val credentialsForm: Form[Credentials] = CredentialsFormProvider()
         .fill(Credentials.apply("11", "22"))
         .withError(FormError("", "Username and/or password is incorrect."))
-      private val login = inject[login]
-      private val loginHtml =
+      val login = inject[login]
+      val loginHtml =
         login(title, heading, credentialsForm)(
           Helpers.stubMessages(messagesApi),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
@@ -111,14 +101,14 @@ class LoginViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
       contentAsString(loginHtml) must include("Username and/or password is incorrect.")
     }
 
-    "render an error when no username given" in new WithApplication {
-      private val title = "TitleTest"
-      private val heading = "HeadingTest"
-      private val credentialsForm: Form[Credentials] = CredentialsFormProvider()
+    "render an error when no username given" in {
+      val title = "TitleTest"
+      val heading = "HeadingTest"
+      val credentialsForm: Form[Credentials] = CredentialsFormProvider()
         .fill(Credentials.apply("", ""))
         .withError(FormError("username", "Enter a username"))
-      private val login = inject[login]
-      private val loginHtml =
+      val login = inject[login]
+      val loginHtml =
         login(title, heading, credentialsForm)(
           Helpers.stubMessages(messagesApi),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
@@ -128,14 +118,14 @@ class LoginViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
       contentAsString(loginHtml) must include("Enter a username")
     }
 
-    "render an error when no password given" in new WithApplication {
-      private val title = "TitleTest"
-      private val heading = "HeadingTest"
-      private val credentialsForm: Form[Credentials] = CredentialsFormProvider()
+    "render an error when no password given" in {
+      val title = "TitleTest"
+      val heading = "HeadingTest"
+      val credentialsForm: Form[Credentials] = CredentialsFormProvider()
         .fill(Credentials.apply("", ""))
         .withError(FormError("password", "Enter a password"))
-      private val login = inject[login]
-      private val loginHtml =
+      val login = inject[login]
+      val loginHtml =
         login(title, heading, credentialsForm)(
           Helpers.stubMessages(messagesApi),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
@@ -144,5 +134,15 @@ class LoginViewSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
       contentAsString(loginHtml) must include(errorSummaryTitle)
       contentAsString(loginHtml) must include("Enter a password")
     }
+  }
+
+  private def generateDocument(): Document = {
+    val login = inject[login]
+    asDocument(
+      login(title = "TitleTest", heading = "HeadingTest", credentialsForm = CredentialsFormProvider())(
+        Helpers.stubMessages(messagesApi),
+        CSRFTokenHelper.addCSRFToken(FakeRequest())
+      )
+    )
   }
 }

@@ -26,7 +26,7 @@ import org.scalatestplus.play.guice._
 import play.api.mvc.{ AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesActionBuilderImpl, DefaultMessagesControllerComponents }
 import play.api.test.Helpers._
 import play.api.test._
-import uk.gov.nationalarchives.omega.editorial.controllers.LoginController
+import uk.gov.nationalarchives.omega.editorial.controllers.{ LoginController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.views.html.login
 
 /** Add your spec here. You can mock out a whole application including requests, plugins etc.
@@ -115,6 +115,8 @@ class LoginControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injectin
             )
         )
       status(response) mustBe SEE_OTHER
+      session(response).get(SessionKeys.token) must not be empty
+
     }
 
     "redirect to result page of the application" in {
@@ -128,6 +130,8 @@ class LoginControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injectin
         )
 
       status(login) mustBe SEE_OTHER
+      session(login).get(SessionKeys.token) must not be empty
+
     }
 
     "redirect to result page from the router" in {
@@ -137,6 +141,7 @@ class LoginControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injectin
       val login = route(app, request).get
 
       status(login) mustBe SEE_OTHER
+      session(login).get(SessionKeys.token) must not be empty
     }
   }
 }

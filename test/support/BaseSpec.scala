@@ -19,31 +19,21 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.controllers.authentication
+package support
 
-import play.api.mvc.Results.Redirect
-import play.api.mvc._
-import uk.gov.nationalarchives.omega.editorial.controllers.{ SessionKeys, routes }
-import uk.gov.nationalarchives.omega.editorial.models.session.Session
-import uk.gov.nationalarchives.omega.editorial.models.{ Credentials, User }
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.scalatestplus.play.PlaySpec
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
+import play.api.test.Injecting
+import play.twirl.api.Content
+import uk.gov.nationalarchives.omega.editorial.models.User
 
-import java.time.{ LocalDateTime, ZoneOffset }
+class BaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
-trait Secured {
+  lazy val user: User = User("dummy user")
 
-  def withUser[T](block: User => Result)(implicit request: Request[AnyContent]): Result =
-    extractUser(request)
-      .map { credentials =>
-        val user = User(credentials.username)
-        block(user)
-      }
-      .getOrElse(Redirect(routes.LoginController.view()))
+  def asDocument(content: Content): Document = Jsoup.parse(contentAsString(content))
 
-  private def extractUser(req: RequestHeader): Option[Credentials] =
-    req.session
-      .get(SessionKeys.token)
-      .flatMap(token => Session.getSession(token))
-      .filter(_.expiration.isAfter(LocalDateTime.now(ZoneOffset.UTC)))
-      .map(_.username)
-      .flatMap(Credentials.getUser)
 }

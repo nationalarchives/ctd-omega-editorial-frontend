@@ -18,6 +18,7 @@ edit-set.record.save.confirmation=Your changes have been saved.
 edit-set.record.save.text=Changes to the following record have been saved:
 edit-set.title=Edit set
 header.title=Pan-Archival Catalogue
+header.logout=Sign out
 index.heading=Welcome to the Catalogue
 index.title=Catalogue
 login.authentication.error=Username and/or password is incorrect.
