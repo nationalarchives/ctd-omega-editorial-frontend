@@ -6,19 +6,13 @@
 
 <year_month_day> ::= <year> <month> valid day of month
 
-// Represented as https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Month.html
-
-// Represented as https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Year.html
+<single> ::= <year> | <year_month> | <year_month_day>
 
 <range> ::= <single> "-" <single>
 
-<single> ::= <year> | <year_month> | <year_month_day>
-
-// Derived dates are not always in square brackets but I need a name for this
-// representation
-<derived> ::= "[" <range> "]" | "[" <single> "]" | "[" <approx> "]"
-
 <approx> ::= "?" <range> | "?" <single> | "c" <range> | "c" <single>
+
+<derived> ::= "[" <range> "]" | "[" <single> "]" | "[" <approx> "]"
 
 <undated> ::= "undated"
 

@@ -21,15 +21,15 @@
 
 package services
 
-import java.time.format.DateTimeFormatter
 import java.time._
+import java.time.format.DateTimeFormatter
+import org.scalatest.EitherValues
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.prop.Tables
 import support.BaseSpec
-import uk.gov.nationalarchives.omega.editorial.models.{ CoveringDate, CoveringDates }
-import uk.gov.nationalarchives.omega.editorial.services.CoveringDateParser
 import support.CustomMatchers.parseSuccessfullyAs
-import org.scalatest.EitherValues
+import uk.gov.nationalarchives.omega.editorial.models.{ CoveringDate, CoveringDates }
+import uk.gov.nationalarchives.omega.editorial.services.{ CoveringDateNode => Node, CoveringDateParser }
 
 class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks with EitherValues {
 
@@ -76,7 +76,7 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks wit
     forAll(testTable) { (input, expectedResult) =>
       s"parse $input as a Year" in {
         val parseResult = CoveringDateParser.runParser(CoveringDateParser.year, input)
-        parseResult must parseSuccessfullyAs(expectedResult)
+        parseResult must parseSuccessfullyAs(Node.Year(expectedResult))
       }
     }
   }
@@ -98,7 +98,7 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks wit
     forAll(testTable) { (input, expectedResult) =>
       s"parse $input as a YearMonth" in {
         val parseResult = CoveringDateParser.runParser(CoveringDateParser.yearMonth, input)
-        parseResult must parseSuccessfullyAs(expectedResult)
+        parseResult must parseSuccessfullyAs(Node.YearMonth(expectedResult))
       }
     }
   }
@@ -114,6 +114,142 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks wit
     forAll(testTable) { (input, expectedResult) =>
       s"parse $input as a LocalDate" in {
         val parseResult = CoveringDateParser.runParser(CoveringDateParser.yearMonthDay, input)
+        parseResult must parseSuccessfullyAs(Node.YearMonthDay(expectedResult))
+      }
+    }
+  }
+
+  "SingleParser" should {
+
+    lazy val testTable = Tables.Table(
+      "single input" -> "parse result",
+      "1 Jan 1"         -> Node.Single(Node.YearMonthDay(LocalDate.of(1, 1, 1))),
+      "1993 Jan 1"         -> Node.Single(Node.YearMonthDay(LocalDate.of(1993, 1, 1))),
+      "1993 Dec"           -> Node.Single(Node.YearMonth(YearMonth.of(1993, Month.DECEMBER))),
+      "1993"               -> Node.Single(Node.Year(Year.of(1993))),
+    )
+
+    forAll(testTable) { (input, expectedResult) =>
+      s"parse $input as a Single" in {
+        val parseResult = CoveringDateParser.runParser(CoveringDateParser.single, input)
+        parseResult must parseSuccessfullyAs(expectedResult)
+      }
+    }
+  }
+
+  "RangeParser" should {
+
+    lazy val testTable = Tables.Table(
+      "Range input" -> "parse result",
+      "1993 Jan 1 - 1993 Dec 31"         -> Node.Range(
+        Node.Single(Node.YearMonthDay(LocalDate.of(1993, 1, 1))),
+        Node.Single(Node.YearMonthDay(LocalDate.of(1993, 12, 31)))
+      ),
+      "1993 Jan 1-1993 Dec 31"         -> Node.Range(
+        Node.Single(Node.YearMonthDay(LocalDate.of(1993, 1, 1))),
+        Node.Single(Node.YearMonthDay(LocalDate.of(1993, 12, 31)))
+      ),
+      "1993 Jan - 1993 Dec"         -> Node.Range(
+        Node.Single(Node.YearMonth(YearMonth.of(1993, 1))),
+        Node.Single(Node.YearMonth(YearMonth.of(1993, 12)))
+      )
+
+    )
+
+    forAll(testTable) { (input, expectedResult) =>
+      s"parse $input as a Range" in {
+        val parseResult = CoveringDateParser.runParser(CoveringDateParser.range, input)
+        parseResult must parseSuccessfullyAs(expectedResult)
+      }
+    }
+  }
+
+  "ApproxParser" should {
+
+    lazy val testTable = Tables.Table(
+      "Approx input" -> "parse result",
+      "c 1 Jan 1"         -> Node.Approx(Node.Single(Node.YearMonthDay(LocalDate.of(1, 1, 1)))),
+      "c 1993 Jan 1"         -> Node.Approx(Node.Single(Node.YearMonthDay(LocalDate.of(1993, 1, 1)))),
+      "c 1993 Dec"           -> Node.Approx(Node.Single(Node.YearMonth(YearMonth.of(1993, Month.DECEMBER)))),
+      "c 1993"               -> Node.Approx(Node.Single(Node.Year(Year.of(1993)))),
+      "c1 Jan 1"         -> Node.Approx(Node.Single(Node.YearMonthDay(LocalDate.of(1, 1, 1)))),
+      "c1993 Jan 1"         -> Node.Approx(Node.Single(Node.YearMonthDay(LocalDate.of(1993, 1, 1)))),
+      "c1993 Dec"           -> Node.Approx(Node.Single(Node.YearMonth(YearMonth.of(1993, Month.DECEMBER)))),
+      "c1993"               -> Node.Approx(Node.Single(Node.Year(Year.of(1993)))),
+      "? 1 Jan 1"         -> Node.Approx(Node.Single(Node.YearMonthDay(LocalDate.of(1, 1, 1)))),
+      "? 1993 Jan 1"         -> Node.Approx(Node.Single(Node.YearMonthDay(LocalDate.of(1993, 1, 1)))),
+      "? 1993 Dec"           -> Node.Approx(Node.Single(Node.YearMonth(YearMonth.of(1993, Month.DECEMBER)))),
+      "? 1993"               -> Node.Approx(Node.Single(Node.Year(Year.of(1993)))),
+    )
+
+    forAll(testTable) { (input, expectedResult) =>
+      s"parse $input as Approx" in {
+        val parseResult = CoveringDateParser.runParser(CoveringDateParser.approx, input)
+        parseResult must parseSuccessfullyAs(expectedResult)
+      }
+    }
+  }
+
+  "DerivedParser" should {
+
+    lazy val testTable = Tables.Table(
+      "Derived input" -> "parse result",
+      "[c 1 Jan 1]"         -> Node.Derived(Node.Approx(Node.Single(Node.YearMonthDay(LocalDate.of(1, 1, 1))))),
+      "[1993 Jan 1 - 2004 Dec 25]"         -> Node.Derived(
+        Node.Range(
+          Node.Single(Node.YearMonthDay(LocalDate.of(1993, 1, 1))),
+          Node.Single(Node.YearMonthDay(LocalDate.of(2004, 12, 25)))
+        )
+      )
+    )
+
+    forAll(testTable) { (input, expectedResult) =>
+      s"parse $input as Derived" in {
+        val parseResult = CoveringDateParser.runParser(CoveringDateParser.derived, input)
+        parseResult must parseSuccessfullyAs(expectedResult)
+      }
+    }
+  }
+
+  "GapParser" should {
+
+    lazy val testTable = Tables.Table(
+      "Gap input" -> "parse result",
+      "1868; 1890-1902; 1933" -> Node.Gap(
+        List(
+          Node.Single(Node.Year(Year.of(1868))),
+          Node.Range(Node.Single(Node.Year(Year.of(1890))), Node.Single(Node.Year(Year.of(1902)))),
+          Node.Single(Node.Year(Year.of(1933)))
+        )
+      )
+    )
+
+    forAll(testTable) { (input, expectedResult) =>
+      s"parse $input as Gap" in {
+        val parseResult = CoveringDateParser.runParser(CoveringDateParser.gap, input)
+        parseResult must parseSuccessfullyAs(expectedResult)
+      }
+    }
+  }
+
+  "CoveringDateParser" should {
+
+    lazy val testTable = Tables.Table(
+      "Gap input" -> "parse result",
+      "1868; 1890-1902; 1933" -> Node.Root(
+        Node.Gap(
+          List(
+            Node.Single(Node.Year(Year.of(1868))),
+            Node.Range(Node.Single(Node.Year(Year.of(1890))), Node.Single(Node.Year(Year.of(1902)))),
+            Node.Single(Node.Year(Year.of(1933)))
+          )
+        )
+      )
+    )
+
+    forAll(testTable) { (input, expectedResult) =>
+      s"parse $input as Gap" in {
+        val parseResult = CoveringDateParser.runParser(CoveringDateParser.coveringDates, input)
         parseResult must parseSuccessfullyAs(expectedResult)
       }
     }

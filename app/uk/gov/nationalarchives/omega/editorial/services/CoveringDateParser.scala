@@ -22,15 +22,18 @@
 package uk.gov.nationalarchives.omega.editorial.services
 
 import java.time._
-import java.util.Locale
 import java.time.format.DateTimeFormatter
+import java.util.Locale
+import scala.util.matching.Regex
 import scala.util.parsing.combinator._
 import scala.util.Try
 import uk.gov.nationalarchives.omega.editorial
 import uk.gov.nationalarchives.omega.editorial.models.{ CoveringDate, CoveringDates }
-import scala.util.matching.Regex
+import uk.gov.nationalarchives.omega.editorial.services.{ CoveringDateNode => Node }
 
 object CoveringDateParser extends JavaTokenParsers {
+
+  override def skipWhitespace = true
 
   private lazy val yearFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("u")
   private lazy val yearMonthFormatter: DateTimeFormatter = DateTimeFormatter
@@ -52,37 +55,49 @@ object CoveringDateParser extends JavaTokenParsers {
     new Regex(regexString)
   }
 
-  def integerDigit: Parser[String] = """-?[0-9]*""".r
+  def integerDigit: Parser[String] = "-?[0-9]*".r
 
-  def coveringDates: Parser[CoveringDates] = ???
+  def year: Parser[Node.Year] = integerDigit ^? (attemptParseYear, yearErrorFormatter)
 
-  def year: Parser[Year] = integerDigit ^? (attemptParseYear, yearErrorFormatter)
+  def yearMonth: Parser[Node.YearMonth] = integerDigit ~ monthChars ^? (attemptParseYearMonth, yearMonthErrorFormatter)
 
-  def yearMonth: Parser[YearMonth] = integerDigit ~ monthChars ^? (attemptParseYearMonth, yearMonthErrorFormatter)
-
-  def yearMonthDay: Parser[LocalDate] =
+  def yearMonthDay: Parser[Node.YearMonthDay] =
     integerDigit ~ monthChars ~ wholeNumber ^? (attemptParseLocalDate, yearMonthDayErrorFormatter)
 
-  def attemptParseYear: PartialFunction[String, Year] =
+  def single: Parser[Node.Single] = (yearMonthDay | yearMonth | year) ^^ Node.Single.apply
+
+  def range: Parser[Node.Range] = (single <~ "-") ~ single ^^ { case (l ~ r) => Node.Range(l, r) }
+
+  def approx: Parser[Node.Approx] = "c|\\?".r ~> (range | single) ^^ Node.Approx.apply
+
+  def derived: Parser[Node.Derived] = ("[" ~> (approx | range | single) <~ "]") ^^ Node.Derived.apply
+
+  def undated: Parser[Node.Undated.type] = "undated" ^^^ Node.Undated
+
+  def gap: Parser[Node.Gap] = rep1sep(range | single, ";") ^^ Node.Gap.apply
+
+  def coveringDates: Parser[Node.Root] = (gap | derived | approx | range | single | undated) ^^ Node.Root.apply
+
+  def attemptParseYear: PartialFunction[String, Node.Year] =
     Function.unlift { yearRaw =>
       Try {
-        Year.parse(yearRaw, yearFormatter)
+        Node.Year(Year.parse(yearRaw, yearFormatter))
       }.toOption
     }
 
-  def attemptParseYearMonth: PartialFunction[String ~ String, YearMonth] =
+  def attemptParseYearMonth: PartialFunction[String ~ String, Node.YearMonth] =
     Function.unlift { case (yearRaw ~ monthRaw) =>
       Try {
         val normalizedMonth = monthRaw.toLowerCase.capitalize
-        YearMonth.parse(s"$yearRaw $normalizedMonth", yearMonthFormatter)
+        Node.YearMonth(YearMonth.parse(s"$yearRaw $normalizedMonth", yearMonthFormatter))
       }.toOption
     }
 
-  def attemptParseLocalDate: PartialFunction[String ~ String ~ String, LocalDate] =
+  def attemptParseLocalDate: PartialFunction[String ~ String ~ String, Node.YearMonthDay] =
     Function.unlift { case (yearRaw ~ monthRaw ~ dayRaw) =>
       Try {
         val normalizedMonth = monthRaw.toLowerCase.capitalize
-        LocalDate.parse(s"$yearRaw $normalizedMonth $dayRaw", yearMonthDayFormatter)
+        Node.YearMonthDay(LocalDate.parse(s"$yearRaw $normalizedMonth $dayRaw", yearMonthDayFormatter))
       }.toOption
     }
 
@@ -108,7 +123,7 @@ object CoveringDateParser extends JavaTokenParsers {
       case Error(msg, _)      => Left(new ParseError(msg))
     }
 
-  def parseCoveringDates(input: String): Either[ParseError, CoveringDates] =
+  def parseCoveringDates(input: String): Either[ParseError, CoveringDateNode.Root] =
     runParser(coveringDates, input)
 
 }
