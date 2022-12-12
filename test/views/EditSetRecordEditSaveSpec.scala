@@ -54,9 +54,9 @@ class EditSetRecordEditSaveSpec extends BaseSpec {
 
       val document = generateDocument()
 
-      document must haveHeaderTitle
+      document must haveHeaderTitle("header.title")
       document must haveVisibleLogoutLink
-      document must haveLogoutLinkLabel
+      document must haveLogoutLinkLabel("header.logout")
       document must haveLogoutLink
 
     }

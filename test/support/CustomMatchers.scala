@@ -26,14 +26,13 @@ import org.scalatest.matchers.{ MatchResult, Matcher }
 
 object CustomMatchers {
 
-  def haveHeaderTitle: Matcher[Document] = (document: Document) => {
-    val title = "header.title"
-    val actualTitle = document.select("div.govuk-header__content").text()
+  def haveHeaderTitle(expectedValue: String): Matcher[Document] = (document: Document) => {
+    val actualValue = document.select("div.govuk-header__content").text()
     val errorMessageIfExpected =
-      s"The page didn't have a header title of '$title'. The actual title was '$actualTitle'"
-    val errorMessageIfNotExpected = s"The page did indeed have a header title of '$title', which was not expected."
+      s"The page didn't have a header title of '$expectedValue'. The actual value was '$actualValue'"
+    val errorMessageIfNotExpected = s"The page did indeed have a header title of '$expectedValue', which was not expected."
     MatchResult(
-      actualTitle == title,
+      actualValue == expectedValue,
       errorMessageIfExpected,
       errorMessageIfNotExpected
     )
@@ -51,27 +50,156 @@ object CustomMatchers {
   }
 
   def haveLogoutLink: Matcher[Document] = (document: Document) => {
-    val link = "/logout"
-    val actualLink = document.select("div.govuk-header__signout > a").attr("href")
-    val errorMessageIfExpected = s"We expected the sign out link to be '$link' but it was '$actualLink'"
-    val errorMessageIfNotExpected = s"We didn't expect the sign out link to be '$link', but it was."
+    val expectedValue = "/logout"
+    val actualValue = document.select("div.govuk-header__signout > a").attr("href")
+    val errorMessageIfExpected = s"We expected the sign out link to be '$expectedValue' but it was '$actualValue'"
+    val errorMessageIfNotExpected = s"We didn't expect the sign out link to be '$expectedValue', but it was."
     MatchResult(
-      link == actualLink,
+      expectedValue == actualValue,
       errorMessageIfExpected,
       errorMessageIfNotExpected
     )
   }
 
-  def haveLogoutLinkLabel: Matcher[Document] = (document: Document) => {
-    val label = "header.logout"
-    val actualLabel = document.select("div.govuk-header__signout > a").text()
-    val errorMessageIfExpected = s"We expected the logout link label to be '$label' but it was '$actualLabel'"
-    val errorMessageIfNotExpected = s"We didn't expect the logout link label to be '$label', but it was."
+  def haveLogoutLinkLabel(expectedValue: String): Matcher[Document] = (document: Document) => {
+    val actualValue = document.select("div.govuk-header__signout > a").text()
+    val errorMessageIfExpected = s"We expected the logout link label to be '$expectedValue' but it was '$actualValue'"
+    val errorMessageIfNotExpected = s"We didn't expect the logout link label to be '$expectedValue', but it was."
     MatchResult(
-      label == actualLabel,
+      expectedValue == actualValue,
       errorMessageIfExpected,
       errorMessageIfNotExpected
     )
   }
 
+  def haveActionButtons(value: String, count: Int): Matcher[Document] = (document: Document) => {
+    val buttons = document.select(s"button[name=action][value=$value]")
+    val actualCount = buttons.size()
+    val errorMessageIfExpected = s"We expected $count action buttons with the value '$value', but there were '$actualCount'."
+    val errorMessageIfNotExpected = s"We didn't expect $count action buttons with the value '$value', but there were."
+    MatchResult(
+      actualCount == count,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveLegend(legend: String): Matcher[Document] = (document: Document) => {
+    val actualLegend =  document.select("legend").text()
+    val errorMessageIfExpected = s"We expected the legend to be '$legend' but it was actually '$actualLegend'."
+    val errorMessageIfNotExpected = s"We didn't expect the legend to be '$legend' but it was."
+    MatchResult(
+      actualLegend == legend,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveTitle(title: String): Matcher[Document] = (document: Document) => {
+    val actualTitle = document.title()
+    val errorMessageIfExpected =
+      s"The page didn't have a title of '$title'. The actual title was '$actualTitle'"
+    val errorMessageIfNotExpected = s"The page did indeed have a title of '$title', which was not expected."
+    MatchResult(
+      actualTitle == title,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveHeading(heading: String): Matcher[Document] = (document: Document) => {
+    val actualHeading = document.select("h1.govuk-heading-l").text()
+    val errorMessageIfExpected =
+      s"The page didn't have a heading of '$heading'. The actual heading was '$actualHeading'"
+    val errorMessageIfNotExpected = s"The page did indeed have a heading of '$heading', which was not expected."
+    MatchResult(
+      actualHeading == heading,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveClassicCatalogueRef(classicCatalogueRef: String): Matcher[Document] = (document: Document) => {
+    val actualClassicCatalogueRef = document.select("#ccr").attr("value")
+    val errorMessageIfExpected =
+      s"The page didn't have a classic catalogue ref of '$classicCatalogueRef'. The actual value was '$actualClassicCatalogueRef'"
+    val errorMessageIfNotExpected = s"The page did indeed have a classic catalogue ref of '$classicCatalogueRef', which was not expected."
+    MatchResult(
+      actualClassicCatalogueRef == classicCatalogueRef,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveOmegaCatalogueId(expectedValue: String): Matcher[Document] = (document: Document) => {
+    val actualValue = document.select("#ocr").attr("value")
+    val errorMessageIfExpected =
+      s"The page didn't have an omega catalogue ref of '$expectedValue'. The actual value was '$actualValue'"
+    val errorMessageIfNotExpected = s"The page did indeed have an omega catalogue ref of '$expectedValue', which was not expected."
+    MatchResult(
+      actualValue == expectedValue,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveScopeAndContent(expectedValue: String): Matcher[Document] = (document: Document) => {
+    val actualValue = document.select("#scopeAndContent").text()
+    val errorMessageIfExpected =
+      s"The page didn't have a scope & content of '$expectedValue'. The actual value was '$actualValue'"
+    val errorMessageIfNotExpected = s"The page did indeed have a scope & content of '$expectedValue', which was not expected."
+    MatchResult(
+      actualValue == expectedValue,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveCoveringDates(expectedValue: String): Matcher[Document] = (document: Document) => {
+    val actualValue = document.select("#coveringDates").attr("value")
+    val errorMessageIfExpected =
+      s"The page didn't have covering dates of '$expectedValue'. The actual value was '$actualValue'"
+    val errorMessageIfNotExpected = s"The page did indeed have covering dates of '$expectedValue', which was not expected."
+    MatchResult(
+      actualValue == expectedValue,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveFormerReferenceDepartment(expectedValue: String): Matcher[Document] = (document: Document) => {
+    val actualValue = document.select("#formerReferenceDepartment").attr("value")
+    val errorMessageIfExpected =
+      s"The page didn't have a former reference department of '$expectedValue'. The actual value was '$actualValue'"
+    val errorMessageIfNotExpected = s"The page did indeed have covering dates of '$expectedValue', which was not expected."
+    MatchResult(
+      actualValue == expectedValue,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveStartDate(expectedValue: String): Matcher[Document] = (document: Document) => {
+    val actualValue = document.select("#startDate").attr("value")
+    val errorMessageIfExpected =
+      s"The page didn't have a start date of '$expectedValue'. The actual value was '$actualValue'"
+    val errorMessageIfNotExpected = s"The page did indeed have a start date of '$expectedValue', which was not expected."
+    MatchResult(
+      actualValue == expectedValue,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveEndDate(expectedValue: String): Matcher[Document] = (document: Document) => {
+    val actualValue = document.select("#endDate").attr("value")
+    val errorMessageIfExpected =
+      s"The page didn't have an end date of '$expectedValue'. The actual value was '$actualValue'"
+    val errorMessageIfNotExpected = s"The page did indeed have a start date of '$expectedValue', which was not expected."
+    MatchResult(
+      actualValue == expectedValue,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
 }
