@@ -85,7 +85,7 @@ object CustomMatchers {
   }
 
   def haveLegend(legend: String): Matcher[Document] = (document: Document) => {
-    val actualLegend =  document.select("legend > h3").text()
+    val actualLegend =  document.select("legend").text()
     val errorMessageIfExpected = s"We expected the legend to be '$legend' but it was actually '$actualLegend'."
     val errorMessageIfNotExpected = s"We didn't expect the legend to be '$legend' but it was."
     MatchResult(

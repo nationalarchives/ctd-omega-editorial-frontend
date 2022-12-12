@@ -21,6 +21,7 @@
 
 @import helper._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
 @import uk.gov.nationalarchives.omega.editorial.models.{EditSetRecord, User}
 
 @this(govukButton: GovukButton, govukInput: GovukInput, govukTextarea: GovukTextarea, govukFieldset: GovukFieldset, govukErrorSummary: GovukErrorSummary)
@@ -49,9 +50,6 @@
 
 @fieldsetContent = {
 @CSRF.formField
-    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-        <h3 class="govuk-fieldset__heading">@messages("edit-set.record.edit.legend")</h3>
-    </legend>
 @govukTextarea(Textarea(
     id = "scopeAndContent",
     name = "scopeAndContent",
@@ -122,6 +120,12 @@
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
     @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetController.submit("1", editSetRecordForm.data.get("oci").get)) {
         @actionButtonGroup
-        @govukFieldset(Fieldset(html = fieldsetContent))
+        @govukFieldset(Fieldset(
+            html = fieldsetContent,
+            legend = Some(Legend(
+                classes = "govuk-fieldset__legend govuk-fieldset__legend--l",
+                content = Text(messages("edit-set.record.edit.legend")
+                ))
+            )))
     }
 }
