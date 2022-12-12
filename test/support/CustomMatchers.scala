@@ -23,6 +23,7 @@ package support
 
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.{ MatchResult, Matcher }
+import uk.gov.nationalarchives.omega.editorial.services.CoveringDateParser
 
 object CustomMatchers {
 
@@ -73,5 +74,22 @@ object CustomMatchers {
       errorMessageIfNotExpected
     )
   }
+
+  def parseSuccessfullyAs[A](expected: A): Matcher[Either[CoveringDateParser.ParseError, A]] =
+    (parseResult: Either[CoveringDateParser.ParseError, A]) =>
+      parseResult match {
+        case Right(ok) =>
+          MatchResult(
+            expected == ok,
+            s"Successfully parsed $ok but expected $expected",
+            s"Parsed $expected OK"
+          )
+        case Left(CoveringDateParser.ParseError(msg)) =>
+          MatchResult(
+            matches = false,
+            s"Expected $expected, but failed to parse: $msg",
+            ""
+          )
+      }
 
 }

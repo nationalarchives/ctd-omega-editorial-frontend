@@ -22,30 +22,46 @@
 package uk.gov.nationalarchives.omega.editorial.services
 
 import java.time._
+import java.util.Locale
 import java.time.format.DateTimeFormatter
 import scala.util.parsing.combinator._
 import scala.util.Try
 import uk.gov.nationalarchives.omega.editorial
 import uk.gov.nationalarchives.omega.editorial.models.{ CoveringDate, CoveringDates }
+import scala.util.matching.Regex
 
 object CoveringDateParser extends JavaTokenParsers {
 
-  private lazy val yearFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy")
-  private lazy val yearMonthFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy MMM")
-  private lazy val yearMonthDayFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy MMM d")
+  private lazy val yearFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("u")
+  private lazy val yearMonthFormatter: DateTimeFormatter = DateTimeFormatter
+    .ofPattern("u MMM")
+    .withLocale(Locale.UK)
+  private lazy val yearMonthDayFormatter: DateTimeFormatter = DateTimeFormatter
+    .ofPattern("u MMM d")
+    .withLocale(Locale.UK)
 
   private lazy val monthFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM")
   private lazy val validMonthNames: List[String] = Month.values().map(monthFormatter.format).toList
 
-  def threeAlphaChar: Parser[String] = """[a-z][A-Z]{3}""".r
-  def integerDigit: Parser[String] = """-?[0-9]\d*""".r
+  def monthChars: Parser[String] = {
+    val regexString = validMonthNames
+      .map { name =>
+        s"$name|${name.toLowerCase}"
+      }
+      .mkString("|")
+    new Regex(regexString)
+  }
+
+  def integerDigit: Parser[String] = """-?[0-9]*""".r
+
+  def coveringDates: Parser[CoveringDates] = ???
 
   def year: Parser[Year] = integerDigit ^? (attemptParseYear, yearErrorFormatter)
 
-  def yearMonth: Parser[YearMonth] = integerDigit ~ threeAlphaChar ^? (attemptParseYearMonth, yearMonthErrorFormatter)
+  def yearMonth: Parser[YearMonth] = integerDigit ~ monthChars ^? (attemptParseYearMonth, yearMonthErrorFormatter)
 
   def yearMonthDay: Parser[LocalDate] =
-    threeAlphaChar ~ integerDigit ~ wholeNumber ^? (attemptParseLocalDate, yearMonthDayErrorFormatter)
+    integerDigit ~ monthChars ~ wholeNumber ^? (attemptParseLocalDate, yearMonthDayErrorFormatter)
 
   def attemptParseYear: PartialFunction[String, Year] =
     Function.unlift { yearRaw =>
@@ -58,7 +74,7 @@ object CoveringDateParser extends JavaTokenParsers {
     Function.unlift { case (yearRaw ~ monthRaw) =>
       Try {
         val normalizedMonth = monthRaw.toLowerCase.capitalize
-        YearMonth.parse(s"$yearRaw $monthRaw", yearMonthFormatter)
+        YearMonth.parse(s"$yearRaw $normalizedMonth", yearMonthFormatter)
       }.toOption
     }
 
@@ -83,14 +99,16 @@ object CoveringDateParser extends JavaTokenParsers {
       )} and a valid day of month; but got "$badYear $badMonth $badDay""""
   }
 
-  sealed abstract class ParseError
+  sealed case class ParseError(val msg: String)
 
-  def parse2(input: String): Either[ParseError, editorial.models.CoveringDates] = {
-    val dm: ParseResult[LocalDate] = parse(yearMonthDay, "1993 May 1")
-    // val dm = parse(monthDay, "May 1").get
-    pprint.pprintln(dm)
-    pprint.pprintln(parse(year, "2993"))
-    ???
-  }
+  def runParser[A](parser: Parser[A], input: String): Either[ParseError, A] =
+    parse(parser, input) match {
+      case Success(result, _) => Right(result)
+      case Failure(msg, _)    => Left(new ParseError(msg))
+      case Error(msg, _)      => Left(new ParseError(msg))
+    }
+
+  def parseCoveringDates(input: String): Either[ParseError, CoveringDates] =
+    runParser(coveringDates, input)
 
 }

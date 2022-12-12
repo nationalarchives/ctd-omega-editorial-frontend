@@ -22,14 +22,16 @@
 package services
 
 import java.time.format.DateTimeFormatter
-import java.time.LocalDate
+import java.time._
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.prop.Tables
 import support.BaseSpec
 import uk.gov.nationalarchives.omega.editorial.models.{ CoveringDate, CoveringDates }
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateParser
+import support.CustomMatchers.parseSuccessfullyAs
+import org.scalatest.EitherValues
 
-class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
+class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks with EitherValues {
 
   lazy val testTable = Tables.Table(
     "date input" -> "parse result",
@@ -54,11 +56,67 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
 
     forAll(testTable) { (input, expectedResult) =>
       s"parse the covering date: $input" in {
-        CoveringDateParser.parse2(input) mustEqual expectedResult
+        CoveringDateParser.parseCoveringDates(input) mustEqual expectedResult
       }
 
     }
 
+  }
+
+  "YearParser" should {
+
+    lazy val testTable = Tables.Table(
+      "year input" -> "parse result",
+      "1993"       -> Year.of(1993),
+      "423"        -> Year.of(423),
+      "-123"       -> Year.of(-123),
+      "2"          -> Year.of(2)
+    )
+
+    forAll(testTable) { (input, expectedResult) =>
+      s"parse $input as a Year" in {
+        val parseResult = CoveringDateParser.runParser(CoveringDateParser.year, input)
+        parseResult must parseSuccessfullyAs(expectedResult)
+      }
+    }
+  }
+
+  "YearMonthParser" should {
+
+    lazy val testTable = Tables.Table(
+      "yearMonth input" -> "parse result",
+      "1993 December"   -> YearMonth.of(1993, Month.DECEMBER),
+      "1993 Jan"        -> YearMonth.of(1993, Month.JANUARY),
+      "1993 jan"        -> YearMonth.of(1993, Month.JANUARY),
+      "1993 Sept"       -> YearMonth.of(1993, Month.SEPTEMBER),
+      "1993 Sep"        -> YearMonth.of(1993, Month.SEPTEMBER),
+      "1993 July"       -> YearMonth.of(1993, Month.JULY),
+      "1993 Jul"        -> YearMonth.of(1993, Month.JULY),
+      "1 jan"           -> YearMonth.of(1, Month.JANUARY)
+    )
+
+    forAll(testTable) { (input, expectedResult) =>
+      s"parse $input as a YearMonth" in {
+        val parseResult = CoveringDateParser.runParser(CoveringDateParser.yearMonth, input)
+        parseResult must parseSuccessfullyAs(expectedResult)
+      }
+    }
+  }
+
+  "YearMonthDayParser" should {
+
+    lazy val testTable = Tables.Table(
+      "yearMonthDay input" -> "parse result",
+      "1993 Jan 1"         -> LocalDate.of(1993, 1, 1),
+      "1993 Jan 01"        -> LocalDate.of(1993, 1, 1)
+    )
+
+    forAll(testTable) { (input, expectedResult) =>
+      s"parse $input as a LocalDate" in {
+        val parseResult = CoveringDateParser.runParser(CoveringDateParser.yearMonthDay, input)
+        parseResult must parseSuccessfullyAs(expectedResult)
+      }
+    }
   }
 
   lazy val basicCoveringDateFormatter = DateTimeFormatter.ofPattern("u LLL d")
