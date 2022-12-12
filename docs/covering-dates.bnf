@@ -1,17 +1,18 @@
-// Day of month cannot be defined in isolation, e.g. Feb 29 is sometimes valid
-// and sometimes not. See
-// https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/MonthDay.html
-<month_day> ::= <month> valid day of month
-
-// Represented as https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Month.html
 <month> ::= "Jan" | "Feb" | "Mar" | "Apr" | "May" | "June" | "July" | "Aug" | "Sept" | "Oct" | "Nov" | "Dec"
 
-// Represented as https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Year.html
 <year> ::= valid year
+
+<year_month> ::= <year> <month>
+
+<year_month_day> ::= <year> <month> valid day of month
+
+// Represented as https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Month.html
+
+// Represented as https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Year.html
 
 <range> ::= <single> "-" <single>
 
-<single> ::= <year> | <year> <month> | <year> <month_day>
+<single> ::= <year> | <year_month> | <year_month_day>
 
 // Derived dates are not always in square brackets but I need a name for this
 // representation
