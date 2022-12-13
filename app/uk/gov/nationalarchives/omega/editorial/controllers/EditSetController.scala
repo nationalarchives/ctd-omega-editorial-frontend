@@ -31,6 +31,9 @@ import uk.gov.nationalarchives.omega.editorial.{ editSetRecords, editSets, _ }
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry, EditSetRecord }
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
+import play.api.data.Mapping
+import uk.gov.nationalarchives.omega.editorial.services.CoveringDateCalculator
+import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError
 
 /** This controller creates an `Action` to handle HTTP requests to the application's home page.
   */
@@ -57,7 +60,11 @@ class EditSetController @Inject() (
           value => value.length <= 8000
         )
         .verifying(messagesApi("edit-set.record.missing.scope-and-content")(Lang.apply("en")), _.nonEmpty),
-      "coveringDates" -> text,
+      "coveringDates" -> text
+        .verifying(
+          messagesApi("edit-set.record.error.covering-dates")(Lang.apply("en")),
+          value => CoveringDateCalculator.getStartAndEndDates(value).isRight
+        ),
       "formerReferenceDepartment" -> text.verifying(
         messagesApi("edit-set.record.error.former-reference-department")(Lang.apply("en")),
         value => value.length <= 255

@@ -257,7 +257,7 @@ class EditSetControllerSpec extends BaseSpec {
                 "oci"                       -> "1234",
                 "scopeAndContent"           -> "1234",
                 "formerReferenceDepartment" -> "1234",
-                "coveringDates"             -> "1234",
+                "coveringDates"             -> "2022 Dec 13",
                 "startDate"                 -> "1234",
                 "endDate"                   -> "1234",
                 "action"                    -> "save"
@@ -278,7 +278,7 @@ class EditSetControllerSpec extends BaseSpec {
               "oci"                       -> "1234",
               "scopeAndContent"           -> "1234",
               "formerReferenceDepartment" -> "1234",
-              "coveringDates"             -> "1234",
+              "coveringDates"             -> "2022 Dec 13",
               "startDate"                 -> "1234",
               "endDate"                   -> "1234",
               "action"                    -> "discard"
@@ -296,7 +296,7 @@ class EditSetControllerSpec extends BaseSpec {
           "oci"                       -> "1234",
           "scopeAndContent"           -> "1234",
           "formerReferenceDepartment" -> "1234",
-          "coveringDates"             -> "1234",
+          "coveringDates"             -> "2022 Dec 13",
           "startDate"                 -> "1234",
           "endDate"                   -> "1234",
           "action"                    -> "save"
@@ -305,6 +305,28 @@ class EditSetControllerSpec extends BaseSpec {
       val editRecordPage = route(app, request).get
 
       status(editRecordPage) mustBe SEE_OTHER
+    }
+
+    "redirect to error page from the router when covering date is invalid" in {
+      val request = CSRFTokenHelper.addCSRFToken(
+        FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+          .withFormUrlEncodedBody(
+            "ccr"                       -> "1234",
+            "oci"                       -> "1234",
+            "scopeAndContent"           -> "1234",
+            "formerReferenceDepartment" -> "1234",
+            "coveringDates"             -> "bad covering date",
+            "startDate"                 -> "1234",
+            "endDate"                   -> "1234",
+            "action"                    -> "save"
+          )
+          .withSession(
+            SessionKeys.token -> validSessionToken
+          )
+      )
+      val editRecordPage = route(app, request).get
+
+      status(editRecordPage) mustBe BAD_REQUEST
     }
   }
 

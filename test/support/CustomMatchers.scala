@@ -204,6 +204,20 @@ object CustomMatchers {
     )
   }
 
+  def haveFormError(errorMessage: String): Matcher[Document] = document => {
+    val errorMessagesSummary = document.select(".govuk-error-summary__list a").text
+    val errorMessageOnField = document.select(".govuk-error-message").text
+    val errorMessageIfExpected =
+      s"The page didn't have an error with text '$errorMessage'."
+    val errorMessageIfNotExpected =
+      s"The page had an error with text '$errorMessage', which was not expected."
+    MatchResult(
+      errorMessagesSummary.contains(errorMessage) && errorMessageOnField.contains(errorMessage),
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
   def parseSuccessfullyAs[A](expected: A): Matcher[CoveringDateError.Result[A]] =
     _ match {
       case Right(ok) =>
