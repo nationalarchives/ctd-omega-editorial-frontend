@@ -23,5 +23,4 @@ package uk.gov.nationalarchives.omega.editorial.models
 
 import java.time.LocalDate
 
-case class CoveringDate(start: LocalDate, end: LocalDate)
-case class CoveringDates(dates: List[CoveringDate])
+case class DateRange(start: LocalDate, end: LocalDate)

@@ -81,7 +81,9 @@ object CustomMatchers {
         case Right(ok) =>
           MatchResult(
             expected == ok,
-            s"Successfully parsed $ok but expected $expected",
+            s"""Parsed OK but no match:
+               |got:      $ok 
+               |expected: $expected""".stripMargin,
             s"Parsed $expected OK"
           )
         case Left(CoveringDateParser.ParseError(msg)) =>

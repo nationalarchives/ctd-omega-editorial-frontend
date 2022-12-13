@@ -37,28 +37,18 @@ object CoveringDateNode {
   trait Derivable
   trait Toplevel
 
-  final case class Single(value: CoveringDateNode with Terminal) extends CoveringDateNode
-    with Approxable
-    with Derivable
-    with Toplevel
+  final case class Single(value: CoveringDateNode with Terminal)
+      extends CoveringDateNode with Approxable with Derivable with Toplevel
 
-  final case class Range(from: Single, to: Single) extends CoveringDateNode
-    with Approxable
-    with Derivable
-    with Toplevel
+  final case class Range(from: Single, to: Single) extends CoveringDateNode with Approxable with Derivable with Toplevel
 
-  final case class Approx(value: CoveringDateNode with Approxable) extends CoveringDateNode
-    with Derivable
-    with Toplevel
+  final case class Approx(value: CoveringDateNode with Approxable) extends CoveringDateNode with Derivable with Toplevel
 
-  final case class Derived(value: CoveringDateNode with Derivable) extends CoveringDateNode
-    with Toplevel
+  final case class Derived(value: CoveringDateNode with Derivable) extends CoveringDateNode with Toplevel
 
-  final case object Undated extends CoveringDateNode
-    with Toplevel
+  final case object Undated extends CoveringDateNode with Toplevel
 
-  final case class Gap(values: List[CoveringDateNode with Approxable]) extends CoveringDateNode
-    with Toplevel
+  final case class Gap(values: List[CoveringDateNode with Approxable]) extends CoveringDateNode with Toplevel
 
   final case class Root(value: CoveringDateNode with Toplevel) extends CoveringDateNode
 
