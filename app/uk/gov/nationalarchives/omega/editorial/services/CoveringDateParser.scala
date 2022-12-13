@@ -42,26 +42,34 @@ object CoveringDateParser extends JavaTokenParsers {
       case Error(msg, _)      => Left(ParseError(msg))
     }
 
-  def coveringDates: Parser[Node.Root] = (gap | derived | approx | range | single | undated) ^^ Node.Root.apply
+  def coveringDates: Parser[Node.Root] =
+    (gap | derived | approx | range | single | undated) ^^ Node.Root.apply
 
-  def gap: Parser[Node.Gap] = ((range | single) <~ ";") ~ rep1sep(range | single, ";") ^^ { case (head ~ rest) =>
-    Node.Gap(head :: rest)
-  }
+  def gap: Parser[Node.Gap] =
+    ((range | single) <~ ";") ~ rep1sep(range | single, ";") ^^ { case (head ~ rest) =>
+      Node.Gap(head :: rest)
+    }
 
-  def derived: Parser[Node.Derived] = ("[" ~> (approx | range | single) <~ "]") ^^ Node.Derived.apply
+  def derived: Parser[Node.Derived] =
+    ("[" ~> (approx | range | single) <~ "]") ^^ Node.Derived.apply
 
-  def approx: Parser[Node.Approx] = "c|\\?".r ~> (range | single) ^^ Node.Approx.apply
+  def approx: Parser[Node.Approx] =
+    "c|\\?".r ~> (range | single) ^^ Node.Approx.apply
 
-  def range: Parser[Node.Range] = (single <~ "-") ~ single ^^ { case (l ~ r) => Node.Range(l, r) }
+  def range: Parser[Node.Range] =
+    (single <~ "-") ~ single ^^ { case (l ~ r) => Node.Range(l, r) }
 
-  def single: Parser[Node.Single] = (yearMonthDay | yearMonth | year) ^^ Node.Single.apply
+  def single: Parser[Node.Single] =
+    (yearMonthDay | yearMonth | year) ^^ Node.Single.apply
 
   def yearMonthDay: Parser[Node.YearMonthDay] =
     integerDigit ~ month ~ wholeNumber ^? (attemptParseLocalDate, yearMonthDayErrorFormatter)
 
-  def yearMonth: Parser[Node.YearMonth] = integerDigit ~ month ^? (attemptParseYearMonth, yearMonthErrorFormatter)
+  def yearMonth: Parser[Node.YearMonth] =
+    integerDigit ~ month ^? (attemptParseYearMonth, yearMonthErrorFormatter)
 
-  def year: Parser[Node.Year] = integerDigit ^? (attemptParseYear, yearErrorFormatter)
+  def year: Parser[Node.Year] =
+    integerDigit ^? (attemptParseYear, yearErrorFormatter)
 
   def month: Parser[Month] =
     ("Jan" ^^^ Month.JANUARY) | ("Feb" ^^^ Month.FEBRUARY) | ("Mar" ^^^ Month.MARCH) |
@@ -69,9 +77,11 @@ object CoveringDateParser extends JavaTokenParsers {
       ("July" ^^^ Month.JULY) | ("Aug" ^^^ Month.AUGUST) | ("Sept" ^^^ Month.SEPTEMBER) |
       ("Oct" ^^^ Month.OCTOBER) | ("Nov" ^^^ Month.NOVEMBER) | ("Dec" ^^^ Month.DECEMBER)
 
-  def integerDigit: Parser[String] = "-?[0-9]*".r
+  def integerDigit: Parser[String] =
+    "-?[0-9]*".r
 
-  def undated: Parser[Node.Undated.type] = "undated" ^^^ Node.Undated
+  def undated: Parser[Node.Undated.type] =
+    "undated" ^^^ Node.Undated
 
   private def attemptParseYear: PartialFunction[String, Node.Year] =
     Function.unlift { yearRaw =>
