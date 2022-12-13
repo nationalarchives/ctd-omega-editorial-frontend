@@ -76,21 +76,21 @@ object CustomMatchers {
   }
 
   def parseSuccessfullyAs[A](expected: A): Matcher[CoveringDateError.Result[A]] =
-      _ match {
-        case Right(ok) =>
-          MatchResult(
-            expected == ok,
-            s"""Parsed OK but no match:
-               |got:      $ok 
-               |expected: $expected""".stripMargin,
-            s"Parsed $expected OK"
-          )
-        case Left(err) =>
-          MatchResult(
-            matches = false,
-            s"Expected $expected, but got error: ${err.message}",
-            ""
-          )
-      }
+    _ match {
+      case Right(ok) =>
+        MatchResult(
+          expected == ok,
+          s"""Parsed OK but no match:
+             |got:      $ok 
+             |expected: $expected""".stripMargin,
+          s"Parsed $expected OK"
+        )
+      case Left(err) =>
+        MatchResult(
+          matches = false,
+          s"Expected $expected, but got error: ${err.message}",
+          ""
+        )
+    }
 
 }

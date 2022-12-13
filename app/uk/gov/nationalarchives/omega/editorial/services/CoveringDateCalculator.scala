@@ -46,7 +46,7 @@ object CoveringDateCalculator {
       case Node.YearMonth(value)    => List(DateRange(startOfYear(value), endOfYear(value)))
       case Node.YearMonthDay(value) => List(DateRange(value, value))
 
-      case Node.Single(value)   => calculateDateRanges(value)
+      case Node.Single(value) => calculateDateRanges(value)
       case Node.Range(from, to) =>
         calculateDateRanges(from)
           .zip(calculateDateRanges(to))
@@ -80,7 +80,7 @@ object CoveringDateCalculator {
   private def validateDateRanges(ranges: List[DateRange]): Result[List[DateRange]] =
     ranges.partitionMap(checkDateRange) match {
       case (Nil, results) => Right(results)
-      case (errs, _) => Left(MultipleErrors(errs))
+      case (errs, _)      => Left(MultipleErrors(errs))
     }
 
   private def checkDateRange(range: DateRange): Result[DateRange] =

@@ -32,10 +32,10 @@ object CoveringDateError {
 
   final case class ParseError(msg: String) extends CoveringDateError(msg)
   final case class InvalidRange(range: DateRange) extends CoveringDateError(
-    s"Invalid date range; ${range.start} is not before or equal to ${range.end}"
-  )
+        s"Invalid date range; ${range.start} is not before or equal to ${range.end}"
+      )
   final case class MultipleErrors(errs: List[CoveringDateError]) extends CoveringDateError(
-    s"Multiple errors:\n ${errs.map(_.message).mkString("\n")}"
-  )
+        s"Multiple errors:\n ${errs.map(_.message).mkString("\n")}"
+      )
 
 }
