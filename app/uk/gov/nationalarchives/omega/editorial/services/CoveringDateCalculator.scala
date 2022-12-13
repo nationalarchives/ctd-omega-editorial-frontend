@@ -23,23 +23,24 @@ package uk.gov.nationalarchives.omega.editorial.services
 
 import java.time._
 import uk.gov.nationalarchives.omega.editorial.models.DateRange
-import uk.gov.nationalarchives.omega.editorial.services.CoveringDateParser.ParseError
+import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError._
 import uk.gov.nationalarchives.omega.editorial.services.{ CoveringDateNode => Node }
 
 object CoveringDateCalculator {
 
-  def getStartAndEndDates(coveringDateRaw: String): Either[ParseError, List[DateRange]] =
+  def getStartAndEndDates(coveringDateRaw: String): Result[List[DateRange]] =
     CoveringDateParser
       .parseCoveringDates(sanitize(coveringDateRaw))
       .map(calculateDateRanges)
+      .flatMap(validateDateRanges)
 
-  def sanitize(input: String): String =
+  private def sanitize(input: String): String =
     input
       .replace("\u2013", "-") // En Dash
       .replace("\u201C", "\"")
       .replace("\u201D", "\"")
 
-  def calculateDateRanges(node: CoveringDateNode): List[DateRange] =
+  private def calculateDateRanges(node: CoveringDateNode): List[DateRange] =
     node match {
       case Node.Year(value)         => List(DateRange(startOfYear(value), endOfYear(value)))
       case Node.YearMonth(value)    => List(DateRange(startOfYear(value), endOfYear(value)))
@@ -47,7 +48,6 @@ object CoveringDateCalculator {
 
       case Node.Single(value)   => calculateDateRanges(value)
       case Node.Range(from, to) =>
-        // TODO assert from is before to
         calculateDateRanges(from)
           .zip(calculateDateRanges(to))
           .map { case (from, to) =>
@@ -76,5 +76,17 @@ object CoveringDateCalculator {
 
   private def endOfYear(yearMonth: YearMonth): LocalDate =
     yearMonth.atEndOfMonth()
+
+  private def validateDateRanges(ranges: List[DateRange]): Result[List[DateRange]] =
+    ranges.partitionMap(checkDateRange) match {
+      case (Nil, results) => Right(results)
+      case (errs, _) => Left(MultipleErrors(errs))
+    }
+
+  private def checkDateRange(range: DateRange): Result[DateRange] =
+    if (range.start.isBefore(range.end) || range.start == range.end)
+      Right(range)
+    else
+      Left(InvalidRange(range))
 
 }

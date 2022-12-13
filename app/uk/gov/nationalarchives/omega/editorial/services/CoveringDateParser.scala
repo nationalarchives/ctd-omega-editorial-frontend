@@ -27,12 +27,39 @@ import java.util.Locale
 import scala.util.matching.Regex
 import scala.util.parsing.combinator._
 import scala.util.Try
-import uk.gov.nationalarchives.omega.editorial
+import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError._
 import uk.gov.nationalarchives.omega.editorial.services.{ CoveringDateNode => Node }
 
 object CoveringDateParser extends JavaTokenParsers {
 
-  def integerDigit: Parser[String] = "-?[0-9]*".r
+  def parseCoveringDates(input: String): Result[Node.Root] =
+    runParser(coveringDates, input)
+
+  def runParser[A](parser: Parser[A], input: String): Result[A] =
+    parseAll(parser, input) match {
+      case Success(result, _) => Right(result)
+      case Failure(msg, _)    => Left(ParseError(msg))
+      case Error(msg, _)      => Left(ParseError(msg))
+    }
+
+  def coveringDates: Parser[Node.Root] = (gap | derived | approx | range | single | undated) ^^ Node.Root.apply
+
+  def gap: Parser[Node.Gap] = ((range | single) <~ ";") ~ rep1sep(range | single, ";") ^^ { case (head ~ rest) =>
+    Node.Gap(head :: rest)
+  }
+
+  def derived: Parser[Node.Derived] = ("[" ~> (approx | range | single) <~ "]") ^^ Node.Derived.apply
+
+  def approx: Parser[Node.Approx] = "c|\\?".r ~> (range | single) ^^ Node.Approx.apply
+
+  def range: Parser[Node.Range] = (single <~ "-") ~ single ^^ { case (l ~ r) => Node.Range(l, r) }
+
+  def single: Parser[Node.Single] = (yearMonthDay | yearMonth | year) ^^ Node.Single.apply
+
+  def yearMonthDay: Parser[Node.YearMonthDay] =
+    integerDigit ~ month ~ wholeNumber ^? (attemptParseLocalDate, yearMonthDayErrorFormatter)
+
+  def yearMonth: Parser[Node.YearMonth] = integerDigit ~ month ^? (attemptParseYearMonth, yearMonthErrorFormatter)
 
   def year: Parser[Node.Year] = integerDigit ^? (attemptParseYear, yearErrorFormatter)
 
@@ -42,69 +69,40 @@ object CoveringDateParser extends JavaTokenParsers {
       ("July" ^^^ Month.JULY) | ("Aug" ^^^ Month.AUGUST) | ("Sept" ^^^ Month.SEPTEMBER) |
       ("Oct" ^^^ Month.OCTOBER) | ("Nov" ^^^ Month.NOVEMBER) | ("Dec" ^^^ Month.DECEMBER)
 
-  def yearMonth: Parser[Node.YearMonth] = integerDigit ~ month ^? (attemptParseYearMonth, yearMonthErrorFormatter)
-
-  def yearMonthDay: Parser[Node.YearMonthDay] =
-    integerDigit ~ month ~ wholeNumber ^? (attemptParseLocalDate, yearMonthDayErrorFormatter)
-
-  def single: Parser[Node.Single] = (yearMonthDay | yearMonth | year) ^^ Node.Single.apply
-
-  def range: Parser[Node.Range] = (single <~ "-") ~ single ^^ { case (l ~ r) => Node.Range(l, r) }
-
-  def approx: Parser[Node.Approx] = "c|\\?".r ~> (range | single) ^^ Node.Approx.apply
-
-  def derived: Parser[Node.Derived] = ("[" ~> (approx | range | single) <~ "]") ^^ Node.Derived.apply
+  def integerDigit: Parser[String] = "-?[0-9]*".r
 
   def undated: Parser[Node.Undated.type] = "undated" ^^^ Node.Undated
 
-  def gap: Parser[Node.Gap] = ((range | single) <~ ";") ~ rep1sep(range | single, ";") ^^ { case (head ~ rest) =>
-    Node.Gap(head :: rest)
-  }
-
-  def coveringDates: Parser[Node.Root] = (gap | derived | approx | range | single | undated) ^^ Node.Root.apply
-
-  def attemptParseYear: PartialFunction[String, Node.Year] =
+  private def attemptParseYear: PartialFunction[String, Node.Year] =
     Function.unlift { yearRaw =>
       Try {
         Node.Year(Year.of(yearRaw.toInt))
       }.toOption
     }
 
-  def attemptParseYearMonth: PartialFunction[String ~ Month, Node.YearMonth] =
+  private def attemptParseYearMonth: PartialFunction[String ~ Month, Node.YearMonth] =
     Function.unlift { case (yearRaw ~ month) =>
       Try {
         Node.YearMonth(Year.of(yearRaw.toInt).atMonth(month))
       }.toOption
     }
 
-  def attemptParseLocalDate: PartialFunction[String ~ Month ~ String, Node.YearMonthDay] =
+  private def attemptParseLocalDate: PartialFunction[String ~ Month ~ String, Node.YearMonthDay] =
     Function.unlift { case (yearRaw ~ month ~ dayRaw) =>
       Try {
         Node.YearMonthDay(Year.of(yearRaw.toInt).atMonth(month).atDay(dayRaw.toInt))
       }.toOption
     }
 
-  def yearErrorFormatter: String => String = badYear =>
+  private def yearErrorFormatter: String => String = badYear =>
     s"Expected a year represented by a positve or negative integer but got $badYear"
 
-  def yearMonthErrorFormatter: String ~ Month => String = { case (badYear ~ badMonth) =>
+  private def yearMonthErrorFormatter: String ~ Month => String = { case (badYear ~ badMonth) =>
     s"""Expected a year followed by a month but got "$badYear $badMonth""""
   }
 
-  def yearMonthDayErrorFormatter: String ~ Month ~ String => String = { case (badYear ~ badMonth ~ badDay) =>
+  private def yearMonthDayErrorFormatter: String ~ Month ~ String => String = { case (badYear ~ badMonth ~ badDay) =>
     s"""Expected a year followed by a month and a valid day of month; but got "$badYear $badMonth $badDay""""
   }
-
-  sealed case class ParseError(val msg: String)
-
-  def runParser[A](parser: Parser[A], input: String): Either[ParseError, A] =
-    parseAll(parser, input) match {
-      case Success(result, _) => Right(result)
-      case Failure(msg, _)    => Left(new ParseError(msg))
-      case Error(msg, _)      => Left(new ParseError(msg))
-    }
-
-  def parseCoveringDates(input: String): Either[ParseError, CoveringDateNode.Root] =
-    runParser(coveringDates, input)
 
 }
