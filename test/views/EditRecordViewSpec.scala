@@ -22,87 +22,65 @@
 package views
 
 import org.jsoup.nodes.Document
-import play.api.data.Forms.{ mapping, text }
-import play.api.data.{ Form, FormError }
-import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
-import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
+import play.api.data.Forms.{mapping, text}
+import play.api.data.{Form, FormError}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
+import play.api.test.{CSRFTokenHelper, FakeRequest, Helpers}
 import play.twirl.api.Html
 import support.BaseSpec
-import support.CustomMatchers.{ haveHeaderTitle, haveLogoutLink, haveLogoutLinkLabel, haveVisibleLogoutLink }
+import support.CustomMatchers._
 import uk.gov.nationalarchives.omega.editorial.models.EditSetRecord
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEdit
 
 class EditRecordViewSpec extends BaseSpec {
 
   "Edit record Html" should {
-    "render the given title and heading" in {
-      val editSetRecordEditInstance = inject[editSetRecordEdit]
-      val title = "EditRecordTitleTest"
-      val heading = "EditRecordHeadingTest"
-      val editSetRecordForm: Form[EditSetRecord] = Form(
-        mapping(
-          "ccr"                       -> text,
-          "oci"                       -> text,
-          "scopeAndContent"           -> text,
-          "coveringDates"             -> text,
-          "formerReferenceDepartment" -> text,
-          "startDate"                 -> text,
-          "endDate"                   -> text
-        )(EditSetRecord.apply)(EditSetRecord.unapply)
-      )
+    "render when all is valid" in {
 
-      val editSetData = new EditSetRecord(
-        "TestCCR",
-        "TestOCI",
-        "TestScopeAndContent",
-        "TestCoveringDates",
-        "TestFormerReferenceDepartment",
-        "TestStartDate",
-        "TestEndDate"
-      )
+      val document = generateDocument(
+        title = "TNA reference: COAL 80/80/1",
+        heading = "PAC-ID: COAL.2022.V5RJW.P",
+        editSetRecord = new EditSetRecord(
+          ccr = "COAL 80/80/1",
+          oci = "COAL.2022.V5RJW.P",
+          scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+          coveringDates = "1960",
+          formerReferenceDepartment = "TestFormerReferenceDepartment",
+          startDate = "1/1/1960",
+          endDate = "31/12/1960"
+        ))
 
-      val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, heading, editSetRecordForm.fill(editSetData))(
-          Helpers.stubMessages(),
-          CSRFTokenHelper.addCSRFToken(FakeRequest())
-        )
-
-      contentAsString(editRecordHtml) must include(title)
-      contentAsString(editRecordHtml) must include(heading)
-      contentAsString(editRecordHtml) must include(editSetData.ccr)
-      contentAsString(editRecordHtml) must include(editSetData.oci)
-      contentAsString(editRecordHtml) must include(editSetData.scopeAndContent)
-      contentAsString(editRecordHtml) must include(editSetData.coveringDates)
-      contentAsString(editRecordHtml) must include(editSetData.formerReferenceDepartment)
-      contentAsString(editRecordHtml) must include(editSetData.startDate)
-      contentAsString(editRecordHtml) must include(editSetData.endDate)
-
-    }
-
-    "render the header" in {
-
-      val document = generateDocument()
-
-      document must haveHeaderTitle
+      document must haveTitle("TNA reference: COAL 80/80/1")
+      document must haveHeading("PAC-ID: COAL.2022.V5RJW.P")
+      document must haveClassicCatalogueRef("COAL 80/80/1")
+      document must haveOmegaCatalogueId("COAL.2022.V5RJW.P")
+      document must haveScopeAndContent("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+      document must haveCoveringDates("1960")
+      document must haveFormerReferenceDepartment("TestFormerReferenceDepartment")
+      document must haveStartDate("1/1/1960")
+      document must haveEndDate("31/12/1960")
+      document must haveHeaderTitle("header.title")
       document must haveVisibleLogoutLink
-      document must haveLogoutLinkLabel
+      document must haveLogoutLinkLabel("header.logout")
       document must haveLogoutLink
+      document must haveActionButtons("save", 2)
+      document must haveActionButtons("discard", 2)
+      document must haveLegend("edit-set.record.edit.legend")
 
     }
-
     "render an error given no scope and content" in {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
       val title = "EditRecordTitleTest"
       val heading = "EditRecordHeadingTest"
       val editSetRecordForm: Form[EditSetRecord] = Form(
         mapping(
-          "ccr"                       -> text,
-          "oci"                       -> text,
-          "scopeAndContent"           -> text,
-          "coveringDates"             -> text,
+          "ccr" -> text,
+          "oci" -> text,
+          "scopeAndContent" -> text,
+          "coveringDates" -> text,
           "formerReferenceDepartment" -> text,
-          "startDate"                 -> text,
-          "endDate"                   -> text
+          "startDate" -> text,
+          "endDate" -> text
         )(EditSetRecord.apply)(EditSetRecord.unapply)
       ).fill(EditSetRecord.apply("", "", "", "", "", "", ""))
         .withError(FormError("", "Enter the scope and content."))
@@ -124,13 +102,13 @@ class EditRecordViewSpec extends BaseSpec {
       val heading = "EditRecordHeadingTest"
       val editSetRecordForm: Form[EditSetRecord] = Form(
         mapping(
-          "ccr"                       -> text,
-          "oci"                       -> text,
-          "scopeAndContent"           -> text,
-          "coveringDates"             -> text,
+          "ccr" -> text,
+          "oci" -> text,
+          "scopeAndContent" -> text,
+          "coveringDates" -> text,
           "formerReferenceDepartment" -> text,
-          "startDate"                 -> text,
-          "endDate"                   -> text
+          "startDate" -> text,
+          "endDate" -> text
         )(EditSetRecord.apply)(EditSetRecord.unapply)
       ).fill(
         EditSetRecord.apply(
@@ -162,13 +140,13 @@ class EditRecordViewSpec extends BaseSpec {
       val heading = "EditRecordHeadingTest"
       val editSetRecordForm: Form[EditSetRecord] = Form(
         mapping(
-          "ccr"                       -> text,
-          "oci"                       -> text,
-          "scopeAndContent"           -> text,
-          "coveringDates"             -> text,
+          "ccr" -> text,
+          "oci" -> text,
+          "scopeAndContent" -> text,
+          "coveringDates" -> text,
           "formerReferenceDepartment" -> text,
-          "startDate"                 -> text,
-          "endDate"                   -> text
+          "startDate" -> text,
+          "endDate" -> text
         )(EditSetRecord.apply)(EditSetRecord.unapply)
       ).fill(
         EditSetRecord.apply(
@@ -196,17 +174,16 @@ class EditRecordViewSpec extends BaseSpec {
     }
 
   }
-
-  private def generateDocument(): Document = {
+  private def generateDocument(title: String, heading: String, editSetRecord: EditSetRecord): Document = {
     val editSetRecordForm: Form[EditSetRecord] = Form(
       mapping(
-        "ccr"                       -> text,
-        "oci"                       -> text,
-        "scopeAndContent"           -> text,
-        "coveringDates"             -> text,
+        "ccr" -> text,
+        "oci" -> text,
+        "scopeAndContent" -> text,
+        "coveringDates" -> text,
         "formerReferenceDepartment" -> text,
-        "startDate"                 -> text,
-        "endDate"                   -> text
+        "startDate" -> text,
+        "endDate" -> text
       )(EditSetRecord.apply)(EditSetRecord.unapply)
     )
 
@@ -214,19 +191,9 @@ class EditRecordViewSpec extends BaseSpec {
     asDocument(
       editSetRecordEditInstance(
         user = user,
-        title = "EditRecordTitleTest",
-        heading = "EditRecordHeadingTest",
-        editSetRecordForm = editSetRecordForm.fill(
-          new EditSetRecord(
-            ccr = "TestCCR",
-            oci = "TestOCI",
-            scopeAndContent = "TestScopeAndContent",
-            coveringDates = "TestCoveringDates",
-            formerReferenceDepartment = "TestFormerReferenceDepartment",
-            startDate = "TestStartDate",
-            endDate = "TestEndDate"
-          )
-        )
+        title = title,
+        heading = heading,
+        editSetRecordForm = editSetRecordForm.fill(editSetRecord)
       )(
         Helpers.stubMessages(),
         CSRFTokenHelper.addCSRFToken(FakeRequest())
@@ -234,4 +201,5 @@ class EditRecordViewSpec extends BaseSpec {
     )
 
   }
+
 }
