@@ -35,8 +35,12 @@ package object editSetRecords {
         |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |  "coveringDates" : "1960",
         |  "formerReferenceDepartment" : "",
-        |  "startDate" : "1960",
-        |  "endDate" : ""
+        |  "startDateDay" : "1",
+        |  "startDateMonth" : "1",
+        |  "startDateYear" : "1960",
+        |  "endDateDay" : "31",
+        |  "endDateMonth" : "12",
+        |  "endDateYear" : "1960"
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -50,8 +54,12 @@ package object editSetRecords {
         |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |  "coveringDates" : "1960",
         |  "formerReferenceDepartment" : "",
-        |  "startDate" : "1960",
-        |  "endDate" : ""
+        |  "startDateDay" : "1",
+        |  "startDateMonth" : "1",
+        |  "startDateYear" : "1960",
+        |  "endDateDay" : "31",
+        |  "endDateMonth" : "12",
+        |  "endDateYear" : "1960"
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -65,8 +73,12 @@ package object editSetRecords {
         |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |  "coveringDates" : "1960",
         |  "formerReferenceDepartment" : "",
-        |  "startDate" : "1960",
-        |  "endDate" : ""
+        |  "startDateDay" : "1",
+        |  "startDateMonth" : "1",
+        |  "startDateYear" : "1960",
+        |  "endDateDay" : "31",
+        |  "endDateMonth" : "12",
+        |  "endDateYear" : "1960"
         |} """.stripMargin
     )
     .validate[EditSetRecord]

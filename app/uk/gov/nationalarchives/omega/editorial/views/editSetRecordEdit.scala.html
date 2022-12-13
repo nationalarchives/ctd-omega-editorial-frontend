@@ -48,6 +48,86 @@
     </div>
 }
 
+@startDateContent = {
+    <label class="govuk-label">
+    @messages("edit-set.record.edit.start-date")
+    </label>
+    @editSetRecordForm.error("startDate").map { error =>
+        <p id="startDateFieldError" class="govuk-error-message">@error.message</p>
+    }
+    <div class="govuk-date-input" id="startDate">
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+            @govukInput(Input(
+                id = "startDateDay",
+                name = "startDateDay",
+                value = editSetRecordForm.data.get("startDateDay"),
+                label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("startDateDay"), content = Text(messages("edit-set.record.edit.dates.day"))),
+                classes = "govuk-input govuk-date-input__input govuk-input--width-2"))
+            </div>
+        </div>
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+            @govukInput(Input(
+                id = "startDateMonth",
+                name = "startDateMonth",
+                value = editSetRecordForm.data.get("startDateMonth"),
+                label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("startDateMonth"), content = Text(messages("edit-set.record.edit.dates.month"))),
+                classes = "govuk-input govuk-date-input__input govuk-input--width-2"))
+            </div>
+        </div>
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+            @govukInput(Input(
+                id = "startDateYear",
+                name = "startDateYear",
+                value = editSetRecordForm.data.get("startDateYear"),
+                label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("startDateYear"), content = Text(messages("edit-set.record.edit.dates.year"))),
+                classes = "govuk-input govuk-date-input__input govuk-input--width-4"))
+            </div>
+        </div>
+    </div>
+}
+
+@endDateContent = {
+    <label class="govuk-label">@messages("edit-set.record.edit.end-date")</label>
+    @editSetRecordForm.error("endDate").map { error =>
+        <p id="endDateFieldError" class="govuk-error-message">@error.message</p>
+    }
+    <div class="govuk-date-input" id="endDate">
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+            @govukInput(Input(
+                id = "endDateDay",
+                name = "endDateDay",
+                value = editSetRecordForm.data.get("endDateDay"),
+                label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("endDateDay"), content = Text(messages("edit-set.record.edit.dates.day"))),
+                classes = "govuk-input govuk-date-input__input govuk-input--width-2"))
+            </div>
+        </div>
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+            @govukInput(Input(
+                id = "endDateMonth",
+                name = "endDateMonth",
+                value = editSetRecordForm.data.get("endDateMonth"),
+                label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("endDateMonth"), content = Text(messages("edit-set.record.edit.dates.month"))),
+                classes = "govuk-input govuk-date-input__input govuk-input--width-2"))
+            </div>
+        </div>
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+            @govukInput(Input(
+                id = "endDateYear",
+                name = "endDateYear",
+                value = editSetRecordForm.data.get("endDateYear"),
+                label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("endDateYear"), content = Text(messages("edit-set.record.edit.dates.year"))),
+                classes = "govuk-input govuk-date-input__input govuk-input--width-4"))
+            </div>
+        </div>
+    </div>
+}
+
 @fieldsetContent = {
 @CSRF.formField
 @govukTextarea(Textarea(
@@ -87,20 +167,20 @@
         )
     },
     classes = "govuk-!-width-one-half"))
-@govukInput(Input(
-    id = "startDate",
-    name = "startDate",
-    attributes = Map("readonly" -> "readonly"),
-    value = editSetRecordForm.data.get("startDate"),
-    label = Label(forAttr = Some("startDate"), content = Text(messages("edit-set.record.edit.start-date"))),
-    classes = "govuk-!-width-one-third"))
-@govukInput(Input(
-    id = "endDate",
-    name = "endDate",
-    attributes = Map("readonly" -> "readonly"),
-    value = editSetRecordForm.data.get("endDate"),
-    label = Label(forAttr = Some("endDate"), content = Text(messages("edit-set.record.edit.end-date"))),
-    classes = "govuk-!-width-one-third"))
+@govukFieldset(
+    Fieldset(
+        classes = "govuk-fieldset",
+        html = startDateContent,
+        role = Some("group"),
+        describedBy = Some("startDateHint")
+    ))
+@govukFieldset(
+    Fieldset(
+        classes = "govuk-fieldset",
+        html = endDateContent,
+        role = Some("group"),
+        describedBy = Some("endDateHint")
+    ))
     <div class="govuk-form-group">
         <input id="ccr" name="ccr" type="text" readonly="readonly" hidden="true" value="@editSetRecordForm.data.get("ccr")"/>
         <input id="ocr" name="oci" type="text" readonly="readonly" hidden="true" value="@editSetRecordForm.data.get("oci")"/>

@@ -22,8 +22,11 @@
 package support
 
 import org.jsoup.nodes.Document
+import org.scalatest.matchers.{MatchResult, Matcher}
 import org.scalatest.matchers.{ MatchResult, Matcher }
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError
+
+import scala.jdk.CollectionConverters._
 
 object CustomMatchers {
 
@@ -86,7 +89,7 @@ object CustomMatchers {
   }
 
   def haveLegend(legend: String): Matcher[Document] = (document: Document) => {
-    val actualLegend =  document.select("legend").text()
+    val actualLegend = document.select("legend").text()
     val errorMessageIfExpected = s"We expected the legend to be '$legend' but it was actually '$actualLegend'."
     val errorMessageIfNotExpected = s"We didn't expect the legend to be '$legend' but it was."
     MatchResult(
@@ -180,11 +183,71 @@ object CustomMatchers {
     )
   }
 
-  def haveStartDate(expectedValue: String): Matcher[Document] = (document: Document) => {
-    val actualValue = document.select("#startDate").attr("value")
+  def haveStartDateDay(expectedValue: String): Matcher[Document] = (document: Document) => {
+    val actualValue = document.select("#startDateDay").attr("value")
     val errorMessageIfExpected =
-      s"The page didn't have a start date of '$expectedValue'. The actual value was '$actualValue'"
-    val errorMessageIfNotExpected = s"The page did indeed have a start date of '$expectedValue', which was not expected."
+      s"The page didn't have a start date day of '$expectedValue'. The actual value was '$actualValue'"
+    val errorMessageIfNotExpected = s"The page did indeed have a start date day of '$expectedValue', which was not expected."
+    MatchResult(
+      actualValue == expectedValue,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveStartDateMonth(expectedValue: String): Matcher[Document] = (document: Document) => {
+    val actualValue = document.select("#startDateMonth").attr("value")
+    val errorMessageIfExpected =
+      s"The page didn't have a start date month of '$expectedValue'. The actual value was '$actualValue'"
+    val errorMessageIfNotExpected = s"The page did indeed have a start date month of '$expectedValue', which was not expected."
+    MatchResult(
+      actualValue == expectedValue,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveStartDateYear(expectedValue: String): Matcher[Document] = (document: Document) => {
+    val actualValue = document.select("#startDateYear").attr("value")
+    val errorMessageIfExpected =
+      s"The page didn't have a start date year of '$expectedValue'. The actual value was '$actualValue'"
+    val errorMessageIfNotExpected = s"The page did indeed have a start date year of '$expectedValue', which was not expected."
+    MatchResult(
+      actualValue == expectedValue,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveEndDateDay(expectedValue: String): Matcher[Document] = (document: Document) => {
+    val actualValue = document.select("#endDateDay").attr("value")
+    val errorMessageIfExpected =
+      s"The page didn't have an end date day of '$expectedValue'. The actual value was '$actualValue'"
+    val errorMessageIfNotExpected = s"The page did indeed have a end date day of '$expectedValue', which was not expected."
+    MatchResult(
+      actualValue == expectedValue,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveEndDateMonth(expectedValue: String): Matcher[Document] = (document: Document) => {
+    val actualValue = document.select("#endDateMonth").attr("value")
+    val errorMessageIfExpected =
+      s"The page didn't have an end date month of '$expectedValue'. The actual value was '$actualValue'"
+    val errorMessageIfNotExpected = s"The page did indeed have an end date month of '$expectedValue', which was not expected."
+    MatchResult(
+      actualValue == expectedValue,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveEndDateYear(expectedValue: String): Matcher[Document] = (document: Document) => {
+    val actualValue = document.select("#endDateYear").attr("value")
+    val errorMessageIfExpected =
+      s"The page didn't have an end date year of '$expectedValue'. The actual value was '$actualValue'"
+    val errorMessageIfNotExpected = s"The page did indeed have an end date year of '$expectedValue', which was not expected."
     MatchResult(
       actualValue == expectedValue,
       errorMessageIfExpected,
@@ -197,6 +260,68 @@ object CustomMatchers {
     val errorMessageIfExpected =
       s"The page didn't have an end date of '$expectedValue'. The actual value was '$actualValue'"
     val errorMessageIfNotExpected = s"The page did indeed have a start date of '$expectedValue', which was not expected."
+    MatchResult(
+      actualValue == expectedValue,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveSummaryErrorMessages(expectedValues: Set[String]): Matcher[Document] = (document: Document) => {
+    val actualValues = document.select("ul.govuk-error-summary__list > li").eachText().asScala.toSet
+    val actualValuesForDisplay = actualValues.mkString(",")
+    val expectedValuesForDisplay = expectedValues.mkString(",")
+    val errorMessageIfExpected =
+      s"The page didn't have summary error messages of ('$expectedValuesForDisplay'). The actual messages were ('$actualValuesForDisplay')"
+    val errorMessageIfNotExpected = s"The page did indeed have a summary error messages of ('$expectedValuesForDisplay'), which was not expected."
+    MatchResult(
+      actualValues == expectedValues,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveErrorMessageForStartDate(expectedValue: String): Matcher[Document] = (document: Document) => {
+    val actualValue = document.select("#startDateFieldError").text()
+    val errorMessageIfExpected =
+      s"The page didn't have an error message of start date of '$expectedValue'. The actual messages were '$actualValue'"
+    val errorMessageIfNotExpected = s"The page did indeed have an error message of start date of '$expectedValue', which was not expected."
+    MatchResult(
+      actualValue == expectedValue,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveNoErrorMessageForStartDate: Matcher[Document] = (document: Document) => {
+    val actualValue = document.select("#startDateFieldError").text()
+    val errorMessageIfExpected =
+      s"The page did indeed have an error message for the start date. The actual value was '$actualValue'"
+    val errorMessageIfNotExpected = s"The page didn't have an error message for the start date, which was not expected."
+    MatchResult(
+      actualValue == "",
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveNoErrorMessageForEndDate: Matcher[Document] = (document: Document) => {
+    val actualValue = document.select("#endDateFieldError").text()
+    val errorMessageIfExpected =
+      s"The page did indeed have an error message for the end date. The actual value was '$actualValue'"
+    val errorMessageIfNotExpected = s"The page didn't have an error message for the end date, which was not expected."
+    MatchResult(
+      actualValue == "",
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveErrorMessageForEndDate(expectedValue: String): Matcher[Document] = (document: Document) => {
+    val actualValue = document.select("#endDateFieldError").text()
+    val errorMessageIfExpected =
+      s"The page didn't have an error message of end date of '$expectedValue'. The actual messages were '$actualValue'"
+    val errorMessageIfNotExpected = s"The page did indeed have an error message of end date of '$expectedValue', which was not expected."
     MatchResult(
       actualValue == expectedValue,
       errorMessageIfExpected,
@@ -223,7 +348,7 @@ object CustomMatchers {
       MatchResult(
         expected == ok,
         s"""Parsed OK but no match:
-           |got:      $ok 
+           |got:      $ok
            |expected: $expected""".stripMargin,
         s"Parsed $expected OK"
       )
@@ -246,7 +371,7 @@ object CustomMatchers {
       MatchResult(
         expectedError == err,
         s"""Failed but no match:
-           |got:      $err 
+           |got:      $err
            |expected: $expectedError""".stripMargin,
         s"Failed with $expectedError as expected"
       )

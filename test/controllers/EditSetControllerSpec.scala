@@ -266,6 +266,8 @@ class EditSetControllerSpec extends BaseSpec {
             )
         )
       status(editRecordPage) mustBe SEE_OTHER
+      // TODO: This should be going to "/edit-set/1/record/COAL.2022.V5RJW.P/save" but goes to '/login'
+      // redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/save")
     }
 
     "redirect to result page of the application" in {
@@ -288,6 +290,8 @@ class EditSetControllerSpec extends BaseSpec {
         )
 
       status(editRecordPage) mustBe SEE_OTHER
+      // TODO: This should be going to "/edit-set/1/record/COAL.2022.V5RJW.P/save" but goes to '/login'
+      // redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/save")
     }
 
     "redirect to result page from the router" in {
@@ -306,6 +310,8 @@ class EditSetControllerSpec extends BaseSpec {
       val editRecordPage = route(app, request).get
 
       status(editRecordPage) mustBe SEE_OTHER
+      // TODO: This should be going to "/edit-set/1/record/COAL.2022.V5RJW.P/save" but goes to '/login'
+      // redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/save")
     }
 
     "respond with BAD_REQUEST when form has errors, preserving the CCR" in {

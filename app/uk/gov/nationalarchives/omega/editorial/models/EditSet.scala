@@ -34,8 +34,12 @@ case class EditSetRecord(
   scopeAndContent: String,
   coveringDates: String,
   formerReferenceDepartment: String,
-  startDate: String,
-  endDate: String
+  startDateDay: String,
+  startDateMonth: String,
+  startDateYear: String,
+  endDateDay: String,
+  endDateMonth: String,
+  endDateYear: String
 )
 object EditSetRecord {
   implicit val editSetRecordReads = Json.reads[EditSetRecord]

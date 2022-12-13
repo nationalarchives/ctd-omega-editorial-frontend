@@ -21,6 +21,12 @@
 
 package uk.gov.nationalarchives.omega.editorial.controllers
 
+import play.api.Logger
+import play.api.data.Forms.{mapping, text}
+import play.api.data.{Form, FormError}
+import play.api.i18n.{I18nSupport, Lang, Messages}
+import play.api.mvc._
+import uk.gov.nationalarchives.omega.editorial._
 import javax.inject._
 import play.api.data.Form
 import play.api.data.Forms.{ mapping, text }
@@ -29,20 +35,27 @@ import play.api.Logger
 import play.api.mvc._
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
 import uk.gov.nationalarchives.omega.editorial.models.EditSetRecord
+import uk.gov.nationalarchives.omega.editorial.views.html.{editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave}
+import uk.gov.nationalarchives.omega.editorial.models.EditSetRecord
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateCalculator
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 import uk.gov.nationalarchives.omega.editorial.{ editSetRecords, editSets, _ }
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import javax.inject._
+import scala.util.Try
+
 /** This controller creates an `Action` to handle HTTP requests to the application's home page.
-  */
+ */
 @Singleton
-class EditSetController @Inject() (
-  val messagesControllerComponents: MessagesControllerComponents,
-  editSet: editSet,
-  editSetRecordEdit: editSetRecordEdit,
-  editSetRecordEditDiscard: editSetRecordEditDiscard,
-  editSetRecordEditSave: editSetRecordEditSave
-) extends MessagesAbstractController(messagesControllerComponents) with I18nSupport with Secured {
+class EditSetController @Inject()(
+                                   val messagesControllerComponents: MessagesControllerComponents,
+                                   editSet: editSet,
+                                   editSetRecordEdit: editSetRecordEdit,
+                                   editSetRecordEditDiscard: editSetRecordEditDiscard,
+                                   editSetRecordEditSave: editSetRecordEditSave
+                                 ) extends MessagesAbstractController(messagesControllerComponents) with I18nSupport with Secured {
 
   val logger: Logger = Logger(this.getClass())
   val save = "save"
@@ -75,16 +88,20 @@ class EditSetController @Inject() (
         messagesApi("edit-set.record.error.former-reference-department")(Lang.apply("en")),
         value => value.length <= 255
       ),
-      "startDate" -> text,
-      "endDate"   -> text
+      "startDateDay" -> text,
+      "startDateMonth" -> text,
+      "startDateYear" -> text,
+      "endDateDay" -> text,
+      "endDateMonth" -> text,
+      "endDateYear" -> text
     )(EditSetRecord.apply)(EditSetRecord.unapply)
   )
 
   /** Create an Action for the edit set page.
-    *
-    * The configuration in the `routes` file means that this method will be called when the application receives a `GET`
-    * request with a path of `/edit-set/{id}`.
-    */
+   *
+   * The configuration in the `routes` file means that this method will be called when the application receives a `GET`
+   * request with a path of `/edit-set/{id}`.
+   */
   def view(id: String) = Action { implicit request: Request[AnyContent] =>
     withUser { user =>
       logger.info(s"The edit set id is $id ")
@@ -97,10 +114,10 @@ class EditSetController @Inject() (
   }
 
   /** Create an Action for the edit set record edit page.
-    *
-    * The configuration in the `routes` file means that this method will be called when the application receives a `GET`
-    * request with a path of `/edit-set/{id}/record/{recordId}/edit`.
-    */
+   *
+   * The configuration in the `routes` file means that this method will be called when the application receives a `GET`
+   * request with a path of `/edit-set/{id}/record/{recordId}/edit`.
+   */
   def editRecord(id: String, recordId: String) = Action { implicit request: Request[AnyContent] =>
     withUser { user =>
       logger.info(s"The edit set id is $id for record id $recordId")
@@ -139,6 +156,34 @@ class EditSetController @Inject() (
       }
 
     }
+  }
+
+  private def validateStartAndEndDates(form: Form[EditSetRecord]): Form[EditSetRecord] = {
+    val errorForInvalidStartDate = FormError("startDate", messagesApi("edit-set.record.error.start-date")(Lang.apply("en")))
+    val errorForInvalidEndDate = FormError("endDate", messagesApi("edit-set.record.error.end-date")(Lang.apply("en")))
+    val errorForEndDateBeforeStartDate = FormError("endDate", messagesApi("edit-set.record.error.end-date-before-start-date")(Lang.apply("en")))
+    val additionErrors = (extractStartDate(form.get), extractEndDate(form.get)) match {
+      case (Some(startDate), Some(endDate)) if !endDate.isBefore(startDate) => Seq.empty
+      case (Some(startDate), Some(endDate)) if endDate.isBefore(startDate) => Seq(errorForEndDateBeforeStartDate)
+      case (Some(_), None) => Seq(errorForInvalidEndDate)
+      case (None, Some(_)) => Seq(errorForInvalidStartDate)
+      case (None, None) => Seq(errorForInvalidStartDate, errorForInvalidEndDate)
+    }
+    form.copy(errors = form.errors ++ additionErrors)
+  }
+
+  private def extractStartDate(editSetRecord: EditSetRecord): Option[LocalDate] =
+    extractDate(editSetRecord.startDateDay, editSetRecord.startDateMonth, editSetRecord.startDateYear)
+
+  private def extractEndDate(editSetRecord: EditSetRecord): Option[LocalDate] =
+    extractDate(editSetRecord.endDateDay, editSetRecord.endDateMonth, editSetRecord.endDateYear)
+
+  private def extractDate(day: String, month: String, year: String): Option[LocalDate] = {
+    Try(
+      LocalDate.parse(
+        List(day, month, year).mkString("/"),
+        DateTimeFormatter.ofPattern("d/M/yyyy")))
+      .toOption
   }
 
   def save(id: String, oci: String) = Action { implicit request: Request[AnyContent] =>
