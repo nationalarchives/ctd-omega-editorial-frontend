@@ -22,7 +22,6 @@
 package services
 
 import java.time._
-import java.time.format.DateTimeFormatter
 import org.scalatest.prop.{ TableDrivenPropertyChecks, Tables }
 import support.BaseSpec
 import support.CustomMatchers.parseSuccessfullyAs

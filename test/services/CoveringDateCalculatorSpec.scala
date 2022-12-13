@@ -21,6 +21,7 @@
 
 package uk.gov.nationalarchives.omega.editorial.services
 
+import java.util.Locale
 import java.time._
 import java.time.format.DateTimeFormatter
 import org.scalatest.prop.{ TableDrivenPropertyChecks, Tables }
@@ -63,7 +64,7 @@ class CoveringDateCalculatorSpec extends BaseSpec with TableDrivenPropertyChecks
 
   }
 
-  lazy val basicCoveringDateFormatter = DateTimeFormatter.ofPattern("u LLL d")
+  lazy val basicCoveringDateFormatter = DateTimeFormatter.ofPattern("u MMM d").withLocale(Locale.UK)
 
   def defineTestCoveringDate(cds: (String, String)*): List[DateRange] =
     cds.map { case (start, end) =>
