@@ -47,7 +47,9 @@ class CoveringDateCalculatorSpec extends BaseSpec with TableDrivenPropertyChecks
       "1868 Jan 1" -> "1868 Dec 31",
       "1890 Jan 1" -> "1902 Dec 31",
       "1933 Jan 1" -> "1933 Dec 31"
-    )
+    ),
+    "1582 Oct 11" -> defineTestCoveringDate("1582 Oct 11" -> "1582 Oct 11"),
+    "1582 Oct 11 - 1582 Nov 29" -> defineTestCoveringDate("1582 Oct 11" -> "1582 Nov 29")
   )
 
   "CoveringDateCalculator" should {
