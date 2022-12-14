@@ -113,11 +113,11 @@ class EditSetController @Inject() (
       request.body.asFormUrlEncoded.get("action").headOption match {
         case Some("save") =>
           formToEither(editSetRecordForm.bindFromRequest()) match {
-              case Left(formWithErrors) => BadRequest(editSetRecordEdit(user, title, heading, formWithErrors))
-              case Right(editSetRecord) =>
-                editSetRecords.saveEditSetRecord(editSetRecord)
-                Redirect(controllers.routes.EditSetController.save(id, editSetRecord.oci))
-            }
+            case Left(formWithErrors) => BadRequest(editSetRecordEdit(user, title, heading, formWithErrors))
+            case Right(editSetRecord) =>
+              editSetRecords.saveEditSetRecord(editSetRecord)
+              Redirect(controllers.routes.EditSetController.save(id, editSetRecord.oci))
+          }
 
         case Some("discard") =>
           Redirect(controllers.routes.EditSetController.discard(id, recordId))
