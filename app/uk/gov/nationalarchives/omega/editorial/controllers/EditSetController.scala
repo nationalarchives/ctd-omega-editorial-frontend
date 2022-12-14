@@ -110,20 +110,23 @@ class EditSetController @Inject() (
       val heading: String = messages("edit-set.record.edit.heading")
       logger.info(s"The edit set id is $id for record id $recordId")
 
-      editSetRecordForm
-        .bindFromRequest()
-        .fold(
-          formWithErrors => BadRequest(editSetRecordEdit(user, title, heading, formWithErrors)),
-          editSetRecord =>
-            request.body.asFormUrlEncoded.get("action").headOption match {
-              case Some("save") =>
+      request.body.asFormUrlEncoded.get("action").headOption match {
+        case Some("save") =>
+          formToEither(editSetRecordForm.bindFromRequest()) match {
+              case Left(formWithErrors) => BadRequest(editSetRecordEdit(user, title, heading, formWithErrors))
+              case Right(editSetRecord) =>
                 editSetRecords.saveEditSetRecord(editSetRecord)
                 Redirect(controllers.routes.EditSetController.save(id, editSetRecord.oci))
-              case Some("discard") => Redirect(controllers.routes.EditSetController.discard(id, recordId))
-              // TODO Below added to handle error flow which could be a redirect to an error page pending configuration
-              case _ => BadRequest("This action is not allowed")
             }
-        )
+
+        case Some("discard") =>
+          Redirect(controllers.routes.EditSetController.discard(id, recordId))
+
+        // TODO Below added to handle error flow which could be a redirect to an error page pending configuration
+        case _ =>
+          BadRequest("This action is not allowed")
+      }
+
     }
   }
 
@@ -152,5 +155,8 @@ class EditSetController @Inject() (
       Ok(editSetRecordEditDiscard(user, title, heading, oci, message))
     }
   }
+
+  private def formToEither[A](form: Form[A]): Either[Form[A], A] =
+    form.fold(Left.apply, Right.apply)
 
 }

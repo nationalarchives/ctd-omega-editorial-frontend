@@ -320,14 +320,17 @@ class EditSetControllerSpec extends BaseSpec {
           "startDate"                 -> "1234",
           "endDate"                   -> "1234",
           "action"                    -> "discard"
-        )
+        ).withSession(SessionKeys.token -> validSessionToken)
       )
       val editRecordPage = route(app, request).get
 
       status(editRecordPage) mustBe SEE_OTHER
 
-      val document = asDocument(contentAsString(editRecordPage))
-      document must haveNotificationBannerWithSubheading("Changes discarded")
+      val expectedRedirectLocation = "/edit-set/1/record/COAL.2022.V5RJW.P/edit/discard"
+      val Some(discardPage) = redirectLocation(editRecordPage)
+
+      expectedRedirectLocation mustBe discardPage
+
     }
   }
 

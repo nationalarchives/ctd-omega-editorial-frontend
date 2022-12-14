@@ -119,24 +119,11 @@ object CustomMatchers {
     )
   }
 
-  def haveNotificationBannerWithSubheading(subheading: String): Matcher[Document] = (document: Document) => {
-    val actualSubheading = document.select("h2.govuk-notification-banner-title").text()
-    val errorMessageIfExpected =
-      s"The page didn't have a heading of '$subheading'. The actual heading was '$actualSubheading'"
-    val errorMessageIfNotExpected = s"The page did indeed have a heading of '$subheading', which was not expected."
-    MatchResult(
-      actualSubheading == subheading,
-      errorMessageIfExpected,
-      errorMessageIfNotExpected
-    )
-  }
-
   def haveClassicCatalogueRef(classicCatalogueRef: String): Matcher[Document] = (document: Document) => {
     val actualClassicCatalogueRef = document.select("#ccr").attr("value")
     val errorMessageIfExpected =
       s"The page didn't have a classic catalogue ref of '$classicCatalogueRef'. The actual value was '$actualClassicCatalogueRef'"
-    val errorMessageIfNotExpected =
-      s"The page did indeed have a classic catalogue ref of '$classicCatalogueRef', which was not expected."
+    val errorMessageIfNotExpected = s"The page did indeed have a classic catalogue ref of '$classicCatalogueRef', which was not expected."
     MatchResult(
       actualClassicCatalogueRef == classicCatalogueRef,
       errorMessageIfExpected,
