@@ -22,10 +22,9 @@
 package uk.gov.nationalarchives.omega.editorial.models
 
 import play.api.libs.json._
-import play.api.libs.json.Reads._
-import play.api.libs.functional.syntax._
 
 case class EditSetEntry(ccr: String, oci: String, scopeAndContent: String, coveringDates: String)
+
 case class EditSet(name: String, id: String, entries: Seq[EditSetEntry])
 
 case class EditSetRecord(
@@ -41,12 +40,15 @@ case class EditSetRecord(
   endDateMonth: String,
   endDateYear: String
 )
+
 object EditSetRecord {
   implicit val editSetRecordReads = Json.reads[EditSetRecord]
 }
+
 object EditSetEntry {
   implicit val editSetEntryReads = Json.reads[EditSetEntry]
 }
+
 object EditSet {
   implicit val editSetReads = Json.reads[EditSet]
 

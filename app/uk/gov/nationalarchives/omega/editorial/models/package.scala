@@ -22,7 +22,6 @@
 package uk.gov.nationalarchives.omega.editorial
 
 import play.api.libs.json._
-import uk.gov.nationalarchives.omega.editorial.editSetRecords.editSetRecordMap
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetRecord }
 
 package object editSetRecords {

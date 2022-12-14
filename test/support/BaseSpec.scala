@@ -25,7 +25,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.api.test.Injecting
 import play.twirl.api.Content
 import uk.gov.nationalarchives.omega.editorial.models.User
@@ -34,7 +34,8 @@ class BaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
   lazy val user: User = User("dummy user")
 
-  def asDocument(content: String): Document = Jsoup.parse(content)
   def asDocument(content: Content): Document = asDocument(contentAsString(content))
+
+  def asDocument(rawContent: String): Document = Jsoup.parse(rawContent)
 
 }
