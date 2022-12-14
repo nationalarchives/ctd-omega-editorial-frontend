@@ -16,8 +16,12 @@
 
 <undated> ::= "undated"
 
+<single_or_range> ::= <single> | <range>
+
+<gap_repeating> ::= <gap_date> | <single_or_range>
+
 // I assume there can be an unbounded number of "gaps" - the only example I
 // have is "1868; 1890-1902; 1933"
-<gap-date> ::= <single> | <range> ";" <gap-date>
+<gap_date> ::= <single_or_range> ";" <gap_repeating>
 
-<covering-date> ::= <range> | <single> | <derived> | <appox> | <undated> | <gap-date>
+<covering-date> ::= <range> | <single> | <derived> | <appox> | <undated> | <gap_date>
