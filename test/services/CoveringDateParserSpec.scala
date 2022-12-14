@@ -24,10 +24,39 @@ package services
 import java.time._
 import org.scalatest.prop.{ TableDrivenPropertyChecks, Tables }
 import support.BaseSpec
-import support.CustomMatchers.parseSuccessfullyAs
+import support.CustomMatchers.{ failToParseAs, parseSuccessfullyAs }
 import uk.gov.nationalarchives.omega.editorial.services.{ CoveringDateNode => Node, CoveringDateParser }
+import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError.ParseError
 
 class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
+
+  "UndatedParser" should {
+
+    s"""parse "undated" as undated""" in {
+      val input = "undated"
+      val parseResult = CoveringDateParser.runParser(CoveringDateParser.undated, input)
+      parseResult must parseSuccessfullyAs(Node.Undated)
+    }
+
+    val invalidTestTable = Tables.Table(
+      "year input"     -> "parse failure",
+      "   "            -> ParseError,
+      "Undated"        -> ParseError,
+      "Temp Edw 1"     -> ParseError,
+      "Oct"            -> ParseError,
+      "1993 Oct"       -> ParseError,
+      "1993 Oct 1"     -> ParseError,
+      "Mon 1 Oct 1330" -> ParseError
+    )
+
+    forAll(invalidTestTable) { (input, error) =>
+      s"fail to parse $input" in {
+        val parseResult = CoveringDateParser.runParser(CoveringDateParser.undated, input)
+        parseResult must failToParseAs(error)
+      }
+    }
+
+  }
 
   "YearParser" should {
 
@@ -45,6 +74,23 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
         parseResult must parseSuccessfullyAs(Node.Year(expectedResult))
       }
     }
+
+    val invalidTestTable = Tables.Table(
+      "year input"     -> "parse failure",
+      "Temp Edw 1"     -> ParseError,
+      "Oct"            -> ParseError,
+      "1993 Oct"       -> ParseError,
+      "1993 Oct 1"     -> ParseError,
+      "Mon 1 Oct 1330" -> ParseError
+    )
+
+    forAll(invalidTestTable) { (input, error) =>
+      s"fail to parse $input" in {
+        val parseResult = CoveringDateParser.runParser(CoveringDateParser.year, input)
+        parseResult must failToParseAs(error)
+      }
+    }
+
   }
 
   "YearMonthParser" should {
@@ -64,6 +110,24 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
         parseResult must parseSuccessfullyAs(Node.YearMonth(expectedResult))
       }
     }
+
+    val invalidTestTable = Tables.Table(
+      "yearMonth input" -> "parse failure",
+      "Temp Edw 1"      -> ParseError,
+      "Oct"             -> ParseError,
+      "1993"            -> ParseError,
+      "1993 Oct 1"      -> ParseError,
+      "October"         -> ParseError,
+      "Mon 1 Oct 1330"  -> ParseError
+    )
+
+    forAll(invalidTestTable) { (input, error) =>
+      s"fail to parse $input" in {
+        val parseResult = CoveringDateParser.runParser(CoveringDateParser.yearMonth, input)
+        parseResult must failToParseAs(error)
+      }
+    }
+
   }
 
   "YearMonthDayParser" should {
@@ -81,6 +145,24 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
         parseResult must parseSuccessfullyAs(Node.YearMonthDay(expectedResult))
       }
     }
+
+    val invalidTestTable = Tables.Table(
+      "yearMonthDay input" -> "parse failure",
+      "Temp Edw 1"         -> ParseError,
+      "Oct"                -> ParseError,
+      "1993"               -> ParseError,
+      "1993 Oct"           -> ParseError,
+      "October"            -> ParseError,
+      "Mon 1 Oct 1330"     -> ParseError
+    )
+
+    forAll(invalidTestTable) { (input, error) =>
+      s"fail to parse $input" in {
+        val parseResult = CoveringDateParser.runParser(CoveringDateParser.yearMonthDay, input)
+        parseResult must failToParseAs(error)
+      }
+    }
+
   }
 
   "SingleParser" should {
@@ -99,6 +181,28 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
         parseResult must parseSuccessfullyAs(expectedResult)
       }
     }
+
+    val invalidTestTable = Tables.Table(
+      "single input"             -> "parse failure",
+      "    "                     -> ParseError,
+      "1305 Sept - Oct"          -> ParseError,
+      "Temp Edw 1"               -> ParseError,
+      "Oct"                      -> ParseError,
+      "October"                  -> ParseError,
+      "Mon 1 Oct 1330"           -> ParseError,
+      "1993 Jan 1 - 1993 Dec 31" -> ParseError,
+      "c 1 Jan 1"                -> ParseError,
+      "[c 1 Jan 1]"              -> ParseError,
+      "1868; 1890-1902; 1933"    -> ParseError
+    )
+
+    forAll(invalidTestTable) { (input, error) =>
+      s"fail to parse $input" in {
+        val parseResult = CoveringDateParser.runParser(CoveringDateParser.single, input)
+        parseResult must failToParseAs(error)
+      }
+    }
+
   }
 
   "RangeParser" should {
@@ -125,6 +229,27 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
         parseResult must parseSuccessfullyAs(expectedResult)
       }
     }
+
+    val invalidTestTable = Tables.Table(
+      "range input"           -> "parse failure",
+      "1305 Sept - Oct"       -> ParseError,
+      "Temp Edw 1"            -> ParseError,
+      "Oct"                   -> ParseError,
+      "October"               -> ParseError,
+      "Mon 1 Oct 1330"        -> ParseError,
+      "1993 Jan 1"            -> ParseError,
+      "c 1 Jan 1"             -> ParseError,
+      "[c 1 Jan 1]"           -> ParseError,
+      "1868; 1890-1902; 1933" -> ParseError
+    )
+
+    forAll(invalidTestTable) { (input, error) =>
+      s"fail to parse $input" in {
+        val parseResult = CoveringDateParser.runParser(CoveringDateParser.range, input)
+        parseResult must failToParseAs(error)
+      }
+    }
+
   }
 
   "ApproxParser" should {
@@ -151,6 +276,26 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
         parseResult must parseSuccessfullyAs(expectedResult)
       }
     }
+
+    val invalidTestTable = Tables.Table(
+      "approx input"          -> "parse failure",
+      "1305 Sept - Oct"       -> ParseError,
+      "Temp Edw 1"            -> ParseError,
+      "Oct"                   -> ParseError,
+      "October"               -> ParseError,
+      "Mon 1 Oct 1330"        -> ParseError,
+      "1993 Jan 1"            -> ParseError,
+      "[c 1 Jan 1]"           -> ParseError,
+      "1868; 1890-1902; 1933" -> ParseError
+    )
+
+    forAll(invalidTestTable) { (input, error) =>
+      s"fail to parse $input" in {
+        val parseResult = CoveringDateParser.runParser(CoveringDateParser.approx, input)
+        parseResult must failToParseAs(error)
+      }
+    }
+
   }
 
   "DerivedParser" should {
@@ -172,6 +317,26 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
         parseResult must parseSuccessfullyAs(expectedResult)
       }
     }
+
+    val invalidTestTable = Tables.Table(
+      "derived input"         -> "parse failure",
+      "1305 Sept - Oct"       -> ParseError,
+      "Temp Edw 1"            -> ParseError,
+      "Oct"                   -> ParseError,
+      "October"               -> ParseError,
+      "Mon 1 Oct 1330"        -> ParseError,
+      "1993 Jan 1"            -> ParseError,
+      "c 1 Jan 1"             -> ParseError,
+      "1868; 1890-1902; 1933" -> ParseError
+    )
+
+    forAll(invalidTestTable) { (input, error) =>
+      s"fail to parse $input" in {
+        val parseResult = CoveringDateParser.runParser(CoveringDateParser.derived, input)
+        parseResult must failToParseAs(error)
+      }
+    }
+
   }
 
   "GapParser" should {
@@ -193,6 +358,27 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
         parseResult must parseSuccessfullyAs(expectedResult)
       }
     }
+
+    val invalidTestTable = Tables.Table(
+      "gap input"       -> "parse failure",
+      "1305 Sept - Oct" -> ParseError,
+      "Temp Edw 1"      -> ParseError,
+      "Oct"             -> ParseError,
+      "October"         -> ParseError,
+      "Mon 1 Oct 1330"  -> ParseError,
+      "1993 Jan 1"      -> ParseError,
+      "c 1 Jan 1"       -> ParseError,
+      "[c 1 Jan 1]"     -> ParseError,
+      "1868;"           -> ParseError
+    )
+
+    forAll(invalidTestTable) { (input, error) =>
+      s"fail to parse $input" in {
+        val parseResult = CoveringDateParser.runParser(CoveringDateParser.gap, input)
+        parseResult must failToParseAs(error)
+      }
+    }
+
   }
 
   "CoveringDateParser" should {
@@ -230,6 +416,26 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
         parseResult must parseSuccessfullyAs(expectedResult)
       }
     }
+
+    val invalidTestTable = Tables.Table(
+      "Covering date input" -> "parse failure",
+      "1305 Sept - Oct"     -> ParseError,
+      "Temp Edw 1"          -> ParseError,
+      "Oct"                 -> ParseError,
+      "October"             -> ParseError,
+      "1868;"               -> ParseError,
+      "1270s"               -> ParseError,
+      "01 Oct 1305"         -> ParseError,
+      "Mon 1 Oct 1330"      -> ParseError
+    )
+
+    forAll(invalidTestTable) { (input, error) =>
+      s"fail to parse $input" in {
+        val parseResult = CoveringDateParser.runParser(CoveringDateParser.coveringDates, input)
+        parseResult must failToParseAs(error)
+      }
+    }
+
   }
 
 }
