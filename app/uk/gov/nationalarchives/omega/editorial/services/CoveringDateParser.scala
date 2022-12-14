@@ -22,9 +22,6 @@
 package uk.gov.nationalarchives.omega.editorial.services
 
 import java.time._
-import java.time.format.DateTimeFormatter
-import java.util.Locale
-import scala.util.matching.Regex
 import scala.util.parsing.combinator._
 import scala.util.Try
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError._

@@ -27,7 +27,6 @@ import java.time.format.DateTimeFormatter
 import org.scalatest.prop.{ TableDrivenPropertyChecks, Tables }
 import support.BaseSpec
 import support.CustomMatchers.parseSuccessfullyAs
-import uk.gov.nationalarchives.omega.editorial.services.{ CoveringDateNode => Node, CoveringDateParser }
 import uk.gov.nationalarchives.omega.editorial.models.DateRange
 
 class CoveringDateCalculatorSpec extends BaseSpec with TableDrivenPropertyChecks {

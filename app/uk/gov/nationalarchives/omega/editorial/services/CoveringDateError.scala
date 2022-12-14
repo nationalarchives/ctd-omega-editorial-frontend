@@ -21,7 +21,6 @@
 
 package uk.gov.nationalarchives.omega.editorial.services
 
-import uk.gov.nationalarchives.omega.editorial.services.{ CoveringDateNode => Node }
 import uk.gov.nationalarchives.omega.editorial.models.DateRange
 
 sealed abstract class CoveringDateError(val message: String)

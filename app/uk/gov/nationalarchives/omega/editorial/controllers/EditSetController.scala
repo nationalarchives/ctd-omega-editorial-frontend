@@ -28,7 +28,7 @@ import play.api.i18n.{ I18nSupport, Lang, Messages }
 import play.api.Logger
 import play.api.mvc._
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry, EditSetRecord }
+import uk.gov.nationalarchives.omega.editorial.models.EditSetRecord
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateCalculator
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 import uk.gov.nationalarchives.omega.editorial.{ editSetRecords, editSets, _ }
