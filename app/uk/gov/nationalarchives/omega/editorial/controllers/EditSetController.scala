@@ -108,20 +108,20 @@ class EditSetController @Inject() (
       val title: String = messages("edit-set.record.edit.title")
       logger.info(s"The edit set id is $id for record id $recordId")
 
-      val boundForm = editSetRecordForm.bindFromRequest()
-
-      boundForm.fold(
-        formWithErrors => BadRequest(editSetRecordEdit(user, title, formWithErrors)),
-        editSetRecord =>
-          request.body.asFormUrlEncoded.get("action").headOption match {
-            case Some("save") =>
-              editSetRecords.saveEditSetRecord(editSetRecord)
-              Redirect(controllers.routes.EditSetController.save(id, editSetRecord.oci))
-            case Some("discard") => Redirect(controllers.routes.EditSetController.discard(id, recordId))
-            // TODO Below added to handle error flow which could be a redirect to an error page pending configuration
-            case _ => BadRequest("This action is not allowed")
-          }
-      )
+      editSetRecordForm
+        .bindFromRequest()
+        .fold(
+          formWithErrors => BadRequest(editSetRecordEdit(user, title, formWithErrors)),
+          editSetRecord =>
+            request.body.asFormUrlEncoded.get("action").headOption match {
+              case Some("save") =>
+                editSetRecords.saveEditSetRecord(editSetRecord)
+                Redirect(controllers.routes.EditSetController.save(id, editSetRecord.oci))
+              case Some("discard") => Redirect(controllers.routes.EditSetController.discard(id, recordId))
+              // TODO Below added to handle error flow which could be a redirect to an error page pending configuration
+              case _ => BadRequest("This action is not allowed")
+            }
+        )
     }
   }
 
