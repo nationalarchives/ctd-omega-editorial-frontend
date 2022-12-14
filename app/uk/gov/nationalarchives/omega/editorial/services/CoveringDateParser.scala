@@ -35,8 +35,8 @@ object CoveringDateParser extends JavaTokenParsers {
   def runParser[A](parser: Parser[A], input: String): Result[A] =
     parseAll(parser, input) match {
       case Success(result, _) => Right(result)
-      case Failure(msg, _)    => Left(ParseError(msg))
-      case Error(msg, _)      => Left(ParseError(msg))
+      case Failure(_, _)      => Left(ParseError)
+      case Error(_, _)        => Left(ParseError)
     }
 
   def coveringDates: Parser[Node.Root] =

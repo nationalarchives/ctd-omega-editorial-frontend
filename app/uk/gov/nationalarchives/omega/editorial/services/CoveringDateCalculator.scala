@@ -80,6 +80,7 @@ object CoveringDateCalculator {
   private def validateDateRanges(ranges: List[DateRange]): Result[List[DateRange]] =
     ranges.partitionMap(checkDateRange) match {
       case (Nil, results) => Right(results)
+      case (List(err), _) => Left(err)
       case (errs, _)      => Left(MultipleErrors(errs))
     }
 

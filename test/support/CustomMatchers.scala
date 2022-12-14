@@ -230,8 +230,25 @@ object CustomMatchers {
     case Left(err) =>
       MatchResult(
         matches = false,
-        s"Expected $expected, but got error: ${err.message}",
+        s"Expected $expected, but got error: $err",
         ""
+      )
+  }
+
+  def failToParseAs(expectedError: CoveringDateError): Matcher[CoveringDateError.Result[_]] = {
+    case Right(ok) =>
+      MatchResult(
+        matches = false,
+        s"Expected to fail as $expectedError, but passed instead with: $ok",
+        ""
+      )
+    case Left(err) =>
+      MatchResult(
+        expectedError == err,
+        s"""Failed but no match:
+           |got:      $err 
+           |expected: $expectedError""".stripMargin,
+        s"Failed with $expectedError as expected"
       )
   }
 

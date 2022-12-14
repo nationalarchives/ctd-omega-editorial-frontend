@@ -23,18 +23,14 @@ package uk.gov.nationalarchives.omega.editorial.services
 
 import uk.gov.nationalarchives.omega.editorial.models.DateRange
 
-sealed abstract class CoveringDateError(val message: String)
+sealed abstract class CoveringDateError
 
 object CoveringDateError {
 
   type Result[A] = Either[CoveringDateError, A]
 
-  final case class ParseError(msg: String) extends CoveringDateError(msg)
-  final case class InvalidRange(range: DateRange) extends CoveringDateError(
-        s"Invalid date range; ${range.start} is not before or equal to ${range.end}"
-      )
-  final case class MultipleErrors(errs: List[CoveringDateError]) extends CoveringDateError(
-        s"Multiple errors:\n ${errs.map(_.message).mkString("\n")}"
-      )
+  final case object ParseError extends CoveringDateError
+  final case class InvalidRange(range: DateRange) extends CoveringDateError
+  final case class MultipleErrors(errs: List[CoveringDateError]) extends CoveringDateError
 
 }
