@@ -316,7 +316,7 @@ class EditSetControllerSpec extends BaseSpec {
             "oci"                       -> "1234",
             "scopeAndContent"           -> "1234",
             "formerReferenceDepartment" -> "1234",
-            "coveringDates"             -> "bad covering date",
+            "coveringDates"             -> "Oct 1 2004",
             "startDate"                 -> "1234",
             "endDate"                   -> "1234",
             "action"                    -> "save"

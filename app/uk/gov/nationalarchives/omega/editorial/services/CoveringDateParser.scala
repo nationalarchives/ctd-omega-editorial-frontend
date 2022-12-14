@@ -68,17 +68,17 @@ object CoveringDateParser extends JavaTokenParsers {
   def year: Parser[Node.Year] =
     integerDigit ^? (attemptParseYear, yearErrorFormatter)
 
-  def month: Parser[Month] =
+  def undated: Parser[Node.Undated.type] =
+    "undated" ^^^ Node.Undated
+
+  private def month: Parser[Month] =
     ("Jan" ^^^ Month.JANUARY) | ("Feb" ^^^ Month.FEBRUARY) | ("Mar" ^^^ Month.MARCH) |
       ("Apr" ^^^ Month.APRIL) | ("May" ^^^ Month.MAY) | ("June" ^^^ Month.JUNE) |
       ("July" ^^^ Month.JULY) | ("Aug" ^^^ Month.AUGUST) | ("Sept" ^^^ Month.SEPTEMBER) |
       ("Oct" ^^^ Month.OCTOBER) | ("Nov" ^^^ Month.NOVEMBER) | ("Dec" ^^^ Month.DECEMBER)
 
-  def integerDigit: Parser[String] =
+  private def integerDigit: Parser[String] =
     "-?[0-9]*".r
-
-  def undated: Parser[Node.Undated.type] =
-    "undated" ^^^ Node.Undated
 
   private def attemptParseYear: PartialFunction[String, Node.Year] =
     Function.unlift { yearRaw =>
@@ -102,7 +102,7 @@ object CoveringDateParser extends JavaTokenParsers {
     }
 
   private def yearErrorFormatter: String => String = badYear =>
-    s"Expected a year represented by a positve or negative integer but got $badYear"
+    s"Expected a year represented by a positive or negative integer but got $badYear"
 
   private def yearMonthErrorFormatter: String ~ Month => String = { case (badYear ~ badMonth) =>
     s"""Expected a year followed by a month but got "$badYear $badMonth""""
