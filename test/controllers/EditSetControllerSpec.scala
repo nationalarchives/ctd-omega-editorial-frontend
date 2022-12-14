@@ -25,6 +25,7 @@ import play.api.mvc.{ AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesAc
 import play.api.test.Helpers._
 import play.api.test._
 import support.BaseSpec
+import support.CustomMatchers.haveNotificationBannerWithSubheading
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
@@ -305,6 +306,28 @@ class EditSetControllerSpec extends BaseSpec {
       val editRecordPage = route(app, request).get
 
       status(editRecordPage) mustBe SEE_OTHER
+    }
+
+    "redirect to discard page on form submit even if validation fails" in {
+      val blankScopeAndContentToFailValidation = ""
+      val request = CSRFTokenHelper.addCSRFToken(
+        FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit").withFormUrlEncodedBody(
+          "ccr"                       -> "1234",
+          "oci"                       -> "1234",
+          "scopeAndContent"           -> blankScopeAndContentToFailValidation,
+          "formerReferenceDepartment" -> "1234",
+          "coveringDates"             -> "1234",
+          "startDate"                 -> "1234",
+          "endDate"                   -> "1234",
+          "action"                    -> "discard"
+        )
+      )
+      val editRecordPage = route(app, request).get
+
+      status(editRecordPage) mustBe SEE_OTHER
+
+      val document = asDocument(contentAsString(editRecordPage))
+      document must haveNotificationBannerWithSubheading("Changes discarded")
     }
   }
 
