@@ -182,7 +182,7 @@ class EditRecordViewSpec extends BaseSpec {
         ccr = "",
         oci = "",
         scopeAndContent = "",
-        coveringDates = "invalid date",
+        coveringDates = "Mon 1 Oct 1330",
         formerReferenceDepartment = "",
         startDate = "",
         endDate = ""

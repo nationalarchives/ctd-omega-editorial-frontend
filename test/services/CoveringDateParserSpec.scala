@@ -31,7 +31,7 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
 
   "YearParser" should {
 
-    lazy val testTable = Tables.Table(
+    val testTable = Tables.Table(
       "year input" -> "parse result",
       "1993"       -> Year.of(1993),
       "423"        -> Year.of(423),
@@ -49,7 +49,7 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
 
   "YearMonthParser" should {
 
-    lazy val testTable = Tables.Table(
+    val testTable = Tables.Table(
       "yearMonth input" -> "parse result",
       "1993 Dec"        -> YearMonth.of(1993, Month.DECEMBER),
       "1993 Jan"        -> YearMonth.of(1993, Month.JANUARY),
@@ -68,7 +68,7 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
 
   "YearMonthDayParser" should {
 
-    lazy val testTable = Tables.Table(
+    val testTable = Tables.Table(
       "yearMonthDay input" -> "parse result",
       "1993 Jan 1"         -> LocalDate.of(1993, 1, 1),
       "1305 Sept 1"        -> LocalDate.of(1305, 9, 1),
@@ -85,7 +85,7 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
 
   "SingleParser" should {
 
-    lazy val testTable = Tables.Table(
+    val testTable = Tables.Table(
       "single input" -> "parse result",
       "1 Jan 1"      -> Node.Single(Node.YearMonthDay(LocalDate.of(1, 1, 1))),
       "1993 Jan 1"   -> Node.Single(Node.YearMonthDay(LocalDate.of(1993, 1, 1))),
@@ -103,7 +103,7 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
 
   "RangeParser" should {
 
-    lazy val testTable = Tables.Table(
+    val testTable = Tables.Table(
       "Range input" -> "parse result",
       "1993 Jan 1 - 1993 Dec 31" -> Node.Range(
         Node.Single(Node.YearMonthDay(LocalDate.of(1993, 1, 1))),
@@ -129,7 +129,7 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
 
   "ApproxParser" should {
 
-    lazy val testTable = Tables.Table(
+    val testTable = Tables.Table(
       "Approx input" -> "parse result",
       "c 1 Jan 1"    -> Node.Approx(Node.Single(Node.YearMonthDay(LocalDate.of(1, 1, 1)))),
       "c 1993 Jan 1" -> Node.Approx(Node.Single(Node.YearMonthDay(LocalDate.of(1993, 1, 1)))),
@@ -155,7 +155,7 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
 
   "DerivedParser" should {
 
-    lazy val testTable = Tables.Table(
+    val testTable = Tables.Table(
       "Derived input" -> "parse result",
       "[c 1 Jan 1]"   -> Node.Derived(Node.Approx(Node.Single(Node.YearMonthDay(LocalDate.of(1, 1, 1))))),
       "[1993 Jan 1 - 2004 Dec 25]" -> Node.Derived(
@@ -176,7 +176,7 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
 
   "GapParser" should {
 
-    lazy val testTable = Tables.Table(
+    val testTable = Tables.Table(
       "Gap input" -> "parse result",
       "1868; 1890-1902; 1933" -> Node.Gap(
         List(
@@ -197,7 +197,7 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
 
   "CoveringDateParser" should {
 
-    lazy val testTable = Tables.Table(
+    val testTable = Tables.Table(
       "Covering date input" -> "parse result",
       "1305 Apr 1-1306 Apr 15" -> Node.Root(
         Node.Range(

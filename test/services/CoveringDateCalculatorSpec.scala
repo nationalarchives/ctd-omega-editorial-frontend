@@ -31,31 +31,31 @@ import uk.gov.nationalarchives.omega.editorial.models.DateRange
 
 class CoveringDateCalculatorSpec extends BaseSpec with TableDrivenPropertyChecks {
 
-  lazy val testTable = Tables.Table(
-    "date input"             -> "parse result",
-    "1305"                   -> defineTestCoveringDate("1305 Jan 1" -> "1305 Dec 31"),
-    "1305 Apr"               -> defineTestCoveringDate("1305 Apr 1" -> "1305 Apr 30"),
-    "1305 Apr 1"             -> defineTestCoveringDate("1305 Apr 1" -> "1305 Apr 1"),
-    "1305-1306"              -> defineTestCoveringDate("1305 Jan 1" -> "1306 Dec 31"),
-    "1305 Apr-1305 Oct"      -> defineTestCoveringDate("1305 Apr 1" -> "1305 Oct 31"),
-    "1305 Apr 1–1306 Apr 15" -> defineTestCoveringDate("1305 Apr 1" -> "1306 Apr 15"),
-    "[1914 - 1916]"          -> defineTestCoveringDate("1914 Jan 1" -> "1916 Dec 31"),
-    "[c 1915]"               -> defineTestCoveringDate("1915 Jan 1" -> "1915 Dec 31"),
-    "[c1915]"                -> defineTestCoveringDate("1915 Jan 1" -> "1915 Dec 31"),
-    "[?1915]"                -> defineTestCoveringDate("1915 Jan 1" -> "1915 Dec 31"),
-    "1868; 1890-1902; 1933" -> defineTestCoveringDate(
-      "1868 Jan 1" -> "1868 Dec 31",
-      "1890 Jan 1" -> "1902 Dec 31",
-      "1933 Jan 1" -> "1933 Dec 31"
-    ),
-    "1582 Oct 11"               -> defineTestCoveringDate("1582 Oct 11" -> "1582 Oct 11"),
-    "1582 Oct 11 - 1582 Nov 29" -> defineTestCoveringDate("1582 Oct 11" -> "1582 Nov 29")
-  )
-
   "CoveringDateCalculator" should {
 
-    forAll(testTable) { (input, expectedResult) =>
-      s"""calculate the date range: "$input"""" in {
+    val validScenarioTestTable = Tables.Table(
+      "date input"             -> "parse result",
+      "1305"                   -> defineTestCoveringDate("1305 Jan 1" -> "1305 Dec 31"),
+      "1305 Apr"               -> defineTestCoveringDate("1305 Apr 1" -> "1305 Apr 30"),
+      "1305 Apr 1"             -> defineTestCoveringDate("1305 Apr 1" -> "1305 Apr 1"),
+      "1305-1306"              -> defineTestCoveringDate("1305 Jan 1" -> "1306 Dec 31"),
+      "1305 Apr-1305 Oct"      -> defineTestCoveringDate("1305 Apr 1" -> "1305 Oct 31"),
+      "1305 Apr 1–1306 Apr 15" -> defineTestCoveringDate("1305 Apr 1" -> "1306 Apr 15"),
+      "[1914 - 1916]"          -> defineTestCoveringDate("1914 Jan 1" -> "1916 Dec 31"),
+      "[c 1915]"               -> defineTestCoveringDate("1915 Jan 1" -> "1915 Dec 31"),
+      "[c1915]"                -> defineTestCoveringDate("1915 Jan 1" -> "1915 Dec 31"),
+      "[?1915]"                -> defineTestCoveringDate("1915 Jan 1" -> "1915 Dec 31"),
+      "1868; 1890-1902; 1933" -> defineTestCoveringDate(
+        "1868 Jan 1" -> "1868 Dec 31",
+        "1890 Jan 1" -> "1902 Dec 31",
+        "1933 Jan 1" -> "1933 Dec 31"
+      ),
+      "1582 Oct 11"               -> defineTestCoveringDate("1582 Oct 11" -> "1582 Oct 11"),
+      "1582 Oct 11 - 1582 Nov 29" -> defineTestCoveringDate("1582 Oct 11" -> "1582 Nov 29")
+    )
+
+    forAll(validScenarioTestTable) { (input, expectedResult) =>
+      s"""calculate the date range successfuly for: "$input"""" in {
         CoveringDateCalculator.getStartAndEndDates(input) must parseSuccessfullyAs(expectedResult)
       }
 

@@ -28,6 +28,8 @@ import uk.gov.nationalarchives.omega.editorial.services.{ CoveringDateNode => No
 
 object CoveringDateCalculator {
 
+  val unicodeEnDash = "\u2013"
+
   def getStartAndEndDates(coveringDateRaw: String): Result[List[DateRange]] =
     CoveringDateParser
       .parseCoveringDates(sanitize(coveringDateRaw))
@@ -36,14 +38,12 @@ object CoveringDateCalculator {
 
   private def sanitize(input: String): String =
     input
-      .replace("\u2013", "-") // En Dash
-      .replace("\u201C", "\"")
-      .replace("\u201D", "\"")
+      .replace(unicodeEnDash, "-")
 
   private def calculateDateRanges(node: CoveringDateNode): List[DateRange] =
     node match {
       case Node.Year(value)         => List(DateRange(startOfYear(value), endOfYear(value)))
-      case Node.YearMonth(value)    => List(DateRange(startOfYear(value), endOfYear(value)))
+      case Node.YearMonth(value)    => List(DateRange(startOfYearMonth(value), endOfYearMonth(value)))
       case Node.YearMonthDay(value) => List(DateRange(value, value))
 
       case Node.Single(value) => calculateDateRanges(value)
@@ -62,7 +62,7 @@ object CoveringDateCalculator {
 
       case Node.Root(value) => calculateDateRanges(value)
 
-      case Node.Undated => ???
+      case Node.Undated => List.empty
     }
 
   private def startOfYear(year: Year): LocalDate =
@@ -71,10 +71,10 @@ object CoveringDateCalculator {
   private def endOfYear(year: Year): LocalDate =
     year.atMonthDay(MonthDay.of(Month.DECEMBER, 31))
 
-  private def startOfYear(yearMonth: YearMonth): LocalDate =
+  private def startOfYearMonth(yearMonth: YearMonth): LocalDate =
     yearMonth.atDay(1)
 
-  private def endOfYear(yearMonth: YearMonth): LocalDate =
+  private def endOfYearMonth(yearMonth: YearMonth): LocalDate =
     yearMonth.atEndOfMonth()
 
   private def validateDateRanges(ranges: List[DateRange]): Result[List[DateRange]] =
