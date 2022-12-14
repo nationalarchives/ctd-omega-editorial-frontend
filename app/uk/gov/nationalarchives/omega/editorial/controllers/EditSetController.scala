@@ -60,6 +60,10 @@ class EditSetController @Inject() (
         .verifying(messagesApi("edit-set.record.missing.scope-and-content")(Lang.apply("en")), _.nonEmpty),
       "coveringDates" -> text
         .verifying(
+          messagesApi("edit-set.record.missing.covering-dates")(Lang.apply("en")),
+          _.trim.nonEmpty
+        )
+        .verifying(
           messagesApi("edit-set.record.error.covering-dates")(Lang.apply("en")),
           value => CoveringDateCalculator.getStartAndEndDates(value).isRight
         ),

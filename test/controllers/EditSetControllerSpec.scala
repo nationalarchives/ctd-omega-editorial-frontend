@@ -25,6 +25,7 @@ import play.api.mvc.{ AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesAc
 import play.api.test.Helpers._
 import play.api.test._
 import support.BaseSpec
+import support.CustomMatchers.haveFormError
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
@@ -327,6 +328,31 @@ class EditSetControllerSpec extends BaseSpec {
       val editRecordPage = route(app, request).get
 
       status(editRecordPage) mustBe BAD_REQUEST
+    }
+
+    "show an error when covering date is empty; showing error correctly" in {
+      val request = CSRFTokenHelper.addCSRFToken(
+        FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+          .withFormUrlEncodedBody(
+            "ccr"                       -> "1234",
+            "oci"                       -> "1234",
+            "scopeAndContent"           -> "1234",
+            "formerReferenceDepartment" -> "1234",
+            "coveringDates"             -> "  ",
+            "startDate"                 -> "1234",
+            "endDate"                   -> "1234",
+            "action"                    -> "save"
+          )
+          .withSession(
+            SessionKeys.token -> validSessionToken
+          )
+      )
+      val editRecordPage = route(app, request).get
+
+      status(editRecordPage) mustBe BAD_REQUEST
+
+      val document = asDocument(contentAsString(editRecordPage))
+      document must haveFormError("Enter the covering dates")
     }
   }
 
