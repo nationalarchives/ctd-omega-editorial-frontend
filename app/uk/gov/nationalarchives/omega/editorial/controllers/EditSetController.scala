@@ -162,7 +162,8 @@ class EditSetController @Inject()(
     val errorForInvalidStartDate = FormError("startDate", messagesApi("edit-set.record.error.start-date")(Lang.apply("en")))
     val errorForInvalidEndDate = FormError("endDate", messagesApi("edit-set.record.error.end-date")(Lang.apply("en")))
     val errorForEndDateBeforeStartDate = FormError("endDate", messagesApi("edit-set.record.error.end-date-before-start-date")(Lang.apply("en")))
-    val additionErrors = (extractStartDate(form.get), extractEndDate(form.get)) match {
+    val formValues = form.data
+    val additionErrors = (extractStartDate(formValues), extractEndDate(formValues)) match {
       case (Some(startDate), Some(endDate)) if !endDate.isBefore(startDate) => Seq.empty
       case (Some(startDate), Some(endDate)) if endDate.isBefore(startDate) => Seq(errorForEndDateBeforeStartDate)
       case (Some(_), None) => Seq(errorForInvalidEndDate)
@@ -172,11 +173,11 @@ class EditSetController @Inject()(
     form.copy(errors = form.errors ++ additionErrors)
   }
 
-  private def extractStartDate(editSetRecord: EditSetRecord): Option[LocalDate] =
-    extractDate(editSetRecord.startDateDay, editSetRecord.startDateMonth, editSetRecord.startDateYear)
+  private def extractStartDate(formValues: Map[String, String]): Option[LocalDate] =
+    extractDate(formValues.getOrElse("startDateDay", ""), formValues.getOrElse("startDateMonth", ""), formValues.getOrElse("startDateYear", ""))
 
-  private def extractEndDate(editSetRecord: EditSetRecord): Option[LocalDate] =
-    extractDate(editSetRecord.endDateDay, editSetRecord.endDateMonth, editSetRecord.endDateYear)
+  private def extractEndDate(formValues: Map[String, String]): Option[LocalDate] =
+    extractDate(formValues.getOrElse("endDateDay", ""), formValues.getOrElse("endDateMonth", ""), formValues.getOrElse("endDateYear", ""))
 
   private def extractDate(day: String, month: String, year: String): Option[LocalDate] = {
     Try(

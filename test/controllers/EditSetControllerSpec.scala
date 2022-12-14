@@ -21,19 +21,28 @@
 
 package controllers
 
+<<<<<<< HEAD
 import play.api.mvc.{ AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesActionBuilderImpl, DefaultMessagesControllerComponents }
+=======
+import play.api.mvc.{AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesActionBuilderImpl, DefaultMessagesControllerComponents}
+import play.api.test.Helpers._
+>>>>>>> ea36822 (PACT-598 Corrected several existing scenarios.)
 import play.api.test._
 import play.api.test.Helpers._
 import support.BaseSpec
+<<<<<<< HEAD
 import support.CustomMatchers.{ haveFormError, haveHeading }
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
+=======
+import uk.gov.nationalarchives.omega.editorial.controllers.{EditSetController, SessionKeys}
+>>>>>>> ea36822 (PACT-598 Corrected several existing scenarios.)
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
-import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
+import uk.gov.nationalarchives.omega.editorial.views.html.{editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave}
 
 /** Add your spec here. You can mock out a whole application including requests, plugins etc.
-  *
-  * For more information, see https://www.playframework.com/documentation/latest/ScalaTestingWithScalaTest
-  */
+ *
+ * For more information, see https://www.playframework.com/documentation/latest/ScalaTestingWithScalaTest
+ */
 class EditSetControllerSpec extends BaseSpec {
 
   val validSessionToken: String = Session.generateToken("1234")
@@ -249,10 +258,11 @@ class EditSetControllerSpec extends BaseSpec {
       )
 
       val editRecordPage = controller
-        .submit("COAL.2022.V5RJW.P", "COAL.2022.V5RJW.P")
+        .submit("1", "COAL.2022.V5RJW.P")
         .apply(
           CSRFTokenHelper
             .addCSRFToken(
+<<<<<<< HEAD
               FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit").withFormUrlEncodedBody(
                 "ccr"                       -> "1234",
                 "oci"                       -> "1234",
@@ -263,19 +273,37 @@ class EditSetControllerSpec extends BaseSpec {
                 "endDate"                   -> "1234",
                 "action"                    -> "save"
               )
+=======
+              FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+                .withFormUrlEncodedBody(
+                  "ccr" -> "1234",
+                  "oci" -> "1234",
+                  "scopeAndContent" -> "1234",
+                  "formerReferenceDepartment" -> "1234",
+                  "coveringDates" -> "1234",
+                  "startDateDay" -> "26",
+                  "startDateMonth" -> "12",
+                  "startDateYear" -> "2020",
+                  "endDateDay" -> "31",
+                  "endDateMonth" -> "12",
+                  "endDateYear" -> "2020",
+                  "action" -> "save")
+                .withSession(SessionKeys.token -> validSessionToken)
+>>>>>>> ea36822 (PACT-598 Corrected several existing scenarios.)
             )
         )
+
       status(editRecordPage) mustBe SEE_OTHER
-      // TODO: This should be going to "/edit-set/1/record/COAL.2022.V5RJW.P/save" but goes to '/login'
-      // redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/save")
+      redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/1234/edit/save")
     }
 
     "redirect to result page of the application" in {
       val controller = inject[EditSetController]
       val editRecordPage = controller
-        .submit("COAL.2022.V5RJW.P", "COAL.2022.V5RJW.P")
+        .submit("1", "COAL.2022.V5RJW.P")
         .apply(
           CSRFTokenHelper.addCSRFToken(
+<<<<<<< HEAD
             FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit").withFormUrlEncodedBody(
               "ccr"                       -> "1234",
               "oci"                       -> "1234",
@@ -286,16 +314,34 @@ class EditSetControllerSpec extends BaseSpec {
               "endDate"                   -> "1234",
               "action"                    -> "discard"
             )
+=======
+            FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+              .withFormUrlEncodedBody(
+                "ccr" -> "1234",
+                "oci" -> "1234",
+                "scopeAndContent" -> "1234",
+                "formerReferenceDepartment" -> "1234",
+                "coveringDates" -> "1234",
+                "startDateDay" -> "26",
+                "startDateMonth" -> "12",
+                "startDateYear" -> "2020",
+                "endDateDay" -> "31",
+                "endDateMonth" -> "12",
+                "endDateYear" -> "2020",
+                "action" -> "save")
+              .withSession(SessionKeys.token -> validSessionToken)
+>>>>>>> ea36822 (PACT-598 Corrected several existing scenarios.)
           )
         )
 
       status(editRecordPage) mustBe SEE_OTHER
-      // TODO: This should be going to "/edit-set/1/record/COAL.2022.V5RJW.P/save" but goes to '/login'
-      // redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/save")
+      redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/1234/edit/save")
+
     }
 
     "redirect to result page from the router" in {
       val request = CSRFTokenHelper.addCSRFToken(
+<<<<<<< HEAD
         FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit").withFormUrlEncodedBody(
           "ccr"                       -> "1234",
           "oci"                       -> "1234",
@@ -306,12 +352,30 @@ class EditSetControllerSpec extends BaseSpec {
           "endDate"                   -> "1234",
           "action"                    -> "save"
         )
+=======
+        FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+          .withFormUrlEncodedBody(
+            "ccr" -> "1234",
+            "oci" -> "1234",
+            "scopeAndContent" -> "1234",
+            "formerReferenceDepartment" -> "1234",
+            "coveringDates" -> "1234",
+            "startDateDay" -> "26",
+            "startDateMonth" -> "12",
+            "startDateYear" -> "2020",
+            "endDateDay" -> "31",
+            "endDateMonth" -> "12",
+            "endDateYear" -> "2020",
+            "action" -> "save")
+          .withSession(SessionKeys.token -> validSessionToken)
+
+>>>>>>> ea36822 (PACT-598 Corrected several existing scenarios.)
       )
       val editRecordPage = route(app, request).get
 
       status(editRecordPage) mustBe SEE_OTHER
-      // TODO: This should be going to "/edit-set/1/record/COAL.2022.V5RJW.P/save" but goes to '/login'
-      // redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/save")
+      redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/1234/edit/save")
+
     }
 
     "respond with BAD_REQUEST when form has errors, preserving the CCR" in {
