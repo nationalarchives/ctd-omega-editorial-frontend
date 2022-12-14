@@ -95,9 +95,8 @@ class EditSetController @Inject() (
         case Some(record) =>
           val messages: Messages = request.messages
           val title: String = messages("edit-set.record.edit.title")
-          val heading: String = messages("edit-set.record.edit.heading", record.ccr)
           val recordForm = editSetRecordForm.fill(record)
-          Ok(editSetRecordEdit(user, title, heading, recordForm))
+          Ok(editSetRecordEdit(user, title, recordForm))
         case None => NotFound
       }
     }
@@ -107,23 +106,22 @@ class EditSetController @Inject() (
     withUser { user =>
       val messages: Messages = messagesApi.preferred(request)
       val title: String = messages("edit-set.record.edit.title")
-      val heading: String = messages("edit-set.record.edit.heading")
       logger.info(s"The edit set id is $id for record id $recordId")
 
-      editSetRecordForm
-        .bindFromRequest()
-        .fold(
-          formWithErrors => BadRequest(editSetRecordEdit(user, title, heading, formWithErrors)),
-          editSetRecord =>
-            request.body.asFormUrlEncoded.get("action").headOption match {
-              case Some("save") =>
-                editSetRecords.saveEditSetRecord(editSetRecord)
-                Redirect(controllers.routes.EditSetController.save(id, editSetRecord.oci))
-              case Some("discard") => Redirect(controllers.routes.EditSetController.discard(id, recordId))
-              // TODO Below added to handle error flow which could be a redirect to an error page pending configuration
-              case _ => BadRequest("This action is not allowed")
-            }
-        )
+      val boundForm = editSetRecordForm.bindFromRequest()
+
+      boundForm.fold(
+        formWithErrors => BadRequest(editSetRecordEdit(user, title, formWithErrors)),
+        editSetRecord =>
+          request.body.asFormUrlEncoded.get("action").headOption match {
+            case Some("save") =>
+              editSetRecords.saveEditSetRecord(editSetRecord)
+              Redirect(controllers.routes.EditSetController.save(id, editSetRecord.oci))
+            case Some("discard") => Redirect(controllers.routes.EditSetController.discard(id, recordId))
+            // TODO Below added to handle error flow which could be a redirect to an error page pending configuration
+            case _ => BadRequest("This action is not allowed")
+          }
+      )
     }
   }
 
