@@ -332,7 +332,6 @@ class EditSetControllerSpec extends BaseSpec {
 
     "redirect to error page from the router when covering date is too long" in {
       val gapDateTooLong = (1 to 100).map(_ => "2004 Oct 1").mkString(";")
-      pprint.pprintln(gapDateTooLong)
       val request = CSRFTokenHelper.addCSRFToken(
         FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
           .withFormUrlEncodedBody(
