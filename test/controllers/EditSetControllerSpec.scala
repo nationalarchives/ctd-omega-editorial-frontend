@@ -327,10 +327,7 @@ class EditSetControllerSpec extends BaseSpec {
 
       status(editRecordPage) mustBe SEE_OTHER
 
-      val expectedRedirectLocation = "/edit-set/1/record/COAL.2022.V5RJW.P/edit/discard"
-      val Some(discardPage) = redirectLocation(editRecordPage)
-
-      expectedRedirectLocation mustBe discardPage
+      redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/discard")
 
     }
   }
