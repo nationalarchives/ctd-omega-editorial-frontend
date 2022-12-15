@@ -25,7 +25,7 @@ import play.api.mvc.{ AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesAc
 import play.api.test._
 import play.api.test.Helpers._
 import support.BaseSpec
-import support.CustomMatchers.haveHeading
+import support.CustomMatchers.{ haveFormError, haveHeading }
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
@@ -258,7 +258,7 @@ class EditSetControllerSpec extends BaseSpec {
                 "oci"                       -> "1234",
                 "scopeAndContent"           -> "1234",
                 "formerReferenceDepartment" -> "1234",
-                "coveringDates"             -> "1234",
+                "coveringDates"             -> "2022 Dec 13",
                 "startDate"                 -> "1234",
                 "endDate"                   -> "1234",
                 "action"                    -> "save"
@@ -279,7 +279,7 @@ class EditSetControllerSpec extends BaseSpec {
               "oci"                       -> "1234",
               "scopeAndContent"           -> "1234",
               "formerReferenceDepartment" -> "1234",
-              "coveringDates"             -> "1234",
+              "coveringDates"             -> "2022 Dec 13",
               "startDate"                 -> "1234",
               "endDate"                   -> "1234",
               "action"                    -> "discard"
@@ -297,7 +297,7 @@ class EditSetControllerSpec extends BaseSpec {
           "oci"                       -> "1234",
           "scopeAndContent"           -> "1234",
           "formerReferenceDepartment" -> "1234",
-          "coveringDates"             -> "1234",
+          "coveringDates"             -> "2022 Dec 13",
           "startDate"                 -> "1234",
           "endDate"                   -> "1234",
           "action"                    -> "save"
@@ -355,6 +355,79 @@ class EditSetControllerSpec extends BaseSpec {
 
       redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/discard")
 
+    }
+
+    "redirect to error page from the router when covering date is invalid" in {
+      val request = CSRFTokenHelper.addCSRFToken(
+        FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+          .withFormUrlEncodedBody(
+            "ccr"                       -> "1234",
+            "oci"                       -> "1234",
+            "scopeAndContent"           -> "1234",
+            "formerReferenceDepartment" -> "1234",
+            "coveringDates"             -> "Oct 1 2004",
+            "startDate"                 -> "1234",
+            "endDate"                   -> "1234",
+            "action"                    -> "save"
+          )
+          .withSession(
+            SessionKeys.token -> validSessionToken
+          )
+      )
+      val editRecordPage = route(app, request).get
+
+      status(editRecordPage) mustBe BAD_REQUEST
+    }
+
+    "redirect to error page from the router when covering date is too long" in {
+      val gapDateTooLong = (1 to 100).map(_ => "2004 Oct 1").mkString(";")
+      val request = CSRFTokenHelper.addCSRFToken(
+        FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+          .withFormUrlEncodedBody(
+            "ccr"                       -> "1234",
+            "oci"                       -> "1234",
+            "scopeAndContent"           -> "1234",
+            "formerReferenceDepartment" -> "1234",
+            "coveringDates"             -> gapDateTooLong,
+            "startDate"                 -> "1234",
+            "endDate"                   -> "1234",
+            "action"                    -> "save"
+          )
+          .withSession(
+            SessionKeys.token -> validSessionToken
+          )
+      )
+      val editRecordPage = route(app, request).get
+
+      status(editRecordPage) mustBe BAD_REQUEST
+
+      val document = asDocument(contentAsString(editRecordPage))
+      document must haveFormError("Covering date too long, maximum length 255 characters")
+    }
+
+    "show an error when covering date is empty; showing error correctly" in {
+      val request = CSRFTokenHelper.addCSRFToken(
+        FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+          .withFormUrlEncodedBody(
+            "ccr"                       -> "1234",
+            "oci"                       -> "1234",
+            "scopeAndContent"           -> "1234",
+            "formerReferenceDepartment" -> "1234",
+            "coveringDates"             -> "  ",
+            "startDate"                 -> "1234",
+            "endDate"                   -> "1234",
+            "action"                    -> "save"
+          )
+          .withSession(
+            SessionKeys.token -> validSessionToken
+          )
+      )
+      val editRecordPage = route(app, request).get
+
+      status(editRecordPage) mustBe BAD_REQUEST
+
+      val document = asDocument(contentAsString(editRecordPage))
+      document must haveFormError("Enter the covering dates")
     }
 
   }

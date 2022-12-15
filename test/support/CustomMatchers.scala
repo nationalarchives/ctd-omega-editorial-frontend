@@ -23,6 +23,7 @@ package support
 
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.{ MatchResult, Matcher }
+import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError
 
 object CustomMatchers {
 
@@ -202,4 +203,53 @@ object CustomMatchers {
       errorMessageIfNotExpected
     )
   }
+
+  def haveFormError(errorMessage: String): Matcher[Document] = document => {
+    val errorMessagesSummary = document.select(".govuk-error-summary__list a").text
+    val errorMessageOnField = document.select(".govuk-error-message").text
+    val errorMessageIfExpected =
+      s"The page didn't have an error with text '$errorMessage'."
+    val errorMessageIfNotExpected =
+      s"The page had an error with text '$errorMessage', which was not expected."
+    MatchResult(
+      errorMessagesSummary.contains(errorMessage) && errorMessageOnField.contains(errorMessage),
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def parseSuccessfullyAs[A](expected: A): Matcher[CoveringDateError.Result[A]] = {
+    case Right(ok) =>
+      MatchResult(
+        expected == ok,
+        s"""Parsed OK but no match:
+           |got:      $ok 
+           |expected: $expected""".stripMargin,
+        s"Parsed $expected OK"
+      )
+    case Left(err) =>
+      MatchResult(
+        matches = false,
+        s"Expected $expected, but got error: $err",
+        ""
+      )
+  }
+
+  def failToParseAs(expectedError: CoveringDateError): Matcher[CoveringDateError.Result[_]] = {
+    case Right(ok) =>
+      MatchResult(
+        matches = false,
+        s"Expected to fail as $expectedError, but passed instead with: $ok",
+        ""
+      )
+    case Left(err) =>
+      MatchResult(
+        expectedError == err,
+        s"""Failed but no match:
+           |got:      $err 
+           |expected: $expectedError""".stripMargin,
+        s"Failed with $expectedError as expected"
+      )
+  }
+
 }

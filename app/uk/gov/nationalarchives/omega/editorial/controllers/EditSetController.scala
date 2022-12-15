@@ -22,15 +22,16 @@
 package uk.gov.nationalarchives.omega.editorial.controllers
 
 import javax.inject._
-import play.api.i18n.{ I18nSupport, Lang, Messages }
-import play.api.mvc._
-import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms.{ mapping, text }
-import uk.gov.nationalarchives.omega.editorial.{ editSetRecords, editSets, _ }
+import play.api.i18n.{ I18nSupport, Lang, Messages }
+import play.api.Logger
+import play.api.mvc._
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry, EditSetRecord }
+import uk.gov.nationalarchives.omega.editorial.models.EditSetRecord
+import uk.gov.nationalarchives.omega.editorial.services.CoveringDateCalculator
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
+import uk.gov.nationalarchives.omega.editorial.{ editSetRecords, editSets, _ }
 
 /** This controller creates an `Action` to handle HTTP requests to the application's home page.
   */
@@ -57,7 +58,19 @@ class EditSetController @Inject() (
           value => value.length <= 8000
         )
         .verifying(messagesApi("edit-set.record.missing.scope-and-content")(Lang.apply("en")), _.nonEmpty),
-      "coveringDates" -> text,
+      "coveringDates" -> text
+        .verifying(
+          messagesApi("edit-set.record.missing.covering-dates")(Lang.apply("en")),
+          _.trim.nonEmpty
+        )
+        .verifying(
+          messagesApi("edit-set.record.error.covering-dates-too-long")(Lang.apply("en")),
+          _.length <= 255
+        )
+        .verifying(
+          messagesApi("edit-set.record.error.covering-dates")(Lang.apply("en")),
+          value => CoveringDateCalculator.getStartAndEndDates(value).isRight
+        ),
       "formerReferenceDepartment" -> text.verifying(
         messagesApi("edit-set.record.error.former-reference-department")(Lang.apply("en")),
         value => value.length <= 255

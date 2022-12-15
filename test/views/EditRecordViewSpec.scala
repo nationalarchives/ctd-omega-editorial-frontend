@@ -172,6 +172,42 @@ class EditRecordViewSpec extends BaseSpec {
 
     }
 
+    "render an error when given invalid covering dates" in {
+      val editSetRecordEditInstance = inject[editSetRecordEdit]
+
+      val title = "EditRecordTitleTest"
+      val inputData = EditSetRecord(
+        ccr = "",
+        oci = "",
+        scopeAndContent = "",
+        coveringDates = "Mon 1 Oct 1330",
+        formerReferenceDepartment = "",
+        startDate = "",
+        endDate = ""
+      )
+      val editSetRecordForm = Form(
+        mapping(
+          "ccr"                       -> text,
+          "oci"                       -> text,
+          "scopeAndContent"           -> text,
+          "coveringDates"             -> text,
+          "formerReferenceDepartment" -> text,
+          "startDate"                 -> text,
+          "endDate"                   -> text
+        )(EditSetRecord.apply)(EditSetRecord.unapply)
+      ).fill(inputData)
+        .withError("coveringDates", "covering date message string")
+
+      val editRecordHtml =
+        editSetRecordEditInstance(user, title, editSetRecordForm)(
+          Helpers.stubMessages(),
+          CSRFTokenHelper.addCSRFToken(FakeRequest())
+        )
+
+      val document = asDocument(editRecordHtml)
+      document must haveFormError("covering date message string")
+    }
+
   }
   private def generateDocument(title: String, editSetRecord: EditSetRecord): Document = {
     val editSetRecordForm: Form[EditSetRecord] = Form(

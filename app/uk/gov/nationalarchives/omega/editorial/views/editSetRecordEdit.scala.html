@@ -77,9 +77,15 @@
 @govukInput(Input(
     id = "coveringDates",
     name = "coveringDates",
-    attributes = Map("readonly" -> "readonly"),
+    attributes = Map(),
     value = editSetRecordForm.data.get("coveringDates"),
     label = Label(forAttr = Some("coveringDates"), content = Text(messages("edit-set.record.edit.covering-dates"))),
+    errorMessage = editSetRecordForm.error("coveringDates").map { error =>
+        ErrorMessage(
+            content = Text(error.message),
+            attributes = Map("for" -> "coveringDates")
+        )
+    },
     classes = "govuk-!-width-one-half"))
 @govukInput(Input(
     id = "startDate",
