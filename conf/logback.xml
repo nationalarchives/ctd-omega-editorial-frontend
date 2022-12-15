@@ -4,7 +4,9 @@
   <conversionRule conversionWord="coloredLevel" converterClass="play.api.libs.logback.ColoredLevel" />
 
   <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-    <file>${application.home:-.}/logs/application.log</file>
+    <!-- There is a bug when using application.home with sbt dist - see https://github.com/playframework/playframework/issues/8759 -->
+    <!-- <file>${application.home:-.}/logs/application.log</file> -->
+    <file>/opt/ctd-omega-editorial-frontend/logs/application.log</file>
     <encoder>
       <charset>UTF-8</charset>
       <pattern>
