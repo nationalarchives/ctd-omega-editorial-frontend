@@ -22,10 +22,10 @@
 package controllers
 
 import play.api.mvc.{ AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesActionBuilderImpl, DefaultMessagesControllerComponents }
-import play.api.test.Helpers._
 import play.api.test._
+import play.api.test.Helpers._
 import support.BaseSpec
-import support.CustomMatchers.haveFormError
+import support.CustomMatchers.{ haveFormError, haveHeading }
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
@@ -308,6 +308,55 @@ class EditSetControllerSpec extends BaseSpec {
       status(editRecordPage) mustBe SEE_OTHER
     }
 
+    "respond with BAD_REQUEST when form has errors, preserving the CCR" in {
+      val ccrToAssert = "COAL 80/80/1"
+      val blankScopeAndContentToFailValidation = ""
+      val request = CSRFTokenHelper.addCSRFToken(
+        FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+          .withFormUrlEncodedBody(
+            "ccr"                       -> ccrToAssert,
+            "oci"                       -> "1234",
+            "scopeAndContent"           -> blankScopeAndContentToFailValidation,
+            "formerReferenceDepartment" -> "1234",
+            "coveringDates"             -> "1234",
+            "startDate"                 -> "1234",
+            "endDate"                   -> "1234",
+            "action"                    -> "save"
+          )
+          .withSession(SessionKeys.token -> validSessionToken)
+      )
+      val editRecordPage = route(app, request).get
+
+      status(editRecordPage) mustBe BAD_REQUEST
+
+      val document = asDocument(contentAsString(editRecordPage))
+      document must haveHeading(s"TNA reference: $ccrToAssert")
+    }
+
+    "redirect to discard page on form submit even if validation fails" in {
+      val blankScopeAndContentToFailValidation = ""
+      val request = CSRFTokenHelper.addCSRFToken(
+        FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+          .withFormUrlEncodedBody(
+            "ccr"                       -> "1234",
+            "oci"                       -> "1234",
+            "scopeAndContent"           -> blankScopeAndContentToFailValidation,
+            "formerReferenceDepartment" -> "1234",
+            "coveringDates"             -> "1234",
+            "startDate"                 -> "1234",
+            "endDate"                   -> "1234",
+            "action"                    -> "discard"
+          )
+          .withSession(SessionKeys.token -> validSessionToken)
+      )
+      val editRecordPage = route(app, request).get
+
+      status(editRecordPage) mustBe SEE_OTHER
+
+      redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/discard")
+
+    }
+
     "redirect to error page from the router when covering date is invalid" in {
       val request = CSRFTokenHelper.addCSRFToken(
         FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
@@ -380,6 +429,7 @@ class EditSetControllerSpec extends BaseSpec {
       val document = asDocument(contentAsString(editRecordPage))
       document must haveFormError("Enter the covering dates")
     }
+
   }
 
 }

@@ -22,10 +22,10 @@
 package views
 
 import org.jsoup.nodes.Document
-import play.api.data.Forms.{mapping, text}
-import play.api.data.{Form, FormError}
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import play.api.test.{CSRFTokenHelper, FakeRequest, Helpers}
+import play.api.data.Forms.{ mapping, text }
+import play.api.data.{ Form, FormError }
+import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
+import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import play.twirl.api.Html
 import support.BaseSpec
 import support.CustomMatchers._
@@ -39,7 +39,6 @@ class EditRecordViewSpec extends BaseSpec {
 
       val document = generateDocument(
         title = "TNA reference: COAL 80/80/1",
-        heading = "PAC-ID: COAL.2022.V5RJW.P",
         editSetRecord = new EditSetRecord(
           ccr = "COAL 80/80/1",
           oci = "COAL.2022.V5RJW.P",
@@ -48,13 +47,16 @@ class EditRecordViewSpec extends BaseSpec {
           formerReferenceDepartment = "TestFormerReferenceDepartment",
           startDate = "1/1/1960",
           endDate = "31/12/1960"
-        ))
+        )
+      )
 
       document must haveTitle("TNA reference: COAL 80/80/1")
-      document must haveHeading("PAC-ID: COAL.2022.V5RJW.P")
+      document must haveHeading("edit-set.record.edit.heading")
       document must haveClassicCatalogueRef("COAL 80/80/1")
       document must haveOmegaCatalogueId("COAL.2022.V5RJW.P")
-      document must haveScopeAndContent("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+      document must haveScopeAndContent(
+        "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+      )
       document must haveCoveringDates("1960")
       document must haveFormerReferenceDepartment("TestFormerReferenceDepartment")
       document must haveStartDate("1/1/1960")
@@ -71,22 +73,21 @@ class EditRecordViewSpec extends BaseSpec {
     "render an error given no scope and content" in {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
       val title = "EditRecordTitleTest"
-      val heading = "EditRecordHeadingTest"
       val editSetRecordForm: Form[EditSetRecord] = Form(
         mapping(
-          "ccr" -> text,
-          "oci" -> text,
-          "scopeAndContent" -> text,
-          "coveringDates" -> text,
+          "ccr"                       -> text,
+          "oci"                       -> text,
+          "scopeAndContent"           -> text,
+          "coveringDates"             -> text,
           "formerReferenceDepartment" -> text,
-          "startDate" -> text,
-          "endDate" -> text
+          "startDate"                 -> text,
+          "endDate"                   -> text
         )(EditSetRecord.apply)(EditSetRecord.unapply)
       ).fill(EditSetRecord.apply("", "", "", "", "", "", ""))
         .withError(FormError("", "Enter the scope and content."))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, heading, editSetRecordForm)(
+        editSetRecordEditInstance(user, title, editSetRecordForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -99,16 +100,15 @@ class EditRecordViewSpec extends BaseSpec {
     "render an error when given scope and content is more than 8000 characters" in {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
       val title = "EditRecordTitleTest"
-      val heading = "EditRecordHeadingTest"
       val editSetRecordForm: Form[EditSetRecord] = Form(
         mapping(
-          "ccr" -> text,
-          "oci" -> text,
-          "scopeAndContent" -> text,
-          "coveringDates" -> text,
+          "ccr"                       -> text,
+          "oci"                       -> text,
+          "scopeAndContent"           -> text,
+          "coveringDates"             -> text,
           "formerReferenceDepartment" -> text,
-          "startDate" -> text,
-          "endDate" -> text
+          "startDate"                 -> text,
+          "endDate"                   -> text
         )(EditSetRecord.apply)(EditSetRecord.unapply)
       ).fill(
         EditSetRecord.apply(
@@ -123,7 +123,7 @@ class EditRecordViewSpec extends BaseSpec {
       ).withError(FormError("", "Scope and content too long, maximum length 8000 characters"))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, heading, editSetRecordForm)(
+        editSetRecordEditInstance(user, title, editSetRecordForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -137,16 +137,15 @@ class EditRecordViewSpec extends BaseSpec {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
 
       val title = "EditRecordTitleTest"
-      val heading = "EditRecordHeadingTest"
       val editSetRecordForm: Form[EditSetRecord] = Form(
         mapping(
-          "ccr" -> text,
-          "oci" -> text,
-          "scopeAndContent" -> text,
-          "coveringDates" -> text,
+          "ccr"                       -> text,
+          "oci"                       -> text,
+          "scopeAndContent"           -> text,
+          "coveringDates"             -> text,
           "formerReferenceDepartment" -> text,
-          "startDate" -> text,
-          "endDate" -> text
+          "startDate"                 -> text,
+          "endDate"                   -> text
         )(EditSetRecord.apply)(EditSetRecord.unapply)
       ).fill(
         EditSetRecord.apply(
@@ -161,7 +160,7 @@ class EditRecordViewSpec extends BaseSpec {
       ).withError(FormError("", "Former reference - Department too long, maximum length 255 characters"))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, heading, editSetRecordForm)(
+        editSetRecordEditInstance(user, title, editSetRecordForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -177,7 +176,6 @@ class EditRecordViewSpec extends BaseSpec {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
 
       val title = "EditRecordTitleTest"
-      val heading = "EditRecordHeadingTest"
       val inputData = EditSetRecord(
         ccr = "",
         oci = "",
@@ -201,7 +199,7 @@ class EditRecordViewSpec extends BaseSpec {
         .withError("coveringDates", "covering date message string")
 
       val editRecordHtml =
-        editSetRecordEditInstance(user, title, heading, editSetRecordForm)(
+        editSetRecordEditInstance(user, title, editSetRecordForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -211,7 +209,7 @@ class EditRecordViewSpec extends BaseSpec {
     }
 
   }
-  private def generateDocument(title: String, heading: String, editSetRecord: EditSetRecord): Document = {
+  private def generateDocument(title: String, editSetRecord: EditSetRecord): Document = {
     val editSetRecordForm: Form[EditSetRecord] = Form(
       mapping(
         "ccr"                       -> text,
@@ -229,7 +227,6 @@ class EditRecordViewSpec extends BaseSpec {
       editSetRecordEditInstance(
         user = user,
         title = title,
-        heading = heading,
         editSetRecordForm = editSetRecordForm.fill(editSetRecord)
       )(
         Helpers.stubMessages(),
