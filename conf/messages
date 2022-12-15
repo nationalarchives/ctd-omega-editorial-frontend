@@ -14,6 +14,7 @@ edit-set.record.edit.title=Edit record
 edit-set.record.error.former-reference-department=Former reference - Department too long, maximum length 255 characters
 edit-set.record.error.scope-and-content=Scope and content too long, maximum length 8000 characters
 edit-set.record.error.covering-dates=Covering date format is not valid
+edit-set.record.error.covering-dates-too-long=Covering date too long, maximum length 255 characters
 edit-set.record.missing.covering-dates=Enter the covering dates
 edit-set.record.missing.scope-and-content=Enter the scope and content
 edit-set.record.save.button=Save changes

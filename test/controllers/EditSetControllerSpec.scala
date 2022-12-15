@@ -330,6 +330,33 @@ class EditSetControllerSpec extends BaseSpec {
       status(editRecordPage) mustBe BAD_REQUEST
     }
 
+    "redirect to error page from the router when covering date is too long" in {
+      val gapDateTooLong = (1 to 100).map(_ => "2004 Oct 1").mkString(";")
+      pprint.pprintln(gapDateTooLong)
+      val request = CSRFTokenHelper.addCSRFToken(
+        FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+          .withFormUrlEncodedBody(
+            "ccr"                       -> "1234",
+            "oci"                       -> "1234",
+            "scopeAndContent"           -> "1234",
+            "formerReferenceDepartment" -> "1234",
+            "coveringDates"             -> gapDateTooLong,
+            "startDate"                 -> "1234",
+            "endDate"                   -> "1234",
+            "action"                    -> "save"
+          )
+          .withSession(
+            SessionKeys.token -> validSessionToken
+          )
+      )
+      val editRecordPage = route(app, request).get
+
+      status(editRecordPage) mustBe BAD_REQUEST
+
+      val document = asDocument(contentAsString(editRecordPage))
+      document must haveFormError("Covering date too long, maximum length 255 characters")
+    }
+
     "show an error when covering date is empty; showing error correctly" in {
       val request = CSRFTokenHelper.addCSRFToken(
         FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")

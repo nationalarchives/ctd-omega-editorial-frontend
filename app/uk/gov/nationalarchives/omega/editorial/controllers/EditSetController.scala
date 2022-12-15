@@ -64,6 +64,10 @@ class EditSetController @Inject() (
           _.trim.nonEmpty
         )
         .verifying(
+          messagesApi("edit-set.record.error.covering-dates-too-long")(Lang.apply("en")),
+          _.length <= 255
+        )
+        .verifying(
           messagesApi("edit-set.record.error.covering-dates")(Lang.apply("en")),
           value => CoveringDateCalculator.getStartAndEndDates(value).isRight
         ),
