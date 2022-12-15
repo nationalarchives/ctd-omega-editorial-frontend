@@ -10,6 +10,8 @@
 
 <range> ::= <single> "-" <single>
 
+<between> ::= "between" <range>
+
 <approx> ::= "?" <range> | "?" <single> | "c" <range> | "c" <single>
 
 <derived> ::= "[" <range> "]" | "[" <single> "]" | "[" <approx> "]"
@@ -24,4 +26,4 @@
 // have is "1868; 1890-1902; 1933"
 <gap_date> ::= <single_or_range> ";" <gap_repeating>
 
-<covering-date> ::= <range> | <single> | <derived> | <appox> | <undated> | <gap_date>
+<covering-date> ::= <between> | <range> | <single> | <derived> | <appox> | <undated> | <gap_date>
