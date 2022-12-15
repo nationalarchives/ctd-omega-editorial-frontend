@@ -73,7 +73,6 @@ class EditRecordViewSpec extends BaseSpec {
     "render an error given no scope and content" in {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
       val title = "EditRecordTitleTest"
-      val heading = "EditRecordHeadingTest"
       val editSetRecordForm: Form[EditSetRecord] = Form(
         mapping(
           "ccr"                       -> text,
@@ -101,7 +100,6 @@ class EditRecordViewSpec extends BaseSpec {
     "render an error when given scope and content is more than 8000 characters" in {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
       val title = "EditRecordTitleTest"
-      val heading = "EditRecordHeadingTest"
       val editSetRecordForm: Form[EditSetRecord] = Form(
         mapping(
           "ccr"                       -> text,
@@ -139,7 +137,6 @@ class EditRecordViewSpec extends BaseSpec {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
 
       val title = "EditRecordTitleTest"
-      val heading = "EditRecordHeadingTest"
       val editSetRecordForm: Form[EditSetRecord] = Form(
         mapping(
           "ccr"                       -> text,

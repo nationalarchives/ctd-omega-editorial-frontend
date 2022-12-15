@@ -309,7 +309,7 @@ class EditSetControllerSpec extends BaseSpec {
     }
 
     "respond with BAD_REQUEST when form has errors, preserving the CCR" in {
-      val ccrToAssert = "I'm looking for this CCR specifically"
+      val ccrToAssert = "COAL 80/80/1"
       val blankScopeAndContentToFailValidation = ""
       val request = CSRFTokenHelper.addCSRFToken(
         FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
