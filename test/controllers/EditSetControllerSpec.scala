@@ -306,6 +306,30 @@ class EditSetControllerSpec extends BaseSpec {
 
       status(editRecordPage) mustBe SEE_OTHER
     }
+
+    "redirect to discard page on form submit even if validation fails" in {
+      val blankScopeAndContentToFailValidation = ""
+      val request = CSRFTokenHelper.addCSRFToken(
+        FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+          .withFormUrlEncodedBody(
+            "ccr"                       -> "1234",
+            "oci"                       -> "1234",
+            "scopeAndContent"           -> blankScopeAndContentToFailValidation,
+            "formerReferenceDepartment" -> "1234",
+            "coveringDates"             -> "1234",
+            "startDate"                 -> "1234",
+            "endDate"                   -> "1234",
+            "action"                    -> "discard"
+          )
+          .withSession(SessionKeys.token -> validSessionToken)
+      )
+      val editRecordPage = route(app, request).get
+
+      status(editRecordPage) mustBe SEE_OTHER
+
+      redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/discard")
+
+    }
   }
 
 }
