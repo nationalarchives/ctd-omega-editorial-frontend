@@ -50,7 +50,7 @@
       @inputPassword(credentialsForm("password"), Symbol("class") -> "govuk-input")
     }
   }
-  @govukButton(Button(element = Some("button"), content = Text("Sign in")))
+  @govukButton(Button(element = Some("button"), content = Text(messages("login.button.text"))))
 }
 
 @template(user = None, title) {

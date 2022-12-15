@@ -29,7 +29,7 @@
 @(user: User, title: String, editSetRecordForm: Form[EditSetRecord])(implicit messages: Messages, request: Request[AnyContent])
 
 @backLink = {
-    <a class="govuk-back-link" href="/edit-set/1">Back to edit set (COAL 80 Sample)</a>
+    <a class="govuk-back-link" href="/edit-set/1">@messages("placeholder.back-to-coal-80")</a>
 }
 
 @actionButtonGroup = {
@@ -122,7 +122,7 @@
     }
     <h1 class="govuk-heading-l">@messages("edit-set.record.edit.heading", editSetRecordForm.data.get("ccr").get)</h1>
     <h2 class="govuk-heading-m">@messages("edit-set.record.edit.id", editSetRecordForm.data.get("oci").get)</h2>
-    <p class="govuk-body">Series: National Coal Board and predecessors: Photographs</p>
+    <p class="govuk-body">@messages("placeholder.series-national-coal-board")</p>
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
     @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetController.submit("1", editSetRecordForm.data.get("oci").get)) {
         @actionButtonGroup
