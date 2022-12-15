@@ -220,6 +220,10 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
       "1993 Jan - 1993 Dec" -> Node.Range(
         Node.Single(Node.YearMonth(YearMonth.of(1993, 1))),
         Node.Single(Node.YearMonth(YearMonth.of(1993, 12)))
+      ),
+      "1993 - 2004" -> Node.Range(
+        Node.Single(Node.Year(Year.of(1993))),
+        Node.Single(Node.Year(Year.of(2004)))
       )
     )
 
@@ -246,6 +250,59 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
     forAll(invalidTestTable) { (input, error) =>
       s"fail to parse $input" in {
         val parseResult = CoveringDateParser.runParser(CoveringDateParser.range, input)
+        parseResult must failToParseAs(error)
+      }
+    }
+
+  }
+
+  "BetweenRangeParser" should {
+
+    val testTable = Tables.Table(
+      "between input" -> "parse result",
+      "Between 1993 Jan 1 - 1993 Dec 31" -> Node.Range(
+        Node.Single(Node.YearMonthDay(LocalDate.of(1993, 1, 1))),
+        Node.Single(Node.YearMonthDay(LocalDate.of(1993, 12, 31)))
+      ),
+      "Between 1993 Jan 1-1993 Dec 31" -> Node.Range(
+        Node.Single(Node.YearMonthDay(LocalDate.of(1993, 1, 1))),
+        Node.Single(Node.YearMonthDay(LocalDate.of(1993, 12, 31)))
+      ),
+      "Between 1993 Jan - 1993 Dec" -> Node.Range(
+        Node.Single(Node.YearMonth(YearMonth.of(1993, 1))),
+        Node.Single(Node.YearMonth(YearMonth.of(1993, 12)))
+      ),
+      "between 1993 - 2004" -> Node.Range(
+        Node.Single(Node.Year(Year.of(1993))),
+        Node.Single(Node.Year(Year.of(2004)))
+      )
+    )
+
+    forAll(testTable) { (input, expectedResult) =>
+      s"parse $input as a Range" in {
+        val parseResult = CoveringDateParser.runParser(CoveringDateParser.between, input)
+        parseResult must parseSuccessfullyAs(expectedResult)
+      }
+    }
+
+    val invalidTestTable = Tables.Table(
+      "range input"           -> "parse failure",
+      "beween 1993 - 2004"    -> ParseError,
+      "between 1993, 2004"    -> ParseError,
+      "BETWEEN 1993 - 2004"   -> ParseError,
+      "Temp Edw 1"            -> ParseError,
+      "Oct"                   -> ParseError,
+      "October"               -> ParseError,
+      "Mon 1 Oct 1330"        -> ParseError,
+      "1993 Jan 1"            -> ParseError,
+      "c 1 Jan 1"             -> ParseError,
+      "[c 1 Jan 1]"           -> ParseError,
+      "1868; 1890-1902; 1933" -> ParseError
+    )
+
+    forAll(invalidTestTable) { (input, error) =>
+      s"fail to parse $input" in {
+        val parseResult = CoveringDateParser.runParser(CoveringDateParser.between, input)
         parseResult must failToParseAs(error)
       }
     }
@@ -398,6 +455,12 @@ class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
             Node.Range(Node.Single(Node.Year(Year.of(1890))), Node.Single(Node.Year(Year.of(1902)))),
             Node.Single(Node.Year(Year.of(1933)))
           )
+        )
+      ),
+      "Between 1914-1916" -> Node.Root(
+        Node.Range(
+          Node.Single(Node.Year(Year.of(1914))),
+          Node.Single(Node.Year(Year.of(1916)))
         )
       ),
       "[1914 - 1916]" -> Node.Root(

@@ -40,7 +40,7 @@ object CoveringDateParser extends JavaTokenParsers {
     }
 
   def coveringDates: Parser[Node.Root] =
-    (gap | derived | approx | range | single | undated) ^^ Node.Root.apply
+    (between | gap | derived | approx | range | single | undated) ^^ Node.Root.apply
 
   def gap: Parser[Node.Gap] =
     ((range | single) <~ ";") ~ rep1sep(range | single, ";") ^^ { case (head ~ rest) =>
@@ -55,6 +55,9 @@ object CoveringDateParser extends JavaTokenParsers {
 
   def range: Parser[Node.Range] =
     (single <~ "-") ~ single ^^ { case (l ~ r) => Node.Range(l, r) }
+
+  def between: Parser[Node.Range] =
+    "(B|b)etween".r ~> range
 
   def single: Parser[Node.Single] =
     (yearMonthDay | yearMonth | year) ^^ Node.Single.apply
