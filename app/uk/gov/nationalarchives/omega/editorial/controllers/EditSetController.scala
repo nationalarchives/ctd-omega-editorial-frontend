@@ -26,12 +26,12 @@ import play.api.data.Forms.{ mapping, text }
 import play.api.data.{ Form, FormError }
 import play.api.i18n.{ I18nSupport, Lang, Messages }
 import play.api.mvc._
+import uk.gov.nationalarchives.omega.editorial._
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
 import uk.gov.nationalarchives.omega.editorial.models.EditSetRecord
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateCalculator
 import uk.gov.nationalarchives.omega.editorial.support.HistoricalDateParser
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
-import uk.gov.nationalarchives.omega.editorial._
 
 import java.util.Date
 import javax.inject._
@@ -200,20 +200,22 @@ class EditSetController @Inject() (
   private def message(key: String): String = messagesApi(key)(Lang("en"))
 
   private def extractStartDate(formValues: Map[String, String]): Option[Date] =
-    extractDate(
-      formValues.getOrElse("startDateDay", ""),
-      formValues.getOrElse("startDateMonth", ""),
-      formValues.getOrElse("startDateYear", "")
-    )
+    extractDate(formValues, "startDateDay", "startDateMonth", "startDateYear")
 
   private def extractEndDate(formValues: Map[String, String]): Option[Date] =
-    extractDate(
-      formValues.getOrElse("endDateDay", ""),
-      formValues.getOrElse("endDateMonth", ""),
-      formValues.getOrElse("endDateYear", "")
-    )
+    extractDate(formValues, "endDateDay", "endDateMonth", "endDateYear")
 
-  private def extractDate(day: String, month: String, year: String): Option[Date] =
-    HistoricalDateParser.parse(List(day, month, year).mkString("/"))
+  private def extractDate(
+    formValues: Map[String, String],
+    fieldNameForDay: String,
+    fieldNameForMonth: String,
+    fieldNameForYear: String
+  ): Option[Date] =
+    for {
+      day   <- formValues.get(fieldNameForDay)
+      month <- formValues.get(fieldNameForMonth)
+      year  <- formValues.get(fieldNameForYear)
+      date  <- HistoricalDateParser.parse(List(day, month, year).mkString("/"))
+    } yield date
 
 }
