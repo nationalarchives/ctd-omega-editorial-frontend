@@ -65,11 +65,11 @@ sudo adduser --system --shell /sbin/nologin ctd-web
 ```
 sudo chown -R ctd-web:ctd-web /opt/ctd-omega-editorial-frontend-0.1.0-SNAPSHOT
 ```
-5. It is recommended to create a symbolc link to the current version as follows:
+5. It is recommended to create a symbolic link to the current version as follows:
 ```
 sudo ln -s /opt/ctd-omega-editorial-frontend-0.1.0-SNAPSHOT /opt/ctd-omega-editorial-frontend
 ```
-6. Create a systemd config file as follows, replacing the text `some_application_secret` with a specially generated secret, as described at https://www.playframework.com/documentation/2.8.x/ApplicationSecret#Generating-an-application-secret
+6. Create a systemd config file as follows, replacing the text `some_application_secret` with a specially generated secret, as described [here](https://www.playframework.com/documentation/2.8.x/ApplicationSecret#Generating-an-application-secret)
 ```
 [Unit]
 Description=CTD Omega Editorial Frontend
@@ -87,7 +87,7 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 ```
-7. Save the config file as ctd-omega-editorial-frontend.service in the `/etc/systemd/system` directory and ensure that the file is executable by the ctd-user, e.g.
+7. Save the config file as `ctd-omega-editorial-frontend.service` in the `/etc/systemd/system` directory and ensure that the file is executable by the `ctd-web` user, e.g.
 ```
 sudo chmod 755 /etc/systemd/system/ctd-omega-editorial-frontend.service
 ```
@@ -95,11 +95,11 @@ sudo chmod 755 /etc/systemd/system/ctd-omega-editorial-frontend.service
 ```
 sudo systemctl daemon-reload
 ```
-9. Enable the ctd-omega-editorial-frontend service:
+9. Enable the `ctd-omega-editorial-frontend` service:
 ```
 sudo systemctl enable ctd-omega-editorial-frontend
 ```
-10. Start the ctd-omega-editorial-frontend service:
+10. Start the `ctd-omega-editorial-frontend` service:
 ```
 sudo systemctl start ctd-omega-editorial-frontend
 ```
