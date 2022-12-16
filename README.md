@@ -74,7 +74,7 @@ sudo ln -s /opt/ctd-omega-editorial-frontend-0.1.0-SNAPSHOT /opt/ctd-omega-edito
 <!-- <file>${application.home:-.}/logs/application.log</file> -->
 <file>/opt/ctd-omega-editorial-frontend/logs/application.log</file>
 ```
-7. Create a systemd config file as follows, replacing the text `some_application_secret` with a specially generated secret, as described [here](https://www.playframework.com/documentation/2.8.x/ApplicationSecret#Generating-an-application-secret)
+7. Create a systemd config file as follows, replacing the text `some_application_secret` with a specially generated secret (as described [here](https://www.playframework.com/documentation/2.8.x/ApplicationSecret#Generating-an-application-secret)) and `/path/to/java-1.8.0` with the Java 8 installation directory (e.g. `/usr/lib/jvm/java-1.8.0-amazon-corretto.x86_64`) 
 ```
 [Unit]
 Description=CTD Omega Editorial Frontend
@@ -85,6 +85,7 @@ After=syslog.target
 Type=simple
 User=ctd-web
 Group=ctd-web
+Environment="JAVA_HOME=/path/to/java-1.8.0"
 Environment="APPLICATION_SECRET=some_application_secret"
 ExecStart=/opt/ctd-omega-editorial-frontend/bin/ctd-omega-editorial-frontend
 Restart=always
