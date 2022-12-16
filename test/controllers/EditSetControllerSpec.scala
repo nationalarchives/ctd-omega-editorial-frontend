@@ -26,16 +26,16 @@ import play.api.test.Helpers._
 import play.api.test._
 import support.BaseSpec
 import support.CustomMatchers._
-import uk.gov.nationalarchives.omega.editorial.controllers.{EditSetController, SessionKeys}
+import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
-import uk.gov.nationalarchives.omega.editorial.views.html.{editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave}
+import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
 import scala.concurrent.Future
 
 /** Add your spec here. You can mock out a whole application including requests, plugins etc.
- *
- * For more information, see https://www.playframework.com/documentation/latest/ScalaTestingWithScalaTest
- */
+  *
+  * For more information, see https://www.playframework.com/documentation/latest/ScalaTestingWithScalaTest
+  */
 class EditSetControllerSpec extends BaseSpec {
 
   val validSessionToken: String = Session.generateToken("1234")
@@ -227,18 +227,19 @@ class EditSetControllerSpec extends BaseSpec {
 
       val validValues: Map[String, String] =
         Map(
-          "ccr" -> "COAL 80/80/1",
-          "oci" -> "COAL.2022.V5RJW.P",
+          "ccr"             -> "COAL 80/80/1",
+          "oci"             -> "COAL.2022.V5RJW.P",
           "scopeAndContent" -> "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
           "formerReferenceDepartment" -> "1234",
-          "coveringDates" -> "2020 Oct",
-          "startDateDay" -> "1",
-          "startDateMonth" -> "10",
-          "startDateYear" -> "2020",
-          "endDateDay" -> "31",
-          "endDateMonth" -> "10",
-          "endDateYear" -> "2020",
-          "action" -> "save")
+          "coveringDates"             -> "2020 Oct",
+          "startDateDay"              -> "1",
+          "startDateMonth"            -> "10",
+          "startDateYear"             -> "2020",
+          "endDateDay"                -> "31",
+          "endDateMonth"              -> "10",
+          "endDateYear"               -> "2020",
+          "action"                    -> "save"
+        )
 
       "fail" when {
         "and yet preserve the CCR" when {
@@ -248,14 +249,14 @@ class EditSetControllerSpec extends BaseSpec {
             val request = CSRFTokenHelper.addCSRFToken(
               FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
                 .withFormUrlEncodedBody(
-                  "ccr" -> ccrToAssert,
-                  "oci" -> "1234",
-                  "scopeAndContent" -> blankScopeAndContentToFailValidation,
+                  "ccr"                       -> ccrToAssert,
+                  "oci"                       -> "1234",
+                  "scopeAndContent"           -> blankScopeAndContentToFailValidation,
                   "formerReferenceDepartment" -> "1234",
-                  "coveringDates" -> "1234",
-                  "startDate" -> "1234",
-                  "endDate" -> "1234",
-                  "action" -> "save"
+                  "coveringDates"             -> "1234",
+                  "startDate"                 -> "1234",
+                  "endDate"                   -> "1234",
+                  "action"                    -> "save"
                 )
                 .withSession(SessionKeys.token -> validSessionToken)
             )
@@ -305,7 +306,6 @@ class EditSetControllerSpec extends BaseSpec {
               FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
                 .withFormUrlEncodedBody(values.toSeq: _*)
                 .withSession(SessionKeys.token -> validSessionToken)
-
             )
             val editRecordPage = route(app, request).get
 
@@ -370,12 +370,13 @@ class EditSetControllerSpec extends BaseSpec {
           "is before start date" in {
 
             val values = validValues ++ Map(
-              "startDateDay" -> "12",
+              "startDateDay"   -> "12",
               "startDateMonth" -> "10",
-              "startDateYear" -> "2020",
-              "endDateDay" -> "11",
-              "endDateMonth" -> "10",
-              "endDateYear" -> "2020")
+              "startDateYear"  -> "2020",
+              "endDateDay"     -> "11",
+              "endDateMonth"   -> "10",
+              "endDateYear"    -> "2020"
+            )
 
             val result = submitWhileLoggedIn(values)
 
@@ -396,12 +397,13 @@ class EditSetControllerSpec extends BaseSpec {
         "neither start date nor end date is valid" in {
 
           val values = validValues ++ Map(
-            "startDateDay" -> "12",
+            "startDateDay"   -> "12",
             "startDateMonth" -> "14",
-            "startDateYear" -> "2020",
-            "endDateDay" -> "42",
-            "endDateMonth" -> "12",
-            "endDateYear" -> "2020")
+            "startDateYear"  -> "2020",
+            "endDateDay"     -> "42",
+            "endDateMonth"   -> "12",
+            "endDateYear"    -> "2020"
+          )
 
           val result = submitWhileLoggedIn(values)
 
@@ -423,14 +425,14 @@ class EditSetControllerSpec extends BaseSpec {
             val request = CSRFTokenHelper.addCSRFToken(
               FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
                 .withFormUrlEncodedBody(
-                  "ccr" -> "1234",
-                  "oci" -> "1234",
-                  "scopeAndContent" -> "1234",
+                  "ccr"                       -> "1234",
+                  "oci"                       -> "1234",
+                  "scopeAndContent"           -> "1234",
                   "formerReferenceDepartment" -> "1234",
-                  "coveringDates" -> "Oct 1 2004",
-                  "startDate" -> "1234",
-                  "endDate" -> "1234",
-                  "action" -> "save"
+                  "coveringDates"             -> "Oct 1 2004",
+                  "startDate"                 -> "1234",
+                  "endDate"                   -> "1234",
+                  "action"                    -> "save"
                 )
                 .withSession(
                   SessionKeys.token -> validSessionToken
@@ -445,18 +447,18 @@ class EditSetControllerSpec extends BaseSpec {
             val request = CSRFTokenHelper.addCSRFToken(
               FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
                 .withFormUrlEncodedBody(
-                  "ccr" -> "1234",
-                  "oci" -> "1234",
-                  "scopeAndContent" -> "1234",
+                  "ccr"                       -> "1234",
+                  "oci"                       -> "1234",
+                  "scopeAndContent"           -> "1234",
                   "formerReferenceDepartment" -> "1234",
-                  "coveringDates" -> gapDateTooLong,
-                  "startDateDay" -> "26",
-                  "startDateMonth" -> "12",
-                  "startDateYear" -> "2020",
-                  "endDateDay" -> "31",
-                  "endDateMonth" -> "12",
-                  "endDateYear" -> "2020",
-                  "action" -> "save"
+                  "coveringDates"             -> gapDateTooLong,
+                  "startDateDay"              -> "26",
+                  "startDateMonth"            -> "12",
+                  "startDateYear"             -> "2020",
+                  "endDateDay"                -> "31",
+                  "endDateMonth"              -> "12",
+                  "endDateYear"               -> "2020",
+                  "action"                    -> "save"
                 )
                 .withSession(
                   SessionKeys.token -> validSessionToken
@@ -474,18 +476,18 @@ class EditSetControllerSpec extends BaseSpec {
             val request = CSRFTokenHelper.addCSRFToken(
               FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
                 .withFormUrlEncodedBody(
-                  "ccr" -> "1234",
-                  "oci" -> "1234",
-                  "scopeAndContent" -> "1234",
+                  "ccr"                       -> "1234",
+                  "oci"                       -> "1234",
+                  "scopeAndContent"           -> "1234",
                   "formerReferenceDepartment" -> "1234",
-                  "coveringDates" -> "  ",
-                  "startDateDay" -> "26",
-                  "startDateMonth" -> "12",
-                  "startDateYear" -> "2020",
-                  "endDateDay" -> "31",
-                  "endDateMonth" -> "12",
-                  "endDateYear" -> "2020",
-                  "action" -> "save"
+                  "coveringDates"             -> "  ",
+                  "startDateDay"              -> "26",
+                  "startDateMonth"            -> "12",
+                  "startDateYear"             -> "2020",
+                  "endDateDay"                -> "31",
+                  "endDateMonth"              -> "12",
+                  "endDateYear"               -> "2020",
+                  "action"                    -> "save"
                 )
                 .withSession(
                   SessionKeys.token -> validSessionToken
@@ -496,7 +498,7 @@ class EditSetControllerSpec extends BaseSpec {
             status(editRecordPage) mustBe BAD_REQUEST
 
             val document = asDocument(contentAsString(editRecordPage))
-            document must haveSummaryErrorMessages(Set("Enter the covering dates","Covering date format is not valid"))
+            document must haveSummaryErrorMessages(Set("Enter the covering dates", "Covering date format is not valid"))
 
           }
         }
@@ -537,18 +539,19 @@ class EditSetControllerSpec extends BaseSpec {
                 .addCSRFToken(
                   FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
                     .withFormUrlEncodedBody(
-                      "ccr" -> "1234",
-                      "oci" -> "1234",
-                      "scopeAndContent" -> "1234",
+                      "ccr"                       -> "1234",
+                      "oci"                       -> "1234",
+                      "scopeAndContent"           -> "1234",
                       "formerReferenceDepartment" -> "1234",
-                      "coveringDates" -> "1234",
-                      "startDateDay" -> "26",
-                      "startDateMonth" -> "12",
-                      "startDateYear" -> "2020",
-                      "endDateDay" -> "31",
-                      "endDateMonth" -> "12",
-                      "endDateYear" -> "2020",
-                      "action" -> "save")
+                      "coveringDates"             -> "1234",
+                      "startDateDay"              -> "26",
+                      "startDateMonth"            -> "12",
+                      "startDateYear"             -> "2020",
+                      "endDateDay"                -> "31",
+                      "endDateMonth"              -> "12",
+                      "endDateYear"               -> "2020",
+                      "action"                    -> "save"
+                    )
                     .withSession(SessionKeys.token -> validSessionToken)
                 )
             )
@@ -565,18 +568,19 @@ class EditSetControllerSpec extends BaseSpec {
               CSRFTokenHelper.addCSRFToken(
                 FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
                   .withFormUrlEncodedBody(
-                    "ccr" -> "1234",
-                    "oci" -> "1234",
-                    "scopeAndContent" -> "1234",
+                    "ccr"                       -> "1234",
+                    "oci"                       -> "1234",
+                    "scopeAndContent"           -> "1234",
                     "formerReferenceDepartment" -> "1234",
-                    "coveringDates" -> "1234",
-                    "startDateDay" -> "26",
-                    "startDateMonth" -> "12",
-                    "startDateYear" -> "2020",
-                    "endDateDay" -> "31",
-                    "endDateMonth" -> "12",
-                    "endDateYear" -> "2020",
-                    "action" -> "save")
+                    "coveringDates"             -> "1234",
+                    "startDateDay"              -> "26",
+                    "startDateMonth"            -> "12",
+                    "startDateYear"             -> "2020",
+                    "endDateDay"                -> "31",
+                    "endDateMonth"              -> "12",
+                    "endDateYear"               -> "2020",
+                    "action"                    -> "save"
+                  )
                   .withSession(SessionKeys.token -> validSessionToken)
               )
             )
@@ -590,20 +594,20 @@ class EditSetControllerSpec extends BaseSpec {
           val request = CSRFTokenHelper.addCSRFToken(
             FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
               .withFormUrlEncodedBody(
-                "ccr" -> "1234",
-                "oci" -> "1234",
-                "scopeAndContent" -> "1234",
+                "ccr"                       -> "1234",
+                "oci"                       -> "1234",
+                "scopeAndContent"           -> "1234",
                 "formerReferenceDepartment" -> "1234",
-                "coveringDates" -> "1234",
-                "startDateDay" -> "26",
-                "startDateMonth" -> "12",
-                "startDateYear" -> "2020",
-                "endDateDay" -> "31",
-                "endDateMonth" -> "12",
-                "endDateYear" -> "2020",
-                "action" -> "save")
+                "coveringDates"             -> "1234",
+                "startDateDay"              -> "26",
+                "startDateMonth"            -> "12",
+                "startDateYear"             -> "2020",
+                "endDateDay"                -> "31",
+                "endDateMonth"              -> "12",
+                "endDateYear"               -> "2020",
+                "action"                    -> "save"
+              )
               .withSession(SessionKeys.token -> validSessionToken)
-
           )
           val editRecordPage = route(app, request).get
 
@@ -622,18 +626,18 @@ class EditSetControllerSpec extends BaseSpec {
           val request = CSRFTokenHelper.addCSRFToken(
             FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
               .withFormUrlEncodedBody(
-                "ccr" -> "1234",
-                "oci" -> "1234",
-                "scopeAndContent" -> blankScopeAndContentToFailValidation,
+                "ccr"                       -> "1234",
+                "oci"                       -> "1234",
+                "scopeAndContent"           -> blankScopeAndContentToFailValidation,
                 "formerReferenceDepartment" -> "1234",
-                "coveringDates" -> "1234",
-                "startDateDay" -> "26",
-                "startDateMonth" -> "12",
-                "startDateYear" -> "2020",
-                "endDateDay" -> "31",
-                "endDateMonth" -> "12",
-                "endDateYear" -> "2020",
-                "action" -> "discard"
+                "coveringDates"             -> "1234",
+                "startDateDay"              -> "26",
+                "startDateMonth"            -> "12",
+                "startDateYear"             -> "2020",
+                "endDateDay"                -> "31",
+                "endDateMonth"              -> "12",
+                "endDateYear"               -> "2020",
+                "action"                    -> "discard"
               )
               .withSession(SessionKeys.token -> validSessionToken)
           )
@@ -651,8 +655,8 @@ class EditSetControllerSpec extends BaseSpec {
     val request = CSRFTokenHelper.addCSRFToken(
       FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
         .withFormUrlEncodedBody(values.toSeq: _*)
-        .withSession(SessionKeys.token -> validSessionToken))
+        .withSession(SessionKeys.token -> validSessionToken)
+    )
     route(app, request).get
   }
 }
-

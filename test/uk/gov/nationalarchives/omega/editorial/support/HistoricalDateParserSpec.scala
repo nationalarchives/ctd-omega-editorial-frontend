@@ -21,8 +21,8 @@
 
 package uk.gov.nationalarchives.omega.editorial.support
 
-import org.scalatest.matchers.{MatchResult, Matcher}
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.matchers.{ MatchResult, Matcher }
+import org.scalatest.{ MustMatchers, OptionValues, WordSpec }
 import uk.gov.nationalarchives.omega.editorial.support.HistoricalDateParser.parse
 
 import java.util._
@@ -43,31 +43,44 @@ class HistoricalDateParserSpec extends WordSpec with MustMatchers with OptionVal
     }
     "the date should be considered invalid" when {
       "during the switchover period" in {
-        Seq("3/9/1752", "4/9/1752", "6/9/1752", "7/9/1752", "8/9/1752", "9/9/1752", "10/9/1752", "11/9/1752", "12/9/1752", "13/9/1752")
+        Seq(
+          "3/9/1752",
+          "4/9/1752",
+          "6/9/1752",
+          "7/9/1752",
+          "8/9/1752",
+          "9/9/1752",
+          "10/9/1752",
+          "11/9/1752",
+          "12/9/1752",
+          "13/9/1752"
+        )
           .foreach(rawDate => parse(rawDate) mustBe empty)
       }
     }
   }
 
-  private def beSameGregorianDateAs(expectedDay: Int, expectedMonth: Int, expectedYear: Int): Matcher[Date] = (date: Date) => {
+  private def beSameGregorianDateAs(expectedDay: Int, expectedMonth: Int, expectedYear: Int): Matcher[Date] =
+    (date: Date) => {
 
-    def formatForDisplay(day: Int, month: Int, year: Int): String = Seq(day, month, year).mkString("/")
+      def formatForDisplay(day: Int, month: Int, year: Int): String = Seq(day, month, year).mkString("/")
 
-    val calendar = new GregorianCalendar(TimeZone.getTimeZone("Europe/London"), Locale.UK)
-    calendar.setTime(date)
-    val actualDay = calendar.get(Calendar.DAY_OF_MONTH)
-    val actualMonth = calendar.get(Calendar.MONTH)
-    val actualYear = calendar.get(Calendar.YEAR)
-    val expectedDateForDisplay = formatForDisplay(expectedDay, expectedMonth, expectedYear)
-    val actualDateForDisplay = formatForDisplay(actualDay, actualMonth, actualYear)
-    val errorMessageIfExpected =
-      s"The page didn't have the expected date '$expectedDateForDisplay'. The actual value was '$actualDateForDisplay'"
-    val errorMessageIfNotExpected = s"The page did indeed have an expected date '$expectedDateForDisplay', which was not expected."
-    MatchResult(
-      (actualDay == expectedDay) && (actualMonth == expectedMonth) && (actualYear == expectedYear),
-      errorMessageIfExpected,
-      errorMessageIfNotExpected
-    )
-  }
+      val calendar = new GregorianCalendar(TimeZone.getTimeZone("Europe/London"), Locale.UK)
+      calendar.setTime(date)
+      val actualDay = calendar.get(Calendar.DAY_OF_MONTH)
+      val actualMonth = calendar.get(Calendar.MONTH)
+      val actualYear = calendar.get(Calendar.YEAR)
+      val expectedDateForDisplay = formatForDisplay(expectedDay, expectedMonth, expectedYear)
+      val actualDateForDisplay = formatForDisplay(actualDay, actualMonth, actualYear)
+      val errorMessageIfExpected =
+        s"The page didn't have the expected date '$expectedDateForDisplay'. The actual value was '$actualDateForDisplay'"
+      val errorMessageIfNotExpected =
+        s"The page did indeed have an expected date '$expectedDateForDisplay', which was not expected."
+      MatchResult(
+        (actualDay == expectedDay) && (actualMonth == expectedMonth) && (actualYear == expectedYear),
+        errorMessageIfExpected,
+        errorMessageIfNotExpected
+      )
+    }
 
 }

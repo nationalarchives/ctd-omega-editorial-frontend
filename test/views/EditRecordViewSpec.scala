@@ -22,10 +22,10 @@
 package views
 
 import org.jsoup.nodes.Document
-import play.api.data.Forms.{mapping, text}
-import play.api.data.{Form, FormError}
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import play.api.test.{CSRFTokenHelper, FakeRequest, Helpers}
+import play.api.data.Forms.{ mapping, text }
+import play.api.data.{ Form, FormError }
+import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
+import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import play.twirl.api.Html
 import support.BaseSpec
 import support.CustomMatchers._
@@ -36,17 +36,19 @@ class EditRecordViewSpec extends BaseSpec {
 
   private val emptyForm: Form[EditSetRecord] = Form(
     mapping(
-      "ccr" -> text,
-      "oci" -> text,
-      "scopeAndContent" -> text,
-      "coveringDates" -> text,
+      "ccr"                       -> text,
+      "oci"                       -> text,
+      "scopeAndContent"           -> text,
+      "coveringDates"             -> text,
       "formerReferenceDepartment" -> text,
-      "startDateDay" -> text,
-      "startDateMonth" -> text,
-      "startDateYear" -> text,
-      "endDateDay" -> text,
-      "endDateMonth" -> text,
-      "endDateYear" -> text)(EditSetRecord.apply)(EditSetRecord.unapply))
+      "startDateDay"              -> text,
+      "startDateMonth"            -> text,
+      "startDateYear"             -> text,
+      "endDateDay"                -> text,
+      "endDateMonth"              -> text,
+      "endDateYear"               -> text
+    )(EditSetRecord.apply)(EditSetRecord.unapply)
+  )
 
   val emptyRecord: EditSetRecord = EditSetRecord.apply("", "", "", "", "", "", "", "", "", "", "")
 
@@ -68,7 +70,9 @@ class EditRecordViewSpec extends BaseSpec {
             endDateDay = "31",
             endDateMonth = "12",
             endDateYear = "1960"
-          )))
+          )
+        )
+      )
 
       document must haveTitle("TNA reference: COAL 80/80/1")
       document must haveHeading("edit-set.record.edit.heading")
@@ -97,7 +101,8 @@ class EditRecordViewSpec extends BaseSpec {
     "render an error given no scope and content" in {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
       val title = "EditRecordTitleTest"
-      val filledForm = emptyForm.fill(emptyRecord)
+      val filledForm = emptyForm
+        .fill(emptyRecord)
         .withError(FormError("", "Enter the scope and content."))
 
       val editRecordHtml: Html =
@@ -114,11 +119,13 @@ class EditRecordViewSpec extends BaseSpec {
     "render an error when given scope and content is more than 8000 characters" in {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
       val title = "EditRecordTitleTest"
-      val filledForm = emptyForm.fill(
-        emptyRecord.copy(
-          scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+      val filledForm = emptyForm
+        .fill(
+          emptyRecord.copy(
+            scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+          )
         )
-      ).withError(FormError("", "Scope and content too long, maximum length 8000 characters"))
+        .withError(FormError("", "Scope and content too long, maximum length 8000 characters"))
 
       val editRecordHtml: Html =
         editSetRecordEditInstance(user, title, filledForm)(
@@ -134,12 +141,15 @@ class EditRecordViewSpec extends BaseSpec {
     "render an error when given former reference department is more than 255 characters" in {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
       val title = "EditRecordTitleTest"
-      val filledForm = emptyForm.fill(
-        emptyRecord.copy(
-          scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-          formerReferenceDepartment = "Former reference - Department Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing"
+      val filledForm = emptyForm
+        .fill(
+          emptyRecord.copy(
+            scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+            formerReferenceDepartment =
+              "Former reference - Department Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing"
+          )
         )
-      ).withError(FormError("", "Former reference - Department too long, maximum length 255 characters"))
+        .withError(FormError("", "Former reference - Department too long, maximum length 255 characters"))
 
       val editRecordHtml: Html =
         editSetRecordEditInstance(user, title, filledForm)(
@@ -173,17 +183,18 @@ class EditRecordViewSpec extends BaseSpec {
       )
       val editSetRecordForm = Form(
         mapping(
-          "ccr" -> text,
-          "oci" -> text,
-          "scopeAndContent" -> text,
-          "coveringDates" -> text,
+          "ccr"                       -> text,
+          "oci"                       -> text,
+          "scopeAndContent"           -> text,
+          "coveringDates"             -> text,
           "formerReferenceDepartment" -> text,
-          "startDateDay" -> text,
-          "startDateMonth" -> text,
-          "startDateYear" -> text,
-          "endDateDay" -> text,
-          "endDateMonth" -> text,
-          "endDateYear" -> text)(EditSetRecord.apply)(EditSetRecord.unapply)
+          "startDateDay"              -> text,
+          "startDateMonth"            -> text,
+          "startDateYear"             -> text,
+          "endDateDay"                -> text,
+          "endDateMonth"              -> text,
+          "endDateYear"               -> text
+        )(EditSetRecord.apply)(EditSetRecord.unapply)
       ).fill(inputData)
         .withError("coveringDates", "covering date message string")
 
@@ -203,8 +214,10 @@ class EditRecordViewSpec extends BaseSpec {
     "only the start date is invalid" in {
 
       val document = generateDocument(
-        form = emptyForm.fill(emptyRecord)
-          .withError(FormError("startDate", "Start date is not a valid date")))
+        form = emptyForm
+          .fill(emptyRecord)
+          .withError(FormError("startDate", "Start date is not a valid date"))
+      )
 
       document must haveSummaryErrorMessages(Set("Start date is not a valid date"))
       document must haveErrorMessageForStartDate("Start date is not a valid date")
@@ -214,8 +227,10 @@ class EditRecordViewSpec extends BaseSpec {
     "only the end date is invalid" in {
 
       val document = generateDocument(
-        form = emptyForm.fill(emptyRecord)
-          .withError(FormError("endDate", "End date is not a valid date")))
+        form = emptyForm
+          .fill(emptyRecord)
+          .withError(FormError("endDate", "End date is not a valid date"))
+      )
 
       document must haveSummaryErrorMessages(Set("End date is not a valid date"))
       document must haveNoErrorMessageForStartDate
@@ -225,8 +240,10 @@ class EditRecordViewSpec extends BaseSpec {
     "the end date precedes the start date" in {
 
       val document = generateDocument(
-        form = emptyForm.fill(emptyRecord)
-          .withError(FormError("endDate", "End date cannot precede start date")))
+        form = emptyForm
+          .fill(emptyRecord)
+          .withError(FormError("endDate", "End date cannot precede start date"))
+      )
 
       document must haveSummaryErrorMessages(Set("End date cannot precede start date"))
       document must haveNoErrorMessageForStartDate
@@ -234,7 +251,6 @@ class EditRecordViewSpec extends BaseSpec {
 
     }
   }
-
 
   private def generateDocument(title: String = "", form: Form[EditSetRecord]): Document = {
     val editSetRecordEditInstance: editSetRecordEdit = inject[editSetRecordEdit]
