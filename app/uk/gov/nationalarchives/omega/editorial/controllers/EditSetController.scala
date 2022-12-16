@@ -21,17 +21,20 @@
 
 package uk.gov.nationalarchives.omega.editorial.controllers
 
-import javax.inject._
-import play.api.data.Form
-import play.api.data.Forms.{ mapping, text }
-import play.api.i18n.{ I18nSupport, Lang, Messages }
 import play.api.Logger
+import play.api.data.Forms.{ mapping, text }
+import play.api.data.{ Form, FormError }
+import play.api.i18n.{ I18nSupport, Lang, Messages }
 import play.api.mvc._
+import uk.gov.nationalarchives.omega.editorial._
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
 import uk.gov.nationalarchives.omega.editorial.models.EditSetRecord
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateCalculator
+import uk.gov.nationalarchives.omega.editorial.support.HistoricalDateParser
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
-import uk.gov.nationalarchives.omega.editorial.{ editSetRecords, editSets, _ }
+
+import java.util.Date
+import javax.inject._
 
 /** This controller creates an `Action` to handle HTTP requests to the application's home page.
   */
@@ -54,7 +57,7 @@ class EditSetController @Inject() (
       "oci" -> text,
       "scopeAndContent" -> text
         .verifying(
-          messagesApi("edit-set.record.error.scope-and-content")(Lang.apply("en")),
+          message("edit-set.record.error.scope-and-content"),
           value => value.length <= 8000
         )
         .verifying(messagesApi("edit-set.record.missing.scope-and-content")(Lang.apply("en")), _.nonEmpty),
@@ -72,11 +75,15 @@ class EditSetController @Inject() (
           value => CoveringDateCalculator.getStartAndEndDates(value).isRight
         ),
       "formerReferenceDepartment" -> text.verifying(
-        messagesApi("edit-set.record.error.former-reference-department")(Lang.apply("en")),
+        message("edit-set.record.error.former-reference-department"),
         value => value.length <= 255
       ),
-      "startDate" -> text,
-      "endDate"   -> text
+      "startDateDay"   -> text,
+      "startDateMonth" -> text,
+      "startDateYear"  -> text,
+      "endDateDay"     -> text,
+      "endDateMonth"   -> text,
+      "endDateYear"    -> text
     )(EditSetRecord.apply)(EditSetRecord.unapply)
   )
 
@@ -123,7 +130,7 @@ class EditSetController @Inject() (
 
       request.body.asFormUrlEncoded.get("action").headOption match {
         case Some("save") =>
-          formToEither(editSetRecordForm.bindFromRequest()) match {
+          formToEither(performAdditionalValidation(editSetRecordForm.bindFromRequest())) match {
             case Left(formWithErrors) => BadRequest(editSetRecordEdit(user, title, formWithErrors))
             case Right(editSetRecord) =>
               editSetRecords.saveEditSetRecord(editSetRecord)
@@ -169,5 +176,46 @@ class EditSetController @Inject() (
 
   private def formToEither[A](form: Form[A]): Either[Form[A], A] =
     form.fold(Left.apply, Right.apply)
+
+  private def performAdditionalValidation(form: Form[EditSetRecord]): Form[EditSetRecord] =
+    validateStartAndEndDates(form)
+
+  private def validateStartAndEndDates(form: Form[EditSetRecord]): Form[EditSetRecord] = {
+    val errorForInvalidStartDate =
+      FormError("startDate", message("edit-set.record.error.start-date"))
+    val errorForInvalidEndDate = FormError("endDate", message("edit-set.record.error.end-date"))
+    val errorForEndDateBeforeStartDate =
+      FormError("endDate", message("edit-set.record.error.end-date-before-start-date"))
+    val formValues = form.data
+    val additionErrors = (extractStartDate(formValues), extractEndDate(formValues)) match {
+      case (Some(startDate), Some(endDate)) if endDate.before(startDate) => Seq(errorForEndDateBeforeStartDate)
+      case (Some(_), Some(_))                                            => Seq.empty
+      case (Some(_), None)                                               => Seq(errorForInvalidEndDate)
+      case (None, Some(_))                                               => Seq(errorForInvalidStartDate)
+      case (None, None) => Seq(errorForInvalidStartDate, errorForInvalidEndDate)
+    }
+    form.copy(errors = form.errors ++ additionErrors)
+  }
+
+  private def message(key: String): String = messagesApi(key)(Lang("en"))
+
+  private def extractStartDate(formValues: Map[String, String]): Option[Date] =
+    extractDate(formValues, "startDateDay", "startDateMonth", "startDateYear")
+
+  private def extractEndDate(formValues: Map[String, String]): Option[Date] =
+    extractDate(formValues, "endDateDay", "endDateMonth", "endDateYear")
+
+  private def extractDate(
+    formValues: Map[String, String],
+    fieldNameForDay: String,
+    fieldNameForMonth: String,
+    fieldNameForYear: String
+  ): Option[Date] =
+    for {
+      day   <- formValues.get(fieldNameForDay)
+      month <- formValues.get(fieldNameForMonth)
+      year  <- formValues.get(fieldNameForYear)
+      date  <- HistoricalDateParser.parse(List(day, month, year).mkString("/"))
+    } yield date
 
 }

@@ -34,19 +34,43 @@ import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEdit
 
 class EditRecordViewSpec extends BaseSpec {
 
+  private val emptyForm: Form[EditSetRecord] = Form(
+    mapping(
+      "ccr"                       -> text,
+      "oci"                       -> text,
+      "scopeAndContent"           -> text,
+      "coveringDates"             -> text,
+      "formerReferenceDepartment" -> text,
+      "startDateDay"              -> text,
+      "startDateMonth"            -> text,
+      "startDateYear"             -> text,
+      "endDateDay"                -> text,
+      "endDateMonth"              -> text,
+      "endDateYear"               -> text
+    )(EditSetRecord.apply)(EditSetRecord.unapply)
+  )
+
+  val emptyRecord: EditSetRecord = EditSetRecord.apply("", "", "", "", "", "", "", "", "", "", "")
+
   "Edit record Html" should {
     "render when all is valid" in {
 
       val document = generateDocument(
         title = "TNA reference: COAL 80/80/1",
-        editSetRecord = new EditSetRecord(
-          ccr = "COAL 80/80/1",
-          oci = "COAL.2022.V5RJW.P",
-          scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-          coveringDates = "1960",
-          formerReferenceDepartment = "TestFormerReferenceDepartment",
-          startDate = "1/1/1960",
-          endDate = "31/12/1960"
+        form = emptyForm.fill(
+          emptyRecord.copy(
+            ccr = "COAL 80/80/1",
+            oci = "COAL.2022.V5RJW.P",
+            scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+            coveringDates = "1960",
+            formerReferenceDepartment = "TestFormerReferenceDepartment",
+            startDateDay = "1",
+            startDateMonth = "2",
+            startDateYear = "1960",
+            endDateDay = "31",
+            endDateMonth = "12",
+            endDateYear = "1960"
+          )
         )
       )
 
@@ -59,8 +83,12 @@ class EditRecordViewSpec extends BaseSpec {
       )
       document must haveCoveringDates("1960")
       document must haveFormerReferenceDepartment("TestFormerReferenceDepartment")
-      document must haveStartDate("1/1/1960")
-      document must haveEndDate("31/12/1960")
+      document must haveStartDateDay("1")
+      document must haveStartDateMonth("2")
+      document must haveStartDateYear("1960")
+      document must haveEndDateDay("31")
+      document must haveEndDateMonth("12")
+      document must haveEndDateYear("1960")
       document must haveHeaderTitle("header.title")
       document must haveVisibleLogoutLink
       document must haveLogoutLinkLabel("header.logout")
@@ -73,21 +101,12 @@ class EditRecordViewSpec extends BaseSpec {
     "render an error given no scope and content" in {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
       val title = "EditRecordTitleTest"
-      val editSetRecordForm: Form[EditSetRecord] = Form(
-        mapping(
-          "ccr"                       -> text,
-          "oci"                       -> text,
-          "scopeAndContent"           -> text,
-          "coveringDates"             -> text,
-          "formerReferenceDepartment" -> text,
-          "startDate"                 -> text,
-          "endDate"                   -> text
-        )(EditSetRecord.apply)(EditSetRecord.unapply)
-      ).fill(EditSetRecord.apply("", "", "", "", "", "", ""))
+      val filledForm = emptyForm
+        .fill(emptyRecord)
         .withError(FormError("", "Enter the scope and content."))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, editSetRecordForm)(
+        editSetRecordEditInstance(user, title, filledForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -100,30 +119,16 @@ class EditRecordViewSpec extends BaseSpec {
     "render an error when given scope and content is more than 8000 characters" in {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
       val title = "EditRecordTitleTest"
-      val editSetRecordForm: Form[EditSetRecord] = Form(
-        mapping(
-          "ccr"                       -> text,
-          "oci"                       -> text,
-          "scopeAndContent"           -> text,
-          "coveringDates"             -> text,
-          "formerReferenceDepartment" -> text,
-          "startDate"                 -> text,
-          "endDate"                   -> text
-        )(EditSetRecord.apply)(EditSetRecord.unapply)
-      ).fill(
-        EditSetRecord.apply(
-          "",
-          "",
-          "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-          "",
-          "",
-          "",
-          ""
+      val filledForm = emptyForm
+        .fill(
+          emptyRecord.copy(
+            scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+          )
         )
-      ).withError(FormError("", "Scope and content too long, maximum length 8000 characters"))
+        .withError(FormError("", "Scope and content too long, maximum length 8000 characters"))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, editSetRecordForm)(
+        editSetRecordEditInstance(user, title, filledForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -135,32 +140,19 @@ class EditRecordViewSpec extends BaseSpec {
 
     "render an error when given former reference department is more than 255 characters" in {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
-
       val title = "EditRecordTitleTest"
-      val editSetRecordForm: Form[EditSetRecord] = Form(
-        mapping(
-          "ccr"                       -> text,
-          "oci"                       -> text,
-          "scopeAndContent"           -> text,
-          "coveringDates"             -> text,
-          "formerReferenceDepartment" -> text,
-          "startDate"                 -> text,
-          "endDate"                   -> text
-        )(EditSetRecord.apply)(EditSetRecord.unapply)
-      ).fill(
-        EditSetRecord.apply(
-          "",
-          "",
-          "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-          "Former reference - Department Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing",
-          "",
-          "",
-          ""
+      val filledForm = emptyForm
+        .fill(
+          emptyRecord.copy(
+            scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+            formerReferenceDepartment =
+              "Former reference - Department Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing"
+          )
         )
-      ).withError(FormError("", "Former reference - Department too long, maximum length 255 characters"))
+        .withError(FormError("", "Former reference - Department too long, maximum length 255 characters"))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, editSetRecordForm)(
+        editSetRecordEditInstance(user, title, filledForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -182,8 +174,12 @@ class EditRecordViewSpec extends BaseSpec {
         scopeAndContent = "",
         coveringDates = "Mon 1 Oct 1330",
         formerReferenceDepartment = "",
-        startDate = "",
-        endDate = ""
+        startDateDay = "1",
+        startDateMonth = "2",
+        startDateYear = "1960",
+        endDateDay = "31",
+        endDateMonth = "12",
+        endDateYear = "1960"
       )
       val editSetRecordForm = Form(
         mapping(
@@ -192,8 +188,12 @@ class EditRecordViewSpec extends BaseSpec {
           "scopeAndContent"           -> text,
           "coveringDates"             -> text,
           "formerReferenceDepartment" -> text,
-          "startDate"                 -> text,
-          "endDate"                   -> text
+          "startDateDay"              -> text,
+          "startDateMonth"            -> text,
+          "startDateYear"             -> text,
+          "endDateDay"                -> text,
+          "endDateMonth"              -> text,
+          "endDateYear"               -> text
         )(EditSetRecord.apply)(EditSetRecord.unapply)
       ).fill(inputData)
         .withError("coveringDates", "covering date message string")
@@ -205,35 +205,65 @@ class EditRecordViewSpec extends BaseSpec {
         )
 
       val document = asDocument(editRecordHtml)
-      document must haveFormError("covering date message string")
+      document must haveSummaryErrorMessages(Set("covering date message string"))
+
     }
 
   }
-  private def generateDocument(title: String, editSetRecord: EditSetRecord): Document = {
-    val editSetRecordForm: Form[EditSetRecord] = Form(
-      mapping(
-        "ccr"                       -> text,
-        "oci"                       -> text,
-        "scopeAndContent"           -> text,
-        "coveringDates"             -> text,
-        "formerReferenceDepartment" -> text,
-        "startDate"                 -> text,
-        "endDate"                   -> text
-      )(EditSetRecord.apply)(EditSetRecord.unapply)
-    )
+  "render expecting errors when" when {
+    "only the start date is invalid" in {
 
+      val document = generateDocument(
+        form = emptyForm
+          .fill(emptyRecord)
+          .withError(FormError("startDate", "Start date is not a valid date"))
+      )
+
+      document must haveSummaryErrorMessages(Set("Start date is not a valid date"))
+      document must haveErrorMessageForStartDate("Start date is not a valid date")
+      document must haveNoErrorMessageForEndDate
+
+    }
+    "only the end date is invalid" in {
+
+      val document = generateDocument(
+        form = emptyForm
+          .fill(emptyRecord)
+          .withError(FormError("endDate", "End date is not a valid date"))
+      )
+
+      document must haveSummaryErrorMessages(Set("End date is not a valid date"))
+      document must haveNoErrorMessageForStartDate
+      document must haveErrorMessageForEndDate("End date is not a valid date")
+
+    }
+    "the end date precedes the start date" in {
+
+      val document = generateDocument(
+        form = emptyForm
+          .fill(emptyRecord)
+          .withError(FormError("endDate", "End date cannot precede start date"))
+      )
+
+      document must haveSummaryErrorMessages(Set("End date cannot precede start date"))
+      document must haveNoErrorMessageForStartDate
+      document must haveErrorMessageForEndDate("End date cannot precede start date")
+
+    }
+  }
+
+  private def generateDocument(title: String = "", form: Form[EditSetRecord]): Document = {
     val editSetRecordEditInstance: editSetRecordEdit = inject[editSetRecordEdit]
     asDocument(
       editSetRecordEditInstance(
         user = user,
         title = title,
-        editSetRecordForm = editSetRecordForm.fill(editSetRecord)
+        editSetRecordForm = form
       )(
         Helpers.stubMessages(),
         CSRFTokenHelper.addCSRFToken(FakeRequest())
       )
     )
-
   }
 
 }
