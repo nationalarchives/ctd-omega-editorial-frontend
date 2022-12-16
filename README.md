@@ -69,7 +69,12 @@ sudo chown -R ctd-web:ctd-web /opt/ctd-omega-editorial-frontend-0.1.0-SNAPSHOT
 ```
 sudo ln -s /opt/ctd-omega-editorial-frontend-0.1.0-SNAPSHOT /opt/ctd-omega-editorial-frontend
 ```
-6. Create a systemd config file as follows, replacing the text `some_application_secret` with a specially generated secret, as described [here](https://www.playframework.com/documentation/2.8.x/ApplicationSecret#Generating-an-application-secret)
+6. Edit the Logback configuration at `/opt/ctd-omega-editorial-frontend/conf/logback.xml` and replace the line mentioning `application.home` as shown below. This is necessary due to a bug using `application.home` with `sbt dist` which is described [here](https://github.com/playframework/playframework/issues/8759)
+```
+<!-- <file>${application.home:-.}/logs/application.log</file> -->
+<file>/opt/ctd-omega-editorial-frontend/logs/application.log</file>
+```
+7. Create a systemd config file as follows, replacing the text `some_application_secret` with a specially generated secret, as described [here](https://www.playframework.com/documentation/2.8.x/ApplicationSecret#Generating-an-application-secret)
 ```
 [Unit]
 Description=CTD Omega Editorial Frontend
