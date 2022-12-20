@@ -28,12 +28,21 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
 import play.api.test.Injecting
 import play.twirl.api.Content
-import uk.gov.nationalarchives.omega.editorial.models.User
+import uk.gov.nationalarchives.omega.editorial.models.{ LegalStatus, User }
 
 class BaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
   lazy val user: User = User("dummy user")
 
   def asDocument(content: Content): Document = Jsoup.parse(contentAsString(content))
+
+  val legalStatusData =
+    Seq(
+      LegalStatus("ref.0", "Select a Legal Status"),
+      LegalStatus("ref.1", "Public Record(s)"),
+      LegalStatus("ref.2", "Not Public Records"),
+      LegalStatus("ref.3", "Public Records unless otherwise Stated"),
+      LegalStatus("ref.4", "Welsh Public Record(s)")
+    )
 
 }

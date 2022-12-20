@@ -29,7 +29,7 @@ import play.api.data.Form
 import play.api.data.Forms.{ mapping, text }
 import uk.gov.nationalarchives.omega.editorial.{ editSetRecords, editSets, _ }
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry, EditSetRecord }
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry, EditSetRecord, LegalStatus }
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
 /** This controller creates an `Action` to handle HTTP requests to the application's home page.
@@ -63,7 +63,12 @@ class EditSetController @Inject() (
         value => value.length <= 255
       ),
       "startDate" -> text,
-      "endDate"   -> text
+      "endDate"   -> text,
+      "legalStatus" -> text
+        .verifying(
+          messagesApi("edit-set.record.error.legal-status")(Lang.apply("en")),
+          value => !value.equalsIgnoreCase("ref.0")
+        )
     )(EditSetRecord.apply)(EditSetRecord.unapply)
   )
 
@@ -97,7 +102,7 @@ class EditSetController @Inject() (
           val title: String = messages("edit-set.record.edit.title")
           val heading: String = messages("edit-set.record.edit.heading", record.ccr)
           val recordForm = editSetRecordForm.fill(record)
-          Ok(editSetRecordEdit(user, title, heading, recordForm))
+          Ok(editSetRecordEdit(user, title, heading, legalStatus.getLegalStatusData(), recordForm))
         case None => NotFound
       }
     }
@@ -113,7 +118,8 @@ class EditSetController @Inject() (
       editSetRecordForm
         .bindFromRequest()
         .fold(
-          formWithErrors => BadRequest(editSetRecordEdit(user, title, heading, formWithErrors)),
+          formWithErrors =>
+            BadRequest(editSetRecordEdit(user, title, heading, legalStatus.getLegalStatusData(), formWithErrors)),
           editSetRecord =>
             request.body.asFormUrlEncoded.get("action").headOption match {
               case Some("save") =>

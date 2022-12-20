@@ -260,6 +260,7 @@ class EditSetControllerSpec extends BaseSpec {
                 "coveringDates"             -> "1234",
                 "startDate"                 -> "1234",
                 "endDate"                   -> "1234",
+                "legalStatus"               -> "1234",
                 "action"                    -> "save"
               )
             )
@@ -281,6 +282,7 @@ class EditSetControllerSpec extends BaseSpec {
               "coveringDates"             -> "1234",
               "startDate"                 -> "1234",
               "endDate"                   -> "1234",
+              "legalStatus"               -> "1234",
               "action"                    -> "discard"
             )
           )
@@ -299,6 +301,7 @@ class EditSetControllerSpec extends BaseSpec {
           "coveringDates"             -> "1234",
           "startDate"                 -> "1234",
           "endDate"                   -> "1234",
+          "legalStatus"               -> "1234",
           "action"                    -> "save"
         )
       )
