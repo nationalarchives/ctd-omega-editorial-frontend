@@ -21,13 +21,16 @@
 
 package controllers
 
-import play.api.mvc.{ AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesActionBuilderImpl, DefaultMessagesControllerComponents }
+import play.api.mvc._
 import play.api.test.Helpers._
 import play.api.test._
 import support.BaseSpec
+import support.CustomMatchers._
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
+
+import scala.concurrent.Future
 
 /** Add your spec here. You can mock out a whole application including requests, plugins etc.
   *
@@ -220,95 +223,444 @@ class EditSetControllerSpec extends BaseSpec {
   }
 
   "EditSetController POST /edit-set/{id}/record/{recordId}/edit" should {
-    "redirect to result page from a new instance of controller" in {
-      val messages: Map[String, Map[String, String]] =
-        Map("en" -> Map("edit-set.record.edit.heading" -> "TNA reference: COAL 80/80/1"))
-      val mockMessagesApi = stubMessagesApi(messages)
-      val editSetInstance = inject[editSet]
-      val editSetRecordEditInstance = inject[editSetRecordEdit]
-      val editSetRecordEditDiscardInstance = inject[editSetRecordEditDiscard]
-      val editSetRecordEditSaveInstance = inject[editSetRecordEditSave]
-      val stub = stubControllerComponents()
-      val controller = new EditSetController(
-        DefaultMessagesControllerComponents(
-          new DefaultMessagesActionBuilderImpl(stubBodyParser(AnyContentAsEmpty), mockMessagesApi)(
-            stub.executionContext
-          ),
-          DefaultActionBuilder(stub.actionBuilder.parser)(stub.executionContext),
-          stub.parsers,
-          mockMessagesApi,
-          stub.langs,
-          stub.fileMimeTypes,
-          stub.executionContext
-        ),
-        editSetInstance,
-        editSetRecordEditInstance,
-        editSetRecordEditDiscardInstance,
-        editSetRecordEditSaveInstance
-      )
+    "when the action is 'save'" when {
 
-      val editRecordPage = controller
-        .submit("COAL.2022.V5RJW.P", "COAL.2022.V5RJW.P")
-        .apply(
-          CSRFTokenHelper
-            .addCSRFToken(
-              FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit").withFormUrlEncodedBody(
+      val validValues: Map[String, String] =
+        Map(
+          "ccr"             -> "COAL 80/80/1",
+          "oci"             -> "COAL.2022.V5RJW.P",
+          "scopeAndContent" -> "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+          "formerReferenceDepartment" -> "1234",
+          "coveringDates"             -> "2020 Oct",
+          "startDateDay"              -> "1",
+          "startDateMonth"            -> "10",
+          "startDateYear"             -> "2020",
+          "endDateDay"                -> "31",
+          "endDateMonth"              -> "10",
+          "endDateYear"               -> "2020",
+          "action"                    -> "save"
+        )
+
+      "fail" when {
+        "and yet preserve the CCR" when {
+          "there are errors" in {
+            val ccrToAssert = "COAL 80/80/1"
+            val blankScopeAndContentToFailValidation = ""
+            val request = CSRFTokenHelper.addCSRFToken(
+              FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+                .withFormUrlEncodedBody(
+                  "ccr"                       -> ccrToAssert,
+                  "oci"                       -> "1234",
+                  "scopeAndContent"           -> blankScopeAndContentToFailValidation,
+                  "formerReferenceDepartment" -> "1234",
+                  "coveringDates"             -> "1234",
+                  "startDate"                 -> "1234",
+                  "endDate"                   -> "1234",
+                  "action"                    -> "save"
+                )
+                .withSession(SessionKeys.token -> validSessionToken)
+            )
+            val editRecordPage = route(app, request).get
+
+            status(editRecordPage) mustBe BAD_REQUEST
+
+            val document = asDocument(contentAsString(editRecordPage))
+            document must haveHeading(s"TNA reference: $ccrToAssert")
+          }
+        }
+        "start date" when {
+          "is empty" in {
+
+            val values = validValues ++ Map("startDateDay" -> "", "startDateMonth" -> "", "startDateYear" -> "")
+
+            val result = submitWhileLoggedIn(values)
+
+            status(result) mustBe BAD_REQUEST
+            val document = asDocument(contentAsString(result))
+            document must haveSummaryErrorMessages(Set("Start date is not a valid date"))
+            document must haveErrorMessageForStartDate("Start date is not a valid date")
+            document must haveStartDateDay("")
+            document must haveStartDateMonth("")
+            document must haveStartDateYear("")
+
+          }
+          "is invalid" in {
+
+            val values = validValues ++ Map("startDateDay" -> "XX", "startDateMonth" -> "11", "startDateYear" -> "1960")
+
+            val result = submitWhileLoggedIn(values)
+
+            status(result) mustBe BAD_REQUEST
+            val document = asDocument(contentAsString(result))
+            document must haveSummaryErrorMessages(Set("Start date is not a valid date"))
+            document must haveErrorMessageForStartDate("Start date is not a valid date")
+            document must haveStartDateDay("XX")
+            document must haveStartDateMonth("11")
+            document must haveStartDateYear("1960")
+
+          }
+          "doesn't exist" in {
+
+            val values = validValues ++ Map("startDateDay" -> "13", "startDateMonth" -> "9", "startDateYear" -> "1752")
+            val request = CSRFTokenHelper.addCSRFToken(
+              FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+                .withFormUrlEncodedBody(values.toSeq: _*)
+                .withSession(SessionKeys.token -> validSessionToken)
+            )
+            val editRecordPage = route(app, request).get
+
+            status(editRecordPage) mustBe BAD_REQUEST
+            val document = asDocument(contentAsString(editRecordPage))
+
+            document must haveSummaryErrorMessages(Set("Start date is not a valid date"))
+            document must haveErrorMessageForStartDate("Start date is not a valid date")
+            document must haveStartDateDay("13")
+            document must haveStartDateMonth("9")
+            document must haveStartDateYear("1752")
+
+          }
+        }
+        "end date" when {
+          "is empty" in {
+
+            val values = validValues ++ Map("endDateDay" -> "", "endDateMonth" -> "", "endDateYear" -> "")
+
+            val result = submitWhileLoggedIn(values)
+
+            status(result) mustBe BAD_REQUEST
+
+            val document = asDocument(contentAsString(result))
+            document must haveSummaryErrorMessages(Set("End date is not a valid date"))
+            document must haveErrorMessageForEndDate("End date is not a valid date")
+            document must haveEndDateDay("")
+            document must haveEndDateMonth("")
+            document must haveEndDateYear("")
+
+          }
+          "is invalid" in {
+
+            val values = validValues ++ Map("endDateDay" -> "42", "endDateMonth" -> "12", "endDateYear" -> "2000")
+            val result = submitWhileLoggedIn(values)
+
+            status(result) mustBe BAD_REQUEST
+            val document = asDocument(contentAsString(result))
+
+            document must haveSummaryErrorMessages(Set("End date is not a valid date"))
+            document must haveErrorMessageForEndDate("End date is not a valid date")
+            document must haveEndDateDay("42")
+            document must haveEndDateMonth("12")
+            document must haveEndDateYear("2000")
+
+          }
+          "doesn't exist" in {
+
+            val values = validValues ++ Map("endDateDay" -> "8", "endDateMonth" -> "9", "endDateYear" -> "1752")
+
+            val result = submitWhileLoggedIn(values)
+
+            status(result) mustBe BAD_REQUEST
+            val document = asDocument(contentAsString(result))
+            document must haveSummaryErrorMessages(Set("End date is not a valid date"))
+            document must haveErrorMessageForEndDate("End date is not a valid date")
+            document must haveEndDateDay("8")
+            document must haveEndDateMonth("9")
+            document must haveEndDateYear("1752")
+
+          }
+          "is before start date" in {
+
+            val values = validValues ++ Map(
+              "startDateDay"   -> "12",
+              "startDateMonth" -> "10",
+              "startDateYear"  -> "2020",
+              "endDateDay"     -> "11",
+              "endDateMonth"   -> "10",
+              "endDateYear"    -> "2020"
+            )
+
+            val result = submitWhileLoggedIn(values)
+
+            status(result) mustBe BAD_REQUEST
+            val document = asDocument(contentAsString(result))
+            document must haveSummaryErrorMessages(Set("End date cannot precede start date"))
+            document must haveErrorMessageForEndDate("End date cannot precede start date")
+            document must haveNoErrorMessageForStartDate
+            document must haveStartDateDay("12")
+            document must haveStartDateMonth("10")
+            document must haveStartDateYear("2020")
+            document must haveEndDateDay("11")
+            document must haveEndDateMonth("10")
+            document must haveEndDateYear("2020")
+
+          }
+        }
+        "neither start date nor end date is valid" in {
+
+          val values = validValues ++ Map(
+            "startDateDay"   -> "12",
+            "startDateMonth" -> "14",
+            "startDateYear"  -> "2020",
+            "endDateDay"     -> "42",
+            "endDateMonth"   -> "12",
+            "endDateYear"    -> "2020"
+          )
+
+          val result = submitWhileLoggedIn(values)
+
+          status(result) mustBe BAD_REQUEST
+          val document = asDocument(contentAsString(result))
+          document must haveSummaryErrorMessages(Set("Start date is not a valid date", "End date is not a valid date"))
+          document must haveErrorMessageForStartDate("Start date is not a valid date")
+          document must haveStartDateDay("12")
+          document must haveStartDateMonth("14")
+          document must haveStartDateYear("2020")
+          document must haveErrorMessageForEndDate("End date is not a valid date")
+          document must haveEndDateDay("42")
+          document must haveEndDateMonth("12")
+          document must haveEndDateYear("2020")
+
+        }
+        "covering date" when {
+          "is invalid" in {
+            val request = CSRFTokenHelper.addCSRFToken(
+              FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+                .withFormUrlEncodedBody(
+                  "ccr"                       -> "1234",
+                  "oci"                       -> "1234",
+                  "scopeAndContent"           -> "1234",
+                  "formerReferenceDepartment" -> "1234",
+                  "coveringDates"             -> "Oct 1 2004",
+                  "startDate"                 -> "1234",
+                  "endDate"                   -> "1234",
+                  "action"                    -> "save"
+                )
+                .withSession(
+                  SessionKeys.token -> validSessionToken
+                )
+            )
+            val editRecordPage = route(app, request).get
+
+            status(editRecordPage) mustBe BAD_REQUEST
+          }
+          "is too long" in {
+            val gapDateTooLong = (1 to 100).map(_ => "2004 Oct 1").mkString(";")
+            val request = CSRFTokenHelper.addCSRFToken(
+              FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+                .withFormUrlEncodedBody(
+                  "ccr"                       -> "1234",
+                  "oci"                       -> "1234",
+                  "scopeAndContent"           -> "1234",
+                  "formerReferenceDepartment" -> "1234",
+                  "coveringDates"             -> gapDateTooLong,
+                  "startDateDay"              -> "26",
+                  "startDateMonth"            -> "12",
+                  "startDateYear"             -> "2020",
+                  "endDateDay"                -> "31",
+                  "endDateMonth"              -> "12",
+                  "endDateYear"               -> "2020",
+                  "action"                    -> "save"
+                )
+                .withSession(
+                  SessionKeys.token -> validSessionToken
+                )
+            )
+            val editRecordPage = route(app, request).get
+
+            status(editRecordPage) mustBe BAD_REQUEST
+
+            val document = asDocument(contentAsString(editRecordPage))
+            document must haveSummaryErrorMessages(Set("Covering date too long, maximum length 255 characters"))
+
+          }
+          "is empty; showing error correctly" in {
+            val request = CSRFTokenHelper.addCSRFToken(
+              FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+                .withFormUrlEncodedBody(
+                  "ccr"                       -> "1234",
+                  "oci"                       -> "1234",
+                  "scopeAndContent"           -> "1234",
+                  "formerReferenceDepartment" -> "1234",
+                  "coveringDates"             -> "  ",
+                  "startDateDay"              -> "26",
+                  "startDateMonth"            -> "12",
+                  "startDateYear"             -> "2020",
+                  "endDateDay"                -> "31",
+                  "endDateMonth"              -> "12",
+                  "endDateYear"               -> "2020",
+                  "action"                    -> "save"
+                )
+                .withSession(
+                  SessionKeys.token -> validSessionToken
+                )
+            )
+            val editRecordPage = route(app, request).get
+
+            status(editRecordPage) mustBe BAD_REQUEST
+
+            val document = asDocument(contentAsString(editRecordPage))
+            document must haveSummaryErrorMessages(Set("Enter the covering dates", "Covering date format is not valid"))
+
+          }
+        }
+
+      }
+      "successful" when {
+        "redirect to result page from a new instance of controller" in {
+          val messages: Map[String, Map[String, String]] =
+            Map("en" -> Map("edit-set.record.edit.heading" -> "TNA reference: COAL 80/80/1"))
+          val mockMessagesApi = stubMessagesApi(messages)
+          val editSetInstance = inject[editSet]
+          val editSetRecordEditInstance = inject[editSetRecordEdit]
+          val editSetRecordEditDiscardInstance = inject[editSetRecordEditDiscard]
+          val editSetRecordEditSaveInstance = inject[editSetRecordEditSave]
+          val stub = stubControllerComponents()
+          val controller = new EditSetController(
+            DefaultMessagesControllerComponents(
+              new DefaultMessagesActionBuilderImpl(stubBodyParser(AnyContentAsEmpty), mockMessagesApi)(
+                stub.executionContext
+              ),
+              DefaultActionBuilder(stub.actionBuilder.parser)(stub.executionContext),
+              stub.parsers,
+              mockMessagesApi,
+              stub.langs,
+              stub.fileMimeTypes,
+              stub.executionContext
+            ),
+            editSetInstance,
+            editSetRecordEditInstance,
+            editSetRecordEditDiscardInstance,
+            editSetRecordEditSaveInstance
+          )
+
+          val editRecordPage = controller
+            .submit("1", "COAL.2022.V5RJW.P")
+            .apply(
+              CSRFTokenHelper
+                .addCSRFToken(
+                  FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+                    .withFormUrlEncodedBody(
+                      "ccr"                       -> "1234",
+                      "oci"                       -> "1234",
+                      "scopeAndContent"           -> "1234",
+                      "formerReferenceDepartment" -> "1234",
+                      "coveringDates"             -> "1234",
+                      "startDateDay"              -> "26",
+                      "startDateMonth"            -> "12",
+                      "startDateYear"             -> "2020",
+                      "endDateDay"                -> "31",
+                      "endDateMonth"              -> "12",
+                      "endDateYear"               -> "2020",
+                      "legalStatus"               -> "1234",
+                      "action"                    -> "save"
+                    )
+                    .withSession(SessionKeys.token -> validSessionToken)
+                )
+            )
+
+          status(editRecordPage) mustBe SEE_OTHER
+          redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/1234/edit/save")
+        }
+
+        "redirect to result page of the application" in {
+          val controller = inject[EditSetController]
+          val editRecordPage = controller
+            .submit("1", "COAL.2022.V5RJW.P")
+            .apply(
+              CSRFTokenHelper.addCSRFToken(
+                FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+                  .withFormUrlEncodedBody(
+                    "ccr"                       -> "1234",
+                    "oci"                       -> "1234",
+                    "scopeAndContent"           -> "1234",
+                    "formerReferenceDepartment" -> "1234",
+                    "coveringDates"             -> "1234",
+                    "startDateDay"              -> "26",
+                    "startDateMonth"            -> "12",
+                    "startDateYear"             -> "2020",
+                    "endDateDay"                -> "31",
+                    "endDateMonth"              -> "12",
+                    "endDateYear"               -> "2020",
+                    "legalStatus"               -> "1234",
+                    "action"                    -> "save"
+                  )
+                  .withSession(SessionKeys.token -> validSessionToken)
+              )
+            )
+
+          status(editRecordPage) mustBe SEE_OTHER
+          redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/1234/edit/save")
+
+        }
+
+        "redirect to result page from the router" in {
+          val request = CSRFTokenHelper.addCSRFToken(
+            FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+              .withFormUrlEncodedBody(
                 "ccr"                       -> "1234",
                 "oci"                       -> "1234",
                 "scopeAndContent"           -> "1234",
                 "formerReferenceDepartment" -> "1234",
                 "coveringDates"             -> "1234",
-                "startDate"                 -> "1234",
-                "endDate"                   -> "1234",
+                "startDateDay"              -> "26",
+                "startDateMonth"            -> "12",
+                "startDateYear"             -> "2020",
+                "endDateDay"                -> "31",
+                "endDateMonth"              -> "12",
+                "endDateYear"               -> "2020",
                 "legalStatus"               -> "1234",
                 "action"                    -> "save"
               )
-            )
-        )
-      status(editRecordPage) mustBe SEE_OTHER
-    }
-
-    "redirect to result page of the application" in {
-      val controller = inject[EditSetController]
-      val editRecordPage = controller
-        .submit("COAL.2022.V5RJW.P", "COAL.2022.V5RJW.P")
-        .apply(
-          CSRFTokenHelper.addCSRFToken(
-            FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit").withFormUrlEncodedBody(
-              "ccr"                       -> "1234",
-              "oci"                       -> "1234",
-              "scopeAndContent"           -> "1234",
-              "formerReferenceDepartment" -> "1234",
-              "coveringDates"             -> "1234",
-              "startDate"                 -> "1234",
-              "endDate"                   -> "1234",
-              "legalStatus"               -> "1234",
-              "action"                    -> "discard"
-            )
+              .withSession(SessionKeys.token -> validSessionToken)
           )
-        )
+          val editRecordPage = route(app, request).get
 
-      status(editRecordPage) mustBe SEE_OTHER
+          status(editRecordPage) mustBe SEE_OTHER
+          redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/1234/edit/save")
+
+        }
+      }
+
     }
 
-    "redirect to result page from the router" in {
-      val request = CSRFTokenHelper.addCSRFToken(
-        FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit").withFormUrlEncodedBody(
-          "ccr"                       -> "1234",
-          "oci"                       -> "1234",
-          "scopeAndContent"           -> "1234",
-          "formerReferenceDepartment" -> "1234",
-          "coveringDates"             -> "1234",
-          "startDate"                 -> "1234",
-          "endDate"                   -> "1234",
-          "legalStatus"               -> "1234",
-          "action"                    -> "save"
-        )
-      )
-      val editRecordPage = route(app, request).get
+    "when the action is 'discard'" when {
+      "successful" when {
+        "even if the validation fails" in {
+          val blankScopeAndContentToFailValidation = ""
+          val request = CSRFTokenHelper.addCSRFToken(
+            FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+              .withFormUrlEncodedBody(
+                "ccr"                       -> "1234",
+                "oci"                       -> "1234",
+                "scopeAndContent"           -> blankScopeAndContentToFailValidation,
+                "formerReferenceDepartment" -> "1234",
+                "coveringDates"             -> "1234",
+                "startDateDay"              -> "26",
+                "startDateMonth"            -> "12",
+                "startDateYear"             -> "2020",
+                "endDateDay"                -> "31",
+                "endDateMonth"              -> "12",
+                "endDateYear"               -> "2020",
+                "legalStatus"               -> "1234",
+                "action"                    -> "discard"
+              )
+              .withSession(SessionKeys.token -> validSessionToken)
+          )
+          val editRecordPage = route(app, request).get
 
-      status(editRecordPage) mustBe SEE_OTHER
+          status(editRecordPage) mustBe SEE_OTHER
+
+          redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/discard")
+
+        }
+      }
     }
   }
-
+  private def submitWhileLoggedIn(values: Map[String, String]): Future[Result] = {
+    val request = CSRFTokenHelper.addCSRFToken(
+      FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+        .withFormUrlEncodedBody(values.toSeq: _*)
+        .withSession(SessionKeys.token -> validSessionToken)
+    )
+    route(app, request).get
+  }
 }

@@ -1,0 +1,29 @@
+<month> ::= "Jan" | "Feb" | "Mar" | "Apr" | "May" | "June" | "July" | "Aug" | "Sept" | "Oct" | "Nov" | "Dec"
+
+<year> ::= valid year
+
+<year_month> ::= <year> <month>
+
+<year_month_day> ::= <year> <month> valid day of month
+
+<single> ::= <year> | <year_month> | <year_month_day>
+
+<range> ::= <single> "-" <single>
+
+<between> ::= "between" <range>
+
+<approx> ::= "?" <range> | "?" <single> | "c" <range> | "c" <single>
+
+<derived> ::= "[" <range> "]" | "[" <single> "]" | "[" <approx> "]"
+
+<undated> ::= "undated"
+
+<single_or_range> ::= <single> | <range>
+
+<gap_repeating> ::= <gap_date> | <single_or_range>
+
+// I assume there can be an unbounded number of "gaps" - the only example I
+// have is "1868; 1890-1902; 1933"
+<gap_date> ::= <single_or_range> ";" <gap_repeating>
+
+<covering-date> ::= <between> | <range> | <single> | <derived> | <appox> | <undated> | <gap_date>

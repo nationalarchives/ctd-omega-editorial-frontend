@@ -34,7 +34,9 @@ class BaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
   lazy val user: User = User("dummy user")
 
-  def asDocument(content: Content): Document = Jsoup.parse(contentAsString(content))
+  def asDocument(content: Content): Document = asDocument(contentAsString(content))
+
+  def asDocument(rawContent: String): Document = Jsoup.parse(rawContent)
 
   val legalStatusData =
     Seq(

@@ -26,9 +26,11 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 
+
 @this(govukButton: GovukButton, govukInput: GovukInput, govukTextarea: GovukTextarea, govukFieldset: GovukFieldset, govukErrorSummary: GovukErrorSummary, govukSelect: GovukSelect)
 
-@(user: User, title: String, heading: String, legalStatusData: Seq[LegalStatus], editSetRecordForm: Form[EditSetRecord])(implicit messages: Messages, request: Request[AnyContent])
+@(user: User, title: String, legalStatusData: Seq[LegalStatus], editSetRecordForm: Form[EditSetRecord])(implicit messages: Messages, request: Request[AnyContent])
+
 
 @backLink = {
     <a class="govuk-back-link" href="/edit-set/1">Back to edit set (COAL 80 Sample)</a>
@@ -48,6 +50,47 @@
             classes = "govuk-button--secondary",
             content = Text(messages("edit-set.record.discard.button"))))
     </div>
+}
+
+@dateSelector(prefix: String, labelKey: String) = {
+        <label class="govuk-label">
+        @messages(labelKey)
+        </label>
+        @editSetRecordForm.error(prefix + "Date").map { error =>
+            <p id="@{prefix}DateFieldError" class="govuk-error-message">@{error.message}</p>
+        }
+        <div class="govuk-date-input" id="@prefix">
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                @govukInput(Input(
+                id = prefix + "DateDay",
+                name = prefix + "DateDay",
+                value = editSetRecordForm.data.get(prefix + "DateDay"),
+                label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("@{prefix}DateDay"), content = Text(messages("edit-set.record.edit.dates.day"))),
+                classes = "govuk-input govuk-date-input__input govuk-input--width-2"))
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                @govukInput(Input(
+                id = prefix +  "DateMonth",
+                name = prefix + "DateMonth",
+                value = editSetRecordForm.data.get(prefix + "DateMonth"),
+                label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("@{prefix}DateMonth"), content = Text(messages("edit-set.record.edit.dates.month"))),
+                classes = "govuk-input govuk-date-input__input govuk-input--width-2"))
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                @govukInput(Input(
+                id = prefix + "DateYear",
+                name = prefix + "DateYear",
+                value = editSetRecordForm.data.get(prefix + "DateYear"),
+                label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("@{prefix}DateYear"), content = Text(messages("edit-set.record.edit.dates.year"))),
+                classes = "govuk-input govuk-date-input__input govuk-input--width-4"))
+                </div>
+            </div>
+        </div>
 }
 
 @fieldsetContent = {
@@ -79,24 +122,28 @@
 @govukInput(Input(
     id = "coveringDates",
     name = "coveringDates",
-    attributes = Map("readonly" -> "readonly"),
+    attributes = Map(),
     value = editSetRecordForm.data.get("coveringDates"),
     label = Label(forAttr = Some("coveringDates"), content = Text(messages("edit-set.record.edit.covering-dates"))),
+    errorMessage = editSetRecordForm.error("coveringDates").map { error =>
+        ErrorMessage(
+            content = Text(error.message),
+            attributes = Map("for" -> "coveringDates")
+        )
+    },
     classes = "govuk-!-width-one-half"))
-@govukInput(Input(
-    id = "startDate",
-    name = "startDate",
-    attributes = Map("readonly" -> "readonly"),
-    value = editSetRecordForm.data.get("startDate"),
-    label = Label(forAttr = Some("startDate"), content = Text(messages("edit-set.record.edit.start-date"))),
-    classes = "govuk-!-width-one-third"))
-@govukInput(Input(
-    id = "endDate",
-    name = "endDate",
-    attributes = Map("readonly" -> "readonly"),
-    value = editSetRecordForm.data.get("endDate"),
-    label = Label(forAttr = Some("endDate"), content = Text(messages("edit-set.record.edit.end-date"))),
-    classes = "govuk-!-width-one-third"))
+@govukFieldset(
+    Fieldset(
+        classes = "govuk-fieldset",
+        html = dateSelector("start", "edit-set.record.edit.start-date"),
+        role = Some("group")
+    ))
+@govukFieldset(
+    Fieldset(
+        classes = "govuk-fieldset",
+        html = dateSelector("end", "edit-set.record.edit.end-date"),
+        role = Some("group")
+    ))
 @govukSelect(Select(
     id = "legalStatus",
     name = "legalStatus",
@@ -136,7 +183,7 @@
             title = Text("There is a problem")
         ))
     }
-    <h1 class="govuk-heading-l">@heading</h1>
+    <h1 class="govuk-heading-l">@messages("edit-set.record.edit.heading", editSetRecordForm.data.get("ccr").get)</h1>
     <h2 class="govuk-heading-m">@messages("edit-set.record.edit.id", editSetRecordForm.data.get("oci").get)</h2>
     <p class="govuk-body">Series: National Coal Board and predecessors: Photographs</p>
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
