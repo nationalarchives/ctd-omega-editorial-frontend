@@ -121,7 +121,7 @@ class EditSetController @Inject() (
           val messages: Messages = request.messages
           val title: String = messages("edit-set.record.edit.title")
           val recordForm = editSetRecordForm.fill(record)
-          Ok(editSetRecordEdit(user, title, heading, legalStatus.getLegalStatusData(), recordForm))
+          Ok(editSetRecordEdit(user, title, legalStatus.getLegalStatusData(), recordForm))
         case None => NotFound
       }
     }
@@ -136,7 +136,8 @@ class EditSetController @Inject() (
       request.body.asFormUrlEncoded.get("action").headOption match {
         case Some("save") =>
           formToEither(performAdditionalValidation(editSetRecordForm.bindFromRequest())) match {
-            case Left(formWithErrors) => BadRequest(editSetRecordEdit(user, title, legalStatus.getLegalStatusData(), formWithErrors))
+            case Left(formWithErrors) =>
+              BadRequest(editSetRecordEdit(user, title, legalStatus.getLegalStatusData(), formWithErrors))
             case Right(editSetRecord) =>
               editSetRecords.saveEditSetRecord(editSetRecord)
               Redirect(controllers.routes.EditSetController.save(id, editSetRecord.oci))

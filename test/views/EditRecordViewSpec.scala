@@ -46,11 +46,12 @@ class EditRecordViewSpec extends BaseSpec {
       "startDateYear"             -> text,
       "endDateDay"                -> text,
       "endDateMonth"              -> text,
-      "endDateYear"               -> text
+      "endDateYear"               -> text,
+      "legalStatus"               -> text
     )(EditSetRecord.apply)(EditSetRecord.unapply)
   )
 
-  val emptyRecord: EditSetRecord = EditSetRecord.apply("", "", "", "", "", "", "", "", "", "", "")
+  val emptyRecord: EditSetRecord = EditSetRecord.apply("", "", "", "", "", "", "", "", "", "", "", "")
 
   "Edit record Html" should {
     "render when all is valid" in {
@@ -169,34 +170,12 @@ class EditRecordViewSpec extends BaseSpec {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
 
       val title = "EditRecordTitleTest"
-      val heading = "EditRecordHeadingTest"
-      val editSetRecordForm: Form[EditSetRecord] = Form(
-        mapping(
-          "ccr"                       -> text,
-          "oci"                       -> text,
-          "scopeAndContent"           -> text,
-          "coveringDates"             -> text,
-          "formerReferenceDepartment" -> text,
-          "startDate"                 -> text,
-          "endDate"                   -> text,
-          "legalStatus"               -> text
-        )(EditSetRecord.apply)(EditSetRecord.unapply)
-      ).fill(
-        EditSetRecord.apply(
-          "",
-          "",
-          "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-          "",
-          "",
-          "",
-          "",
-          ""
-        )
-      ).withError(FormError("", "Select a valid legal status"))
-
+      val filledForm = emptyForm
+        .fill(emptyRecord)
+        .withError(FormError("", "Select a valid legal status"))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, heading, legalStatusData, editSetRecordForm)(
+        editSetRecordEditInstance(user, title, legalStatusData, filledForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -209,7 +188,7 @@ class EditRecordViewSpec extends BaseSpec {
     }
 
     "render an error when given invalid covering dates" in {
-     val editSetRecordEditInstance = inject[editSetRecordEdit]
+      val editSetRecordEditInstance = inject[editSetRecordEdit]
 
       val title = "EditRecordTitleTest"
       val inputData = EditSetRecord(
@@ -223,7 +202,8 @@ class EditRecordViewSpec extends BaseSpec {
         startDateYear = "1960",
         endDateDay = "31",
         endDateMonth = "12",
-        endDateYear = "1960"
+        endDateYear = "1960",
+        legalStatus = "1234"
       )
       val editSetRecordForm = Form(
         mapping(
@@ -237,7 +217,8 @@ class EditRecordViewSpec extends BaseSpec {
           "startDateYear"             -> text,
           "endDateDay"                -> text,
           "endDateMonth"              -> text,
-          "endDateYear"               -> text
+          "endDateYear"               -> text,
+          "legalStatus"               -> text
         )(EditSetRecord.apply)(EditSetRecord.unapply)
       ).fill(inputData)
         .withError("coveringDates", "covering date message string")
