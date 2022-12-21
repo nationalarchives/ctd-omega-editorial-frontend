@@ -237,6 +237,7 @@ class EditSetControllerSpec extends BaseSpec {
         "endDateDay"                -> "31",
         "endDateMonth"              -> "10",
         "endDateYear"               -> "2020",
+        "legalStatus"               -> "ref.1",
         "action"                    -> "save"
       )
 
@@ -471,6 +472,7 @@ class EditSetControllerSpec extends BaseSpec {
                   "endDateDay"                -> "31",
                   "endDateMonth"              -> "12",
                   "endDateYear"               -> "2020",
+                  "legalStatus"               -> "ref.1",
                   "action"                    -> "save"
                 )
                 .withSession(
@@ -500,6 +502,7 @@ class EditSetControllerSpec extends BaseSpec {
                   "endDateDay"                -> "31",
                   "endDateMonth"              -> "12",
                   "endDateYear"               -> "2020",
+                  "legalStatus"               -> "ref.1",
                   "action"                    -> "save"
                 )
                 .withSession(

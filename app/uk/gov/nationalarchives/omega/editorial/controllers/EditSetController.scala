@@ -63,6 +63,7 @@ class EditSetController @Inject() (
     val startDateDay = "startDateDay"
     val startDateMonth = "startDateMonth"
     val startDateYear = "startDateYear"
+    val legalStatus = "legalStatus"
   }
 
   var editSetRecordForm: Form[EditSetRecord] = Form(
@@ -98,11 +99,10 @@ class EditSetController @Inject() (
       FieldNames.endDateDay     -> text,
       FieldNames.endDateMonth   -> text,
       FieldNames.endDateYear    -> text,
-      "legalStatus" -> text
-        .verifying(
-          messagesApi("edit-set.record.error.legal-status")(Lang.apply("en")),
-          value => !value.equalsIgnoreCase("ref.0")
-        )
+      FieldNames.legalStatus -> text.verifying(
+        messagesApi("edit-set.record.error.legal-status")(Lang.apply("en")),
+        value => !value.equalsIgnoreCase("ref.0")
+      )
     )(EditSetRecord.apply)(EditSetRecord.unapply)
   )
 
@@ -245,12 +245,33 @@ class EditSetController @Inject() (
     if (errorsForCoveringDatesOnly.isEmpty) {
       singleRange(originalForm.data.getOrElse(FieldNames.coveringDates, "")) match {
         case Right(singleDateRangeOpt) =>
-          Ok(editSetRecordEdit(user, title, formWithUpdatedDateFields(originalForm, singleDateRangeOpt)))
+          Ok(
+            editSetRecordEdit(
+              user,
+              title,
+              legalStatus.getLegalStatusData(),
+              formWithUpdatedDateFields(originalForm, singleDateRangeOpt)
+            )
+          )
         case Left(_) =>
-          BadRequest(editSetRecordEdit(user, title, formAfterCoveringDatesParseError(originalForm)))
+          BadRequest(
+            editSetRecordEdit(
+              user,
+              title,
+              legalStatus.getLegalStatusData(),
+              formAfterCoveringDatesParseError(originalForm)
+            )
+          )
       }
     } else {
-      BadRequest(editSetRecordEdit(user, title, originalForm.copy(errors = errorsForCoveringDatesOnly)))
+      BadRequest(
+        editSetRecordEdit(
+          user,
+          title,
+          legalStatus.getLegalStatusData(),
+          originalForm.copy(errors = errorsForCoveringDatesOnly)
+        )
+      )
     }
   }
 
