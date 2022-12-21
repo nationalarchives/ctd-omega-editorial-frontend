@@ -204,6 +204,13 @@ object CustomMatchers {
 
   def haveNoErrorMessageForCoveringDate: Matcher[Document] = haveErrorMessageForCoveringDate("")
 
+  def haveErrorMessageForLegalStatus(expectedValue: String): Matcher[Document] = (document: Document) =>
+    singleValueMatcher(
+      "an error message for legal status",
+      expectedValue,
+      document.select("#legalStatus-error").text()
+    )
+
   def haveLegalStatus(expectedValue: String): Matcher[Document] = (document: Document) => {
     val actualValue = document.select("#legalStatus option[selected]").attr("value")
     val errorMessageIfExpected =

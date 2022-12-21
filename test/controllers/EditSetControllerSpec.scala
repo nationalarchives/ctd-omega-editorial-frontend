@@ -519,6 +519,20 @@ class EditSetControllerSpec extends BaseSpec {
           }
         }
 
+        "legal status" when {
+          "is not selected" in {
+
+            val values = validValues ++ Map("legalStatus" -> "ref.0")
+
+            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+
+            status(result) mustBe BAD_REQUEST
+
+            val document = asDocument(contentAsString(result))
+            document must haveSummaryErrorMessages(Set("Select a valid legal status"))
+            document must haveErrorMessageForLegalStatus("Error: Select a valid legal status")
+          }
+        }
       }
       "successful" when {
         "redirect to result page from a new instance of controller" in {
