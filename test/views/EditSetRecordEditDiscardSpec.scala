@@ -24,10 +24,9 @@ package views
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.test.Helpers
-import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
 import play.twirl.api.Html
 import support.BaseSpec
-import support.CustomMatchers.{ haveHeaderTitle, haveLogoutLink, haveLogoutLinkLabel, haveVisibleLogoutLink }
+import support.CustomMatchers._
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEditDiscard
 
 class EditSetRecordEditDiscardSpec extends BaseSpec {
@@ -45,9 +44,18 @@ class EditSetRecordEditDiscardSpec extends BaseSpec {
       val confirmationEditSetRecordEditHtml: Html =
         editSetRecordEditDiscardInstance(user, title, heading, oci, discardChanges)
 
-      contentAsString(confirmationEditSetRecordEditHtml) must include(title)
-      contentAsString(confirmationEditSetRecordEditHtml) must include(heading)
-      contentAsString(confirmationEditSetRecordEditHtml) must include(discardChanges)
+      val document = asDocument(confirmationEditSetRecordEditHtml)
+      document must haveTitle(title)
+      document must haveNotificationBannerContents(
+        Seq(
+          "Any changes have been discarded. Showing last saved version.",
+          "EditRecordHeadingTest",
+          "PAC-ID: COAL.2022.V5RJW.P Physical Record",
+          "Series: National Coal Board and predecessors: Photographs"
+        )
+      )
+      document must haveBackLink("/edit-set/1/record/EditRecordOciTest/edit", "Back to edit record")
+
     }
 
     "render the header" in {

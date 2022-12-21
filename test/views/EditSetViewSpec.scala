@@ -24,10 +24,9 @@ package views
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.test.Helpers
-import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
 import play.twirl.api.Html
 import support.BaseSpec
-import support.CustomMatchers.{ haveHeaderTitle, haveLogoutLink, haveLogoutLinkLabel, haveVisibleLogoutLink }
+import support.CustomMatchers._
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
 
@@ -43,15 +42,35 @@ class EditSetViewSpec extends BaseSpec {
       val heading = editSet.name
 
       val editSetHtml: Html = editSetInstance(user, title, heading, editSet)
-      contentAsString(editSetHtml) must include(title)
-      contentAsString(editSetHtml) must include(heading)
-      contentAsString(editSetHtml) must include(editSet.name)
-      for (entry <- editSet.entries) {
-        contentAsString(editSetHtml) must include(entry.ccr)
-        contentAsString(editSetHtml) must include(entry.scopeAndContent)
-        contentAsString(editSetHtml) must include(entry.coveringDates)
 
-      }
+      val document = asDocument(editSetHtml)
+      document must haveTitle(title)
+      document must haveCaption(heading)
+      document must haveSummaryRows(3)
+      document must haveSummaryRowContents(
+        1,
+        Seq(
+          "COAL 80/80/1",
+          "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+          "1960"
+        )
+      )
+      document must haveSummaryRowContents(
+        2,
+        Seq(
+          "COAL 80/80/2",
+          "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of factory.",
+          "1962"
+        )
+      )
+      document must haveSummaryRowContents(
+        3,
+        Seq(
+          "COAL 80/80/3",
+          "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of workers.",
+          "1964"
+        )
+      )
 
     }
 
@@ -68,21 +87,31 @@ class EditSetViewSpec extends BaseSpec {
 
   }
 
-  private def getEditSetTest(id: String): EditSet = {
-
-    val scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
-    val editSetEntry1 =
-      EditSetEntry("COAL 80/80/1", id, scopeAndContent, "1960")
-    val editSetEntry2 =
-      EditSetEntry("COAL 80/80/2", id, scopeAndContent, "1960")
-    val editSetEntry3 =
-      EditSetEntry("COAL 80/80/3", id, scopeAndContent, "1960")
-    val entries = Seq(editSetEntry1, editSetEntry2, editSetEntry3)
-    val editSetName = "COAL 80 Sample"
-    val editSet = EditSet(editSetName, id: String, entries)
-
-    editSet
-  }
+  private def getEditSetTest(id: String): EditSet =
+    EditSet(
+      "COAL 80 Sample",
+      id,
+      Seq(
+        EditSetEntry(
+          "COAL 80/80/1",
+          id,
+          "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+          "1960"
+        ),
+        EditSetEntry(
+          "COAL 80/80/2",
+          id,
+          "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of factory.",
+          "1962"
+        ),
+        EditSetEntry(
+          "COAL 80/80/3",
+          id,
+          "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of workers.",
+          "1964"
+        )
+      )
+    )
 
   private def generateDocument(): Document = {
     implicit val messages: Messages = Helpers.stubMessages()

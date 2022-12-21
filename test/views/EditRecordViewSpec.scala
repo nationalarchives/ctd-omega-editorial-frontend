@@ -103,7 +103,7 @@ class EditRecordViewSpec extends BaseSpec {
       val title = "EditRecordTitleTest"
       val filledForm = emptyForm
         .fill(emptyRecord)
-        .withError(FormError("", "Enter the scope and content."))
+        .withError(FormError("scopeAndContent", "Enter the scope and content."))
 
       val editRecordHtml: Html =
         editSetRecordEditInstance(user, title, filledForm)(
@@ -111,9 +111,12 @@ class EditRecordViewSpec extends BaseSpec {
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
 
-      contentAsString(editRecordHtml) must include("There is a problem")
-      contentAsString(editRecordHtml) must include("Enter the scope and content.")
-
+      val document = asDocument(editRecordHtml)
+      document must haveTitle("EditRecordTitleTest")
+      document must haveSummaryErrorTitle("There is a problem")
+      document must haveSummaryErrorMessages("Enter the scope and content.")
+      document must haveErrorMessageForScopeAndContent("Enter the scope and content.")
+      document must haveScopeAndContent("")
     }
 
     "render an error when given scope and content is more than 8000 characters" in {
@@ -125,7 +128,7 @@ class EditRecordViewSpec extends BaseSpec {
             scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
           )
         )
-        .withError(FormError("", "Scope and content too long, maximum length 8000 characters"))
+        .withError(FormError("scopeAndContent", "Scope and content too long, maximum length 8000 characters"))
 
       val editRecordHtml: Html =
         editSetRecordEditInstance(user, title, filledForm)(
@@ -133,9 +136,14 @@ class EditRecordViewSpec extends BaseSpec {
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
 
-      contentAsString(editRecordHtml) must include("There is a problem")
-      contentAsString(editRecordHtml) must include("Scope and content too long, maximum length 8000 characters")
-
+      val document = asDocument(editRecordHtml)
+      document must haveTitle("EditRecordTitleTest")
+      document must haveSummaryErrorTitle("There is a problem")
+      document must haveSummaryErrorMessages("Scope and content too long, maximum length 8000 characters")
+      document must haveErrorMessageForScopeAndContent("Scope and content too long, maximum length 8000 characters")
+      document must haveScopeAndContent(
+        "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+      )
     }
 
     "render an error when given former reference department is more than 255 characters" in {
@@ -149,7 +157,12 @@ class EditRecordViewSpec extends BaseSpec {
               "Former reference - Department Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing"
           )
         )
-        .withError(FormError("", "Former reference - Department too long, maximum length 255 characters"))
+        .withError(
+          FormError(
+            "formerReferenceDepartment",
+            "Former reference - Department too long, maximum length 255 characters"
+          )
+        )
 
       val editRecordHtml: Html =
         editSetRecordEditInstance(user, title, filledForm)(
@@ -157,11 +170,16 @@ class EditRecordViewSpec extends BaseSpec {
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
 
-      contentAsString(editRecordHtml) must include("There is a problem")
-      contentAsString(editRecordHtml) must include(
+      val document = asDocument(editRecordHtml)
+      document must haveTitle("EditRecordTitleTest")
+      document must haveSummaryErrorTitle("There is a problem")
+      document must haveSummaryErrorMessages("Former reference - Department too long, maximum length 255 characters")
+      document must haveErrorMessageForFormerReferenceDepartment(
         "Former reference - Department too long, maximum length 255 characters"
       )
-
+      document must haveFormerReferenceDepartment(
+        "Former reference - Department Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing"
+      )
     }
 
     "render an error when given invalid covering dates" in {
@@ -193,8 +211,7 @@ class EditRecordViewSpec extends BaseSpec {
         )
 
       val document = asDocument(editRecordHtml)
-      document must haveSummaryErrorMessages(Set("covering date message string"))
-
+      document must haveSummaryErrorMessages("covering date message string")
     }
 
   }
@@ -207,7 +224,7 @@ class EditRecordViewSpec extends BaseSpec {
           .withError(FormError("startDate", "Start date is not a valid date"))
       )
 
-      document must haveSummaryErrorMessages(Set("Start date is not a valid date"))
+      document must haveSummaryErrorMessages("Start date is not a valid date")
       document must haveErrorMessageForStartDate("Start date is not a valid date")
       document must haveNoErrorMessageForEndDate
 
@@ -220,7 +237,7 @@ class EditRecordViewSpec extends BaseSpec {
           .withError(FormError("endDate", "End date is not a valid date"))
       )
 
-      document must haveSummaryErrorMessages(Set("End date is not a valid date"))
+      document must haveSummaryErrorMessages("End date is not a valid date")
       document must haveNoErrorMessageForStartDate
       document must haveErrorMessageForEndDate("End date is not a valid date")
 
@@ -233,7 +250,7 @@ class EditRecordViewSpec extends BaseSpec {
           .withError(FormError("endDate", "End date cannot precede start date"))
       )
 
-      document must haveSummaryErrorMessages(Set("End date cannot precede start date"))
+      document must haveSummaryErrorMessages("End date cannot precede start date")
       document must haveNoErrorMessageForStartDate
       document must haveErrorMessageForEndDate("End date cannot precede start date")
 

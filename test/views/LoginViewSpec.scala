@@ -21,13 +21,12 @@
 
 package views
 
-import org.jsoup.nodes.Document
 import play.api.data.{ Form, FormError }
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers._
 import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import support.BaseSpec
-import support.CustomMatchers.{ haveHeaderTitle, haveVisibleLogoutLink }
+import support.CustomMatchers._
 import uk.gov.nationalarchives.omega.editorial.forms.CredentialsFormProvider
 import uk.gov.nationalarchives.omega.editorial.models.Credentials
 import uk.gov.nationalarchives.omega.editorial.views.html.login
@@ -55,14 +54,21 @@ class LoginViewSpec extends BaseSpec {
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
 
-      contentAsString(loginHtml) must include(title)
-      contentAsString(loginHtml) must include(heading)
+      val document = asDocument(loginHtml)
+      document must haveTitle("TitleTest")
+      document must haveLegend("HeadingTest")
     }
 
     "render the header" in {
 
-      val document = generateDocument()
+      val login = inject[login]
 
+      val page = login(title = "TitleTest", heading = "HeadingTest", credentialsForm = CredentialsFormProvider())(
+        Helpers.stubMessages(messagesApi),
+        CSRFTokenHelper.addCSRFToken(FakeRequest())
+      )
+
+      val document = asDocument(page)
       document must haveHeaderTitle("header.title")
       document must not(haveVisibleLogoutLink)
 
@@ -79,9 +85,10 @@ class LoginViewSpec extends BaseSpec {
       val loginHtml =
         login(title, heading, userForm)(Helpers.stubMessages(messagesApi), CSRFTokenHelper.addCSRFToken(FakeRequest()))
 
-      contentAsString(loginHtml) must include(errorSummaryTitle)
-      contentAsString(loginHtml) must include("Enter a username")
-      contentAsString(loginHtml) must include("Enter a password")
+      val document = asDocument(loginHtml)
+      document must haveSummaryErrorMessages("Enter a username", "Enter a password")
+      document must haveErrorMessageForUsername("Enter a username")
+      document must haveErrorMessageForPassword("Enter a password")
     }
 
     "render an error given an incorrect username and/or password " in {
@@ -97,8 +104,9 @@ class LoginViewSpec extends BaseSpec {
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
 
-      contentAsString(loginHtml) must include(errorSummaryTitle)
-      contentAsString(loginHtml) must include("Username and/or password is incorrect.")
+      val document = asDocument(loginHtml)
+      document must haveSummaryErrorTitle(errorSummaryTitle)
+      document must haveSummaryErrorMessages("Username and/or password is incorrect.")
     }
 
     "render an error when no username given" in {
@@ -114,8 +122,10 @@ class LoginViewSpec extends BaseSpec {
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
 
-      contentAsString(loginHtml) must include(errorSummaryTitle)
-      contentAsString(loginHtml) must include("Enter a username")
+      val document = asDocument(loginHtml)
+      document must haveSummaryErrorTitle(errorSummaryTitle)
+      document must haveSummaryErrorMessages("Enter a username")
+      document must haveErrorMessageForUsername("Enter a username")
     }
 
     "render an error when no password given" in {
@@ -131,18 +141,11 @@ class LoginViewSpec extends BaseSpec {
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
 
-      contentAsString(loginHtml) must include(errorSummaryTitle)
-      contentAsString(loginHtml) must include("Enter a password")
+      val document = asDocument(loginHtml)
+      document must haveSummaryErrorTitle(errorSummaryTitle)
+      document must haveSummaryErrorMessages("Enter a password")
+      document must haveErrorMessageForPassword("Enter a password")
     }
   }
 
-  private def generateDocument(): Document = {
-    val login = inject[login]
-    asDocument(
-      login(title = "TitleTest", heading = "HeadingTest", credentialsForm = CredentialsFormProvider())(
-        Helpers.stubMessages(messagesApi),
-        CSRFTokenHelper.addCSRFToken(FakeRequest())
-      )
-    )
-  }
 }

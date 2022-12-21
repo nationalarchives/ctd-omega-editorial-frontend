@@ -76,7 +76,8 @@ class EditSetControllerSpec extends BaseSpec {
 
       status(editSet) mustBe OK
       contentType(editSet) mustBe Some("text/html")
-      contentAsString(editSet) must include("Edit set: COAL 80 Sample")
+      val document = asDocument(editSet)
+      document must haveCaption("Edit set: COAL 80 Sample")
     }
 
     "render the edit set page from the application" in {
@@ -90,7 +91,8 @@ class EditSetControllerSpec extends BaseSpec {
 
       status(editSet) mustBe OK
       contentType(editSet) mustBe Some("text/html")
-      contentAsString(editSet) must include("Edit set: COAL 80 Sample")
+      val document = asDocument(editSet)
+      document must haveCaption("Edit set: COAL 80 Sample")
     }
 
     "render the edit set page from the router" in {
@@ -99,7 +101,8 @@ class EditSetControllerSpec extends BaseSpec {
 
       status(editSet) mustBe OK
       contentType(editSet) mustBe Some("text/html")
-      contentAsString(editSet) must include("Edit set: COAL 80 Sample")
+      val document = asDocument(editSet)
+      document must haveCaption("Edit set: COAL 80 Sample")
     }
 
     "redirect to the login page from the application when requested with invalid session token" in {
@@ -164,7 +167,8 @@ class EditSetControllerSpec extends BaseSpec {
 
       status(editRecordPage) mustBe OK
       contentType(editRecordPage) mustBe Some("text/html")
-      contentAsString(editRecordPage) must include("TNA reference: COAL 80/80/1")
+      val document = asDocument(editRecordPage)
+      document must haveHeading("TNA reference: COAL 80/80/1")
     }
 
     "render the edit set page from the application" in {
@@ -180,7 +184,8 @@ class EditSetControllerSpec extends BaseSpec {
 
       status(editRecordPage) mustBe OK
       contentType(editRecordPage) mustBe Some("text/html")
-      contentAsString(editRecordPage) must include("TNA reference: COAL 80/80/1")
+      val document = asDocument(editRecordPage)
+      document must haveHeading("TNA reference: COAL 80/80/1")
     }
 
     "render the edit set page from the router" in {
@@ -192,7 +197,8 @@ class EditSetControllerSpec extends BaseSpec {
 
       status(editRecordPage) mustBe OK
       contentType(editRecordPage) mustBe Some("text/html")
-      contentAsString(editRecordPage) must include("TNA reference: COAL 80/80/1")
+      val document = asDocument(editRecordPage)
+      document must haveHeading("TNA reference: COAL 80/80/1")
     }
 
     "redirect to the login page from the application when requested with invalid session token" in {
@@ -263,8 +269,7 @@ class EditSetControllerSpec extends BaseSpec {
             val editRecordPage = route(app, request).get
 
             status(editRecordPage) mustBe BAD_REQUEST
-
-            val document = asDocument(contentAsString(editRecordPage))
+            val document = asDocument(editRecordPage)
             document must haveHeading(s"TNA reference: $ccrToAssert")
           }
         }
@@ -276,8 +281,8 @@ class EditSetControllerSpec extends BaseSpec {
             val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
-            val document = asDocument(contentAsString(result))
-            document must haveSummaryErrorMessages(Set("Start date is not a valid date"))
+            val document = asDocument(result)
+            document must haveSummaryErrorMessages("Start date is not a valid date")
             document must haveErrorMessageForStartDate("Start date is not a valid date")
             document must haveStartDateDay("")
             document must haveStartDateMonth("")
@@ -291,8 +296,8 @@ class EditSetControllerSpec extends BaseSpec {
             val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
-            val document = asDocument(contentAsString(result))
-            document must haveSummaryErrorMessages(Set("Start date is not a valid date"))
+            val document = asDocument(result)
+            document must haveSummaryErrorMessages("Start date is not a valid date")
             document must haveErrorMessageForStartDate("Start date is not a valid date")
             document must haveStartDateDay("XX")
             document must haveStartDateMonth("11")
@@ -315,9 +320,9 @@ class EditSetControllerSpec extends BaseSpec {
             val result = submitWhileLoggedIn(2, "COAL.2022.V5RJW.R", values)
 
             status(result) mustBe BAD_REQUEST
-            val document = asDocument(contentAsString(result))
+            val document = asDocument(result)
 
-            document must haveSummaryErrorMessages(Set("Start date is not a valid date"))
+            document must haveSummaryErrorMessages("Start date is not a valid date")
             document must haveErrorMessageForStartDate("Start date is not a valid date")
             document must haveStartDateDay("29")
             document must haveStartDateMonth("2")
@@ -334,8 +339,8 @@ class EditSetControllerSpec extends BaseSpec {
 
             status(result) mustBe BAD_REQUEST
 
-            val document = asDocument(contentAsString(result))
-            document must haveSummaryErrorMessages(Set("End date is not a valid date"))
+            val document = asDocument(result)
+            document must haveSummaryErrorMessages("End date is not a valid date")
             document must haveErrorMessageForEndDate("End date is not a valid date")
             document must haveEndDateDay("")
             document must haveEndDateMonth("")
@@ -348,9 +353,9 @@ class EditSetControllerSpec extends BaseSpec {
             val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
-            val document = asDocument(contentAsString(result))
+            val document = asDocument(result)
 
-            document must haveSummaryErrorMessages(Set("End date is not a valid date"))
+            document must haveSummaryErrorMessages("End date is not a valid date")
             document must haveErrorMessageForEndDate("End date is not a valid date")
             document must haveEndDateDay("XX")
             document must haveEndDateMonth("12")
@@ -372,8 +377,8 @@ class EditSetControllerSpec extends BaseSpec {
             val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
-            val document = asDocument(contentAsString(result))
-            document must haveSummaryErrorMessages(Set("End date is not a valid date"))
+            val document = asDocument(result)
+            document must haveSummaryErrorMessages("End date is not a valid date")
             document must haveErrorMessageForEndDate("End date is not a valid date")
             document must haveEndDateDay("29")
             document must haveEndDateMonth("2")
@@ -394,8 +399,8 @@ class EditSetControllerSpec extends BaseSpec {
             val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
-            val document = asDocument(contentAsString(result))
-            document must haveSummaryErrorMessages(Set("End date cannot precede start date"))
+            val document = asDocument(result)
+            document must haveSummaryErrorMessages("End date cannot precede start date")
             document must haveErrorMessageForEndDate("End date cannot precede start date")
             document must haveNoErrorMessageForStartDate
             document must haveStartDateDay("12")
@@ -421,8 +426,8 @@ class EditSetControllerSpec extends BaseSpec {
           val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
           status(result) mustBe BAD_REQUEST
-          val document = asDocument(contentAsString(result))
-          document must haveSummaryErrorMessages(Set("Start date is not a valid date", "End date is not a valid date"))
+          val document = asDocument(result)
+          document must haveSummaryErrorMessages("Start date is not a valid date", "End date is not a valid date")
           document must haveErrorMessageForStartDate("Start date is not a valid date")
           document must haveStartDateDay("12")
           document must haveStartDateMonth("14")
@@ -481,8 +486,8 @@ class EditSetControllerSpec extends BaseSpec {
 
             status(editRecordPage) mustBe BAD_REQUEST
 
-            val document = asDocument(contentAsString(editRecordPage))
-            document must haveSummaryErrorMessages(Set("Covering date too long, maximum length 255 characters"))
+            val document = asDocument(editRecordPage)
+            document must haveSummaryErrorMessages("Covering date too long, maximum length 255 characters")
 
           }
           "is empty; showing error correctly" in {
@@ -509,9 +514,8 @@ class EditSetControllerSpec extends BaseSpec {
             val editRecordPage = route(app, request).get
 
             status(editRecordPage) mustBe BAD_REQUEST
-
-            val document = asDocument(contentAsString(editRecordPage))
-            document must haveSummaryErrorMessages(Set("Enter the covering dates", "Covering date format is not valid"))
+            val document = asDocument(editRecordPage)
+            document must haveSummaryErrorMessages("Enter the covering dates", "Covering date format is not valid")
 
           }
         }
@@ -628,7 +632,7 @@ class EditSetControllerSpec extends BaseSpec {
           redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/1234/edit/save")
 
           val getRecordResult = getRecordForEditingWhileLoggedIn(1, "1234")
-          val document = asDocument(contentAsString(getRecordResult))
+          val document = asDocument(getRecordResult)
           document must haveStartDateDay("26")
           document must haveStartDateMonth("12")
           document must haveStartDateYear("2020")
@@ -691,8 +695,8 @@ class EditSetControllerSpec extends BaseSpec {
           val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
           status(result) mustBe BAD_REQUEST
-          val document = asDocument(contentAsString(result))
-          document must haveSummaryErrorMessages(Set("Enter the covering dates", "Covering date format is not valid"))
+          val document = asDocument(result)
+          document must haveSummaryErrorMessages("Enter the covering dates", "Covering date format is not valid")
           document must haveErrorMessageForCoveringDate("Enter the covering dates")
           document must haveNoErrorMessageForStartDate
           document must haveStartDateDay("1")
@@ -720,8 +724,8 @@ class EditSetControllerSpec extends BaseSpec {
           val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
           status(result) mustBe BAD_REQUEST
-          val document = asDocument(contentAsString(result))
-          document must haveSummaryErrorMessages(Set("Covering date format is not valid"))
+          val document = asDocument(result)
+          document must haveSummaryErrorMessages("Covering date format is not valid")
           document must haveErrorMessageForCoveringDate("Covering date format is not valid")
           document must haveNoErrorMessageForStartDate
           document must haveStartDateDay("1")
@@ -749,8 +753,8 @@ class EditSetControllerSpec extends BaseSpec {
           val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
           status(result) mustBe BAD_REQUEST
-          val document = asDocument(contentAsString(result))
-          document must haveSummaryErrorMessages(Set("Covering date format is not valid"))
+          val document = asDocument(result)
+          document must haveSummaryErrorMessages("Covering date format is not valid")
           document must haveErrorMessageForCoveringDate("Covering date format is not valid")
           document must haveNoErrorMessageForStartDate
           document must haveStartDateDay("1")
@@ -774,7 +778,7 @@ class EditSetControllerSpec extends BaseSpec {
           val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
           status(result) mustBe OK
-          val document = asDocument(contentAsString(result))
+          val document = asDocument(result)
           document must haveNoSummaryErrorMessages
           document must haveNoErrorMessageForCoveringDate
           document must haveNoErrorMessageForStartDate
@@ -797,7 +801,7 @@ class EditSetControllerSpec extends BaseSpec {
           val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
           status(result) mustBe OK
-          val document = asDocument(contentAsString(result))
+          val document = asDocument(result)
           document must haveNoSummaryErrorMessages
           document must haveNoErrorMessageForCoveringDate
           document must haveNoErrorMessageForStartDate
@@ -820,7 +824,7 @@ class EditSetControllerSpec extends BaseSpec {
           val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
           status(result) mustBe OK
-          val document = asDocument(contentAsString(result))
+          val document = asDocument(result)
           document must haveNoSummaryErrorMessages
           document must haveNoErrorMessageForCoveringDate
           document must haveNoErrorMessageForStartDate
