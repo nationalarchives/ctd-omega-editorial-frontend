@@ -1,5 +1,6 @@
 # https://www.playframework.com/documentation/latest/ScalaI18N
 edit-set.heading=Edit set: {0}
+edit-set.record.calculate-dates.button=Calculate start and end dates
 edit-set.record.discard.button=Discard changes
 edit-set.record.discard.text=Changes to the following record have been discarded:
 edit-set.record.edit.covering-dates=Covering dates

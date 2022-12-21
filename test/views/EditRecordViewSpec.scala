@@ -181,21 +181,9 @@ class EditRecordViewSpec extends BaseSpec {
         endDateMonth = "12",
         endDateYear = "1960"
       )
-      val editSetRecordForm = Form(
-        mapping(
-          "ccr"                       -> text,
-          "oci"                       -> text,
-          "scopeAndContent"           -> text,
-          "coveringDates"             -> text,
-          "formerReferenceDepartment" -> text,
-          "startDateDay"              -> text,
-          "startDateMonth"            -> text,
-          "startDateYear"             -> text,
-          "endDateDay"                -> text,
-          "endDateMonth"              -> text,
-          "endDateYear"               -> text
-        )(EditSetRecord.apply)(EditSetRecord.unapply)
-      ).fill(inputData)
+
+      val editSetRecordForm = emptyForm
+        .fill(inputData)
         .withError("coveringDates", "covering date message string")
 
       val editRecordHtml =
