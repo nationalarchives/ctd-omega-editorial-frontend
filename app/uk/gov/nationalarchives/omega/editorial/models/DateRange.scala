@@ -24,3 +24,13 @@ package uk.gov.nationalarchives.omega.editorial.models
 import java.time.LocalDate
 
 case class DateRange(start: LocalDate, end: LocalDate)
+
+object DateRange {
+
+  def single(dateRanges: Seq[DateRange]): Option[DateRange] = dateRanges.sortBy(_.start) match {
+    case Nil                  => None
+    case Seq(singleDateRange) => Some(singleDateRange)
+    case sortedDateRanges     => Some(DateRange(sortedDateRanges.head.start, sortedDateRanges.last.end))
+  }
+
+}

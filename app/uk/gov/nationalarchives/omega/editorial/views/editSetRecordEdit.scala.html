@@ -132,6 +132,13 @@
         )
     },
     classes = "govuk-!-width-one-half"))
+
+@govukButton(Button(
+    element = Some("button"),
+    name = Some("action"),
+    value = Some("calculateDates"),
+    content = Text(messages("edit-set.record.calculate-dates.button"))))
+
 @govukFieldset(
     Fieldset(
         classes = "govuk-fieldset",

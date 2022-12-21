@@ -223,24 +223,24 @@ class EditSetControllerSpec extends BaseSpec {
   }
 
   "EditSetController POST /edit-set/{id}/record/{recordId}/edit" should {
-    "when the action is 'save'" when {
 
-      val validValues: Map[String, String] =
-        Map(
-          "ccr"             -> "COAL 80/80/1",
-          "oci"             -> "COAL.2022.V5RJW.P",
-          "scopeAndContent" -> "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-          "formerReferenceDepartment" -> "1234",
-          "coveringDates"             -> "2020 Oct",
-          "startDateDay"              -> "1",
-          "startDateMonth"            -> "10",
-          "startDateYear"             -> "2020",
-          "endDateDay"                -> "31",
-          "endDateMonth"              -> "10",
-          "endDateYear"               -> "2020",
-          "action"                    -> "save"
-        )
+    val validValues: Map[String, String] =
+      Map(
+        "ccr"             -> "COAL 80/80/1",
+        "oci"             -> "COAL.2022.V5RJW.P",
+        "scopeAndContent" -> "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+        "formerReferenceDepartment" -> "1234",
+        "coveringDates"             -> "2020 Oct",
+        "startDateDay"              -> "1",
+        "startDateMonth"            -> "10",
+        "startDateYear"             -> "2020",
+        "endDateDay"                -> "31",
+        "endDateMonth"              -> "10",
+        "endDateYear"               -> "2020",
+        "action"                    -> "save"
+      )
 
+    "when the action is to save the record" when {
       "fail" when {
         "and yet preserve the CCR" when {
           "there are errors" in {
@@ -273,7 +273,7 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values = validValues ++ Map("startDateDay" -> "", "startDateMonth" -> "", "startDateYear" -> "")
 
-            val result = submitWhileLoggedIn(values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             val document = asDocument(contentAsString(result))
@@ -284,11 +284,11 @@ class EditSetControllerSpec extends BaseSpec {
             document must haveStartDateYear("")
 
           }
-          "is invalid" in {
+          "is of an invalid format" in {
 
             val values = validValues ++ Map("startDateDay" -> "XX", "startDateMonth" -> "11", "startDateYear" -> "1960")
 
-            val result = submitWhileLoggedIn(values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             val document = asDocument(contentAsString(result))
@@ -301,22 +301,27 @@ class EditSetControllerSpec extends BaseSpec {
           }
           "doesn't exist" in {
 
-            val values = validValues ++ Map("startDateDay" -> "13", "startDateMonth" -> "9", "startDateYear" -> "1752")
-            val request = CSRFTokenHelper.addCSRFToken(
-              FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
-                .withFormUrlEncodedBody(values.toSeq: _*)
-                .withSession(SessionKeys.token -> validSessionToken)
-            )
-            val editRecordPage = route(app, request).get
+            val values = validValues ++
+              Map(
+                "action"         -> "save",
+                "startDateDay"   -> "29",
+                "startDateMonth" -> "2",
+                "startDateYear"  -> "2022",
+                "endDateDay"     -> "31",
+                "endDateMonth"   -> "10",
+                "endDateYear"    -> "2022"
+              )
 
-            status(editRecordPage) mustBe BAD_REQUEST
-            val document = asDocument(contentAsString(editRecordPage))
+            val result = submitWhileLoggedIn(2, "COAL.2022.V5RJW.R", values)
+
+            status(result) mustBe BAD_REQUEST
+            val document = asDocument(contentAsString(result))
 
             document must haveSummaryErrorMessages(Set("Start date is not a valid date"))
             document must haveErrorMessageForStartDate("Start date is not a valid date")
-            document must haveStartDateDay("13")
-            document must haveStartDateMonth("9")
-            document must haveStartDateYear("1752")
+            document must haveStartDateDay("29")
+            document must haveStartDateMonth("2")
+            document must haveStartDateYear("2022")
 
           }
         }
@@ -325,7 +330,7 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values = validValues ++ Map("endDateDay" -> "", "endDateMonth" -> "", "endDateYear" -> "")
 
-            val result = submitWhileLoggedIn(values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
 
@@ -337,34 +342,42 @@ class EditSetControllerSpec extends BaseSpec {
             document must haveEndDateYear("")
 
           }
-          "is invalid" in {
+          "is of an invalid format" in {
 
-            val values = validValues ++ Map("endDateDay" -> "42", "endDateMonth" -> "12", "endDateYear" -> "2000")
-            val result = submitWhileLoggedIn(values)
+            val values = validValues ++ Map("endDateDay" -> "XX", "endDateMonth" -> "12", "endDateYear" -> "2000")
+            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             val document = asDocument(contentAsString(result))
 
             document must haveSummaryErrorMessages(Set("End date is not a valid date"))
             document must haveErrorMessageForEndDate("End date is not a valid date")
-            document must haveEndDateDay("42")
+            document must haveEndDateDay("XX")
             document must haveEndDateMonth("12")
             document must haveEndDateYear("2000")
 
           }
           "doesn't exist" in {
 
-            val values = validValues ++ Map("endDateDay" -> "8", "endDateMonth" -> "9", "endDateYear" -> "1752")
-
-            val result = submitWhileLoggedIn(values)
+            val values = validValues ++
+              Map(
+                "action"         -> "save",
+                "startDateDay"   -> "1",
+                "startDateMonth" -> "2",
+                "startDateYear"  -> "2022",
+                "endDateDay"     -> "29",
+                "endDateMonth"   -> "2",
+                "endDateYear"    -> "2022"
+              )
+            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             val document = asDocument(contentAsString(result))
             document must haveSummaryErrorMessages(Set("End date is not a valid date"))
             document must haveErrorMessageForEndDate("End date is not a valid date")
-            document must haveEndDateDay("8")
-            document must haveEndDateMonth("9")
-            document must haveEndDateYear("1752")
+            document must haveEndDateDay("29")
+            document must haveEndDateMonth("2")
+            document must haveEndDateYear("2022")
 
           }
           "is before start date" in {
@@ -378,7 +391,7 @@ class EditSetControllerSpec extends BaseSpec {
               "endDateYear"    -> "2020"
             )
 
-            val result = submitWhileLoggedIn(values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             val document = asDocument(contentAsString(result))
@@ -405,7 +418,7 @@ class EditSetControllerSpec extends BaseSpec {
             "endDateYear"    -> "2020"
           )
 
-          val result = submitWhileLoggedIn(values)
+          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
           status(result) mustBe BAD_REQUEST
           val document = asDocument(contentAsString(result))
@@ -617,12 +630,22 @@ class EditSetControllerSpec extends BaseSpec {
           status(editRecordPage) mustBe SEE_OTHER
           redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/1234/edit/save")
 
+          val getRecordResult = getRecordForEditingWhileLoggedIn(1, "1234")
+          val document = asDocument(contentAsString(getRecordResult))
+          document must haveStartDateDay("26")
+          document must haveStartDateMonth("12")
+          document must haveStartDateYear("2020")
+          document must haveEndDateDay("31")
+          document must haveEndDateMonth("12")
+          document must haveEndDateYear("2020")
+
         }
+
       }
 
     }
 
-    "when the action is 'discard'" when {
+    "when the action is to discard all changes" when {
       "successful" when {
         "even if the validation fails" in {
           val blankScopeAndContentToFailValidation = ""
@@ -648,19 +671,194 @@ class EditSetControllerSpec extends BaseSpec {
           val editRecordPage = route(app, request).get
 
           status(editRecordPage) mustBe SEE_OTHER
-
           redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/discard")
 
         }
       }
     }
+
+    "when the action is to calculate the start and end dates from the covering dates" when {
+      "failure" when {
+        "blank" in {
+
+          val values = validValues ++ Map(
+            "action"         -> "calculateDates",
+            "coveringDates"  -> "   ",
+            "startDateDay"   -> "1",
+            "startDateMonth" -> "10",
+            "startDateYear"  -> "2020",
+            "endDateDay"     -> "31",
+            "endDateMonth"   -> "10",
+            "endDateYear"    -> "2020"
+          )
+
+          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+
+          status(result) mustBe BAD_REQUEST
+          val document = asDocument(contentAsString(result))
+          document must haveSummaryErrorMessages(Set("Enter the covering dates", "Covering date format is not valid"))
+          document must haveErrorMessageForCoveringDate("Enter the covering dates")
+          document must haveNoErrorMessageForStartDate
+          document must haveStartDateDay("1")
+          document must haveStartDateMonth("10")
+          document must haveStartDateYear("2020")
+          document must haveNoErrorMessageForEndDate
+          document must haveEndDateDay("31")
+          document must haveEndDateMonth("10")
+          document must haveEndDateYear("2020")
+
+        }
+        "invalid format" in {
+
+          val values = validValues ++ Map(
+            "action"         -> "calculateDates",
+            "coveringDates"  -> "1270s",
+            "startDateDay"   -> "1",
+            "startDateMonth" -> "10",
+            "startDateYear"  -> "2020",
+            "endDateDay"     -> "31",
+            "endDateMonth"   -> "10",
+            "endDateYear"    -> "2020"
+          )
+
+          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+
+          status(result) mustBe BAD_REQUEST
+          val document = asDocument(contentAsString(result))
+          document must haveSummaryErrorMessages(Set("Covering date format is not valid"))
+          document must haveErrorMessageForCoveringDate("Covering date format is not valid")
+          document must haveNoErrorMessageForStartDate
+          document must haveStartDateDay("1")
+          document must haveStartDateMonth("10")
+          document must haveStartDateYear("2020")
+          document must haveNoErrorMessageForEndDate
+          document must haveEndDateDay("31")
+          document must haveEndDateMonth("10")
+          document must haveEndDateYear("2020")
+
+        }
+        "contains a non-existent date" in {
+
+          val values = validValues ++ Map(
+            "action"         -> "calculateDates",
+            "coveringDates"  -> "2022 Feb 1-2022 Feb 29",
+            "startDateDay"   -> "1",
+            "startDateMonth" -> "10",
+            "startDateYear"  -> "2020",
+            "endDateDay"     -> "31",
+            "endDateMonth"   -> "10",
+            "endDateYear"    -> "2020"
+          )
+
+          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+
+          status(result) mustBe BAD_REQUEST
+          val document = asDocument(contentAsString(result))
+          document must haveSummaryErrorMessages(Set("Covering date format is not valid"))
+          document must haveErrorMessageForCoveringDate("Covering date format is not valid")
+          document must haveNoErrorMessageForStartDate
+          document must haveStartDateDay("1")
+          document must haveStartDateMonth("10")
+          document must haveStartDateYear("2020")
+          document must haveNoErrorMessageForEndDate
+          document must haveEndDateDay("31")
+          document must haveEndDateMonth("10")
+          document must haveEndDateYear("2020")
+
+        }
+      }
+      "successful" when {
+        "covers period of the switchover" in {
+
+          val values = validValues ++ Map(
+            "action"        -> "calculateDates",
+            "coveringDates" -> "1752 Aug 1-1752 Sept 12"
+          )
+
+          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+
+          status(result) mustBe OK
+          val document = asDocument(contentAsString(result))
+          document must haveNoSummaryErrorMessages
+          document must haveNoErrorMessageForCoveringDate
+          document must haveNoErrorMessageForStartDate
+          document must haveStartDateDay("1")
+          document must haveStartDateMonth("8")
+          document must haveStartDateYear("1752")
+          document must haveNoErrorMessageForEndDate
+          document must haveEndDateDay("12")
+          document must haveEndDateMonth("9")
+          document must haveEndDateYear("1752")
+
+        }
+        "covers period after the switchover" in {
+
+          val values = validValues ++ Map(
+            "action"        -> "calculateDates",
+            "coveringDates" -> "1984 Dec"
+          )
+
+          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+
+          status(result) mustBe OK
+          val document = asDocument(contentAsString(result))
+          document must haveNoSummaryErrorMessages
+          document must haveNoErrorMessageForCoveringDate
+          document must haveNoErrorMessageForStartDate
+          document must haveStartDateDay("1")
+          document must haveStartDateMonth("12")
+          document must haveStartDateYear("1984")
+          document must haveNoErrorMessageForEndDate
+          document must haveEndDateDay("31")
+          document must haveEndDateMonth("12")
+          document must haveEndDateYear("1984")
+
+        }
+        "covers multiple ranges" in {
+
+          val values = validValues ++ Map(
+            "action"        -> "calculateDates",
+            "coveringDates" -> "1868; 1890-1902; 1933"
+          )
+
+          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+
+          status(result) mustBe OK
+          val document = asDocument(contentAsString(result))
+          document must haveNoSummaryErrorMessages
+          document must haveNoErrorMessageForCoveringDate
+          document must haveNoErrorMessageForStartDate
+          document must haveStartDateDay("1")
+          document must haveStartDateMonth("1")
+          document must haveStartDateYear("1868")
+          document must haveNoErrorMessageForEndDate
+          document must haveEndDateDay("31")
+          document must haveEndDateMonth("12")
+          document must haveEndDateYear("1933")
+
+        }
+      }
+
+    }
   }
-  private def submitWhileLoggedIn(values: Map[String, String]): Future[Result] = {
+
+  private def submitWhileLoggedIn(editSetId: Int, recordId: String, values: Map[String, String]): Future[Result] = {
     val request = CSRFTokenHelper.addCSRFToken(
-      FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+      FakeRequest(POST, s"/edit-set/$editSetId/record/$recordId/edit")
         .withFormUrlEncodedBody(values.toSeq: _*)
         .withSession(SessionKeys.token -> validSessionToken)
     )
+    route(app, request).get
+  }
+
+  private def getRecordForEditingWhileLoggedIn(editSetId: Int, recordId: String): Future[Result] =
+    getWhileLoggedIn(s"/edit-set/$editSetId/record/$recordId/edit")
+
+  private def getWhileLoggedIn(location: String): Future[Result] = {
+    val request =
+      FakeRequest(GET, location).withSession(
+        SessionKeys.token -> validSessionToken
+      )
     route(app, request).get
   }
 }
