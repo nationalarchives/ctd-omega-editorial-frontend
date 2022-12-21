@@ -1,0 +1,16 @@
+[Unit]
+Description=CTD Omega Editorial Frontend
+Documentation=https://github.com/nationalarchives/ctd-omega-editorial-frontend
+After=syslog.target
+
+[Service]
+Type=simple
+User=ctd-web
+Group=ctd-web
+Environment="JAVA_HOME=/usr/lib/jvm/jre-1.8.0
+Environment="APPLICATION_SECRET=_mTFr@DIDmTUC9LFSFsn_j]iICDMj=DKMy/yuw/gy10RgsUiXuOK0beEP]SiCwMO"
+ExecStart=/opt/ctd-omega-editorial-frontend/bin/ctd-omega-editorial-frontend
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
