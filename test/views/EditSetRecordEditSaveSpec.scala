@@ -24,10 +24,9 @@ package views
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.test.Helpers
-import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
 import play.twirl.api.Html
 import support.BaseSpec
-import support.CustomMatchers.{ haveHeaderTitle, haveLogoutLink, haveLogoutLinkLabel, haveVisibleLogoutLink }
+import support.CustomMatchers._
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEditSave
 
 class EditSetRecordEditSaveSpec extends BaseSpec {
@@ -45,9 +44,18 @@ class EditSetRecordEditSaveSpec extends BaseSpec {
       val confirmationEditSetRecordEditHtml: Html =
         editSetRecordEditSaveInstance(user, title, heading, oci, saveChanges)
 
-      contentAsString(confirmationEditSetRecordEditHtml) must include(title)
-      contentAsString(confirmationEditSetRecordEditHtml) must include(heading)
-      contentAsString(confirmationEditSetRecordEditHtml) must include(saveChanges)
+      val document = asDocument(confirmationEditSetRecordEditHtml)
+      document must haveTitle("EditRecordTitleTest")
+      document must haveNotificationBannerContents(
+        Seq(
+          "Your changes have been saved.",
+          "EditRecordHeadingTest",
+          "PAC-ID: COAL.2022.V5RJW.P Physical Record",
+          "Series: National Coal Board and predecessors: Photographs"
+        )
+      )
+      document must haveBackLink("/edit-set/1/record/EditRecordOciTest/edit", "Back to edit record")
+
     }
 
     "render the header" in {

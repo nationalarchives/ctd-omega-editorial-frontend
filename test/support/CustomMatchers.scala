@@ -169,39 +169,42 @@ object CustomMatchers {
       actualValue = document.select("#endDateYear").attr("value")
     )
 
-  def haveSummaryErrorMessages(expectedValues: Set[String]): Matcher[Document] = (document: Document) => {
+  def haveSummaryErrorTitle(expectedValue: String): Matcher[Document] = (document: Document) =>
+    singleValueMatcher(
+      label = "an error summary title",
+      expectedValue = expectedValue,
+      actualValue = document.select("#error-summary-title").text()
+    )
+
+  def haveSummaryErrorMessages(expectedValues: String*): Matcher[Document] = (document: Document) => {
     val actualValues = document.select("ul.govuk-error-summary__list > li").eachText().asScala.toSet
     val actualValuesForDisplay = actualValues.mkString(",")
-    val expectedValuesForDisplay = expectedValues.mkString(",")
+    val expectedValuesForDisplay = expectedValues.toSet.mkString(",")
     val errorMessageIfExpected =
       s"The page didn't have summary error messages of ('$expectedValuesForDisplay'). The actual messages were ('$actualValuesForDisplay')"
     val errorMessageIfNotExpected =
       s"The page did indeed have a summary error messages of ('$expectedValuesForDisplay'), which was not expected."
     MatchResult(
-      actualValues == expectedValues,
+      actualValues == expectedValues.toSet,
       errorMessageIfExpected,
       errorMessageIfNotExpected
     )
   }
 
-  def haveNoSummaryErrorMessages: Matcher[Document] = haveSummaryErrorMessages(Set.empty)
+  def haveNoSummaryErrorMessages: Matcher[Document] = haveSummaryErrorMessages()
 
-  def haveErrorMessageForStartDate(expectedValue: String): Matcher[Document] = (document: Document) =>
-    singleValueMatcher("an error message for start date", expectedValue, document.select("#startDateFieldError").text())
+  def haveErrorMessageForStartDate(expectedValue: String): Matcher[Document] =
+    haveErrorMessageForField("start date", "#startDateFieldError", expectedValue)
 
   def haveNoErrorMessageForStartDate: Matcher[Document] = haveErrorMessageForStartDate("")
 
-  def haveErrorMessageForEndDate(expectedValue: String): Matcher[Document] = (document: Document) =>
-    singleValueMatcher("an error message for end date", expectedValue, document.select("#endDateFieldError").text())
+  def haveErrorMessageForEndDate(expectedValue: String): Matcher[Document] =
+    haveErrorMessageForField("end date", "#endDateFieldError", expectedValue)
 
   def haveNoErrorMessageForEndDate: Matcher[Document] = haveErrorMessageForEndDate("")
 
-  def haveErrorMessageForCoveringDate(expectedValue: String): Matcher[Document] = (document: Document) =>
-    singleValueMatcher(
-      "an error message for covering dates",
-      expectedValue,
-      document.select("#coveringDates-error").text().replace("Error: ", "")
-    )
+  def haveErrorMessageForCoveringDate(expectedValue: String): Matcher[Document] =
+    haveErrorMessageForField("covering dates", "#coveringDates-error", expectedValue)
 
   def haveNoErrorMessageForCoveringDate: Matcher[Document] = haveErrorMessageForCoveringDate("")
 
@@ -253,6 +256,83 @@ object CustomMatchers {
       )
   }
 
+  def haveErrorMessageForUsername(expectedValue: String): Matcher[Document] = (document: Document) =>
+    singleValueMatcher(
+      "a username",
+      expectedValue,
+      removeInvisibleErrorMessagePrefix(document.select("#username-error").text())
+    )
+
+  def haveErrorMessageForPassword(expectedValue: String): Matcher[Document] = (document: Document) =>
+    singleValueMatcher(
+      "a password",
+      expectedValue,
+      removeInvisibleErrorMessagePrefix(document.select("#password-error").text())
+    )
+
+  def haveErrorMessageForScopeAndContent(expectedValue: String): Matcher[Document] =
+    haveErrorMessageForField("scope and content", "#scopeAndContent-error", expectedValue)
+
+  def haveErrorMessageForFormerReferenceDepartment(expectedValue: String): Matcher[Document] =
+    haveErrorMessageForField("former reference department", "#formerReferenceDepartment-error", expectedValue)
+
+  def haveCaption(expectedValue: String): Matcher[Document] = (document: Document) =>
+    singleValueMatcher("a caption", expectedValue, document.select("caption").text())
+
+  def haveSummaryRows(expectedCount: Int): Matcher[Document] = (document: Document) => {
+    val actualCount = document.select(s"tbody > tr.govuk-table__row").size()
+    val errorMessageIfExpected =
+      s"We expected $expectedCount summary rows but there were actually '$actualCount'."
+    val errorMessageIfNotExpected = s"We didn't expect $expectedCount summary rows, but there were."
+    MatchResult(
+      actualCount == expectedCount,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveSummaryRowContents(rowNumber: Int, expectedColumnContents: Seq[String]): Matcher[Document] =
+    (document: Document) => {
+      val summaryRow = document.select(s"tbody > tr.govuk-table__row").get(rowNumber - 1)
+      val columns = summaryRow.select("tr > *")
+      val actualColumnContents = columns.eachText().asScala.toList
+      val errorMessageIfExpected =
+        s"We expected the contents of summary row $rowNumber to be [$expectedColumnContents] but it was actually [$actualColumnContents]."
+      val errorMessageIfNotExpected =
+        s"We didn't expect the contents of summary row $rowNumber to be [$expectedColumnContents], but it was."
+      MatchResult(
+        actualColumnContents == expectedColumnContents,
+        errorMessageIfExpected,
+        errorMessageIfNotExpected
+      )
+    }
+
+  def haveNotificationBannerContents(expectedValues: Seq[String]): Matcher[Document] = (document: Document) => {
+    val bannerItems = document.select(s"div.govuk-notification-banner__content > *")
+    val actualValues = bannerItems.eachText().asScala.toList
+    val errorMessageIfExpected =
+      s"We expected the contents of the banner to be [$expectedValues] but it was actually [$actualValues]."
+    val errorMessageIfNotExpected = s"We didn't expect the contents of the banner to be [$expectedValues], but it was."
+    MatchResult(
+      actualValues == expectedValues,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveBackLink(expectedPath: String, expectedLabel: String): Matcher[Document] = (document: Document) => {
+    val actualLabel = document.select(s"a.govuk-back-link[href=$expectedPath]").text()
+    val errorMessageIfExpected =
+      s"We expected a back link with path of '$expectedPath' and label of '$expectedLabel', but there wasn't one."
+    val errorMessageIfNotExpected =
+      s"We didn't expect a back link with path of '$expectedPath' and label of '$expectedLabel', but there one."
+    MatchResult(
+      actualLabel == expectedLabel,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
   private def singleValueMatcher[T](label: String, expectedValue: T, actualValue: T) = {
     val errorMessageIfExpected =
       s"The page didn't have $label of '$expectedValue'. The actual value was '$actualValue'"
@@ -263,5 +343,18 @@ object CustomMatchers {
       errorMessageIfNotExpected
     )
   }
+
+  private def removeInvisibleErrorMessagePrefix(original: String) = original.replace("Error: ", "")
+
+  private def haveErrorMessageForField(
+    fieldName: String,
+    valueSelector: String,
+    expectedValue: String
+  ): Matcher[Document] = (document: Document) =>
+    singleValueMatcher(
+      s"an error message for $fieldName",
+      expectedValue,
+      removeInvisibleErrorMessagePrefix(document.select(valueSelector).text().replace("Error: ", ""))
+    )
 
 }

@@ -65,7 +65,8 @@ class CoveringDateCalculatorSpec extends BaseSpec with TableDrivenPropertyChecks
       "1752 Sept 3–1752 Sept 13"  -> defineTestCoveringDate("1752 Sep 3" -> "1752 Sep 13"),
       "1752 Sept 14–1752 Sept 15" -> defineTestCoveringDate("1752 Sep 14" -> "1752 Sep 15"),
       "1752 Sept"                 -> defineTestCoveringDate("1752 Sep 1" -> "1752 Sep 30"),
-      "undated"                   -> List.empty
+      // End of switchover dates.
+      "undated" -> List.empty
     )
 
     forAll(validScenarioTestTable) { (input, expectedResult) =>

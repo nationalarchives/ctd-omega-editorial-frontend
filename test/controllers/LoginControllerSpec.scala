@@ -21,19 +21,21 @@
 
 package controllers
 
-import org.scalatestplus.play._
-import org.scalatestplus.play.guice._
-import play.api.mvc.{ AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesActionBuilderImpl, DefaultMessagesControllerComponents }
+import play.api.mvc._
 import play.api.test.Helpers._
 import play.api.test._
+import support.BaseSpec
+import support.CustomMatchers.haveLegend
 import uk.gov.nationalarchives.omega.editorial.controllers.{ LoginController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.views.html.login
+
+import scala.concurrent.Future
 
 /** Add your spec here. You can mock out a whole application including requests, plugins etc.
   *
   * For more information, see https://www.playframework.com/documentation/latest/ScalaTestingWithScalaTest
   */
-class LoginControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
+class LoginControllerSpec extends BaseSpec {
 
   "LoginController GET" should {
 
@@ -62,7 +64,8 @@ class LoginControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injectin
 
       status(response) mustBe OK
       contentType(response) mustBe Some("text/html")
-      contentAsString(response) must include("Sign in: Pan-Archival Catalogue")
+      val document = asDocument(response)
+      document must haveLegend("Sign in: Pan-Archival Catalogue")
     }
 
     "render the login page from the application" in {
@@ -71,16 +74,18 @@ class LoginControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injectin
 
       status(login) mustBe OK
       contentType(login) mustBe Some("text/html")
-      contentAsString(login) must include("Sign in: Pan-Archival Catalogue")
+      val document = asDocument(login)
+      document must haveLegend("Sign in: Pan-Archival Catalogue")
     }
 
     "render the login page from the router" in {
       val request = FakeRequest(GET, "/login")
-      val login = route(app, request).get
+      val login: Future[Result] = route(app, request).get
 
       status(login) mustBe OK
       contentType(login) mustBe Some("text/html")
-      contentAsString(login) must include("Sign in: Pan-Archival Catalogue")
+      val document = asDocument(login)
+      document must haveLegend("Sign in: Pan-Archival Catalogue")
     }
   }
 
