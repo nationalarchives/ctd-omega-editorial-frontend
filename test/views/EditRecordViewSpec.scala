@@ -24,7 +24,6 @@ package views
 import org.jsoup.nodes.Document
 import play.api.data.Forms.{ mapping, text }
 import play.api.data.{ Form, FormError }
-import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
 import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import play.twirl.api.Html
 import support.BaseSpec
@@ -47,7 +46,8 @@ class EditRecordViewSpec extends BaseSpec {
       "endDateDay"                -> text,
       "endDateMonth"              -> text,
       "endDateYear"               -> text,
-      "legalStatus"               -> text
+      "legalStatus"               -> text,
+      "placeOfDeposit"            -> text
     )(EditSetRecord.apply)(EditSetRecord.unapply)
   )
 
@@ -59,7 +59,21 @@ class EditRecordViewSpec extends BaseSpec {
       LegalStatus("ref.4", "Welsh Public Record(s)")
     )
 
-  val emptyRecord: EditSetRecord = EditSetRecord.apply("", "", "", "", "", "", "", "", "", "", "", "")
+  val emptyRecord: EditSetRecord = EditSetRecord.apply(
+    ccr = "",
+    oci = "",
+    scopeAndContent = "",
+    coveringDates = "",
+    formerReferenceDepartment = "",
+    startDateDay = "",
+    startDateMonth = "",
+    startDateYear = "",
+    endDateDay = "",
+    endDateMonth = "",
+    endDateYear = "",
+    placeOfDeposit = "",
+    legalStatus = ""
+  )
 
   "Edit record Html" should {
     "render when all is valid" in {
@@ -78,8 +92,9 @@ class EditRecordViewSpec extends BaseSpec {
             startDateYear = "1960",
             endDateDay = "31",
             endDateMonth = "12",
+            endDateYear = "1960",
             legalStatus = "ref.1",
-            endDateYear = "1960"
+            placeOfDeposit = "3"
           )
         )
       )
@@ -117,7 +132,7 @@ class EditRecordViewSpec extends BaseSpec {
         .withError(FormError("scopeAndContent", "Enter the scope and content."))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, legalStatusReferenceData, filledForm)(
+        editSetRecordEditInstance(user, title, legalStatusReferenceData, allCorporateBodies, filledForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -142,7 +157,7 @@ class EditRecordViewSpec extends BaseSpec {
         .withError(FormError("scopeAndContent", "Scope and content too long, maximum length 8000 characters"))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, legalStatusReferenceData, filledForm)(
+        editSetRecordEditInstance(user, title, legalStatusReferenceData, allCorporateBodies, filledForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -176,7 +191,7 @@ class EditRecordViewSpec extends BaseSpec {
         )
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, legalStatusReferenceData, filledForm)(
+        editSetRecordEditInstance(user, title, legalStatusReferenceData, allCorporateBodies, filledForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -201,16 +216,14 @@ class EditRecordViewSpec extends BaseSpec {
         .withError(FormError("", "Select a valid legal status"))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, legalStatusReferenceData, filledForm)(
+        editSetRecordEditInstance(user, title, legalStatusReferenceData, allCorporateBodies, filledForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
 
-      contentAsString(editRecordHtml) must include("There is a problem")
-      contentAsString(editRecordHtml) must include(
-        "Select a valid legal status"
-      )
-
+      val document = asDocument(editRecordHtml)
+      document must haveSummaryErrorTitle("There is a problem")
+      document must haveSummaryErrorMessages("Select a valid legal status")
     }
 
     "render an error when given invalid covering dates" in {
@@ -229,7 +242,8 @@ class EditRecordViewSpec extends BaseSpec {
         endDateDay = "31",
         endDateMonth = "12",
         endDateYear = "1960",
-        legalStatus = "ref.1"
+        legalStatus = "ref.1",
+        placeOfDeposit = "2"
       )
 
       val editSetRecordForm = emptyForm
@@ -237,7 +251,7 @@ class EditRecordViewSpec extends BaseSpec {
         .withError("coveringDates", "covering date message string")
 
       val editRecordHtml =
-        editSetRecordEditInstance(user, title, legalStatusReferenceData, editSetRecordForm)(
+        editSetRecordEditInstance(user, title, legalStatusReferenceData, allCorporateBodies, editSetRecordForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -296,6 +310,7 @@ class EditRecordViewSpec extends BaseSpec {
         user = user,
         title = title,
         legalStatusReferenceData,
+        corporateBodies = allCorporateBodies,
         editSetRecordForm = form
       )(
         Helpers.stubMessages(),
