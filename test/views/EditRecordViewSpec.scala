@@ -29,7 +29,7 @@ import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import play.twirl.api.Html
 import support.BaseSpec
 import support.CustomMatchers._
-import uk.gov.nationalarchives.omega.editorial.models.EditSetRecord
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, LegalStatus }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEdit
 
 class EditRecordViewSpec extends BaseSpec {
@@ -50,6 +50,15 @@ class EditRecordViewSpec extends BaseSpec {
       "legalStatus"               -> text
     )(EditSetRecord.apply)(EditSetRecord.unapply)
   )
+
+  val legalStatusReferenceData =
+    Seq(
+      LegalStatus("", "Select a Legal Status"),
+      LegalStatus("ref.1", "Public Record(s)"),
+      LegalStatus("ref.2", "Not Public Records"),
+      LegalStatus("ref.3", "Public Records unless otherwise Stated"),
+      LegalStatus("ref.4", "Welsh Public Record(s)")
+    )
 
   val emptyRecord: EditSetRecord = EditSetRecord.apply("", "", "", "", "", "", "", "", "", "", "", "")
 
@@ -109,7 +118,7 @@ class EditRecordViewSpec extends BaseSpec {
         .withError(FormError("", "Enter the scope and content."))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, legalStatusData, filledForm)(
+        editSetRecordEditInstance(user, title, legalStatusReferenceData, filledForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -131,7 +140,7 @@ class EditRecordViewSpec extends BaseSpec {
         .withError(FormError("", "Scope and content too long, maximum length 8000 characters"))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, legalStatusData, filledForm)(
+        editSetRecordEditInstance(user, title, legalStatusReferenceData, filledForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -155,7 +164,7 @@ class EditRecordViewSpec extends BaseSpec {
         .withError(FormError("", "Former reference - Department too long, maximum length 255 characters"))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, legalStatusData, filledForm)(
+        editSetRecordEditInstance(user, title, legalStatusReferenceData, filledForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -175,7 +184,7 @@ class EditRecordViewSpec extends BaseSpec {
         .withError(FormError("", "Select a valid legal status"))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, legalStatusData, filledForm)(
+        editSetRecordEditInstance(user, title, legalStatusReferenceData, filledForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -203,7 +212,7 @@ class EditRecordViewSpec extends BaseSpec {
         endDateDay = "31",
         endDateMonth = "12",
         endDateYear = "1960",
-        legalStatus = "1234"
+        legalStatus = "ref.1"
       )
 
       val editSetRecordForm = emptyForm
@@ -211,7 +220,7 @@ class EditRecordViewSpec extends BaseSpec {
         .withError("coveringDates", "covering date message string")
 
       val editRecordHtml =
-        editSetRecordEditInstance(user, title, legalStatusData, editSetRecordForm)(
+        editSetRecordEditInstance(user, title, legalStatusReferenceData, editSetRecordForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -270,7 +279,7 @@ class EditRecordViewSpec extends BaseSpec {
       editSetRecordEditInstance(
         user = user,
         title = title,
-        legalStatusData,
+        legalStatusReferenceData,
         editSetRecordForm = form
       )(
         Helpers.stubMessages(),

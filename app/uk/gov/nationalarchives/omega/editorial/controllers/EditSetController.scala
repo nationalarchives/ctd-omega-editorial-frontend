@@ -99,10 +99,15 @@ class EditSetController @Inject() (
       FieldNames.endDateDay     -> text,
       FieldNames.endDateMonth   -> text,
       FieldNames.endDateYear    -> text,
-      FieldNames.legalStatus -> text.verifying(
-        messagesApi("edit-set.record.error.legal-status")(Lang.apply("en")),
-        value => !value.equalsIgnoreCase("ref.0")
-      )
+      FieldNames.legalStatus -> text
+        .verifying(
+          resolvedMessage("edit-set.record.error.legal-status"),
+          value => !value.isEmpty
+        )
+        .verifying(
+          resolvedMessage("edit-set.record.error.legal-status"),
+          value => !legalStatus.getLegalStatusReferenceData().contains(value)
+        )
     )(EditSetRecord.apply)(EditSetRecord.unapply)
   )
 
@@ -134,7 +139,7 @@ class EditSetController @Inject() (
         case Some(record) =>
           val title: String = resolvedMessage("edit-set.record.edit.title")
           val recordForm = editSetRecordForm.fill(record)
-          Ok(editSetRecordEdit(user, title, legalStatus.getLegalStatusData(), recordForm))
+          Ok(editSetRecordEdit(user, title, legalStatus.getLegalStatusReferenceData(), recordForm))
         case None => NotFound
       }
     }
@@ -149,7 +154,7 @@ class EditSetController @Inject() (
         case Some("save") =>
           formToEither(performAdditionalValidation(editSetRecordForm.bindFromRequest())) match {
             case Left(formWithErrors) =>
-              BadRequest(editSetRecordEdit(user, title, legalStatus.getLegalStatusData(), formWithErrors))
+              BadRequest(editSetRecordEdit(user, title, legalStatus.getLegalStatusReferenceData(), formWithErrors))
             case Right(editSetRecord) =>
               editSetRecords.saveEditSetRecord(editSetRecord)
               Redirect(controllers.routes.EditSetController.save(id, editSetRecord.oci))
@@ -249,7 +254,7 @@ class EditSetController @Inject() (
             editSetRecordEdit(
               user,
               title,
-              legalStatus.getLegalStatusData(),
+              legalStatus.getLegalStatusReferenceData(),
               formWithUpdatedDateFields(originalForm, singleDateRangeOpt)
             )
           )
@@ -258,7 +263,7 @@ class EditSetController @Inject() (
             editSetRecordEdit(
               user,
               title,
-              legalStatus.getLegalStatusData(),
+              legalStatus.getLegalStatusReferenceData(),
               formAfterCoveringDatesParseError(originalForm)
             )
           )
@@ -268,7 +273,7 @@ class EditSetController @Inject() (
         editSetRecordEdit(
           user,
           title,
-          legalStatus.getLegalStatusData(),
+          legalStatus.getLegalStatusReferenceData(),
           originalForm.copy(errors = errorsForCoveringDatesOnly)
         )
       )

@@ -522,7 +522,7 @@ class EditSetControllerSpec extends BaseSpec {
         "legal status" when {
           "is not selected" in {
 
-            val values = validValues ++ Map("legalStatus" -> "ref.0")
+            val values = validValues ++ Map("legalStatus" -> "")
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
@@ -531,6 +531,18 @@ class EditSetControllerSpec extends BaseSpec {
             val document = asDocument(contentAsString(result))
             document must haveSummaryErrorMessages(Set("Select a valid legal status"))
             document must haveErrorMessageForLegalStatus("Error: Select a valid legal status")
+          }
+
+          "value doesn't exist" in {
+
+            val values = validValues ++ Map("legalStatus" -> "ref.10")
+
+            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+
+            status(result) mustBe SEE_OTHER
+
+            redirectLocation(result) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/save")
+
           }
         }
       }
@@ -580,7 +592,7 @@ class EditSetControllerSpec extends BaseSpec {
                       "endDateDay"                -> "31",
                       "endDateMonth"              -> "12",
                       "endDateYear"               -> "2020",
-                      "legalStatus"               -> "1234",
+                      "legalStatus"               -> "ref.1",
                       "action"                    -> "save"
                     )
                     .withSession(SessionKeys.token -> validSessionToken)
@@ -610,7 +622,7 @@ class EditSetControllerSpec extends BaseSpec {
                     "endDateDay"                -> "31",
                     "endDateMonth"              -> "12",
                     "endDateYear"               -> "2020",
-                    "legalStatus"               -> "1234",
+                    "legalStatus"               -> "ref.1",
                     "action"                    -> "save"
                   )
                   .withSession(SessionKeys.token -> validSessionToken)
@@ -637,7 +649,7 @@ class EditSetControllerSpec extends BaseSpec {
                 "endDateDay"                -> "31",
                 "endDateMonth"              -> "12",
                 "endDateYear"               -> "2020",
-                "legalStatus"               -> "1234",
+                "legalStatus"               -> "ref.1",
                 "action"                    -> "save"
               )
               .withSession(SessionKeys.token -> validSessionToken)
@@ -680,7 +692,7 @@ class EditSetControllerSpec extends BaseSpec {
                 "endDateDay"                -> "31",
                 "endDateMonth"              -> "12",
                 "endDateYear"               -> "2020",
-                "legalStatus"               -> "1234",
+                "legalStatus"               -> "ref.1",
                 "action"                    -> "discard"
               )
               .withSession(SessionKeys.token -> validSessionToken)
