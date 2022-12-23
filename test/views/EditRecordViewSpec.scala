@@ -29,7 +29,7 @@ import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import play.twirl.api.Html
 import support.BaseSpec
 import support.CustomMatchers._
-import uk.gov.nationalarchives.omega.editorial.models.EditSetRecord
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, LegalStatus }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEdit
 
 class EditRecordViewSpec extends BaseSpec {
@@ -46,11 +46,20 @@ class EditRecordViewSpec extends BaseSpec {
       "startDateYear"             -> text,
       "endDateDay"                -> text,
       "endDateMonth"              -> text,
-      "endDateYear"               -> text
+      "endDateYear"               -> text,
+      "legalStatus"               -> text
     )(EditSetRecord.apply)(EditSetRecord.unapply)
   )
 
-  val emptyRecord: EditSetRecord = EditSetRecord.apply("", "", "", "", "", "", "", "", "", "", "")
+  val legalStatusReferenceData =
+    Seq(
+      LegalStatus("ref.1", "Public Record(s)"),
+      LegalStatus("ref.2", "Not Public Records"),
+      LegalStatus("ref.3", "Public Records unless otherwise Stated"),
+      LegalStatus("ref.4", "Welsh Public Record(s)")
+    )
+
+  val emptyRecord: EditSetRecord = EditSetRecord.apply("", "", "", "", "", "", "", "", "", "", "", "")
 
   "Edit record Html" should {
     "render when all is valid" in {
@@ -69,6 +78,7 @@ class EditRecordViewSpec extends BaseSpec {
             startDateYear = "1960",
             endDateDay = "31",
             endDateMonth = "12",
+            legalStatus = "ref.1",
             endDateYear = "1960"
           )
         )
@@ -96,6 +106,7 @@ class EditRecordViewSpec extends BaseSpec {
       document must haveActionButtons("save", 2)
       document must haveActionButtons("discard", 2)
       document must haveLegend("edit-set.record.edit.legend")
+      document must haveLegalStatus("ref.1")
 
     }
     "render an error given no scope and content" in {
@@ -106,7 +117,7 @@ class EditRecordViewSpec extends BaseSpec {
         .withError(FormError("scopeAndContent", "Enter the scope and content."))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, filledForm)(
+        editSetRecordEditInstance(user, title, legalStatusReferenceData, filledForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -131,7 +142,7 @@ class EditRecordViewSpec extends BaseSpec {
         .withError(FormError("scopeAndContent", "Scope and content too long, maximum length 8000 characters"))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, filledForm)(
+        editSetRecordEditInstance(user, title, legalStatusReferenceData, filledForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -165,7 +176,7 @@ class EditRecordViewSpec extends BaseSpec {
         )
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, filledForm)(
+        editSetRecordEditInstance(user, title, legalStatusReferenceData, filledForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -180,6 +191,26 @@ class EditRecordViewSpec extends BaseSpec {
       document must haveFormerReferenceDepartment(
         "Former reference - Department Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing"
       )
+    }
+    "render an error when no legal status is selected" in {
+      val editSetRecordEditInstance = inject[editSetRecordEdit]
+
+      val title = "EditRecordTitleTest"
+      val filledForm = emptyForm
+        .fill(emptyRecord)
+        .withError(FormError("", "Select a valid legal status"))
+
+      val editRecordHtml: Html =
+        editSetRecordEditInstance(user, title, legalStatusReferenceData, filledForm)(
+          Helpers.stubMessages(),
+          CSRFTokenHelper.addCSRFToken(FakeRequest())
+        )
+
+      contentAsString(editRecordHtml) must include("There is a problem")
+      contentAsString(editRecordHtml) must include(
+        "Select a valid legal status"
+      )
+
     }
 
     "render an error when given invalid covering dates" in {
@@ -197,7 +228,8 @@ class EditRecordViewSpec extends BaseSpec {
         startDateYear = "1960",
         endDateDay = "31",
         endDateMonth = "12",
-        endDateYear = "1960"
+        endDateYear = "1960",
+        legalStatus = "ref.1"
       )
 
       val editSetRecordForm = emptyForm
@@ -205,7 +237,7 @@ class EditRecordViewSpec extends BaseSpec {
         .withError("coveringDates", "covering date message string")
 
       val editRecordHtml =
-        editSetRecordEditInstance(user, title, editSetRecordForm)(
+        editSetRecordEditInstance(user, title, legalStatusReferenceData, editSetRecordForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -213,8 +245,8 @@ class EditRecordViewSpec extends BaseSpec {
       val document = asDocument(editRecordHtml)
       document must haveSummaryErrorMessages("covering date message string")
     }
-
   }
+
   "render expecting errors when" when {
     "only the start date is invalid" in {
 
@@ -263,6 +295,7 @@ class EditRecordViewSpec extends BaseSpec {
       editSetRecordEditInstance(
         user = user,
         title = title,
+        legalStatusReferenceData,
         editSetRecordForm = form
       )(
         Helpers.stubMessages(),

@@ -22,7 +22,7 @@
 package uk.gov.nationalarchives.omega.editorial
 
 import play.api.libs.json._
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetRecord }
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetRecord, LegalStatus }
 
 package object editSetRecords {
 
@@ -39,7 +39,8 @@ package object editSetRecords {
         |  "startDateYear" : "1960",
         |  "endDateDay" : "31",
         |  "endDateMonth" : "12",
-        |  "endDateYear" : "1960"
+        |  "endDateYear" : "1960",
+        |  "legalStatus": "ref.1"
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -58,7 +59,8 @@ package object editSetRecords {
         |  "startDateYear" : "1960",
         |  "endDateDay" : "31",
         |  "endDateMonth" : "12",
-        |  "endDateYear" : "1960"
+        |  "endDateYear" : "1960",
+        |  "legalStatus": "ref.2"
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -77,7 +79,8 @@ package object editSetRecords {
         |  "startDateYear" : "1960",
         |  "endDateDay" : "31",
         |  "endDateMonth" : "12",
-        |  "endDateYear" : "1960"
+        |  "endDateYear" : "1960",
+        |  "legalStatus": ""
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -132,4 +135,15 @@ package object editSets {
 
   def getEditSet(): EditSet =
     editSet1
+}
+
+package object legalStatus {
+  val legalStatusData =
+    Seq(
+      LegalStatus("ref.1", "Public Record(s)"),
+      LegalStatus("ref.2", "Not Public Records"),
+      LegalStatus("ref.3", "Public Records unless otherwise Stated"),
+      LegalStatus("ref.4", "Welsh Public Record(s)")
+    )
+  def getLegalStatusReferenceData(): Seq[LegalStatus] = legalStatus.legalStatusData
 }

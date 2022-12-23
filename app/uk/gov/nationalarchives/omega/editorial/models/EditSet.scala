@@ -38,7 +38,8 @@ case class EditSetRecord(
   startDateYear: String,
   endDateDay: String,
   endDateMonth: String,
-  endDateYear: String
+  endDateYear: String,
+  legalStatus: String
 )
 
 object EditSetRecord {

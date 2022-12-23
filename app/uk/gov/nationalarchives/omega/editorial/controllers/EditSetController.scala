@@ -63,6 +63,7 @@ class EditSetController @Inject() (
     val startDateDay = "startDateDay"
     val startDateMonth = "startDateMonth"
     val startDateYear = "startDateYear"
+    val legalStatus = "legalStatus"
   }
 
   var editSetRecordForm: Form[EditSetRecord] = Form(
@@ -97,7 +98,12 @@ class EditSetController @Inject() (
       FieldNames.startDateYear  -> text,
       FieldNames.endDateDay     -> text,
       FieldNames.endDateMonth   -> text,
-      FieldNames.endDateYear    -> text
+      FieldNames.endDateYear    -> text,
+      FieldNames.legalStatus -> text
+        .verifying(
+          resolvedMessage("edit-set.record.error.choose-an-option"),
+          _.trim.nonEmpty
+        )
     )(EditSetRecord.apply)(EditSetRecord.unapply)
   )
 
@@ -129,7 +135,7 @@ class EditSetController @Inject() (
         case Some(record) =>
           val title: String = resolvedMessage("edit-set.record.edit.title")
           val recordForm = editSetRecordForm.fill(record)
-          Ok(editSetRecordEdit(user, title, recordForm))
+          Ok(editSetRecordEdit(user, title, legalStatus.getLegalStatusReferenceData(), recordForm))
         case None => NotFound
       }
     }
@@ -143,7 +149,8 @@ class EditSetController @Inject() (
       request.body.asFormUrlEncoded.get("action").headOption match {
         case Some("save") =>
           formToEither(performAdditionalValidation(editSetRecordForm.bindFromRequest())) match {
-            case Left(formWithErrors) => BadRequest(editSetRecordEdit(user, title, formWithErrors))
+            case Left(formWithErrors) =>
+              BadRequest(editSetRecordEdit(user, title, legalStatus.getLegalStatusReferenceData(), formWithErrors))
             case Right(editSetRecord) =>
               editSetRecords.saveEditSetRecord(editSetRecord)
               Redirect(controllers.routes.EditSetController.save(id, editSetRecord.oci))
@@ -239,12 +246,33 @@ class EditSetController @Inject() (
     if (errorsForCoveringDatesOnly.isEmpty) {
       singleRange(originalForm.data.getOrElse(FieldNames.coveringDates, "")) match {
         case Right(singleDateRangeOpt) =>
-          Ok(editSetRecordEdit(user, title, formWithUpdatedDateFields(originalForm, singleDateRangeOpt)))
+          Ok(
+            editSetRecordEdit(
+              user,
+              title,
+              legalStatus.getLegalStatusReferenceData(),
+              formWithUpdatedDateFields(originalForm, singleDateRangeOpt)
+            )
+          )
         case Left(_) =>
-          BadRequest(editSetRecordEdit(user, title, formAfterCoveringDatesParseError(originalForm)))
+          BadRequest(
+            editSetRecordEdit(
+              user,
+              title,
+              legalStatus.getLegalStatusReferenceData(),
+              formAfterCoveringDatesParseError(originalForm)
+            )
+          )
       }
     } else {
-      BadRequest(editSetRecordEdit(user, title, originalForm.copy(errors = errorsForCoveringDatesOnly)))
+      BadRequest(
+        editSetRecordEdit(
+          user,
+          title,
+          legalStatus.getLegalStatusReferenceData(),
+          originalForm.copy(errors = errorsForCoveringDatesOnly)
+        )
+      )
     }
   }
 

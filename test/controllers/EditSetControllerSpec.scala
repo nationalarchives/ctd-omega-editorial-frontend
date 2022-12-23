@@ -243,6 +243,7 @@ class EditSetControllerSpec extends BaseSpec {
         "endDateDay"                -> "31",
         "endDateMonth"              -> "10",
         "endDateYear"               -> "2020",
+        "legalStatus"               -> "ref.1",
         "action"                    -> "save"
       )
 
@@ -476,6 +477,7 @@ class EditSetControllerSpec extends BaseSpec {
                   "endDateDay"                -> "31",
                   "endDateMonth"              -> "12",
                   "endDateYear"               -> "2020",
+                  "legalStatus"               -> "ref.1",
                   "action"                    -> "save"
                 )
                 .withSession(
@@ -505,6 +507,7 @@ class EditSetControllerSpec extends BaseSpec {
                   "endDateDay"                -> "31",
                   "endDateMonth"              -> "12",
                   "endDateYear"               -> "2020",
+                  "legalStatus"               -> "ref.1",
                   "action"                    -> "save"
                 )
                 .withSession(
@@ -520,6 +523,32 @@ class EditSetControllerSpec extends BaseSpec {
           }
         }
 
+        "legal status" when {
+          "is not selected" in {
+
+            val values = validValues ++ Map("legalStatus" -> "")
+
+            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+
+            status(result) mustBe BAD_REQUEST
+
+            val document = asDocument(contentAsString(result))
+            document must haveSummaryErrorMessages("You must choose an option")
+            document must haveErrorMessageForLegalStatus("Error: You must choose an option")
+          }
+
+          "value doesn't exist" in {
+
+            val values = validValues ++ Map("legalStatus" -> "ref.10")
+
+            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+
+            status(result) mustBe SEE_OTHER
+
+            redirectLocation(result) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/save")
+
+          }
+        }
       }
       "successful" when {
         "redirect to result page from a new instance of controller" in {
@@ -567,6 +596,7 @@ class EditSetControllerSpec extends BaseSpec {
                       "endDateDay"                -> "31",
                       "endDateMonth"              -> "12",
                       "endDateYear"               -> "2020",
+                      "legalStatus"               -> "ref.1",
                       "action"                    -> "save"
                     )
                     .withSession(SessionKeys.token -> validSessionToken)
@@ -596,6 +626,7 @@ class EditSetControllerSpec extends BaseSpec {
                     "endDateDay"                -> "31",
                     "endDateMonth"              -> "12",
                     "endDateYear"               -> "2020",
+                    "legalStatus"               -> "ref.1",
                     "action"                    -> "save"
                   )
                   .withSession(SessionKeys.token -> validSessionToken)
@@ -622,6 +653,7 @@ class EditSetControllerSpec extends BaseSpec {
                 "endDateDay"                -> "31",
                 "endDateMonth"              -> "12",
                 "endDateYear"               -> "2020",
+                "legalStatus"               -> "ref.1",
                 "action"                    -> "save"
               )
               .withSession(SessionKeys.token -> validSessionToken)
@@ -664,6 +696,7 @@ class EditSetControllerSpec extends BaseSpec {
                 "endDateDay"                -> "31",
                 "endDateMonth"              -> "12",
                 "endDateYear"               -> "2020",
+                "legalStatus"               -> "ref.1",
                 "action"                    -> "discard"
               )
               .withSession(SessionKeys.token -> validSessionToken)

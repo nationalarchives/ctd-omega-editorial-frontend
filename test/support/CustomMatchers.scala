@@ -23,6 +23,7 @@ package support
 
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.{ MatchResult, Matcher }
+import support.CustomMatchers.singleValueMatcher
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError
 
 import scala.jdk.CollectionConverters._
@@ -206,6 +207,20 @@ object CustomMatchers {
     haveErrorMessageForField("covering dates", "#coveringDates-error", expectedValue)
 
   def haveNoErrorMessageForCoveringDate: Matcher[Document] = haveErrorMessageForCoveringDate("")
+
+  def haveErrorMessageForLegalStatus(expectedValue: String): Matcher[Document] = (document: Document) =>
+    singleValueMatcher(
+      "an error message for legal status",
+      expectedValue,
+      document.select("#legalStatus-error").text()
+    )
+
+  def haveLegalStatus(expectedValue: String): Matcher[Document] = (document: Document) =>
+    singleValueMatcher(
+      "a legal status",
+      expectedValue,
+      document.select("#legalStatus option[selected]").attr("value")
+    )
 
   def parseSuccessfullyAs[A](expected: A): Matcher[CoveringDateError.Result[A]] = {
     case Right(ok) =>
