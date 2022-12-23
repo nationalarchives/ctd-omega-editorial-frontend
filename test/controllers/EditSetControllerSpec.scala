@@ -533,8 +533,8 @@ class EditSetControllerSpec extends BaseSpec {
             status(result) mustBe BAD_REQUEST
 
             val document = asDocument(contentAsString(result))
-            document must haveSummaryErrorMessages(Set("Select a valid legal status"))
-            document must haveErrorMessageForLegalStatus("Error: Select a valid legal status")
+            document must haveSummaryErrorMessages("You must choose an option")
+            document must haveErrorMessageForLegalStatus("Error: You must choose an option")
           }
 
           "value doesn't exist" in {

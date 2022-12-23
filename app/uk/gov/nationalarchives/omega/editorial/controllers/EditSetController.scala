@@ -101,12 +101,8 @@ class EditSetController @Inject() (
       FieldNames.endDateYear    -> text,
       FieldNames.legalStatus -> text
         .verifying(
-          resolvedMessage("edit-set.record.error.legal-status"),
-          value => !value.isEmpty
-        )
-        .verifying(
-          resolvedMessage("edit-set.record.error.legal-status"),
-          value => !legalStatus.getLegalStatusReferenceData().contains(value)
+          resolvedMessage("edit-set.record.error.choose-an-option"),
+          _.trim.nonEmpty
         )
     )(EditSetRecord.apply)(EditSetRecord.unapply)
   )
