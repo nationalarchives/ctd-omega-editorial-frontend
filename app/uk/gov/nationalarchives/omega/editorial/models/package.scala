@@ -140,7 +140,6 @@ package object editSets {
 package object legalStatus {
   val legalStatusData =
     Seq(
-      LegalStatus("", "Select a Legal Status"),
       LegalStatus("ref.1", "Public Record(s)"),
       LegalStatus("ref.2", "Not Public Records"),
       LegalStatus("ref.3", "Public Records unless otherwise Stated"),
