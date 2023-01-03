@@ -71,7 +71,7 @@ class EditSetControllerSpec extends BaseSpec {
         editSetRecordEditSaveInstance
       )
       val editSet = controller
-        .view("COAL.2022.V5RJW.P")
+        .view("1")
         .apply(FakeRequest(GET, "/edit-set/1").withSession(SessionKeys.token -> validSessionToken))
 
       status(editSet) mustBe OK
@@ -83,7 +83,7 @@ class EditSetControllerSpec extends BaseSpec {
     "render the edit set page from the application" in {
       val controller = inject[EditSetController]
       val editSet = controller
-        .view("COAL.2022.V5RJW.P")
+        .view("1")
         .apply(
           FakeRequest(GET, "/edit-set/1")
             .withSession(SessionKeys.token -> validSessionToken)
@@ -157,7 +157,7 @@ class EditSetControllerSpec extends BaseSpec {
         editSetRecordEditSaveInstance
       )
       val editRecordPage = controller
-        .editRecord("COAL.2022.V5RJW.P", "COAL.2022.V5RJW.P")
+        .editRecord("1", "COAL.2022.V5RJW.P")
         .apply(
           CSRFTokenHelper.addCSRFToken(
             FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
@@ -174,7 +174,7 @@ class EditSetControllerSpec extends BaseSpec {
     "render the edit set page from the application" in {
       val controller = inject[EditSetController]
       val editRecordPage = controller
-        .editRecord("COAL.2022.V5RJW.P", "COAL.2022.V5RJW.P")
+        .editRecord("1", "COAL.2022.V5RJW.P")
         .apply(
           CSRFTokenHelper.addCSRFToken(
             FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
@@ -204,7 +204,7 @@ class EditSetControllerSpec extends BaseSpec {
     "redirect to the login page from the application when requested with invalid session token" in {
       val controller = inject[EditSetController]
       val editRecordPage = controller
-        .editRecord("COAL.2022.V5RJW.P", "COAL.2022.V5RJW.P")
+        .editRecord("1", "COAL.2022.V5RJW.P")
         .apply(
           CSRFTokenHelper.addCSRFToken(
             FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
@@ -232,7 +232,7 @@ class EditSetControllerSpec extends BaseSpec {
 
     val validValues: Map[String, String] =
       Map(
-        "ccr"             -> "COAL 80/80/1",
+        "ccr"             -> "COAL 80/80/5",
         "oci"             -> "COAL.2022.V5RJW.P",
         "scopeAndContent" -> "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         "formerReferenceDepartment" -> "1234",
