@@ -43,8 +43,7 @@ package object editSetRecords {
         |  "endDateYear" : "1960"
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   lazy val editSetRecord2: EditSetRecord = Json
     .parse(
@@ -62,8 +61,7 @@ package object editSetRecords {
         |  "endDateYear" : "1960"
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   lazy val editSetRecord3: EditSetRecord = Json
     .parse(
@@ -81,8 +79,7 @@ package object editSetRecords {
         |  "endDateYear" : "1960"
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   lazy val editSetRecord4: EditSetRecord = Json
     .parse(
@@ -100,8 +97,7 @@ package object editSetRecords {
         |  "endDateYear" : "1960"
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   lazy val editSetRecord5: EditSetRecord = Json
     .parse(
@@ -119,8 +115,7 @@ package object editSetRecords {
         |  "endDateYear" : "1960"
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   lazy val editSetRecord6: EditSetRecord = Json
     .parse(
@@ -138,8 +133,7 @@ package object editSetRecords {
         |  "endDateYear" : "1960"
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   lazy val editSetRecord7: EditSetRecord = Json
     .parse(
@@ -157,8 +151,7 @@ package object editSetRecords {
         |  "endDateYear" : "1960"
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   lazy val editSetRecord8: EditSetRecord = Json
     .parse(
@@ -176,8 +169,7 @@ package object editSetRecords {
         |  "endDateYear" : "1960"
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   lazy val editSetRecord9: EditSetRecord = Json
     .parse(
@@ -195,8 +187,7 @@ package object editSetRecords {
         |  "endDateYear" : "1960"
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   lazy val editSetRecord10: EditSetRecord = Json
     .parse(
@@ -214,8 +205,7 @@ package object editSetRecords {
         |  "endDateYear" : "1960"
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   lazy val editSetRecord11: EditSetRecord = Json
     .parse(
@@ -233,8 +223,7 @@ package object editSetRecords {
         |  "endDateYear" : "1960"
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   lazy val editSetRecord12: EditSetRecord = Json
     .parse(
@@ -252,8 +241,7 @@ package object editSetRecords {
         |  "endDateYear" : "1960"
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   lazy val editSetRecordMap = mutable.Map(
     "COAL.2022.V1RJW.P"  -> editSetRecord1,
@@ -362,8 +350,7 @@ package object editSets {
         |  ]
         |}""".stripMargin
     )
-    .validate[EditSet]
-    .get
+    .as[EditSet]
 
   def getEditSet(): EditSet =
     editSet1
