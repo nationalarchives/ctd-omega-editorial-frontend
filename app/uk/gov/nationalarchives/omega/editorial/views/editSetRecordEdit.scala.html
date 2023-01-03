@@ -185,7 +185,7 @@
     id = "placeOfDeposit",
     name = "placeOfDeposit",
     items = {
-        val noSelectionAsMap = Map("" -> messages("edit-set.record.edit.place-of-deposit.no-selection"))
+        val noSelectionAsMap = Map("" -> messages("edit-set.record.error.place-of-deposit"))
         val corporateBodiesAsMap = noSelectionAsMap ++ corporateBodies.map(corporateBody => (corporateBody.id, corporateBody.name)).toMap
         corporateBodiesAsMap
                 .map { case (id, label) =>

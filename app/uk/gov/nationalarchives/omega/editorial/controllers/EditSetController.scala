@@ -80,7 +80,7 @@ class EditSetController @Inject() (
     val formerReferenceDepartmentInvalid = "edit-set.record.error.former-reference-department"
     val heading = "edit-set.record.edit.heading"
     val legalStatusMissing = "edit-set.record.error.choose-an-option"
-    val placeOfDepositMissingOrInvalid = "edit-set.record.error.place-of-deposit"
+    val placeOfDepositMissingOrInvalid = "edit-set.record.error.choose-an-option"
     val scopeAndContentInvalid = "edit-set.record.error.scope-and-content"
     val scopeAndContentMissing = "edit-set.record.missing.scope-and-content"
     val startDateInvalid = "edit-set.record.error.start-date"

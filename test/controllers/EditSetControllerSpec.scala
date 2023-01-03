@@ -704,8 +704,8 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "",
-                summaryErrorMessages = Seq("Select where this record is held"),
-                errorMessageForPlaceOfDeposit = Some("Select where this record is held")
+                summaryErrorMessages = Seq("You must choose an option"),
+                errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
             )
 
@@ -732,8 +732,8 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "",
-                summaryErrorMessages = Seq("Select where this record is held"),
-                errorMessageForPlaceOfDeposit = Some("Select where this record is held")
+                summaryErrorMessages = Seq("You must choose an option"),
+                errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
             )
 
@@ -761,8 +761,8 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "",
-                summaryErrorMessages = Seq("Select where this record is held"),
-                errorMessageForPlaceOfDeposit = Some("Select where this record is held")
+                summaryErrorMessages = Seq("You must choose an option"),
+                errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
             )
 
@@ -1168,7 +1168,7 @@ class EditSetControllerSpec extends BaseSpec {
     document must haveActionButtons("discard", 2)
 
     val expectedSelectOptions =
-      (Seq(ExpectedSelectOption("", "You must choose an option", selected = false, disabled = true)) ++
+      (Seq(ExpectedSelectOption("", "Select where this record is held", selected = false, disabled = true)) ++
         allCorporateBodies
           .map(corporateBody =>
             ExpectedSelectOption(corporateBody.id, corporateBody.name, selected = false, disabled = false)
