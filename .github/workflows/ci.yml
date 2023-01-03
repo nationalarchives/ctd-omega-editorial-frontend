@@ -15,12 +15,8 @@ jobs:
         jdk: [1.8]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Cleanup build folder
-        run: |
-          ls -la ./
-          rm -rf ./* || true
-          rm -rf ./.??* || true
-          ls -la ./
+      - name: Clean all files from build directory
+      - uses: AutoModality/action-clean@v1
       - name: Setup JDK
         uses: actions/setup-java@v2
         with:
