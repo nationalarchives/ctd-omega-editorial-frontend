@@ -185,7 +185,7 @@ class EditSetControllerSpec extends BaseSpec {
       status(editRecordPage) mustBe OK
       contentType(editRecordPage) mustBe Some("text/html")
       val document = asDocument(editRecordPage)
-      document must haveHeading("TNA reference: COAL 80/80/1")
+      document must haveHeading("TNA reference: COAL 80/80/5")
     }
 
     "render the edit set page from the router" in {
@@ -198,7 +198,7 @@ class EditSetControllerSpec extends BaseSpec {
       status(editRecordPage) mustBe OK
       contentType(editRecordPage) mustBe Some("text/html")
       val document = asDocument(editRecordPage)
-      document must haveHeading("TNA reference: COAL 80/80/1")
+      document must haveHeading("TNA reference: COAL 80/80/5")
     }
 
     "redirect to the login page from the application when requested with invalid session token" in {
