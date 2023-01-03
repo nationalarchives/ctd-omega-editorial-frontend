@@ -48,7 +48,7 @@ package object editSetRecords {
   val editSetRecord2: EditSetRecord = Json
     .parse(
       """{
-        |  "ccr" : "COAL 80/80/1",
+        |  "ccr" : "COAL 80/80/2",
         |  "oci" : "COAL.2022.V2RJW.P",
         |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |  "coveringDates" : "1960",
@@ -67,7 +67,7 @@ package object editSetRecords {
   val editSetRecord3: EditSetRecord = Json
     .parse(
       """{
-        |  "ccr" : "COAL 80/80/1",
+        |  "ccr" : "COAL 80/80/3",
         |  "oci" : "COAL.2022.V3RJW.P",
         |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |  "coveringDates" : "1960",
@@ -86,7 +86,7 @@ package object editSetRecords {
   val editSetRecord4: EditSetRecord = Json
     .parse(
       """{
-        |  "ccr" : "COAL 80/80/1",
+        |  "ccr" : "COAL 80/80/4",
         |  "oci" : "COAL.2022.V4RJW.P",
         |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |  "coveringDates" : "1960",
@@ -105,7 +105,7 @@ package object editSetRecords {
   val editSetRecord5: EditSetRecord = Json
     .parse(
       """{
-        |  "ccr" : "COAL 80/80/1",
+        |  "ccr" : "COAL 80/80/5",
         |  "oci" : "COAL.2022.V5RJW.P",
         |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |  "coveringDates" : "1960",
@@ -124,7 +124,7 @@ package object editSetRecords {
   val editSetRecord6: EditSetRecord = Json
     .parse(
       """{
-        |  "ccr" : "COAL 80/80/1",
+        |  "ccr" : "COAL 80/80/6",
         |  "oci" : "COAL.2022.V6RJW.P",
         |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |  "coveringDates" : "1960",
@@ -143,7 +143,7 @@ package object editSetRecords {
   val editSetRecord7: EditSetRecord = Json
     .parse(
       """{
-        |  "ccr" : "COAL 80/80/1",
+        |  "ccr" : "COAL 80/80/7",
         |  "oci" : "COAL.2022.V7RJW.P",
         |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |  "coveringDates" : "1960",
@@ -162,7 +162,7 @@ package object editSetRecords {
   val editSetRecord8: EditSetRecord = Json
     .parse(
       """{
-        |  "ccr" : "COAL 80/80/1",
+        |  "ccr" : "COAL 80/80/8",
         |  "oci" : "COAL.2022.V8RJW.P",
         |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |  "coveringDates" : "1960",
@@ -181,7 +181,7 @@ package object editSetRecords {
   val editSetRecord9: EditSetRecord = Json
     .parse(
       """{
-        |  "ccr" : "COAL 80/80/1",
+        |  "ccr" : "COAL 80/80/9",
         |  "oci" : "COAL.2022.V9RJW.P",
         |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |  "coveringDates" : "1960",
@@ -200,7 +200,7 @@ package object editSetRecords {
   val editSetRecord10: EditSetRecord = Json
     .parse(
       """{
-        |  "ccr" : "COAL 80/80/1",
+        |  "ccr" : "COAL 80/80/10",
         |  "oci" : "COAL.2022.V10RJW.P",
         |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |  "coveringDates" : "1960",
@@ -219,7 +219,7 @@ package object editSetRecords {
   val editSetRecord11: EditSetRecord = Json
     .parse(
       """{
-        |  "ccr" : "COAL 80/80/1",
+        |  "ccr" : "COAL 80/80/11",
         |  "oci" : "COAL.2022.V11RJW.P",
         |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |  "coveringDates" : "1960",
@@ -238,7 +238,7 @@ package object editSetRecords {
   val editSetRecord12: EditSetRecord = Json
     .parse(
       """{
-        |  "ccr" : "COAL 80/80/1",
+        |  "ccr" : "COAL 80/80/12",
         |  "oci" : "COAL.2022.V12RJW.P",
         |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |  "coveringDates" : "1960",
@@ -305,55 +305,55 @@ package object editSets {
         |      "coveringDates" : "1960"
         |    },
         |    {
-        |      "ccr" : "COAL 80/80/3",
+        |      "ccr" : "COAL 80/80/4",
         |      "oci" : "COAL.2022.V4RJW.P",
         |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |      "coveringDates" : "1960"
         |    },
         |    {
-        |      "ccr" : "COAL 80/80/3",
+        |      "ccr" : "COAL 80/80/5",
         |      "oci" : "COAL.2022.V5RJW.P",
         |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |      "coveringDates" : "1960"
         |    },
         |    {
-        |      "ccr" : "COAL 80/80/3",
+        |      "ccr" : "COAL 80/80/6",
         |      "oci" : "COAL.2022.V6RJW.P",
         |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |      "coveringDates" : "1960"
         |    },
         |    {
-        |      "ccr" : "COAL 80/80/3",
+        |      "ccr" : "COAL 80/80/7",
         |      "oci" : "COAL.2022.V7RJW.P",
         |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |      "coveringDates" : "1960"
         |    },
         |    {
-        |      "ccr" : "COAL 80/80/3",
+        |      "ccr" : "COAL 80/80/8",
         |      "oci" : "COAL.2022.V8RJW.P",
         |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |      "coveringDates" : "1960"
         |    },
         |    {
-        |      "ccr" : "COAL 80/80/3",
+        |      "ccr" : "COAL 80/80/9",
         |      "oci" : "COAL.2022.V9RJW.P",
         |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |      "coveringDates" : "1960"
         |    },
         |    {
-        |      "ccr" : "COAL 80/80/3",
+        |      "ccr" : "COAL 80/80/10",
         |      "oci" : "COAL.2022.V10RJW.P",
         |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |      "coveringDates" : "1960"
         |    },
         |    {
-        |      "ccr" : "COAL 80/80/3",
+        |      "ccr" : "COAL 80/80/11",
         |      "oci" : "COAL.2022.V11RJW.P",
         |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |      "coveringDates" : "1960"
         |    },
         |    {
-        |      "ccr" : "COAL 80/80/3",
+        |      "ccr" : "COAL 80/80/12",
         |      "oci" : "COAL.2022.V12RJW.P",
         |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         |      "coveringDates" : "1960"
