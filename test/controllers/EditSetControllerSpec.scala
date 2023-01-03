@@ -132,7 +132,7 @@ class EditSetControllerSpec extends BaseSpec {
     "render the edit set page from a new instance of controller" in {
       val defaultLang = play.api.i18n.Lang.defaultLang.code
       val messages: Map[String, Map[String, String]] =
-        Map(defaultLang -> Map("edit-set.record.edit.heading" -> "TNA reference: COAL 80/80/1"))
+        Map(defaultLang -> Map("edit-set.record.edit.heading" -> "TNA reference: COAL 80/80/5"))
       val mockMessagesApi = stubMessagesApi(messages)
       val editSetInstance = inject[editSet]
       val editSetRecordEditInstance = inject[editSetRecordEdit]
@@ -168,7 +168,7 @@ class EditSetControllerSpec extends BaseSpec {
       status(editRecordPage) mustBe OK
       contentType(editRecordPage) mustBe Some("text/html")
       val document = asDocument(editRecordPage)
-      document must haveHeading("TNA reference: COAL 80/80/1")
+      document must haveHeading("TNA reference: COAL 80/80/5")
     }
 
     "render the edit set page from the application" in {
@@ -250,7 +250,7 @@ class EditSetControllerSpec extends BaseSpec {
       "fail" when {
         "and yet preserve the CCR" when {
           "there are errors" in {
-            val ccrToAssert = "COAL 80/80/1"
+            val ccrToAssert = "COAL 80/80/5"
             val blankScopeAndContentToFailValidation = ""
             val request = CSRFTokenHelper.addCSRFToken(
               FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
