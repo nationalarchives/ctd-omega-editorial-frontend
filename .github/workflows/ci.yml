@@ -23,4 +23,4 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Run tests
-        run: sbt -v +test
+        run: sbt -v clean +test
