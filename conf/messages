@@ -1,5 +1,12 @@
 # https://www.playframework.com/documentation/latest/ScalaI18N
 edit-set.heading=Edit set: {0}
+edit-set.ordering.button=Go
+edit-set.ordering.direction.ascending=Ascending
+edit-set.ordering.direction.descending=Descending
+edit-set.ordering.field.ccr=CCR
+edit-set.ordering.field.covering-dates=Covering Dates
+edit-set.ordering.field.scope-and-content=Scope and Content
+edit-set.ordering.header=Ordering:
 edit-set.record.calculate-dates.button=Calculate start and end dates
 edit-set.record.discard.button=Discard changes
 edit-set.record.discard.subheader=Changes discarded
@@ -51,5 +58,4 @@ login.missing.username=Enter a username
 login.password.label=Password
 login.title=Sign in
 login.username.label=Username
-
 placeholder.series-national-coal-board=Series: National Coal Board and predecessors: Photographs

@@ -24,11 +24,12 @@ package uk.gov.nationalarchives.omega.editorial.controllers
 import play.api.Logger
 import play.api.data.Forms.{ mapping, text }
 import play.api.data.{ Form, FormError }
-import play.api.i18n.{ I18nSupport, Lang, Messages }
+import play.api.i18n.{ I18nSupport, Lang }
 import play.api.mvc._
 import uk.gov.nationalarchives.omega.editorial._
+import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.EditSetReorder
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
-import uk.gov.nationalarchives.omega.editorial.models.{ DateRange, EditSetRecord, User }
+import uk.gov.nationalarchives.omega.editorial.models.{ DateRange, EditSetEntry, EditSetRecord, User }
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateCalculator.getStartAndEndDates
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError
 import uk.gov.nationalarchives.omega.editorial.support.DateParser
@@ -54,10 +55,12 @@ class EditSetController @Inject() (
   object FieldNames {
     val ccr = "ccr"
     val coveringDates = "coveringDates"
+    val orderDirection = "direction"
     val endDate = "endDate"
     val endDateDay = "endDateDay"
     val endDateMonth = "endDateMonth"
     val endDateYear = "endDateYear"
+    val orderField = "field"
     val formerReferenceDepartment = "formerReferenceDepartment"
     val legalStatus = "legalStatus"
     val oci = "oci"
@@ -88,10 +91,12 @@ class EditSetController @Inject() (
   }
 
   private val noSelectionForPlaceOfDeposit = ""
+  private val orderDirectionAscending = "ascending"
+  private val orderDirectionDescending = "descending"
 
   type FormTransformer = Form[EditSetRecord] => Form[EditSetRecord]
 
-  var editSetRecordForm: Form[EditSetRecord] = Form(
+  private val editSetRecordForm: Form[EditSetRecord] = Form(
     mapping(
       FieldNames.ccr -> text,
       FieldNames.oci -> text,
@@ -137,6 +142,19 @@ class EditSetController @Inject() (
     )(EditSetRecord.apply)(EditSetRecord.unapply)
   )
 
+  private val reorderForm: Form[EditSetReorder] = Form(
+    mapping(
+      FieldNames.orderField -> text
+        .verifying(proposed =>
+          Seq(FieldNames.ccr, FieldNames.scopeAndContent, FieldNames.coveringDates).contains(proposed)
+        ),
+      FieldNames.orderDirection -> text
+        .verifying(proposed => Seq(orderDirectionAscending, orderDirectionDescending).contains(proposed))
+    )(EditSetReorder.apply)(EditSetReorder.unapply)
+  )
+
+  private val fallbackEditSetReorder = EditSetReorder(FieldNames.ccr, orderDirectionAscending)
+
   /** Create an Action for the edit set page.
     *
     * The configuration in the `routes` file means that this method will be called when the application receives a `GET`
@@ -145,11 +163,48 @@ class EditSetController @Inject() (
   def view(id: String): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     withUser { user =>
       logger.info(s"The edit set id is $id ")
-      val editSetModels = editSets.getEditSet()
-      val messages: Messages = request.messages
-      val title: String = messages("edit-set.title")
-      val heading: String = messages("edit-set.heading", editSetModels.name)
-      Ok(editSet(user, title, heading, editSetModels))
+      generateEditSetView(user, fallbackEditSetReorder)
+    }
+  }
+
+  def viewAfterReordering(idCurrentlyUnused: String): Action[AnyContent] = Action {
+    implicit request: Request[AnyContent] =>
+      withUser { user =>
+        generateEditSetView(user, formToEither(reorderForm.bindFromRequest()).getOrElse(fallbackEditSetReorder))
+      }
+  }
+
+  private def generateEditSetView(user: User, editSetReorder: EditSetReorder)(implicit
+    request: Request[AnyContent]
+  ): Result = {
+    val currentEditSet = editSets.getEditSet()
+    val title = resolvedMessage("edit-set.title")
+    val heading: String = resolvedMessage("edit-set.heading", currentEditSet.name)
+    val editSetEntries = currentEditSet.entries.sortWith(getSorter(editSetReorder))
+    Ok(editSet(user, title, heading, editSetEntries, reorderForm.fill(editSetReorder)))
+  }
+
+  private def getSorter(editSetReorder: EditSetReorder): (EditSetEntry, EditSetEntry) => Boolean = {
+
+    def sortByCCRAscending(first: EditSetEntry, second: EditSetEntry): Boolean = first.ccr < second.ccr
+    def sortByCCRDescending(first: EditSetEntry, second: EditSetEntry): Boolean = first.ccr > second.ccr
+    def sortByScopeAndContentAscending(first: EditSetEntry, second: EditSetEntry): Boolean =
+      first.scopeAndContent < second.scopeAndContent
+    def sortByScopeAndContentDescending(first: EditSetEntry, second: EditSetEntry): Boolean =
+      first.scopeAndContent > second.scopeAndContent
+    def sortByCoveringDatesAscending(first: EditSetEntry, second: EditSetEntry): Boolean =
+      first.coveringDates < second.coveringDates
+    def sortByCoveringDatesDescending(first: EditSetEntry, second: EditSetEntry): Boolean =
+      first.coveringDates > second.coveringDates
+
+    editSetReorder match {
+      case EditSetReorder(FieldNames.ccr, `orderDirectionAscending`)              => sortByCCRAscending
+      case EditSetReorder(FieldNames.ccr, `orderDirectionDescending`)             => sortByCCRDescending
+      case EditSetReorder(FieldNames.scopeAndContent, `orderDirectionAscending`)  => sortByScopeAndContentAscending
+      case EditSetReorder(FieldNames.scopeAndContent, `orderDirectionDescending`) => sortByScopeAndContentDescending
+      case EditSetReorder(FieldNames.coveringDates, `orderDirectionAscending`)    => sortByCoveringDatesAscending
+      case EditSetReorder(FieldNames.coveringDates, `orderDirectionDescending`)   => sortByCoveringDatesDescending
+      case _                                                                      => sortByCCRAscending
     }
   }
 
@@ -394,4 +449,9 @@ class EditSetController @Inject() (
       form.data.get(FieldNames.placeOfDeposit).filter(isPlaceOfDepositRecognised).getOrElse("")
     form.copy(data = form.data ++ Map(FieldNames.placeOfDeposit -> correctedPlaceOfDeposit))
   }
+
+}
+
+object EditSetController {
+  case class EditSetReorder(field: String, direction: String)
 }

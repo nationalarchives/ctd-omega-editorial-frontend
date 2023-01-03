@@ -23,6 +23,6 @@ package support
 
 object ExpectedValues {
 
-  case class ExpectedSelectOption(value: String, label: String, selected: Boolean, disabled: Boolean)
+  case class ExpectedSelectOption(value: String, label: String, selected: Boolean = false, disabled: Boolean = false)
 
 }

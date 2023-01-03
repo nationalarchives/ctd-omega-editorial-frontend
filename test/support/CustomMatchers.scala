@@ -341,14 +341,27 @@ object CustomMatchers {
   }
 
   def haveSelectionForPlaceOfDeposit(expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
+    haveSelectionOptions("placeOfDeposit", "place of deposit", expectedSelectOptions)
+
+  def haveSelectionForOrderingField(expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
+    haveSelectionOptions("field", "ordering field", expectedSelectOptions)
+
+  def haveSelectionForOrderingDirection(expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
+    haveSelectionOptions("direction", "ordering direction", expectedSelectOptions)
+
+  private def haveSelectionOptions(
+    id: String,
+    label: String,
+    expectedSelectOptions: Seq[ExpectedSelectOption]
+  ): Matcher[Document] =
     (document: Document) => {
-      val actualSelectOptions = getActualSelectOptions(document, "placeOfDeposit")
+      val actualSelectOptions = getActualSelectOptions(document, id)
       val expectedSelectOptionsPresented = formatForDisplay(expectedSelectOptions)
       val actualSelectOptionsPresented = formatForDisplay(actualSelectOptions)
       val errorMessageIfExpected =
-        s"We expected the 'place of deposit' selection to have options of [$expectedSelectOptionsPresented], but they were [$actualSelectOptionsPresented]."
+        s"We expected the '$label' selection to have options of [$expectedSelectOptionsPresented], but they were [$actualSelectOptionsPresented]."
       val errorMessageIfNotExpected =
-        s"We didn't expect the 'place of deposit' selection to have options of [$expectedSelectOptionsPresented], but they were."
+        s"We didn't expect the '$label' selection to have options of [$expectedSelectOptionsPresented], but they were."
       MatchResult(
         actualSelectOptions == expectedSelectOptions,
         errorMessageIfExpected,
