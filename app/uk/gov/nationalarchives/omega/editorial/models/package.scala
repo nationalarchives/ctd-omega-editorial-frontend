@@ -21,6 +21,7 @@
 
 package uk.gov.nationalarchives.omega.editorial
 
+import scala.collection.mutable
 import play.api.libs.json._
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetRecord }
 
@@ -254,7 +255,7 @@ package object editSetRecords {
     .validate[EditSetRecord]
     .get
 
-  var editSetRecordMap = Map(
+  lazy val editSetRecordMap = mutable.Map(
     "COAL.2022.V1RJW.P"  -> editSetRecord1,
     "COAL.2022.V2RJW.P"  -> editSetRecord2,
     "COAL.2022.V3RJW.P"  -> editSetRecord3,
