@@ -22,7 +22,7 @@
 package uk.gov.nationalarchives.omega.editorial
 
 import play.api.libs.json._
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetRecord, LegalStatus }
+import uk.gov.nationalarchives.omega.editorial.models.{ CorporateBody, EditSet, EditSetRecord, LegalStatus }
 
 package object editSetRecords {
 
@@ -40,7 +40,8 @@ package object editSetRecords {
         |  "endDateDay" : "31",
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
-        |  "legalStatus": "ref.1"
+        |  "legalStatus": "ref.1",
+        |  "placeOfDeposit" : "1"
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -60,7 +61,8 @@ package object editSetRecords {
         |  "endDateDay" : "31",
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
-        |  "legalStatus": "ref.2"
+        |  "legalStatus": "ref.2",
+        |  "placeOfDeposit" : ""
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -80,7 +82,8 @@ package object editSetRecords {
         |  "endDateDay" : "31",
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
-        |  "legalStatus": ""
+        |  "legalStatus": "",
+        |  "placeOfDeposit" : "6"
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -146,4 +149,14 @@ package object legalStatus {
       LegalStatus("ref.4", "Welsh Public Record(s)")
     )
   def getLegalStatusReferenceData(): Seq[LegalStatus] = legalStatus.legalStatusData
+}
+
+package object corporateBodies {
+
+  val all: Seq[CorporateBody] = Seq(
+    CorporateBody("1", "The National Archives, Kew"),
+    CorporateBody("2", "British Museum, Department of Libraries and Archives"),
+    CorporateBody("3", "British Library, National Sound Archive")
+  )
+
 }

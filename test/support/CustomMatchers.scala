@@ -23,7 +23,7 @@ package support
 
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.{ MatchResult, Matcher }
-import support.CustomMatchers.singleValueMatcher
+import support.ExpectedValues.ExpectedSelectOption
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError
 
 import scala.jdk.CollectionConverters._
@@ -101,7 +101,7 @@ object CustomMatchers {
 
   def haveOmegaCatalogueId(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
-      label = "n omega catalogue ref",
+      label = "an omega catalogue ref",
       expectedValue = expectedValue,
       actualValue = document.select("#ocr").attr("value")
     )
@@ -177,7 +177,7 @@ object CustomMatchers {
     )
 
   def haveSummaryErrorMessages(expectedValues: String*): Matcher[Document] = (document: Document) => {
-    val actualValues = document.select("ul.govuk-error-summary__list > li").eachText().asScala.toSet
+    val actualValues = document.select("ul.govuk-error-summary__list > li").eachText().asScala.toSeq
     val actualValuesForDisplay = actualValues.mkString(",")
     val expectedValuesForDisplay = expectedValues.toSet.mkString(",")
     val errorMessageIfExpected =
@@ -185,7 +185,7 @@ object CustomMatchers {
     val errorMessageIfNotExpected =
       s"The page did indeed have a summary error messages of ('$expectedValuesForDisplay'), which was not expected."
     MatchResult(
-      actualValues == expectedValues.toSet,
+      actualValues == expectedValues.toSeq,
       errorMessageIfExpected,
       errorMessageIfNotExpected
     )
@@ -203,10 +203,10 @@ object CustomMatchers {
 
   def haveNoErrorMessageForEndDate: Matcher[Document] = haveErrorMessageForEndDate("")
 
-  def haveErrorMessageForCoveringDate(expectedValue: String): Matcher[Document] =
+  def haveErrorMessageForCoveringDates(expectedValue: String): Matcher[Document] =
     haveErrorMessageForField("covering dates", "#coveringDates-error", expectedValue)
 
-  def haveNoErrorMessageForCoveringDate: Matcher[Document] = haveErrorMessageForCoveringDate("")
+  def haveNoErrorMessageForCoveringDates: Matcher[Document] = haveErrorMessageForCoveringDates("")
 
   def haveErrorMessageForLegalStatus(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
@@ -214,6 +214,8 @@ object CustomMatchers {
       expectedValue,
       document.select("#legalStatus-error").text()
     )
+
+  def haveNoErrorMessageForLegalStatus: Matcher[Document] = haveErrorMessageForLegalStatus("")
 
   def haveLegalStatus(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
@@ -276,6 +278,11 @@ object CustomMatchers {
   def haveErrorMessageForFormerReferenceDepartment(expectedValue: String): Matcher[Document] =
     haveErrorMessageForField("former reference department", "#formerReferenceDepartment-error", expectedValue)
 
+  def haveErrorMessageForPlaceOfDeposit(expectedValue: String): Matcher[Document] =
+    haveErrorMessageForField("place of deposit", "#placeOfDeposit-error", expectedValue)
+
+  def haveNoErrorMessageForPlaceOfDeposit: Matcher[Document] = haveErrorMessageForPlaceOfDeposit("")
+
   def haveCaption(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher("a caption", expectedValue, document.select("caption").text())
 
@@ -332,6 +339,41 @@ object CustomMatchers {
       errorMessageIfNotExpected
     )
   }
+
+  def haveSelectionForPlaceOfDeposit(expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
+    (document: Document) => {
+      val actualSelectOptions = getActualSelectOptions(document, "placeOfDeposit")
+      val expectedSelectOptionsPresented = formatForDisplay(expectedSelectOptions)
+      val actualSelectOptionsPresented = formatForDisplay(actualSelectOptions)
+      val errorMessageIfExpected =
+        s"We expected the 'place of deposit' selection to have options of [$expectedSelectOptionsPresented], but they were [$actualSelectOptionsPresented]."
+      val errorMessageIfNotExpected =
+        s"We didn't expect the 'place of deposit' selection to have options of [$expectedSelectOptionsPresented], but they were."
+      MatchResult(
+        actualSelectOptions == expectedSelectOptions,
+        errorMessageIfExpected,
+        errorMessageIfNotExpected
+      )
+    }
+
+  private def formatForDisplay(expectedSelectOptions: Seq[ExpectedSelectOption]): String =
+    expectedSelectOptions
+      .map(option => s"'${option.value}' -> '${option.label}' (selected: ${option.selected})")
+      .mkString(",")
+
+  private def getActualSelectOptions(document: Document, selectionId: String): Seq[ExpectedSelectOption] =
+    document
+      .select(s"#$selectionId > option")
+      .asScala
+      .map(option =>
+        ExpectedSelectOption(
+          option.attr("value"),
+          option.text(),
+          option.hasAttr("selected"),
+          option.hasAttr("disabled")
+        )
+      )
+      .toSeq
 
   private def singleValueMatcher[T](label: String, expectedValue: T, actualValue: T) = {
     val errorMessageIfExpected =

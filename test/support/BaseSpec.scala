@@ -29,13 +29,19 @@ import play.api.mvc.Result
 import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
 import play.api.test.Injecting
 import play.twirl.api.Content
-import uk.gov.nationalarchives.omega.editorial.models.{ LegalStatus, User }
+import uk.gov.nationalarchives.omega.editorial.models.{ CorporateBody, User }
 
 import scala.concurrent.Future
 
 class BaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
 
-  lazy val user: User = User("dummy user")
+  val user: User = User("dummy user")
+
+  val allCorporateBodies: Seq[CorporateBody] = Seq(
+    CorporateBody("1", "The National Archives, Kew"),
+    CorporateBody("2", "British Museum, Department of Libraries and Archives"),
+    CorporateBody("3", "British Library, National Sound Archive")
+  )
 
   def asDocument(content: Content): Document = asDocument(contentAsString(content))
 
