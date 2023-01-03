@@ -26,7 +26,7 @@ import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetRecord }
 
 package object editSetRecords {
 
-  val editSetRecord1: EditSetRecord = Json
+  lazy val editSetRecord1: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/1",
@@ -45,7 +45,7 @@ package object editSetRecords {
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord2: EditSetRecord = Json
+  lazy val editSetRecord2: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/2",
@@ -64,7 +64,7 @@ package object editSetRecords {
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord3: EditSetRecord = Json
+  lazy val editSetRecord3: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/3",
@@ -83,7 +83,7 @@ package object editSetRecords {
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord4: EditSetRecord = Json
+  lazy val editSetRecord4: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/4",
@@ -102,7 +102,7 @@ package object editSetRecords {
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord5: EditSetRecord = Json
+  lazy val editSetRecord5: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/5",
@@ -121,7 +121,7 @@ package object editSetRecords {
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord6: EditSetRecord = Json
+  lazy val editSetRecord6: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/6",
@@ -140,7 +140,7 @@ package object editSetRecords {
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord7: EditSetRecord = Json
+  lazy val editSetRecord7: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/7",
@@ -159,7 +159,7 @@ package object editSetRecords {
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord8: EditSetRecord = Json
+  lazy val editSetRecord8: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/8",
@@ -178,7 +178,7 @@ package object editSetRecords {
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord9: EditSetRecord = Json
+  lazy val editSetRecord9: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/9",
@@ -197,7 +197,7 @@ package object editSetRecords {
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord10: EditSetRecord = Json
+  lazy val editSetRecord10: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/10",
@@ -216,7 +216,7 @@ package object editSetRecords {
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord11: EditSetRecord = Json
+  lazy val editSetRecord11: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/11",
@@ -235,7 +235,7 @@ package object editSetRecords {
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord12: EditSetRecord = Json
+  lazy val editSetRecord12: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/12",
@@ -272,7 +272,7 @@ package object editSetRecords {
     editSetRecordMap.get(oci)
 
   def saveEditSetRecord(editSetRecord: EditSetRecord) = {
-    val editSetRecordOCI = editSetRecord.oci;
+    lazy val editSetRecordOCI = editSetRecord.oci;
     editSetRecordMap -= editSetRecordOCI
     editSetRecordMap += (editSetRecordOCI -> editSetRecord)
   }
@@ -280,7 +280,7 @@ package object editSetRecords {
 }
 
 package object editSets {
-  val editSet1: EditSet = Json
+  lazy val editSet1: EditSet = Json
     .parse(
       """{
         |  "name" : "COAL 80 Sample",
