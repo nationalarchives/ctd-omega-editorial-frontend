@@ -16,7 +16,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Clean all files from build directory
-      - uses: AutoModality/action-clean@v1
+        uses: AutoModality/action-clean@v1
       - name: Setup JDK
         uses: actions/setup-java@v2
         with:
