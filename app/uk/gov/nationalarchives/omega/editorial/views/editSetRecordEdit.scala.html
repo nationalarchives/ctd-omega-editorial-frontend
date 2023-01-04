@@ -27,7 +27,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(govukButton: GovukButton, govukInput: GovukInput, govukTextarea: GovukTextarea, govukFieldset: GovukFieldset, govukErrorSummary: GovukErrorSummary, govukSelect: GovukSelect)
-@(user: User, title: String, legalStatusReferenceData: Seq[LegalStatus], corporateBodies: Seq[CorporateBody], editSetRecordForm: Form[EditSetRecord])(implicit messages: Messages, request: Request[AnyContent])
+@(user: User, editSetName: String, title: String, legalStatusReferenceData: Seq[LegalStatus], corporateBodies: Seq[CorporateBody], editSetRecordForm: Form[EditSetRecord])(implicit messages: Messages, request: Request[AnyContent])
 
 
 
@@ -39,7 +39,7 @@
 }
 
 @backLink = {
-    <a class="govuk-back-link" href="/edit-set/1">@messages("placeholder.back-to-edit-set")</a>
+    <a class="govuk-back-link" href="/edit-set/1">@messages("edit-set.record.edit.back-to-edit-set", editSetName)</a>
 }
 
 @actionButtonGroup = {

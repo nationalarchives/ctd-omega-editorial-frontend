@@ -37,12 +37,13 @@ class EditSetRecordEditDiscardSpec extends BaseSpec {
 
       val editSetRecordEditDiscardInstance = inject[editSetRecordEditDiscard]
       val title = "EditRecordTitleTest"
+      val editSetName = "COAL 80 Sample"
       val heading = "EditRecordHeadingTest"
       val discardChanges = "Any changes have been discarded. Showing last saved version."
       val oci = "EditRecordOciTest"
 
       val confirmationEditSetRecordEditHtml: Html =
-        editSetRecordEditDiscardInstance(user, title, heading, oci, discardChanges)
+        editSetRecordEditDiscardInstance(user, editSetName, title, heading, oci, discardChanges)
 
       val document = asDocument(confirmationEditSetRecordEditHtml)
       document must haveTitle(title)
@@ -50,11 +51,11 @@ class EditSetRecordEditDiscardSpec extends BaseSpec {
         Seq(
           "Any changes have been discarded. Showing last saved version.",
           "EditRecordHeadingTest",
-          "PAC-ID: COAL.2022.V5RJW.P Physical Record",
-          "Series: National Coal Board and predecessors: Photographs"
+          "edit-set.record.edit.id",
+          "placeholder.series-national-coal-board"
         )
       )
-      document must haveBackLink("/edit-set/1/record/EditRecordOciTest/edit", "Back to edit record")
+      document must haveBackLink("/edit-set/1/record/EditRecordOciTest/edit", "edit-set.record.save.back")
 
     }
 
@@ -76,6 +77,7 @@ class EditSetRecordEditDiscardSpec extends BaseSpec {
     asDocument(
       editSetRecordEditDiscardInstance(
         user = user,
+        editSetName = "COAL 80 Sample",
         title = "EditRecordTitleTest",
         heading = "EditRecordHeadingTest",
         oci = "EditRecordOciTest",

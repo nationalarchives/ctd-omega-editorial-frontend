@@ -127,19 +127,20 @@ class EditRecordViewSpec extends BaseSpec {
     "render an error given no scope and content" in {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
       val title = "EditRecordTitleTest"
+      val editSetName = "COAL 80 Sample"
       val filledForm = emptyForm
         .fill(emptyRecord)
         .withError(FormError("scopeAndContent", "Enter the scope and content."))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, legalStatusReferenceData, allCorporateBodies, filledForm)(
+        editSetRecordEditInstance(user, editSetName, title, legalStatusReferenceData, allCorporateBodies, filledForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
 
       val document = asDocument(editRecordHtml)
       document must haveTitle("EditRecordTitleTest")
-      document must haveSummaryErrorTitle("There is a problem")
+      document must haveSummaryErrorTitle("error.summary.title")
       document must haveSummaryErrorMessages("Enter the scope and content.")
       document must haveErrorMessageForScopeAndContent("Enter the scope and content.")
       document must haveScopeAndContent("")
@@ -148,6 +149,7 @@ class EditRecordViewSpec extends BaseSpec {
     "render an error when given scope and content is more than 8000 characters" in {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
       val title = "EditRecordTitleTest"
+      val editSetName = "COAL 80 Sample"
       val filledForm = emptyForm
         .fill(
           emptyRecord.copy(
@@ -157,14 +159,14 @@ class EditRecordViewSpec extends BaseSpec {
         .withError(FormError("scopeAndContent", "Scope and content too long, maximum length 8000 characters"))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, legalStatusReferenceData, allCorporateBodies, filledForm)(
+        editSetRecordEditInstance(user, editSetName, title, legalStatusReferenceData, allCorporateBodies, filledForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
 
       val document = asDocument(editRecordHtml)
       document must haveTitle("EditRecordTitleTest")
-      document must haveSummaryErrorTitle("There is a problem")
+      document must haveSummaryErrorTitle("error.summary.title")
       document must haveSummaryErrorMessages("Scope and content too long, maximum length 8000 characters")
       document must haveErrorMessageForScopeAndContent("Scope and content too long, maximum length 8000 characters")
       document must haveScopeAndContent(
@@ -175,6 +177,7 @@ class EditRecordViewSpec extends BaseSpec {
     "render an error when given former reference department is more than 255 characters" in {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
       val title = "EditRecordTitleTest"
+      val editSetName = "COAL 80 Sample"
       val filledForm = emptyForm
         .fill(
           emptyRecord.copy(
@@ -191,14 +194,14 @@ class EditRecordViewSpec extends BaseSpec {
         )
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, legalStatusReferenceData, allCorporateBodies, filledForm)(
+        editSetRecordEditInstance(user, editSetName, title, legalStatusReferenceData, allCorporateBodies, filledForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
 
       val document = asDocument(editRecordHtml)
       document must haveTitle("EditRecordTitleTest")
-      document must haveSummaryErrorTitle("There is a problem")
+      document must haveSummaryErrorTitle("error.summary.title")
       document must haveSummaryErrorMessages("Former reference - Department too long, maximum length 255 characters")
       document must haveErrorMessageForFormerReferenceDepartment(
         "Former reference - Department too long, maximum length 255 characters"
@@ -211,18 +214,19 @@ class EditRecordViewSpec extends BaseSpec {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
 
       val title = "EditRecordTitleTest"
+      val editSetName = "COAL 80 Sample"
       val filledForm = emptyForm
         .fill(emptyRecord)
         .withError(FormError("", "Select a valid legal status"))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, title, legalStatusReferenceData, allCorporateBodies, filledForm)(
+        editSetRecordEditInstance(user, editSetName, title, legalStatusReferenceData, allCorporateBodies, filledForm)(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
 
       val document = asDocument(editRecordHtml)
-      document must haveSummaryErrorTitle("There is a problem")
+      document must haveSummaryErrorTitle("error.summary.title")
       document must haveSummaryErrorMessages("Select a valid legal status")
     }
 
@@ -230,6 +234,7 @@ class EditRecordViewSpec extends BaseSpec {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
 
       val title = "EditRecordTitleTest"
+      val editSetName = "COAL 80 Sample"
       val inputData = EditSetRecord(
         ccr = "",
         oci = "",
@@ -251,7 +256,14 @@ class EditRecordViewSpec extends BaseSpec {
         .withError("coveringDates", "covering date message string")
 
       val editRecordHtml =
-        editSetRecordEditInstance(user, title, legalStatusReferenceData, allCorporateBodies, editSetRecordForm)(
+        editSetRecordEditInstance(
+          user,
+          editSetName,
+          title,
+          legalStatusReferenceData,
+          allCorporateBodies,
+          editSetRecordForm
+        )(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -308,6 +320,7 @@ class EditRecordViewSpec extends BaseSpec {
     asDocument(
       editSetRecordEditInstance(
         user = user,
+        editSetName = "COAL 80 Sample",
         title = title,
         legalStatusReferenceData,
         corporateBodies = allCorporateBodies,

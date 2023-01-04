@@ -4,6 +4,7 @@ edit-set.record.calculate-dates.button=Calculate start and end dates
 edit-set.record.discard.button=Discard changes
 edit-set.record.discard.subheader=Changes discarded
 edit-set.record.discard.text=Changes to the following record have been discarded:
+edit-set.record.edit.back-to-edit-set=Back to edit set ({0})
 edit-set.record.edit.ccr=CCR
 edit-set.record.edit.covering-dates=Covering dates
 edit-set.record.edit.dates.day=Day
@@ -50,5 +51,5 @@ login.missing.username=Enter a username
 login.password.label=Password
 login.title=Sign in
 login.username.label=Username
-placeholder.back-to-edit-set=Back to edit set (COAL 80 Sample)
+
 placeholder.series-national-coal-board=Series: National Coal Board and predecessors: Photographs
