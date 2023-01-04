@@ -162,50 +162,35 @@ class EditSetController @Inject() (
     */
   def view(id: String): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     withUser { user =>
-      logger.info(s"The edit set id is $id ")
-      generateEditSetView(user, fallbackEditSetReorder)
+      generateEditSetView(id, user, fallbackEditSetReorder)
     }
   }
 
-  def viewAfterReordering(idCurrentlyUnused: String): Action[AnyContent] = Action {
-    implicit request: Request[AnyContent] =>
-      withUser { user =>
-        generateEditSetView(user, formToEither(reorderForm.bindFromRequest()).getOrElse(fallbackEditSetReorder))
-      }
+  def viewAfterReordering(id: String): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
+    withUser { user =>
+      generateEditSetView(id, user, formToEither(reorderForm.bindFromRequest()).getOrElse(fallbackEditSetReorder))
+    }
   }
 
-  private def generateEditSetView(user: User, editSetReorder: EditSetReorder)(implicit
+  private def generateEditSetView(id: String, user: User, editSetReorder: EditSetReorder)(implicit
     request: Request[AnyContent]
   ): Result = {
+    logger.info(s"The edit set id is $id ")
     val currentEditSet = editSets.getEditSet()
     val title = resolvedMessage("edit-set.title")
     val heading: String = resolvedMessage("edit-set.heading", currentEditSet.name)
-    val editSetEntries = currentEditSet.entries.sortWith(getSorter(editSetReorder))
+    val editSetEntries = currentEditSet.entries.sorted(getSorter(editSetReorder))
     Ok(editSet(user, title, heading, editSetEntries, reorderForm.fill(editSetReorder)))
   }
 
-  private def getSorter(editSetReorder: EditSetReorder): (EditSetEntry, EditSetEntry) => Boolean = {
-
-    def sortByCCRAscending(first: EditSetEntry, second: EditSetEntry): Boolean = first.ccr < second.ccr
-    def sortByCCRDescending(first: EditSetEntry, second: EditSetEntry): Boolean = first.ccr > second.ccr
-    def sortByScopeAndContentAscending(first: EditSetEntry, second: EditSetEntry): Boolean =
-      first.scopeAndContent < second.scopeAndContent
-    def sortByScopeAndContentDescending(first: EditSetEntry, second: EditSetEntry): Boolean =
-      first.scopeAndContent > second.scopeAndContent
-    def sortByCoveringDatesAscending(first: EditSetEntry, second: EditSetEntry): Boolean =
-      first.coveringDates < second.coveringDates
-    def sortByCoveringDatesDescending(first: EditSetEntry, second: EditSetEntry): Boolean =
-      first.coveringDates > second.coveringDates
-
-    editSetReorder match {
-      case EditSetReorder(FieldNames.ccr, `orderDirectionAscending`)              => sortByCCRAscending
-      case EditSetReorder(FieldNames.ccr, `orderDirectionDescending`)             => sortByCCRDescending
-      case EditSetReorder(FieldNames.scopeAndContent, `orderDirectionAscending`)  => sortByScopeAndContentAscending
-      case EditSetReorder(FieldNames.scopeAndContent, `orderDirectionDescending`) => sortByScopeAndContentDescending
-      case EditSetReorder(FieldNames.coveringDates, `orderDirectionAscending`)    => sortByCoveringDatesAscending
-      case EditSetReorder(FieldNames.coveringDates, `orderDirectionDescending`)   => sortByCoveringDatesDescending
-      case _                                                                      => sortByCCRAscending
+  private def getSorter(editSetReorder: EditSetReorder): Ordering[EditSetEntry] = {
+    val fieldOrdering: Ordering[EditSetEntry] = editSetReorder.field match {
+      case FieldNames.ccr             => Ordering.by(_.ccr)
+      case FieldNames.scopeAndContent => Ordering.by(_.scopeAndContent)
+      case FieldNames.coveringDates   => Ordering.by(_.coveringDates)
+      case _                          => Ordering.by(_.ccr)
     }
+    if (editSetReorder.direction == orderDirectionDescending) fieldOrdering.reverse else fieldOrdering
   }
 
   /** Create an Action for the edit set record edit page.
