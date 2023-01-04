@@ -161,11 +161,21 @@ class EditSetController @Inject() (
   def editRecord(id: String, recordId: String): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     withUser { user =>
       logger.info(s"The edit set id is $id for record id $recordId")
+      val editSetName = editSets.getEditSet().name
       editSetRecords.getEditSetRecordByOCI(recordId) match {
         case Some(record) =>
           val title: String = resolvedMessage(MessageKeys.title)
           val recordForm = correctBeforePresenting(editSetRecordForm.fill(record))
-          Ok(editSetRecordEdit(user, title, legalStatus.getLegalStatusReferenceData(), corporateBodies.all, recordForm))
+          Ok(
+            editSetRecordEdit(
+              user,
+              editSetName,
+              title,
+              legalStatus.getLegalStatusReferenceData(),
+              corporateBodies.all,
+              recordForm
+            )
+          )
         case None => NotFound
       }
     }
@@ -174,6 +184,7 @@ class EditSetController @Inject() (
   def submit(id: String, recordId: String): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     withUser { user =>
       val title: String = resolvedMessage(MessageKeys.title)
+      val editSetName = editSets.getEditSet().name
       logger.info(s"The edit set id is $id for record id $recordId")
 
       request.body.asFormUrlEncoded.get("action").headOption match {
@@ -183,6 +194,7 @@ class EditSetController @Inject() (
               BadRequest(
                 editSetRecordEdit(
                   user,
+                  editSetName,
                   title,
                   legalStatus.getLegalStatusReferenceData(),
                   corporateBodies.all,
@@ -211,26 +223,28 @@ class EditSetController @Inject() (
   def save(id: String, oci: String): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     withUser { user =>
       val title: String = resolvedMessage(MessageKeys.title)
+      val editSetName = editSets.getEditSet().name
       editSetRecords.getEditSetRecordByOCI(oci).get
       val heading: String =
         resolvedMessage(MessageKeys.heading, editSetRecords.getEditSetRecordByOCI(oci).get.ccr)
       val message: String = resolvedMessage(MessageKeys.buttonSave)
       logger.info(s"Save changes for record id $oci edit set id $id")
 
-      Ok(editSetRecordEditSave(user, title, heading, oci, message))
+      Ok(editSetRecordEditSave(user, editSetName, title, heading, oci, message))
     }
   }
 
   def discard(id: String, oci: String): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     withUser { user =>
       val title: String = resolvedMessage(MessageKeys.title)
+      val editSetName = editSets.getEditSet().name
       editSetRecords.getEditSetRecordByOCI(oci).get
       val heading: String =
         resolvedMessage(MessageKeys.heading, editSetRecords.getEditSetRecordByOCI(oci).get.ccr)
       val message: String = resolvedMessage(MessageKeys.buttonDiscard)
       logger.info(s"Discard changes for record id $oci edit set id $id ")
 
-      Ok(editSetRecordEditDiscard(user, title, heading, oci, message))
+      Ok(editSetRecordEditDiscard(user, editSetName, title, heading, oci, message))
     }
   }
 
@@ -302,12 +316,14 @@ class EditSetController @Inject() (
   private def calculateDates(user: User, title: String)(implicit request: Request[AnyContent]): Result = {
     val originalForm: Form[EditSetRecord] = editSetRecordForm.bindFromRequest()
     val errorsForCoveringDatesOnly = originalForm.errors(FieldNames.coveringDates)
+    val editSetName = editSets.getEditSet().name
     if (errorsForCoveringDatesOnly.isEmpty) {
       singleRange(originalForm.data.getOrElse(FieldNames.coveringDates, "")) match {
         case Right(singleDateRangeOpt) =>
           Ok(
             editSetRecordEdit(
               user,
+              editSetName,
               title,
               legalStatus.getLegalStatusReferenceData(),
               corporateBodies.all,
@@ -318,6 +334,7 @@ class EditSetController @Inject() (
           BadRequest(
             editSetRecordEdit(
               user,
+              editSetName,
               title,
               legalStatus.getLegalStatusReferenceData(),
               corporateBodies.all,
@@ -329,6 +346,7 @@ class EditSetController @Inject() (
       BadRequest(
         editSetRecordEdit(
           user,
+          editSetName,
           title,
           legalStatus.getLegalStatusReferenceData(),
           corporateBodies.all,

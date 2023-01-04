@@ -26,25 +26,25 @@
 
 @this(govukNotificationBanner: GovukNotificationBanner)
 
-@(user: User, title: String, heading: String, oci: String, message: String)(implicit messages: Messages)
+@(user: User, editSetName: String, title: String, heading: String, oci: String, message: String)(implicit messages: Messages)
 
 @backLink = {
-  <a class="govuk-back-link" href="/edit-set/1">Back to edit set (COAL 80 Sample)</a>
+  <a class="govuk-back-link" href="/edit-set/1">@messages("edit-set.record.edit.back-to-edit-set", editSetName)</a>
 }
 
 @content = {
   <h3 class="govuk-notification-banner__heading">@message</h3>
   <p class="govuk-body"><strong>@heading</strong></p>
-  <p class="govuk-body"><strong>PAC-ID: COAL.2022.V5RJW.P Physical Record</strong></p>
-  <p class="govuk-body">Series: National Coal Board and predecessors: Photographs</p>
+  <p class="govuk-body"><strong>@messages("edit-set.record.edit.id", oci)</strong></p>
+  <p class="govuk-body">@messages("placeholder.series-national-coal-board")</p>
 }
 
 @template(Some(user), title, Some(backLink)) {
   @govukNotificationBanner(NotificationBanner(
     content = HtmlContent(content),
-    title = Text("Changes discarded")))
+    title = Text(messages("edit-set.record.discard.subheader"))))
   <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
     @defining("/edit-set/1/record/"+oci+"/edit") { hrefLink =>
-        <a class="govuk-back-link" href=@hrefLink>Back to edit record</a>
+        <a class="govuk-back-link" href=@hrefLink>@messages("edit-set.record.save.back")</a>
     }
 }

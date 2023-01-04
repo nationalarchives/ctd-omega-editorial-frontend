@@ -21,6 +21,7 @@
 
 package uk.gov.nationalarchives.omega.editorial.forms
 import views.html.helper.FieldConstructor
+import play.api.i18n.Messages
 
 object GovukHelpers {
 
@@ -30,7 +31,7 @@ object GovukHelpers {
     * This was necessary to ensure the password field is not repopulated with the entered password in the event of an
     * error condition. In this case the password would be accessibly in plain text in the source code of the page.
     */
-  implicit val govukLoginInputFields: FieldConstructor = FieldConstructor(
-    uk.gov.nationalarchives.omega.editorial.views.html.govukLoginInput.f
+  implicit def govukLoginInputFields(implicit messages: Messages): FieldConstructor = FieldConstructor(
+    uk.gov.nationalarchives.omega.editorial.views.html.govukLoginInput.f(messages)
   )
 }

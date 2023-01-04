@@ -37,12 +37,13 @@ class EditSetRecordEditSaveSpec extends BaseSpec {
 
       val editSetRecordEditSaveInstance = inject[editSetRecordEditSave]
       val title = "EditRecordTitleTest"
+      val editSetName = "COAL 80 Sample"
       val heading = "EditRecordHeadingTest"
       val saveChanges = "Your changes have been saved."
       val oci = "EditRecordOciTest"
 
       val confirmationEditSetRecordEditHtml: Html =
-        editSetRecordEditSaveInstance(user, title, heading, oci, saveChanges)
+        editSetRecordEditSaveInstance(user, editSetName, title, heading, oci, saveChanges)
 
       val document = asDocument(confirmationEditSetRecordEditHtml)
       document must haveTitle("EditRecordTitleTest")
@@ -50,11 +51,11 @@ class EditSetRecordEditSaveSpec extends BaseSpec {
         Seq(
           "Your changes have been saved.",
           "EditRecordHeadingTest",
-          "PAC-ID: COAL.2022.V5RJW.P Physical Record",
-          "Series: National Coal Board and predecessors: Photographs"
+          "edit-set.record.edit.id",
+          "placeholder.series-national-coal-board"
         )
       )
-      document must haveBackLink("/edit-set/1/record/EditRecordOciTest/edit", "Back to edit record")
+      document must haveBackLink("/edit-set/1/record/EditRecordOciTest/edit", "edit-set.record.save.back")
 
     }
 
@@ -77,6 +78,7 @@ class EditSetRecordEditSaveSpec extends BaseSpec {
     asDocument(
       editSetRecordEditSaveInstance(
         user = user,
+        editSetName = "COAL 80 Sample",
         title = "EditRecordTitleTest",
         heading = "EditRecordHeadingTest",
         oci = "EditRecordOciTest",

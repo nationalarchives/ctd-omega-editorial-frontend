@@ -27,7 +27,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(govukButton: GovukButton, govukInput: GovukInput, govukTextarea: GovukTextarea, govukFieldset: GovukFieldset, govukErrorSummary: GovukErrorSummary, govukSelect: GovukSelect)
-@(user: User, title: String, legalStatusReferenceData: Seq[LegalStatus], corporateBodies: Seq[CorporateBody], editSetRecordForm: Form[EditSetRecord])(implicit messages: Messages, request: Request[AnyContent])
+@(user: User, editSetName: String, title: String, legalStatusReferenceData: Seq[LegalStatus], corporateBodies: Seq[CorporateBody], editSetRecordForm: Form[EditSetRecord])(implicit messages: Messages, request: Request[AnyContent])
 
 
 
@@ -39,7 +39,7 @@
 }
 
 @backLink = {
-    <a class="govuk-back-link" href="/edit-set/1">Back to edit set (COAL 80 Sample)</a>
+    <a class="govuk-back-link" href="/edit-set/1">@messages("edit-set.record.edit.back-to-edit-set", editSetName)</a>
 }
 
 @actionButtonGroup = {
@@ -223,12 +223,12 @@
                     content = Text(error.message),
                 )
             },
-            title = Text("There is a problem")
+            title = Text(messages("error.summary.title"))
         ))
     }
     <h1 class="govuk-heading-l">@messages("edit-set.record.edit.heading", editSetRecordForm.data.get("ccr").get)</h1>
     <h2 class="govuk-heading-m">@messages("edit-set.record.edit.id", editSetRecordForm.data.get("oci").get)</h2>
-    <p class="govuk-body">Series: National Coal Board and predecessors: Photographs</p>
+    <p class="govuk-body">@messages("placeholder.series-national-coal-board")</p>
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
     @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetController.submit("1", editSetRecordForm.data.get("oci").get)) {
         @actionButtonGroup

@@ -386,7 +386,7 @@ object CustomMatchers {
     )
   }
 
-  private def removeInvisibleErrorMessagePrefix(original: String) = original.replace("Error: ", "")
+  private def removeInvisibleErrorMessagePrefix(original: String) = original.replace("login.hidden.error ", "")
 
   private def haveErrorMessageForField(
     fieldName: String,
