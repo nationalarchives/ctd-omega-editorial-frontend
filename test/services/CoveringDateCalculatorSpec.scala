@@ -19,16 +19,18 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.services
+package services
 
-import java.util.Locale
-import java.time._
-import java.time.format.DateTimeFormatter
 import org.scalatest.prop.{ TableDrivenPropertyChecks, Tables }
 import support.BaseSpec
 import support.CustomMatchers.{ failToParseAs, parseSuccessfullyAs }
 import uk.gov.nationalarchives.omega.editorial.models.DateRange
+import uk.gov.nationalarchives.omega.editorial.services.CoveringDateCalculator
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError._
+
+import java.time._
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class CoveringDateCalculatorSpec extends BaseSpec with TableDrivenPropertyChecks {
 
@@ -56,11 +58,19 @@ class CoveringDateCalculatorSpec extends BaseSpec with TableDrivenPropertyChecks
       ),
       "1582 Oct 11"               -> defineTestCoveringDate("1582 Oct 11" -> "1582 Oct 11"),
       "1582 Oct 11 - 1582 Nov 29" -> defineTestCoveringDate("1582 Oct 11" -> "1582 Nov 29"),
-      "undated"                   -> List.empty
+      // Dates related to the switchover from the Julian to the Gregorian calendar.
+      "1752 Aug"                  -> defineTestCoveringDate("1752 Aug 1" -> "1752 Aug 31"),
+      "1752 Aug 1–1752 Aug 2"     -> defineTestCoveringDate("1752 Aug 1" -> "1752 Aug 2"),
+      "1752 Sept 1–1752 Sept 2"   -> defineTestCoveringDate("1752 Sep 1" -> "1752 Sep 2"),
+      "1752 Sept 3–1752 Sept 13"  -> defineTestCoveringDate("1752 Sep 3" -> "1752 Sep 13"),
+      "1752 Sept 14–1752 Sept 15" -> defineTestCoveringDate("1752 Sep 14" -> "1752 Sep 15"),
+      "1752 Sept"                 -> defineTestCoveringDate("1752 Sep 1" -> "1752 Sep 30"),
+      // End of switchover dates.
+      "undated" -> List.empty
     )
 
     forAll(validScenarioTestTable) { (input, expectedResult) =>
-      s"""calculate the date range successfuly for: "$input"""" in {
+      s"""calculate the date range successfully for: "$input"""" in {
         CoveringDateCalculator.getStartAndEndDates(input) must parseSuccessfullyAs(expectedResult)
       }
     }

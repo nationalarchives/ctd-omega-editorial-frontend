@@ -21,15 +21,25 @@
 
 @import helper._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.nationalarchives.omega.editorial.models.{CorporateBody, EditSetRecord, User}
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
-@import uk.gov.nationalarchives.omega.editorial.models.{EditSetRecord, User}
+@import uk.gov.nationalarchives.omega.editorial.models.{EditSetRecord, User, LegalStatus}
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
-@this(govukButton: GovukButton, govukInput: GovukInput, govukTextarea: GovukTextarea, govukFieldset: GovukFieldset, govukErrorSummary: GovukErrorSummary)
+@this(govukButton: GovukButton, govukInput: GovukInput, govukTextarea: GovukTextarea, govukFieldset: GovukFieldset, govukErrorSummary: GovukErrorSummary, govukSelect: GovukSelect)
+@(user: User, title: String, legalStatusReferenceData: Seq[LegalStatus], corporateBodies: Seq[CorporateBody], editSetRecordForm: Form[EditSetRecord])(implicit messages: Messages, request: Request[AnyContent])
 
-@(user: User, title: String, editSetRecordForm: Form[EditSetRecord])(implicit messages: Messages, request: Request[AnyContent])
+
+
+@legalStatusItems = @{
+    Seq(SelectItem(
+        value = None,
+        text = "Select a Legal Status",
+    ))
+}
 
 @backLink = {
-    <a class="govuk-back-link" href="/edit-set/1">@messages("placeholder.back-to-coal-80")</a>
+    <a class="govuk-back-link" href="/edit-set/1">@messages("placeholder.back-to-edit-set")</a>
 }
 
 @actionButtonGroup = {
@@ -45,6 +55,51 @@
             value = Some("discard"),
             classes = "govuk-button--secondary",
             content = Text(messages("edit-set.record.discard.button"))))
+    </div>
+}
+
+@dateSelector(prefix: String, labelKey: String) = {
+    <label class="govuk-label">
+    @messages(labelKey)
+    </label>
+@editSetRecordForm.error(prefix + "Date").map { error =>
+    <p id="@{
+        prefix
+    }DateFieldError" class="govuk-error-message">@{
+        error.message
+    }</p>
+}
+    <div class="govuk-date-input" id="@prefix">
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+            @govukInput(Input(
+                id = prefix + "DateDay",
+                name = prefix + "DateDay",
+                value = editSetRecordForm.data.get(prefix + "DateDay"),
+                label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("@{prefix}DateDay"), content = Text(messages("edit-set.record.edit.dates.day"))),
+                classes = "govuk-input govuk-date-input__input govuk-input--width-2"))
+            </div>
+        </div>
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+            @govukInput(Input(
+                id = prefix + "DateMonth",
+                name = prefix + "DateMonth",
+                value = editSetRecordForm.data.get(prefix + "DateMonth"),
+                label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("@{prefix}DateMonth"), content = Text(messages("edit-set.record.edit.dates.month"))),
+                classes = "govuk-input govuk-date-input__input govuk-input--width-2"))
+            </div>
+        </div>
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group">
+            @govukInput(Input(
+                id = prefix + "DateYear",
+                name = prefix + "DateYear",
+                value = editSetRecordForm.data.get(prefix + "DateYear"),
+                label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("@{prefix}DateYear"), content = Text(messages("edit-set.record.edit.dates.year"))),
+                classes = "govuk-input govuk-date-input__input govuk-input--width-4"))
+            </div>
+        </div>
     </div>
 }
 
@@ -87,20 +142,71 @@
         )
     },
     classes = "govuk-!-width-one-half"))
-@govukInput(Input(
-    id = "startDate",
-    name = "startDate",
-    attributes = Map("readonly" -> "readonly"),
-    value = editSetRecordForm.data.get("startDate"),
-    label = Label(forAttr = Some("startDate"), content = Text(messages("edit-set.record.edit.start-date"))),
-    classes = "govuk-!-width-one-third"))
-@govukInput(Input(
-    id = "endDate",
-    name = "endDate",
-    attributes = Map("readonly" -> "readonly"),
-    value = editSetRecordForm.data.get("endDate"),
-    label = Label(forAttr = Some("endDate"), content = Text(messages("edit-set.record.edit.end-date"))),
-    classes = "govuk-!-width-one-third"))
+
+@govukButton(Button(
+    element = Some("button"),
+    name = Some("action"),
+    value = Some("calculateDates"),
+    content = Text(messages("edit-set.record.calculate-dates.button"))))
+
+@govukFieldset(
+    Fieldset(
+        classes = "govuk-fieldset",
+        html = dateSelector("start", "edit-set.record.edit.start-date"),
+        role = Some("group")
+    ))
+@govukFieldset(
+    Fieldset(
+        classes = "govuk-fieldset",
+        html = dateSelector("end", "edit-set.record.edit.end-date"),
+        role = Some("group")
+    ))
+@govukSelect(Select(
+    id = "legalStatus",
+    name = "legalStatus",
+    items = legalStatusItems ++ legalStatusReferenceData.map { status =>
+        SelectItem(
+            selected = editSetRecordForm.data.get("legalStatus").contains(status.uri),
+            text = status.label,
+            value = Some(status.uri)
+        )
+    },
+    label = Label(forAttr = Some("legalStatus"), content = Text(messages("edit-set.record.edit.legal-status"))),
+    errorMessage = editSetRecordForm.error("legalStatus").map { error =>
+        ErrorMessage(
+            content = Text(error.message),
+            attributes = Map("for" -> "legalStatus")
+        )
+    },
+)
+)
+
+@govukSelect(Select(
+    id = "placeOfDeposit",
+    name = "placeOfDeposit",
+    items = {
+        val noSelectionAsMap = Map("" -> messages("edit-set.record.error.place-of-deposit"))
+        val corporateBodiesAsMap = noSelectionAsMap ++ corporateBodies.map(corporateBody => (corporateBody.id, corporateBody.name)).toMap
+        corporateBodiesAsMap
+                .map { case (id, label) =>
+            SelectItem(
+                selected = editSetRecordForm.data.get("placeOfDeposit").contains(id),
+                text = label,
+                value = Some(id).filter(_.nonEmpty),
+                disabled = id == ""
+            )
+        }.toSeq
+    },
+    label = Label(forAttr = Some("placeOfDeposit"), content = Text(messages("edit-set.record.edit.place-of-deposit"))),
+    errorMessage = editSetRecordForm.error("placeOfDeposit").map { error =>
+        ErrorMessage(
+            content = Text(error.message),
+            attributes = Map("for" -> "placeOfDeposit")
+        )
+    },
+)
+)
+
     <div class="govuk-form-group">
         <input id="ccr" name="ccr" type="text" readonly="readonly" hidden="true" value="@editSetRecordForm.data.get("ccr")"/>
         <input id="ocr" name="oci" type="text" readonly="readonly" hidden="true" value="@editSetRecordForm.data.get("oci")"/>
@@ -117,7 +223,7 @@
                     content = Text(error.message),
                 )
             },
-            title = Text("There is a problem")
+            title = Text(messages("error.summary.title"))
         ))
     }
     <h1 class="govuk-heading-l">@messages("edit-set.record.edit.heading", editSetRecordForm.data.get("ccr").get)</h1>

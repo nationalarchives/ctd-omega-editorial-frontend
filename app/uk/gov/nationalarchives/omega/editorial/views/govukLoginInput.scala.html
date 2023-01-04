@@ -19,12 +19,12 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *@
 
-@(elements: helper.FieldElements)
+@(messages: Messages)(elements: helper.FieldElements)
 
 <div class="govuk-form-group @if(elements.hasErrors) {govuk-form-group--error}">
     @if(elements.hasErrors){
         <p id="@elements.id-error" class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span> @elements.field.error.map(_.message)
+            <span class="govuk-visually-hidden">@messages("login.hidden.error")</span> @elements.field.error.map(_.message)
         </p>
     }
     <label class="govuk-label govuk-label--s" for="@elements.id">

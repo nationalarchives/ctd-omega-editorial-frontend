@@ -29,13 +29,13 @@
 @(user: User, title: String, heading: String, oci: String, message: String)(implicit messages: Messages)
 
 @backLink = {
-  <a class="govuk-back-link" href="/edit-set/1">@messages("placeholder.back-to-coal-80")</a>
+  <a class="govuk-back-link" href="/edit-set/1">@messages("placeholder.back-to-edit-set")</a>
 }
 
 @content = {
   <h3 class="govuk-notification-banner__heading">@message</h3>
   <p class="govuk-body"><strong>@heading</strong></p>
-  <p class="govuk-body"><strong>@messages("placeholder.coal-pac-id")</strong></p>
+  <p class="govuk-body"><strong>@messages("edit-set.record.edit.id", oci)</strong></p>
   <p class="govuk-body">@messages("placeholder.series-national-coal-board")</p>
 }
 

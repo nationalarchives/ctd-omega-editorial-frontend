@@ -21,37 +21,11 @@
 
 package uk.gov.nationalarchives.omega.editorial.models
 
-import play.api.libs.json._
+import play.api.libs.json.Json
 
-case class EditSetEntry(ccr: String, oci: String, scopeAndContent: String, coveringDates: String)
+case class LegalStatus(uri: String, label: String)
 
-case class EditSet(name: String, id: String, entries: Seq[EditSetEntry])
-
-case class EditSetRecord(
-  ccr: String,
-  oci: String,
-  scopeAndContent: String,
-  coveringDates: String,
-  formerReferenceDepartment: String,
-  startDateDay: String,
-  startDateMonth: String,
-  startDateYear: String,
-  endDateDay: String,
-  endDateMonth: String,
-  endDateYear: String,
-  legalStatus: String,
-  placeOfDeposit: String
-)
-
-object EditSetRecord {
-  implicit val editSetRecordReads = Json.reads[EditSetRecord]
-}
-
-object EditSetEntry {
-  implicit val editSetEntryReads = Json.reads[EditSetEntry]
-}
-
-object EditSet {
-  implicit val editSetReads = Json.reads[EditSet]
+object LegalStatus {
+  implicit val legalStatusReads = Json.reads[LegalStatus]
 
 }

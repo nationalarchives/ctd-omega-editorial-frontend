@@ -23,6 +23,7 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
     Defaults.itSettings,
     organization := "uk.gov.nationalarchives",
     name := "ctd-omega-editorial-frontend",
+    maintainer := "webmaster@nationalarchives.gov.uk",
     scalaVersion := "2.13.10",
     licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT")),
     homepage := Some(
