@@ -25,6 +25,7 @@ import org.jsoup.nodes.Document
 import play.api.mvc._
 import play.api.test.Helpers._
 import play.api.test._
+import org.scalatest.compatible.Assertion
 import support.BaseSpec
 import support.CustomMatchers._
 import support.ExpectedValues.ExpectedSelectOption
@@ -215,7 +216,14 @@ class EditSetControllerSpec extends BaseSpec {
             startDate = ExpectedDate("1", "1", "1960"),
             endDate = ExpectedDate("31", "12", "1960"),
             legalStatus = "ref.1",
-            placeOfDeposit = "1"
+            placeOfDeposit = "1",
+            relatedMaterial = Seq(
+              ExpectedRelatedMaterial(
+                linkHref = "#;",
+                linkText = "COAL 80/80/2",
+                description = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+              )
+            )
           )
         )
       }
@@ -681,6 +689,7 @@ class EditSetControllerSpec extends BaseSpec {
 
           }
         }
+
         "place of deposit" when {
           "isn't selected" in {
             val values = validValuesForSaving ++ Map("placeOfDeposit" -> "")
@@ -1145,7 +1154,7 @@ class EditSetControllerSpec extends BaseSpec {
     route(app, request).get
   }
 
-  private def assertPageAsExpected(document: Document, expectedPage: ExpectedPage): Unit = {
+  private def assertPageAsExpected(document: Document, expectedPage: ExpectedPage): Assertion = {
     document must haveTitle(expectedPage.title)
     document must haveHeading(expectedPage.heading)
     document must haveLegend(expectedPage.legend)
@@ -1160,6 +1169,11 @@ class EditSetControllerSpec extends BaseSpec {
     document must haveEndDateDay(expectedPage.endDate.day)
     document must haveEndDateMonth(expectedPage.endDate.month)
     document must haveEndDateYear(expectedPage.endDate.year)
+
+    expectedPage.relatedMaterial.foreach { relatedMaterial =>
+      document must haveRelatedMaterialLink(relatedMaterial.linkHref, relatedMaterial.linkText)
+      document must haveRelatedMaterialText(relatedMaterial.description)
+    }
 
     document must haveVisibleLogoutLink
     document must haveLogoutLinkLabel("Sign out")
@@ -1224,6 +1238,7 @@ class EditSetControllerSpec extends BaseSpec {
     endDate: ExpectedDate,
     legalStatus: String,
     placeOfDeposit: String,
+    relatedMaterial: Seq[ExpectedRelatedMaterial] = Seq.empty,
     summaryErrorMessages: Seq[String] = Seq.empty,
     errorMessageForStartDate: Option[String] = None,
     errorMessageForEndDate: Option[String] = None,
@@ -1231,6 +1246,8 @@ class EditSetControllerSpec extends BaseSpec {
     errorMessageForLegalStatus: Option[String] = None,
     errorMessageForPlaceOfDeposit: Option[String] = None
   )
+
+  case class ExpectedRelatedMaterial(linkHref: String, linkText: String, description: String)
 
   case class ExpectedDate(day: String, month: String, year: String)
 

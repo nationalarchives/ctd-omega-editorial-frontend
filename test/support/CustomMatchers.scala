@@ -169,6 +169,22 @@ object CustomMatchers {
       actualValue = document.select("#endDateYear").attr("value")
     )
 
+  def haveRelatedMaterialLink(expectedHref: String, expectedText: String): Matcher[Document] = (document: Document) => {
+    val link = document.select("#relatedMaterialLink")
+    singleValueMatcher(
+      label = "a link for related material",
+      expectedValue = (expectedHref, expectedText),
+      actualValue = (link.attr("href"), link.text)
+    )
+  }
+
+  def haveRelatedMaterialText(expectedValue: String): Matcher[Document] = (document: Document) =>
+    singleValueMatcher(
+      label = "text for related material",
+      expectedValue = expectedValue,
+      actualValue = document.select("#relatedMaterialText").text()
+    )
+
   def haveSummaryErrorTitle(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "an error summary title",
