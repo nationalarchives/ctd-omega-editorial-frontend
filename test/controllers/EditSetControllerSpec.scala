@@ -159,10 +159,10 @@ class EditSetControllerSpec extends BaseSpec {
         editSetRecordEditSaveInstance
       )
       val editRecordPage = controller
-        .editRecord("COAL.2022.V5RJW.P", "COAL.2022.V5RJW.P")
+        .editRecord("COAL.2022.V5RJW.P", "COAL.2022.V1RJW.P")
         .apply(
           CSRFTokenHelper.addCSRFToken(
-            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
               .withSession(SessionKeys.token -> validSessionToken)
           )
         )
@@ -176,10 +176,10 @@ class EditSetControllerSpec extends BaseSpec {
     "render the edit set page from the application" in {
       val controller = inject[EditSetController]
       val editRecordPage = controller
-        .editRecord("COAL.2022.V5RJW.P", "COAL.2022.V5RJW.P")
+        .editRecord("COAL.2022.V5RJW.P", "COAL.2022.V1RJW.P")
         .apply(
           CSRFTokenHelper.addCSRFToken(
-            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
               .withSession(SessionKeys.token -> validSessionToken)
           )
         )
@@ -193,7 +193,7 @@ class EditSetControllerSpec extends BaseSpec {
     "render the edit set page from the router" when {
       "all data is valid" in {
         val request =
-          FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit").withSession(
+          FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit").withSession(
             SessionKeys.token -> validSessionToken
           )
 
@@ -208,7 +208,7 @@ class EditSetControllerSpec extends BaseSpec {
             heading = "TNA reference: COAL 80/80/1",
             legend = "Intellectual properties",
             classicCatalogueRef = "COAL 80/80/1",
-            omegaCatalogueId = "COAL.2022.V5RJW.P",
+            omegaCatalogueId = "COAL.2022.V1RJW.P",
             scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
             coveringDates = "1960",
             formerReferenceDepartment = "",
@@ -232,9 +232,9 @@ class EditSetControllerSpec extends BaseSpec {
           asDocument(editRecordPage),
           ExpectedPage(
             title = "Edit record",
-            heading = "TNA reference: COAL 80/80/1",
+            heading = "TNA reference: COAL 80/80/3",
             legend = "Intellectual properties",
-            classicCatalogueRef = "COAL 80/80/1",
+            classicCatalogueRef = "COAL 80/80/3",
             omegaCatalogueId = "COAL.2022.V3RJW.P",
             scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
             coveringDates = "1960",
@@ -280,7 +280,7 @@ class EditSetControllerSpec extends BaseSpec {
     val validValues: Map[String, String] =
       Map(
         "ccr"             -> "COAL 80/80/1",
-        "oci"             -> "COAL.2022.V5RJW.P",
+        "oci"             -> "COAL.2022.V1RJW.P",
         "scopeAndContent" -> "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         "formerReferenceDepartment" -> "1234",
         "coveringDates"             -> "2020 Oct",
@@ -315,7 +315,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent = "",
                 coveringDates = "2020 Oct",
                 formerReferenceDepartment = "1234",
@@ -343,7 +343,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -373,7 +373,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -408,7 +408,7 @@ class EditSetControllerSpec extends BaseSpec {
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
               classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V5RJW.P",
+              omegaCatalogueId = "COAL.2022.V1RJW.P",
               scopeAndContent =
                 "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
               coveringDates = "2020 Oct",
@@ -440,7 +440,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -469,7 +469,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -505,7 +505,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -541,7 +541,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -578,7 +578,7 @@ class EditSetControllerSpec extends BaseSpec {
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
               classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V5RJW.P",
+              omegaCatalogueId = "COAL.2022.V1RJW.P",
               scopeAndContent =
                 "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
               coveringDates = "2020 Oct",
@@ -608,7 +608,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "Oct 1 2004",
@@ -637,7 +637,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = gapDateTooLong,
@@ -665,7 +665,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "  ",
@@ -695,7 +695,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -723,7 +723,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -752,7 +752,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -783,7 +783,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -807,7 +807,7 @@ class EditSetControllerSpec extends BaseSpec {
 
             status(result) mustBe SEE_OTHER
 
-            redirectLocation(result) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/save")
+            redirectLocation(result) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
 
           }
         }
@@ -841,18 +841,18 @@ class EditSetControllerSpec extends BaseSpec {
           )
 
           val editRecordPage = controller
-            .submit("1", "COAL.2022.V5RJW.P")
+            .submit("1", "COAL.2022.V1RJW.P")
             .apply(
               CSRFTokenHelper
                 .addCSRFToken(
-                  FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+                  FakeRequest(POST, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
                     .withFormUrlEncodedBody(validValuesForSaving.toSeq: _*)
                     .withSession(SessionKeys.token -> validSessionToken)
                 )
             )
 
           status(editRecordPage) mustBe SEE_OTHER
-          redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/save")
+          redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
         }
 
         "redirect to result page of the application" in {
@@ -868,17 +868,17 @@ class EditSetControllerSpec extends BaseSpec {
             )
 
           status(editRecordPage) mustBe SEE_OTHER
-          redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/save")
+          redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
         }
 
         "redirect to result page from the router" in {
 
-          val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", validValuesForSaving)
+          val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", validValuesForSaving)
 
           status(editRecordPageResponse) mustBe SEE_OTHER
-          redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/save")
+          redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
 
-          val getRecordResult = getRecordForEditingWhileLoggedIn(1, "COAL.2022.V5RJW.P")
+          val getRecordResult = getRecordForEditingWhileLoggedIn(1, "COAL.2022.V1RJW.P")
           assertPageAsExpected(
             asDocument(getRecordResult),
             ExpectedPage(
@@ -886,7 +886,7 @@ class EditSetControllerSpec extends BaseSpec {
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
               classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V5RJW.P",
+              omegaCatalogueId = "COAL.2022.V1RJW.P",
               scopeAndContent =
                 "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
               coveringDates = "2020 Oct",
@@ -948,7 +948,7 @@ class EditSetControllerSpec extends BaseSpec {
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
               classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V5RJW.P",
+              omegaCatalogueId = "COAL.2022.V1RJW.P",
               scopeAndContent =
                 "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
               coveringDates = "   ",
@@ -985,7 +985,7 @@ class EditSetControllerSpec extends BaseSpec {
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
               classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V5RJW.P",
+              omegaCatalogueId = "COAL.2022.V1RJW.P",
               scopeAndContent =
                 "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
               coveringDates = "1270s",
@@ -1022,7 +1022,7 @@ class EditSetControllerSpec extends BaseSpec {
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
               classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V5RJW.P",
+              omegaCatalogueId = "COAL.2022.V1RJW.P",
               scopeAndContent =
                 "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
               coveringDates = "2022 Feb 1-2022 Feb 29",
@@ -1053,7 +1053,7 @@ class EditSetControllerSpec extends BaseSpec {
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
               classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V5RJW.P",
+              omegaCatalogueId = "COAL.2022.V1RJW.P",
               scopeAndContent =
                 "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
               coveringDates = "1752 Aug 1-1752 Sept 12",
@@ -1080,7 +1080,7 @@ class EditSetControllerSpec extends BaseSpec {
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
               classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V5RJW.P",
+              omegaCatalogueId = "COAL.2022.V1RJW.P",
               scopeAndContent =
                 "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
               coveringDates = "1984 Dec",
@@ -1107,7 +1107,7 @@ class EditSetControllerSpec extends BaseSpec {
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
               classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V5RJW.P",
+              omegaCatalogueId = "COAL.2022.V1RJW.P",
               scopeAndContent =
                 "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
               coveringDates = "1868; 1890-1902; 1933",
