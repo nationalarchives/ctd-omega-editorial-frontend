@@ -22,7 +22,7 @@
 package uk.gov.nationalarchives.omega.editorial.controllers
 
 import play.api.Logger
-import play.api.data.Forms.{ mapping, text }
+import play.api.data.Forms.{ mapping, seq, text }
 import play.api.data.{ Form, FormError }
 import play.api.i18n.{ I18nSupport, Lang, Messages }
 import play.api.mvc._
@@ -62,6 +62,7 @@ class EditSetController @Inject() (
     val legalStatus = "legalStatus"
     val oci = "oci"
     val placeOfDeposit = "placeOfDeposit"
+    val relatedMaterial = "relatedMaterial"
     val scopeAndContent = "scopeAndContent"
     val startDate = "startDate"
     val startDateDay = "startDateDay"
@@ -133,7 +134,8 @@ class EditSetController @Inject() (
         .verifying(
           resolvedMessage(MessageKeys.placeOfDepositMissingOrInvalid),
           _.trim.nonEmpty
-        )
+        ),
+      FieldNames.relatedMaterial -> seq(text)
     )(EditSetRecord.apply)(EditSetRecord.unapply)
   )
 

@@ -22,7 +22,7 @@
 package views
 
 import org.jsoup.nodes.Document
-import play.api.data.Forms.{ mapping, text }
+import play.api.data.Forms.{ mapping, seq, text }
 import play.api.data.{ Form, FormError }
 import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import play.twirl.api.Html
@@ -47,7 +47,8 @@ class EditRecordViewSpec extends BaseSpec {
       "endDateMonth"              -> text,
       "endDateYear"               -> text,
       "legalStatus"               -> text,
-      "placeOfDeposit"            -> text
+      "placeOfDeposit"            -> text,
+      "relatedMaterial"           -> seq(text)
     )(EditSetRecord.apply)(EditSetRecord.unapply)
   )
 
