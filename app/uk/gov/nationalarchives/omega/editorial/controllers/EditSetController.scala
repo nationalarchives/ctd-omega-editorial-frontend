@@ -37,6 +37,7 @@ import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetReco
 import java.time.LocalDate
 import java.time.temporal.ChronoField.{ DAY_OF_MONTH, MONTH_OF_YEAR, YEAR }
 import javax.inject._
+import uk.gov.nationalarchives.omega.editorial.models.RelatedMaterial
 
 /** This controller creates an `Action` to handle HTTP requests to the application's home page.
   */
@@ -166,6 +167,7 @@ class EditSetController @Inject() (
       val editSetName = editSets.getEditSet().name
       editSetRecords.getEditSetRecordByOCI(recordId) match {
         case Some(record) =>
+          val relatedMaterials = resolveRelatedMaterials(record, relatedMaterial.all)
           val title: String = resolvedMessage(MessageKeys.title)
           val recordForm = correctBeforePresenting(editSetRecordForm.fill(record))
           Ok(
@@ -175,6 +177,7 @@ class EditSetController @Inject() (
               title,
               legalStatus.getLegalStatusReferenceData(),
               corporateBodies.all,
+              relatedMaterials,
               recordForm
             )
           )
@@ -295,6 +298,11 @@ class EditSetController @Inject() (
     corporateBodies.all.map(_.id).contains(placeOfDeposit)
 
   private def resolvedMessage(key: String, args: String*): String = messagesApi(key, args: _*)(Lang("en"))
+
+  private def resolveRelatedMaterials(record: EditSetRecord, relatedMaterials: Seq[RelatedMaterial]): Seq[RelatedMaterial] =
+    record.relatedMaterial.flatMap { id =>
+      relatedMaterials.find(_.id == id)
+    }
 
   private def extractStartDate(formValues: Map[String, String]): Option[LocalDate] =
     extractDate(formValues, FieldNames.startDateDay, FieldNames.startDateMonth, FieldNames.startDateYear)

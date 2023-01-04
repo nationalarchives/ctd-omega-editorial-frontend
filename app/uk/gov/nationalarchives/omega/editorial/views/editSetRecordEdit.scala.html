@@ -21,13 +21,20 @@
 
 @import helper._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.nationalarchives.omega.editorial.models.{CorporateBody, EditSetRecord, User}
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
-@import uk.gov.nationalarchives.omega.editorial.models.{EditSetRecord, User, LegalStatus}
+@import uk.gov.nationalarchives.omega.editorial.models._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(govukButton: GovukButton, govukInput: GovukInput, govukTextarea: GovukTextarea, govukFieldset: GovukFieldset, govukErrorSummary: GovukErrorSummary, govukSelect: GovukSelect)
-@(user: User, editSetName: String, title: String, legalStatusReferenceData: Seq[LegalStatus], corporateBodies: Seq[CorporateBody], editSetRecordForm: Form[EditSetRecord])(implicit messages: Messages, request: Request[AnyContent])
+@(
+  user: User,
+  editSetName: String,
+  title: String,
+  legalStatusReferenceData: Seq[LegalStatus],
+  corporateBodies: Seq[CorporateBody],
+  relatedMaterial: Seq[RelatedMaterial],
+  editSetRecordForm: Form[EditSetRecord]
+)(implicit messages: Messages, request: Request[AnyContent])
 
 
 
@@ -180,6 +187,8 @@
     },
 )
 )
+
+<ol>
 
 @govukSelect(Select(
     id = "placeOfDeposit",

@@ -23,6 +23,7 @@ package uk.gov.nationalarchives.omega.editorial
 
 import play.api.libs.json._
 import uk.gov.nationalarchives.omega.editorial.models.{ CorporateBody, EditSet, EditSetRecord, LegalStatus }
+import uk.gov.nationalarchives.omega.editorial.models.RelatedMaterial
 
 package object editSetRecords {
 
@@ -157,6 +158,20 @@ package object corporateBodies {
     CorporateBody("1", "The National Archives, Kew"),
     CorporateBody("2", "British Museum, Department of Libraries and Archives"),
     CorporateBody("3", "British Library, National Sound Archive")
+  )
+
+}
+
+package object relatedMaterial {
+
+  val all: Seq[RelatedMaterial] = Seq(
+    RelatedMaterial(id = "1", linkHref = "#;", linkText = "COAL 80/80/3"),
+    RelatedMaterial(
+      id = "2",
+      linkHref = "#;",
+      linkText = "COAL 80/80/2",
+      description = Some("dlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+    )
   )
 
 }
