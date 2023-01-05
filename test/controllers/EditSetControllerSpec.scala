@@ -305,6 +305,7 @@ class EditSetControllerSpec extends BaseSpec {
         "endDateYear"               -> "2020",
         "legalStatus"               -> "ref.1",
         "placeOfDeposit"            -> "2",
+        "relatedMaterial"           -> "1",
         "action"                    -> "save"
       )
 
