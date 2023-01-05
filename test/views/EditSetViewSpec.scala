@@ -22,18 +22,26 @@
 package views
 
 import org.jsoup.nodes.Document
-import play.api.i18n.Messages
-import play.api.test.Helpers
+import play.api.data.Form
+import play.api.data.Forms.{ mapping, text }
+import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import play.twirl.api.Html
 import support.BaseSpec
 import support.CustomMatchers._
+import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.EditSetReorder
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
 
 class EditSetViewSpec extends BaseSpec {
 
+  private val reorderForm: Form[EditSetReorder] = Form(
+    mapping(
+      "field"     -> text,
+      "direction" -> text
+    )(EditSetReorder.apply)(EditSetReorder.unapply)
+  )
+
   "Edit set Html" should {
-    implicit val messages: Messages = Helpers.stubMessages()
     "render the given title and heading" in {
 
       val editSetInstance = inject[editSet]
@@ -41,7 +49,10 @@ class EditSetViewSpec extends BaseSpec {
       val title = "EditSetTitleTest"
       val heading = editSet.name
 
-      val editSetHtml: Html = editSetInstance(user, title, heading, editSet)
+      val editSetHtml: Html = editSetInstance(user, title, heading, editSet.entries, reorderForm)(
+        Helpers.stubMessages(),
+        CSRFTokenHelper.addCSRFToken(FakeRequest())
+      )
 
       val document = asDocument(editSetHtml)
       document must haveTitle(title)
@@ -114,9 +125,19 @@ class EditSetViewSpec extends BaseSpec {
     )
 
   private def generateDocument(): Document = {
-    implicit val messages: Messages = Helpers.stubMessages()
     val editSetInstance = inject[editSet]
     val editSet: EditSet = getEditSetTest("1")
-    asDocument(editSetInstance(user = user, title = "EditSetTitleTest", heading = editSet.name, editSet = editSet))
+    asDocument(
+      editSetInstance(
+        user = user,
+        title = "EditSetTitleTest",
+        heading = editSet.name,
+        editSetEntries = editSet.entries,
+        editSetReorderForm = reorderForm
+      )(
+        Helpers.stubMessages(),
+        CSRFTokenHelper.addCSRFToken(FakeRequest())
+      )
+    )
   }
 }

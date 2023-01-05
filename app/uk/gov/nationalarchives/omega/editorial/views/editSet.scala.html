@@ -19,13 +19,15 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *@
 
-@import uk.gov.nationalarchives.omega.editorial.models.{ User, EditSet }
+@import uk.gov.nationalarchives.omega.editorial.models.{ User, EditSetEntry }
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import views.html.helper.CSRF
+@import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.EditSetReorder
 
-@this(govukTable: GovukTable)
+@this(govukTable: GovukTable, govukSelect: GovukSelect, govukButton: GovukButton, govukFieldset: GovukFieldset, govukLabel: GovukLabel)
 
-@(user: User, title: String, heading: String, editSet: EditSet)(implicit messages: Messages)
+@(user: User, title: String, heading: String, editSetEntries:  Seq[EditSetEntry], editSetReorderForm: Form[EditSetReorder])(implicit messages: Messages, request: Request[AnyContent])
 
 @recordLink(ccr: String, oci: String) = {
     @defining("/edit-set/1/record/"+oci+"/edit") { hrefLink =>
@@ -34,9 +36,41 @@
 }
 
 
+@orderingFormContents = {
+        @govukLabel(Label(content = Text(messages("edit-set.ordering.header"))))
+        @govukSelect(Select(
+            id = "field",
+            name = "field",
+            items = Seq(
+                SelectItem(text = messages("edit-set.ordering.field.ccr"), value = Some("ccr"), selected = editSetReorderForm.data.get("field").contains("ccr")),
+                SelectItem(text = messages("edit-set.ordering.field.scope-and-content"), value = Some("scopeAndContent"), selected = editSetReorderForm.data.get("field").contains("scopeAndContent")),
+                SelectItem(text = messages("edit-set.ordering.field.covering-dates"), value = Some("coveringDates"), selected = editSetReorderForm.data.get("field").contains("coveringDates"))
+            )))
+        @govukSelect(Select(
+            id = "direction",
+            name = "direction",
+            items = Seq(
+                SelectItem(text = messages("edit-set.ordering.direction.ascending"), value = Some("ascending"), selected = editSetReorderForm.data.get("direction").contains("ascending")),
+                SelectItem(text = messages("edit-set.ordering.direction.descending"), value = Some("descending"),  selected = editSetReorderForm.data.get("direction").contains("descending"))
+            )))
+        @govukButton(Button(
+            element = Some("button"),
+            name = Some("action"),
+            value = Some("reorder"),
+            content = Text(messages("edit-set.ordering.button"))))
+}
+
 @template(Some(user), title) {
+
+    @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetController.viewAfterReordering("1")) {
+            @CSRF.formField
+
+        @govukFieldset(Fieldset( html = orderingFormContents))
+
+    }
+
   @govukTable(Table(
-      rows = editSet.entries.map{
+      rows = editSetEntries.map{
         entry =>
             Seq(
                 TableRow (

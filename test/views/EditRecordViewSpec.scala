@@ -121,8 +121,8 @@ class EditRecordViewSpec extends BaseSpec {
       document must haveVisibleLogoutLink
       document must haveLogoutLinkLabel("header.logout")
       document must haveLogoutLink
-      document must haveActionButtons("save", 2)
-      document must haveActionButtons("discard", 2)
+      document must haveActionButtons("save", "edit-set.record.save.button", 2)
+      document must haveActionButtons("discard", "edit-set.record.discard.button", 2)
       document must haveLegend("edit-set.record.edit.legend")
       document must haveLegalStatus("ref.1")
 
