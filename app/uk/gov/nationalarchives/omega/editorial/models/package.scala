@@ -26,7 +26,7 @@ import uk.gov.nationalarchives.omega.editorial.models.{ CorporateBody, EditSet, 
 
 package object editSetRecords {
 
-  val editSetRecord1: EditSetRecord = Json
+  private val editSetRecord1: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/1",
@@ -42,13 +42,13 @@ package object editSetRecords {
         |  "endDateYear" : "1962",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "note": "A note about COAL.2022.V5RJW.P."
+        |  "note": "A note about COAL.2022.V1RJW.P."
         |} """.stripMargin
     )
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord2: EditSetRecord = Json
+  private val editSetRecord2: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/2",
@@ -64,13 +64,13 @@ package object editSetRecords {
         |  "endDateYear" : "1966",
         |  "legalStatus": "ref.2",
         |  "placeOfDeposit" : "",
-        |  "note": "A note about COAL.2022.V5RJW.P."
+        |  "note": "A note about COAL.2022.V2RJW.P."
         |} """.stripMargin
     )
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord3: EditSetRecord = Json
+  private val editSetRecord3: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/3",
@@ -92,7 +92,7 @@ package object editSetRecords {
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord4: EditSetRecord = Json
+  private val editSetRecord4: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/4",
@@ -107,13 +107,14 @@ package object editSetRecords {
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
-        |  "placeOfDeposit" : "1"
+        |  "placeOfDeposit" : "1",
+        |  "note": ""
         |} """.stripMargin
     )
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord5: EditSetRecord = Json
+  private val editSetRecord5: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/5",
@@ -128,13 +129,14 @@ package object editSetRecords {
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
-        |  "placeOfDeposit" : "1"
+        |  "placeOfDeposit" : "1",
+        |  "note": ""
         |} """.stripMargin
     )
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord6: EditSetRecord = Json
+  private val editSetRecord6: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/6",
@@ -149,13 +151,14 @@ package object editSetRecords {
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
-        |  "placeOfDeposit" : "1"
+        |  "placeOfDeposit" : "1",
+        |  "note": ""
         |} """.stripMargin
     )
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord7: EditSetRecord = Json
+  private val editSetRecord7: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/7",
@@ -170,13 +173,14 @@ package object editSetRecords {
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
-        |  "placeOfDeposit" : "1"
+        |  "placeOfDeposit" : "1",
+        |  "note": ""
         |} """.stripMargin
     )
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord8: EditSetRecord = Json
+  private val editSetRecord8: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/8",
@@ -191,13 +195,14 @@ package object editSetRecords {
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
-        |  "placeOfDeposit" : "1"
+        |  "placeOfDeposit" : "1",
+        |  "note": ""
         |} """.stripMargin
     )
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord9: EditSetRecord = Json
+  private val editSetRecord9: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/9",
@@ -212,13 +217,14 @@ package object editSetRecords {
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
-        |  "placeOfDeposit" : "1"
+        |  "placeOfDeposit" : "1",
+        |  "note": ""
         |} """.stripMargin
     )
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord10: EditSetRecord = Json
+  private val editSetRecord10: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/10",
@@ -233,13 +239,14 @@ package object editSetRecords {
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
-        |  "placeOfDeposit" : "1"
+        |  "placeOfDeposit" : "1",
+        |  "note": ""
         |} """.stripMargin
     )
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord11: EditSetRecord = Json
+  private val editSetRecord11: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/11",
@@ -254,13 +261,14 @@ package object editSetRecords {
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
-        |  "placeOfDeposit" : "1"
+        |  "placeOfDeposit" : "1",
+        |  "note": ""
         |} """.stripMargin
     )
     .validate[EditSetRecord]
     .get
 
-  val editSetRecord12: EditSetRecord = Json
+  private val editSetRecord12: EditSetRecord = Json
     .parse(
       """{
         |  "ccr" : "COAL 80/80/12",
@@ -275,7 +283,8 @@ package object editSetRecords {
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
-        |  "placeOfDeposit" : "1"
+        |  "placeOfDeposit" : "1",
+        |  "note": ""
         |} """.stripMargin
     )
     .validate[EditSetRecord]

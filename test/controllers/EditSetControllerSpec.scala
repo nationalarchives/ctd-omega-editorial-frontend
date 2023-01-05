@@ -72,7 +72,7 @@ class EditSetControllerSpec extends BaseSpec {
         editSetRecordEditSaveInstance
       )
       val editSet = controller
-        .view("COAL.2022.V5RJW.P")
+        .view("1")
         .apply(
           CSRFTokenHelper.addCSRFToken(
             FakeRequest(GET, "/edit-set/1").withSession(SessionKeys.token -> validSessionToken)
@@ -88,7 +88,7 @@ class EditSetControllerSpec extends BaseSpec {
     "render the edit set page from the application" in {
       val controller = inject[EditSetController]
       val editSet = controller
-        .view("COAL.2022.V5RJW.P")
+        .view("1")
         .apply(
           CSRFTokenHelper.addCSRFToken(
             FakeRequest(GET, "/edit-set/1")
@@ -115,7 +115,7 @@ class EditSetControllerSpec extends BaseSpec {
     "redirect to the login page from the application when requested with invalid session token" in {
       val controller = inject[EditSetController]
       val editSet = controller
-        .view("COAL.2022.V5RJW.P")
+        .view("1")
         .apply(
           FakeRequest(GET, "/edit-set/1")
             .withSession(SessionKeys.token -> invalidSessionToken)
@@ -880,7 +880,7 @@ class EditSetControllerSpec extends BaseSpec {
         editSetRecordEditSaveInstance
       )
       val editRecordPage = controller
-        .editRecord("COAL.2022.V5RJW.P", "COAL.2022.V1RJW.P")
+        .editRecord("1", "COAL.2022.V1RJW.P")
         .apply(
           CSRFTokenHelper.addCSRFToken(
             FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
@@ -897,7 +897,7 @@ class EditSetControllerSpec extends BaseSpec {
     "render the edit set page from the application" in {
       val controller = inject[EditSetController]
       val editRecordPage = controller
-        .editRecord("COAL.2022.V5RJW.P", "COAL.2022.V1RJW.P")
+        .editRecord("1", "COAL.2022.V1RJW.P")
         .apply(
           CSRFTokenHelper.addCSRFToken(
             FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
@@ -939,7 +939,7 @@ class EditSetControllerSpec extends BaseSpec {
             endDate = ExpectedDate("31", "12", "1962"),
             legalStatus = "ref.1",
             placeOfDeposit = "1",
-            note = "A note about COAL.2022.V5RJW.P.",
+            note = "A note about COAL.2022.V1RJW.P.",
             optionsForPlaceOfDeposit = Seq(
               ExpectedSelectOption("", "Select where this record is held", disabled = true),
               ExpectedSelectOption("1", "The National Archives, Kew", selected = true),
@@ -989,10 +989,10 @@ class EditSetControllerSpec extends BaseSpec {
     "redirect to the login page from the application when requested with invalid session token" in {
       val controller = inject[EditSetController]
       val editRecordPage = controller
-        .editRecord("COAL.2022.V5RJW.P", "COAL.2022.V5RJW.P")
+        .editRecord("1", "COAL.2022.V1RJW.P")
         .apply(
           CSRFTokenHelper.addCSRFToken(
-            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
               .withSession(SessionKeys.token -> invalidSessionToken)
           )
         )
@@ -1003,7 +1003,7 @@ class EditSetControllerSpec extends BaseSpec {
 
     "redirect to the login page from the router when requested with invalid session token" in {
       val request =
-        FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit").withSession(
+        FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit").withSession(
           SessionKeys.token -> invalidSessionToken
         )
       val editRecordPage = route(app, request).get
@@ -1044,7 +1044,7 @@ class EditSetControllerSpec extends BaseSpec {
             val blankScopeAndContentToFailValidation = ""
             val values = validValuesForSaving ++ Map("scopeAndContent" -> blankScopeAndContentToFailValidation)
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1079,7 +1079,7 @@ class EditSetControllerSpec extends BaseSpec {
             val values =
               validValuesForSaving ++ Map("startDateDay" -> "", "startDateMonth" -> "", "startDateYear" -> "")
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1116,7 +1116,7 @@ class EditSetControllerSpec extends BaseSpec {
             val values =
               validValuesForSaving ++ Map("startDateDay" -> "XX", "startDateMonth" -> "11", "startDateYear" -> "1960")
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1152,15 +1152,15 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values = validValuesForSaving ++
               Map(
-                "startDateDay"   -> "29",
+                "startDateDay" -> "29",
                 "startDateMonth" -> "2",
-                "startDateYear"  -> "2022",
-                "endDateDay"     -> "31",
-                "endDateMonth"   -> "10",
-                "endDateYear"    -> "2022"
+                "startDateYear" -> "2022",
+                "endDateDay" -> "31",
+                "endDateMonth" -> "10",
+                "endDateYear" -> "2022"
               )
 
-            val result = submitWhileLoggedIn(2, "COAL.2022.V5RJW.R", values)
+            val result = submitWhileLoggedIn(2, "COAL.2022.V1RJW.R", values)
 
             status(result) mustBe BAD_REQUEST
             val expectedPage = ExpectedEditRecordPage(
@@ -1196,7 +1196,7 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values = validValuesForSaving ++ Map("endDateDay" -> "", "endDateMonth" -> "", "endDateYear" -> "")
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             val document = asDocument(result)
@@ -1233,7 +1233,7 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values =
               validValuesForSaving ++ Map("endDateDay" -> "XX", "endDateMonth" -> "12", "endDateYear" -> "2000")
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1269,14 +1269,14 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values = validValuesForSaving ++
               Map(
-                "startDateDay"   -> "1",
+                "startDateDay" -> "1",
                 "startDateMonth" -> "2",
-                "startDateYear"  -> "2022",
-                "endDateDay"     -> "29",
-                "endDateMonth"   -> "2",
-                "endDateYear"    -> "2022"
+                "startDateYear" -> "2022",
+                "endDateDay" -> "29",
+                "endDateMonth" -> "2",
+                "endDateYear" -> "2022"
               )
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1311,15 +1311,15 @@ class EditSetControllerSpec extends BaseSpec {
           "is before start date" in {
 
             val values = validValuesForSaving ++ Map(
-              "startDateDay"   -> "12",
+              "startDateDay" -> "12",
               "startDateMonth" -> "10",
-              "startDateYear"  -> "2020",
-              "endDateDay"     -> "11",
-              "endDateMonth"   -> "10",
-              "endDateYear"    -> "2020"
+              "startDateYear" -> "2020",
+              "endDateDay" -> "11",
+              "endDateMonth" -> "10",
+              "endDateYear" -> "2020"
             )
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1355,15 +1355,15 @@ class EditSetControllerSpec extends BaseSpec {
         "neither start date nor end date is valid" in {
 
           val values = validValuesForSaving ++ Map(
-            "startDateDay"   -> "12",
+            "startDateDay" -> "12",
             "startDateMonth" -> "14",
-            "startDateYear"  -> "2020",
-            "endDateDay"     -> "42",
-            "endDateMonth"   -> "12",
-            "endDateYear"    -> "2020"
+            "startDateYear" -> "2020",
+            "endDateDay" -> "42",
+            "endDateMonth" -> "12",
+            "endDateYear" -> "2020"
           )
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
           status(result) mustBe BAD_REQUEST
           assertPageAsExpected(
@@ -1400,7 +1400,7 @@ class EditSetControllerSpec extends BaseSpec {
           "is invalid" in {
             val values = validValuesForSaving ++ Map("coveringDates" -> "Oct 1 2004")
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1436,7 +1436,7 @@ class EditSetControllerSpec extends BaseSpec {
             val gapDateTooLong = (1 to 100).map(_ => "2004 Oct 1").mkString(";")
             val values = validValuesForSaving ++ Map("coveringDates" -> gapDateTooLong)
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1471,7 +1471,7 @@ class EditSetControllerSpec extends BaseSpec {
           "is empty; showing error correctly" in {
             val values = validValuesForSaving ++ Map("coveringDates" -> "  ")
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1508,7 +1508,7 @@ class EditSetControllerSpec extends BaseSpec {
           "isn't selected" in {
             val values = validValuesForSaving ++ Map("placeOfDeposit" -> "")
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1543,7 +1543,7 @@ class EditSetControllerSpec extends BaseSpec {
           "is absent" in {
             val values = validValuesForSaving.removed("placeOfDeposit")
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1579,7 +1579,7 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values = validValuesForSaving ++ Map("placeOfDeposit" -> "6")
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1617,7 +1617,7 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values = validValuesForSaving ++ Map("legalStatus" -> "")
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1654,7 +1654,7 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values = validValues ++ Map("legalStatus" -> "ref.10")
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe SEE_OTHER
 
@@ -1668,7 +1668,7 @@ class EditSetControllerSpec extends BaseSpec {
             val excessivelyLongNote = "Something about something else." * 100
             val values = validValuesForSaving ++ Map("note" -> excessivelyLongNote)
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1678,7 +1678,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -1748,10 +1748,10 @@ class EditSetControllerSpec extends BaseSpec {
         "redirect to result page of the application" in {
           val controller = inject[EditSetController]
           val editRecordPage = controller
-            .submit("1", "COAL.2022.V5RJW.P")
+            .submit("1", "COAL.2022.V1RJW.P")
             .apply(
               CSRFTokenHelper.addCSRFToken(
-                FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+                FakeRequest(POST, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
                   .withFormUrlEncodedBody(validValuesForSaving.toSeq: _*)
                   .withSession(SessionKeys.token -> validSessionToken)
               )
@@ -1804,12 +1804,12 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values = validValuesForSaving ++ Map("note" -> "")
 
-            val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(editRecordPageResponse) mustBe SEE_OTHER
-            redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/save")
+            redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
 
-            val getRecordResult = getRecordForEditingWhileLoggedIn(1, "COAL.2022.V5RJW.P")
+            val getRecordResult = getRecordForEditingWhileLoggedIn(1, "COAL.2022.V1RJW.P")
             assertPageAsExpected(
               asDocument(getRecordResult),
               ExpectedEditRecordPage(
@@ -1817,7 +1817,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -1839,6 +1839,7 @@ class EditSetControllerSpec extends BaseSpec {
           }
         }
       }
+    }
 
 
     "when the action is to discard all changes" when {
@@ -1851,10 +1852,10 @@ class EditSetControllerSpec extends BaseSpec {
           val blankScopeAndContentToFailValidation = ""
           val values = validValuesForDiscarding ++ Map("coveringDates" -> blankScopeAndContentToFailValidation)
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/discard")
+          redirectLocation(result) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/discard")
 
         }
       }
@@ -1877,7 +1878,7 @@ class EditSetControllerSpec extends BaseSpec {
             "endDateYear"    -> "2020"
           )
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
           status(result) mustBe BAD_REQUEST
           assertPageAsExpected(
@@ -1921,7 +1922,7 @@ class EditSetControllerSpec extends BaseSpec {
             "endDateYear"    -> "2020"
           )
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
           status(result) mustBe BAD_REQUEST
           assertPageAsExpected(
@@ -1965,7 +1966,7 @@ class EditSetControllerSpec extends BaseSpec {
             "endDateYear"    -> "2020"
           )
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
           status(result) mustBe BAD_REQUEST
           assertPageAsExpected(
@@ -2003,7 +2004,7 @@ class EditSetControllerSpec extends BaseSpec {
 
           val values = validValuesForCalculatingDates ++ Map("coveringDates" -> "1752 Aug 1-1752 Sept 12")
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
           status(result) mustBe OK
           assertPageAsExpected(
@@ -2037,7 +2038,7 @@ class EditSetControllerSpec extends BaseSpec {
 
           val values = validValuesForCalculatingDates ++ Map("coveringDates" -> "1984 Dec")
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
           status(result) mustBe OK
           assertPageAsExpected(
@@ -2071,7 +2072,7 @@ class EditSetControllerSpec extends BaseSpec {
 
           val values = validValuesForCalculatingDates ++ Map("coveringDates" -> "1868; 1890-1902; 1933")
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
           status(result) mustBe OK
           assertPageAsExpected(
