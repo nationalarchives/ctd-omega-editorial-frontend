@@ -331,56 +331,56 @@ package object editSets {
         |    {
         |      "ccr" : "COAL 80/80/4",
         |      "oci" : "COAL.2022.V4RJW.P",
-        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-        |      "coveringDates" : "1960"
+        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (D)",
+        |      "coveringDates" : "1961"
         |    },
         |    {
         |      "ccr" : "COAL 80/80/5",
         |      "oci" : "COAL.2022.V5RJW.P",
-        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-        |      "coveringDates" : "1960"
+        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (E)",
+        |      "coveringDates" : "1963"
         |    },
         |    {
         |      "ccr" : "COAL 80/80/6",
         |      "oci" : "COAL.2022.V6RJW.P",
-        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-        |      "coveringDates" : "1960"
+        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (F)",
+        |      "coveringDates" : "1965"
         |    },
         |    {
         |      "ccr" : "COAL 80/80/7",
         |      "oci" : "COAL.2022.V7RJW.P",
-        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-        |      "coveringDates" : "1960"
+        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (G)",
+        |      "coveringDates" : "1967"
         |    },
         |    {
         |      "ccr" : "COAL 80/80/8",
         |      "oci" : "COAL.2022.V8RJW.P",
-        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-        |      "coveringDates" : "1960"
+        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (H)",
+        |      "coveringDates" : "1969"
         |    },
         |    {
         |      "ccr" : "COAL 80/80/9",
         |      "oci" : "COAL.2022.V9RJW.P",
-        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-        |      "coveringDates" : "1960"
+        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (I)",
+        |      "coveringDates" : "1971"
         |    },
         |    {
         |      "ccr" : "COAL 80/80/10",
         |      "oci" : "COAL.2022.V10RJW.P",
-        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-        |      "coveringDates" : "1960"
+        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
+        |      "coveringDates" : "1973"
         |    },
         |    {
         |      "ccr" : "COAL 80/80/11",
         |      "oci" : "COAL.2022.V11RJW.P",
-        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-        |      "coveringDates" : "1960"
+        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (K)",
+        |      "coveringDates" : "1975"
         |    },
         |    {
         |      "ccr" : "COAL 80/80/12",
         |      "oci" : "COAL.2022.V12RJW.P",
-        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-        |      "coveringDates" : "1960"
+        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (L)",
+        |      "coveringDates" : "1977"
         |    }
         |  ]
         |}""".stripMargin
