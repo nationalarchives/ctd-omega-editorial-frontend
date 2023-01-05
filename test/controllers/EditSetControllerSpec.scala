@@ -939,6 +939,7 @@ class EditSetControllerSpec extends BaseSpec {
             endDate = ExpectedDate("31", "12", "1962"),
             legalStatus = "ref.1",
             placeOfDeposit = "1",
+            note = "A note about COAL.2022.V5RJW.P.",
             optionsForPlaceOfDeposit = Seq(
               ExpectedSelectOption("", "Select where this record is held", disabled = true),
               ExpectedSelectOption("1", "The National Archives, Kew", selected = true),
@@ -973,6 +974,7 @@ class EditSetControllerSpec extends BaseSpec {
             endDate = ExpectedDate("31", "12", "1964"),
             legalStatus = "",
             placeOfDeposit = "",
+            note = "",
             optionsForPlaceOfDeposit = Seq(
               ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
               ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1028,6 +1030,7 @@ class EditSetControllerSpec extends BaseSpec {
         "endDateYear"               -> "2020",
         "legalStatus"               -> "ref.1",
         "placeOfDeposit"            -> "2",
+        "note"                      -> "Need to check copyright info.",
         "action"                    -> "save"
       )
 
@@ -1059,6 +1062,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1094,6 +1098,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1130,6 +1135,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1171,6 +1177,7 @@ class EditSetControllerSpec extends BaseSpec {
               endDate = ExpectedDate("31", "10", "2022"),
               legalStatus = "ref.1",
               placeOfDeposit = "2",
+              note = "Need to check copyright info.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1209,6 +1216,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("", "", ""),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1244,6 +1252,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("XX", "12", "2000"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1286,6 +1295,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("29", "2", "2022"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1328,6 +1338,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("11", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1371,6 +1382,7 @@ class EditSetControllerSpec extends BaseSpec {
               endDate = ExpectedDate("42", "12", "2020"),
               legalStatus = "ref.1",
               placeOfDeposit = "2",
+              note = "Need to check copyright info.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1407,6 +1419,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1442,6 +1455,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1476,6 +1490,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1512,6 +1527,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1546,6 +1562,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1581,6 +1598,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1618,6 +1636,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1640,6 +1659,45 @@ class EditSetControllerSpec extends BaseSpec {
             status(result) mustBe SEE_OTHER
 
             redirectLocation(result) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+
+          }
+        }
+        "note" when {
+          "is too long" in {
+
+            val excessivelyLongNote = "Something about something else." * 100
+            val values = validValuesForSaving ++ Map("note" -> excessivelyLongNote)
+
+            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+
+            status(result) mustBe BAD_REQUEST
+            assertPageAsExpected(
+              asDocument(result),
+              ExpectedEditRecordPage(
+                title = "Edit record",
+                heading = "TNA reference: COAL 80/80/1",
+                legend = "Intellectual properties",
+                classicCatalogueRef = "COAL 80/80/1",
+                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                scopeAndContent =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+                coveringDates = "2020 Oct",
+                formerReferenceDepartment = "1234",
+                startDate = ExpectedDate("1", "10", "2020"),
+                endDate = ExpectedDate("31", "10", "2020"),
+                legalStatus = "ref.1",
+                placeOfDeposit = "2",
+                note = excessivelyLongNote,
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
+                summaryErrorMessages = Seq("Note too long, maximum length 1000 characters"),
+                errorMessageForNote = Some("Note too long, maximum length 1000 characters")
+              )
+            )
 
           }
         }
@@ -1703,42 +1761,85 @@ class EditSetControllerSpec extends BaseSpec {
           redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
         }
 
-        "redirect to result page from the router" in {
+        "redirect to result page from the router" when {
 
-          val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", validValuesForSaving)
 
-          status(editRecordPageResponse) mustBe SEE_OTHER
-          redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+          "all fields are provided" in {
 
-          val getRecordResult = getRecordForEditingWhileLoggedIn(1, "COAL.2022.V1RJW.P")
-          assertPageAsExpected(
-            asDocument(getRecordResult),
-            ExpectedEditRecordPage(
-              title = "Edit record",
-              heading = "TNA reference: COAL 80/80/1",
-              legend = "Intellectual properties",
-              classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V1RJW.P",
-              scopeAndContent =
-                "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-              coveringDates = "2020 Oct",
-              formerReferenceDepartment = "1234",
-              startDate = ExpectedDate("1", "10", "2020"),
-              endDate = ExpectedDate("31", "10", "2020"),
-              legalStatus = "ref.1",
-              placeOfDeposit = "2",
-              optionsForPlaceOfDeposit = Seq(
-                ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                ExpectedSelectOption("1", "The National Archives, Kew"),
-                ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                ExpectedSelectOption("3", "British Library, National Sound Archive")
+            val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", validValuesForSaving)
+
+            status(editRecordPageResponse) mustBe SEE_OTHER
+            redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+
+            val getRecordResult = getRecordForEditingWhileLoggedIn(1, "COAL.2022.V1RJW.P")
+            assertPageAsExpected(
+              asDocument(getRecordResult),
+              ExpectedEditRecordPage(
+                title = "Edit record",
+                heading = "TNA reference: COAL 80/80/1",
+                legend = "Intellectual properties",
+                classicCatalogueRef = "COAL 80/80/1",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
+                scopeAndContent =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+                coveringDates = "2020 Oct",
+                formerReferenceDepartment = "1234",
+                startDate = ExpectedDate("1", "10", "2020"),
+                endDate = ExpectedDate("31", "10", "2020"),
+                legalStatus = "ref.1",
+                placeOfDeposit = "2",
+                note = "Need to check copyright info.",
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                )
               )
             )
-          )
+
+          }
+
+          "the 'note' field is blank" in {
+
+            val values = validValuesForSaving ++ Map("note" -> "")
+
+            val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+
+            status(editRecordPageResponse) mustBe SEE_OTHER
+            redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/save")
+
+            val getRecordResult = getRecordForEditingWhileLoggedIn(1, "COAL.2022.V5RJW.P")
+            assertPageAsExpected(
+              asDocument(getRecordResult),
+              ExpectedEditRecordPage(
+                title = "Edit record",
+                heading = "TNA reference: COAL 80/80/1",
+                legend = "Intellectual properties",
+                classicCatalogueRef = "COAL 80/80/1",
+                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                scopeAndContent =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+                coveringDates = "2020 Oct",
+                formerReferenceDepartment = "1234",
+                startDate = ExpectedDate("1", "10", "2020"),
+                endDate = ExpectedDate("31", "10", "2020"),
+                legalStatus = "ref.1",
+                placeOfDeposit = "2",
+                note = "",
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                )
+              )
+            )
+
+          }
         }
       }
 
-    }
 
     "when the action is to discard all changes" when {
 
@@ -1795,6 +1896,7 @@ class EditSetControllerSpec extends BaseSpec {
               endDate = ExpectedDate("31", "10", "2020"),
               legalStatus = "ref.1",
               placeOfDeposit = "2",
+              note = "Need to check copyright info.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1838,6 +1940,7 @@ class EditSetControllerSpec extends BaseSpec {
               endDate = ExpectedDate("31", "10", "2020"),
               legalStatus = "ref.1",
               placeOfDeposit = "2",
+              note = "Need to check copyright info.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1881,6 +1984,7 @@ class EditSetControllerSpec extends BaseSpec {
               endDate = ExpectedDate("31", "10", "2020"),
               legalStatus = "ref.1",
               placeOfDeposit = "2",
+              note = "Need to check copyright info.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1918,6 +2022,7 @@ class EditSetControllerSpec extends BaseSpec {
               endDate = ExpectedDate("12", "9", "1752"),
               legalStatus = "ref.1",
               placeOfDeposit = "2",
+              note = "Need to check copyright info.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1951,6 +2056,7 @@ class EditSetControllerSpec extends BaseSpec {
               endDate = ExpectedDate("31", "12", "1984"),
               legalStatus = "ref.1",
               placeOfDeposit = "2",
+              note = "Need to check copyright info.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1984,6 +2090,7 @@ class EditSetControllerSpec extends BaseSpec {
               endDate = ExpectedDate("31", "12", "1933"),
               legalStatus = "ref.1",
               placeOfDeposit = "2",
+              note = "Need to check copyright info.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -2034,16 +2141,15 @@ class EditSetControllerSpec extends BaseSpec {
     document must haveEndDateDay(expectedEditRecordPage.endDate.day)
     document must haveEndDateMonth(expectedEditRecordPage.endDate.month)
     document must haveEndDateYear(expectedEditRecordPage.endDate.year)
+    document must haveLegalStatus(expectedEditRecordPage.legalStatus)
+    document must haveSelectionForPlaceOfDeposit(expectedEditRecordPage.optionsForPlaceOfDeposit)
+    document must haveNote(expectedEditRecordPage.note)
 
     document must haveVisibleLogoutLink
     document must haveLogoutLinkLabel("Sign out")
     document must haveLogoutLink
     document must haveActionButtons("save", "Save changes", 2)
     document must haveActionButtons("discard", "Discard changes", 2)
-
-    document must haveLegalStatus(expectedEditRecordPage.legalStatus)
-
-    document must haveSelectionForPlaceOfDeposit(expectedEditRecordPage.optionsForPlaceOfDeposit)
 
     if (expectedEditRecordPage.summaryErrorMessages.nonEmpty) {
       document must haveSummaryErrorMessages(expectedEditRecordPage.summaryErrorMessages: _*)
@@ -2074,6 +2180,10 @@ class EditSetControllerSpec extends BaseSpec {
       case None                       => document must haveNoErrorMessageForPlaceOfDeposit
     }
 
+    expectedEditRecordPage.errorMessageForNote match {
+      case Some(expectedErrorMessage) => document must haveErrorMessageForNote(expectedErrorMessage)
+      case None                       => document must haveNoErrorMessageForNote
+    }
   }
 
   private def assertPageAsExpected(document: Document, expectedEditRecordPage: ExpectedEditSetPage): Unit = {
@@ -2108,6 +2218,7 @@ class EditSetControllerSpec extends BaseSpec {
     startDate: ExpectedDate,
     endDate: ExpectedDate,
     legalStatus: String,
+    note: String,
     placeOfDeposit: String,
     optionsForPlaceOfDeposit: Seq[ExpectedSelectOption],
     summaryErrorMessages: Seq[String] = Seq.empty,
@@ -2115,7 +2226,8 @@ class EditSetControllerSpec extends BaseSpec {
     errorMessageForEndDate: Option[String] = None,
     errorMessageForCoveringsDates: Option[String] = None,
     errorMessageForLegalStatus: Option[String] = None,
-    errorMessageForPlaceOfDeposit: Option[String] = None
+    errorMessageForPlaceOfDeposit: Option[String] = None,
+    errorMessageForNote: Option[String] = None
   )
 
   case class ExpectedEditSetPage(

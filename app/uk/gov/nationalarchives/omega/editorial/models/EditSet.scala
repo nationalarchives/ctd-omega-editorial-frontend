@@ -40,7 +40,8 @@ case class EditSetRecord(
   endDateMonth: String,
   endDateYear: String,
   legalStatus: String,
-  placeOfDeposit: String
+  placeOfDeposit: String,
+  note: String
 )
 
 object EditSetRecord {

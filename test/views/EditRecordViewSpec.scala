@@ -47,7 +47,8 @@ class EditRecordViewSpec extends BaseSpec {
       "endDateMonth"              -> text,
       "endDateYear"               -> text,
       "legalStatus"               -> text,
-      "placeOfDeposit"            -> text
+      "placeOfDeposit"            -> text,
+      "note"                      -> text
     )(EditSetRecord.apply)(EditSetRecord.unapply)
   )
 
@@ -72,7 +73,8 @@ class EditRecordViewSpec extends BaseSpec {
     endDateMonth = "",
     endDateYear = "",
     placeOfDeposit = "",
-    legalStatus = ""
+    legalStatus = "",
+    note = ""
   )
 
   "Edit record Html" should {
@@ -248,7 +250,8 @@ class EditRecordViewSpec extends BaseSpec {
         endDateMonth = "12",
         endDateYear = "1960",
         legalStatus = "ref.1",
-        placeOfDeposit = "2"
+        placeOfDeposit = "2",
+        note = ""
       )
 
       val editSetRecordForm = emptyForm
