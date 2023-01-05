@@ -368,6 +368,18 @@ object CustomMatchers {
 
   def haveNoErrorMessageForNote: Matcher[Document] = haveErrorMessageForNote("")
 
+  def haveBackground(expectedValue: String): Matcher[Document] = (document: Document) =>
+    singleValueMatcher(
+      label = "a background",
+      expectedValue = expectedValue,
+      actualValue = document.select("#background").text()
+    )
+
+  def haveErrorMessageForBackground(expectedValue: String): Matcher[Document] =
+    haveErrorMessageForField("background", "#background-error", expectedValue)
+
+  def haveNoErrorMessageForBackground: Matcher[Document] = haveErrorMessageForBackground("")
+
   private def haveSelectionOptions(
     id: String,
     label: String,
