@@ -45,7 +45,7 @@ jobs:
       - name: Configure AWS credentials for GitHub OIDC
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          role-to-assume: arn:aws:iam::495195014394:role/iam_github_oidc
+          role-to-assume: arn:aws:iam::495195014394:role/IAMGitHubOIDCRole
           aws-region: eu-west-2
       - name: Copy package to S3 bucket
         working-directory: target/universal
