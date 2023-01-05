@@ -62,12 +62,19 @@ object CustomMatchers {
       actualValue = document.select("div.govuk-header__signout > a").text()
     )
 
-  def haveActionButtons(value: String, count: Int): Matcher[Document] = (document: Document) => {
-    val buttons = document.select(s"button[name=action][value=$value]")
-    val actualCount = buttons.size()
+  def haveActionButtons(value: String, label: String, count: Int = 1): Matcher[Document] = (document: Document) => {
+    val buttons =
+      document
+        .select(s"button[name=action][value=$value]")
+        .textNodes()
+        .asScala
+        .map(_.getWholeText.trim)
+        .filter(_ == label)
+    val actualCount = buttons.size
     val errorMessageIfExpected =
-      s"We expected $count action buttons with the value '$value', but there were '$actualCount'."
-    val errorMessageIfNotExpected = s"We didn't expect $count action buttons with the value '$value', but there were."
+      s"We expected $count action buttons with the value '$value' and label '$label', but there were '$actualCount'."
+    val errorMessageIfNotExpected =
+      s"We didn't expect $count action buttons with the value '$value' and label '$label', but there were."
     MatchResult(
       actualCount == count,
       errorMessageIfExpected,

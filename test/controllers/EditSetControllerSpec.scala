@@ -27,7 +27,7 @@ import play.api.test.Helpers._
 import play.api.test._
 import support.BaseSpec
 import support.CustomMatchers._
-import support.ExpectedValues.ExpectedSelectOption
+import support.ExpectedValues.{ ExpectedActionButton, ExpectedDate, ExpectedSelectOption }
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
@@ -159,6 +159,7 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Edit set",
             caption = "Edit set: COAL 80 Sample",
+            button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption("ccr", "CCR", selected = true),
               ExpectedSelectOption("scopeAndContent", "Scope and Content"),
@@ -204,6 +205,7 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Edit set",
             caption = "Edit set: COAL 80 Sample",
+            button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption("ccr", "CCR", selected = true),
               ExpectedSelectOption("scopeAndContent", "Scope and Content"),
@@ -249,6 +251,7 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Edit set",
             caption = "Edit set: COAL 80 Sample",
+            button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption("ccr", "CCR"),
               ExpectedSelectOption("scopeAndContent", "Scope and Content", selected = true),
@@ -294,6 +297,7 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Edit set",
             caption = "Edit set: COAL 80 Sample",
+            button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption("ccr", "CCR"),
               ExpectedSelectOption("scopeAndContent", "Scope and Content", selected = true),
@@ -339,6 +343,7 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Edit set",
             caption = "Edit set: COAL 80 Sample",
+            button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption("ccr", "CCR"),
               ExpectedSelectOption("scopeAndContent", "Scope and Content"),
@@ -384,6 +389,7 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Edit set",
             caption = "Edit set: COAL 80 Sample",
+            button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption("ccr", "CCR"),
               ExpectedSelectOption("scopeAndContent", "Scope and Content"),
@@ -429,6 +435,7 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Edit set",
             caption = "Edit set: COAL 80 Sample",
+            button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption("ccr", "CCR", selected = true),
               ExpectedSelectOption("scopeAndContent", "Scope and Content"),
@@ -1653,8 +1660,8 @@ class EditSetControllerSpec extends BaseSpec {
     document must haveVisibleLogoutLink
     document must haveLogoutLinkLabel("Sign out")
     document must haveLogoutLink
-    document must haveActionButtons("save", 2)
-    document must haveActionButtons("discard", 2)
+    document must haveActionButtons("save", "Save changes", 2)
+    document must haveActionButtons("discard", "Discard changes", 2)
 
     document must haveLegalStatus(expectedEditRecordPage.legalStatus)
 
@@ -1694,6 +1701,7 @@ class EditSetControllerSpec extends BaseSpec {
   private def assertPageAsExpected(document: Document, expectedEditRecordPage: ExpectedEditSetPage): Unit = {
     document must haveTitle(expectedEditRecordPage.title)
     document must haveCaption(expectedEditRecordPage.caption)
+    document must haveActionButtons(expectedEditRecordPage.button.value, expectedEditRecordPage.button.label)
     document must haveSelectionForOrderingField(expectedEditRecordPage.expectedOptionsForField)
     document must haveSelectionForOrderingDirection(expectedEditRecordPage.expectedOptionsForDirection)
     document must haveSummaryRows(expectedEditRecordPage.expectedSummaryRows.size)
@@ -1735,6 +1743,7 @@ class EditSetControllerSpec extends BaseSpec {
   case class ExpectedEditSetPage(
     title: String,
     caption: String,
+    button: ExpectedActionButton,
     expectedOptionsForField: Seq[ExpectedSelectOption],
     expectedOptionsForDirection: Seq[ExpectedSelectOption],
     expectedSummaryRows: Seq[ExpectedEditSetSummaryRow]
@@ -1745,7 +1754,5 @@ class EditSetControllerSpec extends BaseSpec {
     scopeAndContents: String,
     coveringDates: String
   )
-
-  case class ExpectedDate(day: String, month: String, year: String)
 
 }

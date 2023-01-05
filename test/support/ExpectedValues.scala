@@ -25,4 +25,7 @@ object ExpectedValues {
 
   case class ExpectedSelectOption(value: String, label: String, selected: Boolean = false, disabled: Boolean = false)
 
+  case class ExpectedActionButton(value: String, label: String)
+
+  case class ExpectedDate(day: String, month: String, year: String)
 }

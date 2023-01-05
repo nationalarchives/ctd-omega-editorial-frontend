@@ -1,6 +1,6 @@
 # https://www.playframework.com/documentation/latest/ScalaI18N
 edit-set.heading=Edit set: {0}
-edit-set.ordering.button=Go
+edit-set.ordering.button=Sort edit set
 edit-set.ordering.direction.ascending=Ascending
 edit-set.ordering.direction.descending=Descending
 edit-set.ordering.field.ccr=CCR
