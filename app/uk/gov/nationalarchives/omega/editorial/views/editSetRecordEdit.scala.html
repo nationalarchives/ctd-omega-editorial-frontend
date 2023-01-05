@@ -23,6 +23,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
 @import uk.gov.nationalarchives.omega.editorial.models._
+@import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(govukButton: GovukButton, govukInput: GovukInput, govukTextarea: GovukTextarea, govukFieldset: GovukFieldset, govukErrorSummary: GovukErrorSummary, govukSelect: GovukSelect)
@@ -33,7 +34,7 @@
   legalStatusReferenceData: Seq[LegalStatus],
   corporateBodies: Seq[CorporateBody],
   allRelatedMaterial: Seq[RelatedMaterial],
-  editSetRecordForm: Form[EditSetRecord]
+  editSetRecordForm: Form[EditSetRecordFormValues]
 )(implicit messages: Messages, request: Request[AnyContent])
 
 

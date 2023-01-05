@@ -29,14 +29,13 @@ import play.twirl.api.Html
 import support.BaseSpec
 import support.CustomMatchers._
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, LegalStatus }
+import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEdit
 
 class EditRecordViewSpec extends BaseSpec {
 
-  private val emptyForm: Form[EditSetRecord] = Form(
+  private val emptyForm: Form[EditSetRecordFormValues] = Form(
     mapping(
-      "ccr"                       -> text,
-      "oci"                       -> text,
       "scopeAndContent"           -> text,
       "coveringDates"             -> text,
       "formerReferenceDepartment" -> text,
@@ -47,9 +46,8 @@ class EditRecordViewSpec extends BaseSpec {
       "endDateMonth"              -> text,
       "endDateYear"               -> text,
       "legalStatus"               -> text,
-      "placeOfDeposit"            -> text,
-      "relatedMaterial"           -> text
-    )(EditSetRecord.apply)(EditSetRecord.unapply)
+      "placeOfDeposit"            -> text
+    )(EditSetRecordFormValues.apply)(EditSetRecordFormValues.unapply)
   )
 
   val legalStatusReferenceData =
@@ -60,9 +58,7 @@ class EditRecordViewSpec extends BaseSpec {
       LegalStatus("ref.4", "Welsh Public Record(s)")
     )
 
-  val emptyRecord: EditSetRecord = EditSetRecord.apply(
-    ccr = "",
-    oci = "",
+  val emptyRecord: EditSetRecordFormValues = EditSetRecordFormValues.apply(
     scopeAndContent = "",
     coveringDates = "",
     formerReferenceDepartment = "",
@@ -73,8 +69,7 @@ class EditRecordViewSpec extends BaseSpec {
     endDateMonth = "",
     endDateYear = "",
     placeOfDeposit = "",
-    legalStatus = "",
-    relatedMaterial = ""
+    legalStatus = ""
   )
 
   "Edit record Html" should {
@@ -84,8 +79,6 @@ class EditRecordViewSpec extends BaseSpec {
         title = "TNA reference: COAL 80/80/1",
         form = emptyForm.fill(
           emptyRecord.copy(
-            ccr = "COAL 80/80/1",
-            oci = "COAL.2022.V5RJW.P",
             scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
             coveringDates = "1960",
             formerReferenceDepartment = "TestFormerReferenceDepartment",
@@ -96,8 +89,7 @@ class EditRecordViewSpec extends BaseSpec {
             endDateMonth = "12",
             endDateYear = "1960",
             legalStatus = "ref.1",
-            placeOfDeposit = "3",
-            relatedMaterial = "1"
+            placeOfDeposit = "3"
           )
         )
       )
@@ -270,9 +262,7 @@ class EditRecordViewSpec extends BaseSpec {
 
       val title = "EditRecordTitleTest"
       val editSetName = "COAL 80 Sample"
-      val inputData = EditSetRecord(
-        ccr = "",
-        oci = "",
+      val inputData = EditSetRecordFormValues(
         scopeAndContent = "",
         coveringDates = "Mon 1 Oct 1330",
         formerReferenceDepartment = "",
@@ -283,8 +273,7 @@ class EditRecordViewSpec extends BaseSpec {
         endDateMonth = "12",
         endDateYear = "1960",
         legalStatus = "ref.1",
-        placeOfDeposit = "2",
-        relatedMaterial = "1"
+        placeOfDeposit = "2"
       )
 
       val editSetRecordForm = emptyForm
@@ -352,7 +341,7 @@ class EditRecordViewSpec extends BaseSpec {
     }
   }
 
-  private def generateDocument(title: String = "", form: Form[EditSetRecord]): Document = {
+  private def generateDocument(title: String = "", form: Form[EditSetRecordFormValues]): Document = {
     val editSetRecordEditInstance: editSetRecordEdit = inject[editSetRecordEdit]
     asDocument(
       editSetRecordEditInstance(
