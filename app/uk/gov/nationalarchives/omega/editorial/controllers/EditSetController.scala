@@ -136,7 +136,7 @@ class EditSetController @Inject() (
           resolvedMessage(MessageKeys.placeOfDepositMissingOrInvalid),
           _.trim.nonEmpty
         ),
-      FieldNames.relatedMaterial -> seq(text)
+      FieldNames.relatedMaterial -> text
     )(EditSetRecord.apply)(EditSetRecord.unapply)
   )
 
@@ -167,7 +167,6 @@ class EditSetController @Inject() (
       val editSetName = editSets.getEditSet().name
       editSetRecords.getEditSetRecordByOCI(recordId) match {
         case Some(record) =>
-          val relatedMaterials = resolveRelatedMaterials(record, relatedMaterial.all)
           val title: String = resolvedMessage(MessageKeys.title)
           val recordForm = correctBeforePresenting(editSetRecordForm.fill(record))
           Ok(
@@ -177,7 +176,7 @@ class EditSetController @Inject() (
               title,
               legalStatus.getLegalStatusReferenceData(),
               corporateBodies.all,
-              relatedMaterials,
+              relatedMaterial.all,
               recordForm
             )
           )
@@ -203,6 +202,7 @@ class EditSetController @Inject() (
                   title,
                   legalStatus.getLegalStatusReferenceData(),
                   corporateBodies.all,
+                  Seq.empty,
                   formWithErrors
                 )
               )
@@ -299,11 +299,6 @@ class EditSetController @Inject() (
 
   private def resolvedMessage(key: String, args: String*): String = messagesApi(key, args: _*)(Lang("en"))
 
-  private def resolveRelatedMaterials(record: EditSetRecord, relatedMaterials: Seq[RelatedMaterial]): Seq[RelatedMaterial] =
-    record.relatedMaterial.flatMap { id =>
-      relatedMaterials.find(_.id == id)
-    }
-
   private def extractStartDate(formValues: Map[String, String]): Option[LocalDate] =
     extractDate(formValues, FieldNames.startDateDay, FieldNames.startDateMonth, FieldNames.startDateYear)
 
@@ -337,6 +332,7 @@ class EditSetController @Inject() (
               title,
               legalStatus.getLegalStatusReferenceData(),
               corporateBodies.all,
+              Seq.empty,
               formWithUpdatedDateFields(originalForm, singleDateRangeOpt)
             )
           )
@@ -348,6 +344,7 @@ class EditSetController @Inject() (
               title,
               legalStatus.getLegalStatusReferenceData(),
               corporateBodies.all,
+              Seq.empty,
               formAfterCoveringDatesParseError(originalForm)
             )
           )
@@ -360,6 +357,7 @@ class EditSetController @Inject() (
           title,
           legalStatus.getLegalStatusReferenceData(),
           corporateBodies.all,
+          Seq.empty,
           originalForm.copy(errors = errorsForCoveringDatesOnly)
         )
       )

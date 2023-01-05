@@ -29,7 +29,7 @@ import play.api.mvc.Result
 import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
 import play.api.test.Injecting
 import play.twirl.api.Content
-import uk.gov.nationalarchives.omega.editorial.models.{ CorporateBody, User }
+import uk.gov.nationalarchives.omega.editorial.models._
 
 import scala.concurrent.Future
 
@@ -41,6 +41,20 @@ class BaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
     CorporateBody("1", "The National Archives, Kew"),
     CorporateBody("2", "British Museum, Department of Libraries and Archives"),
     CorporateBody("3", "British Library, National Sound Archive")
+  )
+
+  val allRelatedMaterial: Seq[RelatedMaterial] = Seq(
+    RelatedMaterial(
+      id = "1",
+      entries = Seq(
+        RelatedMaterialEntry(linkHref = "#;", linkText = "COAL 80/80/3"),
+        RelatedMaterialEntry(
+          linkHref = "#;",
+          linkText = "COAL 80/80/2",
+          description = Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+        )
+      )
+    )
   )
 
   def asDocument(content: Content): Document = asDocument(contentAsString(content))

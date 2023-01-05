@@ -48,7 +48,7 @@ class EditRecordViewSpec extends BaseSpec {
       "endDateYear"               -> text,
       "legalStatus"               -> text,
       "placeOfDeposit"            -> text,
-      "relatedMaterial"           -> seq(text)
+      "relatedMaterial"           -> text
     )(EditSetRecord.apply)(EditSetRecord.unapply)
   )
 
@@ -73,7 +73,8 @@ class EditRecordViewSpec extends BaseSpec {
     endDateMonth = "",
     endDateYear = "",
     placeOfDeposit = "",
-    legalStatus = ""
+    legalStatus = "",
+    relatedMaterial = ""
   )
 
   "Edit record Html" should {
@@ -95,7 +96,8 @@ class EditRecordViewSpec extends BaseSpec {
             endDateMonth = "12",
             endDateYear = "1960",
             legalStatus = "ref.1",
-            placeOfDeposit = "3"
+            placeOfDeposit = "3",
+            relatedMaterial = "1"
           )
         )
       )
@@ -134,7 +136,15 @@ class EditRecordViewSpec extends BaseSpec {
         .withError(FormError("scopeAndContent", "Enter the scope and content."))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, editSetName, title, legalStatusReferenceData, allCorporateBodies, filledForm)(
+        editSetRecordEditInstance(
+          user,
+          editSetName,
+          title,
+          legalStatusReferenceData,
+          allCorporateBodies,
+          allRelatedMaterial,
+          filledForm
+        )(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -160,7 +170,15 @@ class EditRecordViewSpec extends BaseSpec {
         .withError(FormError("scopeAndContent", "Scope and content too long, maximum length 8000 characters"))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, editSetName, title, legalStatusReferenceData, allCorporateBodies, filledForm)(
+        editSetRecordEditInstance(
+          user,
+          editSetName,
+          title,
+          legalStatusReferenceData,
+          allCorporateBodies,
+          allRelatedMaterial,
+          filledForm
+        )(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -195,7 +213,15 @@ class EditRecordViewSpec extends BaseSpec {
         )
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, editSetName, title, legalStatusReferenceData, allCorporateBodies, filledForm)(
+        editSetRecordEditInstance(
+          user,
+          editSetName,
+          title,
+          legalStatusReferenceData,
+          allCorporateBodies,
+          allRelatedMaterial,
+          filledForm
+        )(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -221,7 +247,15 @@ class EditRecordViewSpec extends BaseSpec {
         .withError(FormError("", "Select a valid legal status"))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, editSetName, title, legalStatusReferenceData, allCorporateBodies, filledForm)(
+        editSetRecordEditInstance(
+          user,
+          editSetName,
+          title,
+          legalStatusReferenceData,
+          allCorporateBodies,
+          allRelatedMaterial,
+          filledForm
+        )(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -249,7 +283,8 @@ class EditRecordViewSpec extends BaseSpec {
         endDateMonth = "12",
         endDateYear = "1960",
         legalStatus = "ref.1",
-        placeOfDeposit = "2"
+        placeOfDeposit = "2",
+        relatedMaterial = "1"
       )
 
       val editSetRecordForm = emptyForm
@@ -263,6 +298,7 @@ class EditRecordViewSpec extends BaseSpec {
           title,
           legalStatusReferenceData,
           allCorporateBodies,
+          allRelatedMaterial,
           editSetRecordForm
         )(
           Helpers.stubMessages(),
@@ -325,6 +361,7 @@ class EditRecordViewSpec extends BaseSpec {
         title = title,
         legalStatusReferenceData,
         corporateBodies = allCorporateBodies,
+        relatedMaterial = allRelatedMaterial,
         editSetRecordForm = form
       )(
         Helpers.stubMessages(),
