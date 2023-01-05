@@ -47,12 +47,12 @@ class BaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
     RelatedMaterial(
       id = "1",
       entries = Seq(
-        RelatedMaterialEntry(linkHref = "#;", linkText = "COAL 80/80/3"),
         RelatedMaterialEntry(
           linkHref = "#;",
           linkText = "COAL 80/80/2",
           description = Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-        )
+        ),
+        RelatedMaterialEntry(linkHref = "#;", linkText = "COAL 80/80/3")
       )
     )
   )

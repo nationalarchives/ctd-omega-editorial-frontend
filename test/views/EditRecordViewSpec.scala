@@ -361,7 +361,7 @@ class EditRecordViewSpec extends BaseSpec {
         title = title,
         legalStatusReferenceData,
         corporateBodies = allCorporateBodies,
-        relatedMaterial = allRelatedMaterial,
+        allRelatedMaterial = allRelatedMaterial,
         editSetRecordForm = form
       )(
         Helpers.stubMessages(),

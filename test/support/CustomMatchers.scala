@@ -170,19 +170,21 @@ object CustomMatchers {
     )
 
   def haveRelatedMaterialLink(expectedHref: String, expectedText: String): Matcher[Document] = (document: Document) => {
-    val link = document.select("#relatedMaterialLink")
-    singleValueMatcher(
+    val actualLinks = document.select(".relatedMaterialLink").asScala.map { element =>
+      (element.attr("href"), element.text)
+    }
+    oneOfMatcher(
       label = "a link for related material",
       expectedValue = (expectedHref, expectedText),
-      actualValue = (link.attr("href"), link.text)
+      possibleValues = actualLinks.toSet
     )
   }
 
   def haveRelatedMaterialText(expectedValue: String): Matcher[Document] = (document: Document) =>
-    singleValueMatcher(
+    oneOfMatcher(
       label = "text for related material",
       expectedValue = expectedValue,
-      actualValue = document.select("#relatedMaterialText").text()
+      possibleValues = document.select(".relatedMaterialText").eachText.asScala.toSet
     )
 
   def haveSummaryErrorTitle(expectedValue: String): Matcher[Document] = (document: Document) =>
@@ -397,6 +399,17 @@ object CustomMatchers {
     val errorMessageIfNotExpected = s"The page did indeed have $label of '$expectedValue', which was not expected."
     MatchResult(
       actualValue == expectedValue,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  private def oneOfMatcher[T](label: String, expectedValue: T, possibleValues: Set[T]) = {
+    val errorMessageIfExpected =
+      s"The page didn't have any $label of '$expectedValue'. The actual values were '$possibleValues'"
+    val errorMessageIfNotExpected = s"The page did indeed have $label of '$expectedValue', which was not expected."
+    MatchResult(
+      possibleValues.contains(expectedValue),
       errorMessageIfExpected,
       errorMessageIfNotExpected
     )

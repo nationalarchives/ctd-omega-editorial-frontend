@@ -221,7 +221,12 @@ class EditSetControllerSpec extends BaseSpec {
               ExpectedRelatedMaterial(
                 linkHref = "#;",
                 linkText = "COAL 80/80/2",
-                description = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+                description =
+                  Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+              ),
+              ExpectedRelatedMaterial(
+                linkHref = "#;",
+                linkText = "COAL 80/80/3"
               )
             )
           )
@@ -1172,7 +1177,9 @@ class EditSetControllerSpec extends BaseSpec {
 
     expectedPage.relatedMaterial.foreach { relatedMaterial =>
       document must haveRelatedMaterialLink(relatedMaterial.linkHref, relatedMaterial.linkText)
-      document must haveRelatedMaterialText(relatedMaterial.description)
+      relatedMaterial.description.foreach { description =>
+        document must haveRelatedMaterialText(description)
+      }
     }
 
     document must haveVisibleLogoutLink
@@ -1247,7 +1254,7 @@ class EditSetControllerSpec extends BaseSpec {
     errorMessageForPlaceOfDeposit: Option[String] = None
   )
 
-  case class ExpectedRelatedMaterial(linkHref: String, linkText: String, description: String)
+  case class ExpectedRelatedMaterial(linkHref: String, linkText: String, description: Option[String] = None)
 
   case class ExpectedDate(day: String, month: String, year: String)
 

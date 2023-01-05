@@ -41,7 +41,8 @@ package object editSetRecords {
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
-        |  "placeOfDeposit" : "1"
+        |  "placeOfDeposit" : "1",
+        |  "relatedMaterial" : "1"
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -62,7 +63,8 @@ package object editSetRecords {
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.2",
-        |  "placeOfDeposit" : ""
+        |  "placeOfDeposit" : "",
+        |  "relatedMaterial" : "1"
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -83,7 +85,8 @@ package object editSetRecords {
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
         |  "legalStatus": "",
-        |  "placeOfDeposit" : "6"
+        |  "placeOfDeposit" : "6",
+        |  "relatedMaterial" : "1"
         |} """.stripMargin
     )
     .validate[EditSetRecord]

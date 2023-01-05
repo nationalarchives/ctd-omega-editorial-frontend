@@ -32,7 +32,7 @@
   title: String,
   legalStatusReferenceData: Seq[LegalStatus],
   corporateBodies: Seq[CorporateBody],
-  relatedMaterial: Seq[RelatedMaterial],
+  allRelatedMaterial: Seq[RelatedMaterial],
   editSetRecordForm: Form[EditSetRecord]
 )(implicit messages: Messages, request: Request[AnyContent])
 
@@ -43,6 +43,14 @@
         value = None,
         text = "Select a Legal Status",
     ))
+}
+
+@relatedMaterialItem(href: String, linkText: String) = {
+  <li><a class="relatedMaterialLink" href="@href">@linkText</a></li>
+}
+
+@relatedMaterialItemWithDescription(href: String, linkText: String, description: String) = {
+  <li><a class="relatedMaterialLink" href="@href">@linkText</a> - <span class="relatedMaterialText">@description</span></li>
 }
 
 @backLink = {
@@ -214,6 +222,28 @@
     },
 )
 )
+
+  <ul>
+    @{
+
+      val id = editSetRecordForm.data.getOrElse("relatedMaterial", "")
+      val applicableRelatedMaterial = allRelatedMaterial.filter(_.id == id).flatMap(_.entries)
+
+      applicableRelatedMaterial.map { entry =>
+        entry.description match {
+
+          case Some(description) => {
+            relatedMaterialItemWithDescription(entry.linkHref, entry.linkText, description)
+          }
+
+          case None => {
+            relatedMaterialItem(entry.linkHref, entry.linkText)
+          }
+
+        }
+      }
+    }
+  </ul>
 
     <div class="govuk-form-group">
         <input id="ccr" name="ccr" type="text" readonly="readonly" hidden="true" value="@editSetRecordForm.data.get("ccr")"/>
