@@ -218,7 +218,7 @@ class EditSetControllerSpec extends BaseSpec {
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (E)",
                 coveringDates = "1963"
               ),
-                ExpectedEditSetSummaryRow(
+              ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/6",
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (F)",
@@ -1152,12 +1152,12 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values = validValuesForSaving ++
               Map(
-                "startDateDay" -> "29",
+                "startDateDay"   -> "29",
                 "startDateMonth" -> "2",
-                "startDateYear" -> "2022",
-                "endDateDay" -> "31",
-                "endDateMonth" -> "10",
-                "endDateYear" -> "2022"
+                "startDateYear"  -> "2022",
+                "endDateDay"     -> "31",
+                "endDateMonth"   -> "10",
+                "endDateYear"    -> "2022"
               )
 
             val result = submitWhileLoggedIn(2, "COAL.2022.V1RJW.R", values)
@@ -1269,12 +1269,12 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values = validValuesForSaving ++
               Map(
-                "startDateDay" -> "1",
+                "startDateDay"   -> "1",
                 "startDateMonth" -> "2",
-                "startDateYear" -> "2022",
-                "endDateDay" -> "29",
-                "endDateMonth" -> "2",
-                "endDateYear" -> "2022"
+                "startDateYear"  -> "2022",
+                "endDateDay"     -> "29",
+                "endDateMonth"   -> "2",
+                "endDateYear"    -> "2022"
               )
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1311,12 +1311,12 @@ class EditSetControllerSpec extends BaseSpec {
           "is before start date" in {
 
             val values = validValuesForSaving ++ Map(
-              "startDateDay" -> "12",
+              "startDateDay"   -> "12",
               "startDateMonth" -> "10",
-              "startDateYear" -> "2020",
-              "endDateDay" -> "11",
-              "endDateMonth" -> "10",
-              "endDateYear" -> "2020"
+              "startDateYear"  -> "2020",
+              "endDateDay"     -> "11",
+              "endDateMonth"   -> "10",
+              "endDateYear"    -> "2020"
             )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -1355,12 +1355,12 @@ class EditSetControllerSpec extends BaseSpec {
         "neither start date nor end date is valid" in {
 
           val values = validValuesForSaving ++ Map(
-            "startDateDay" -> "12",
+            "startDateDay"   -> "12",
             "startDateMonth" -> "14",
-            "startDateYear" -> "2020",
-            "endDateDay" -> "42",
-            "endDateMonth" -> "12",
-            "endDateYear" -> "2020"
+            "startDateYear"  -> "2020",
+            "endDateDay"     -> "42",
+            "endDateMonth"   -> "12",
+            "endDateYear"    -> "2020"
           )
 
           val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -1763,7 +1763,6 @@ class EditSetControllerSpec extends BaseSpec {
 
         "redirect to result page from the router" when {
 
-
           "all fields are provided" in {
 
             val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", validValuesForSaving)
@@ -1840,7 +1839,6 @@ class EditSetControllerSpec extends BaseSpec {
         }
       }
     }
-
 
     "when the action is to discard all changes" when {
 
