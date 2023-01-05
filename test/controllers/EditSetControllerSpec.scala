@@ -177,6 +177,24 @@ class EditSetControllerSpec extends BaseSpec {
                 coveringDates = "1962"
               ),
               ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/10",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
+                coveringDates = "1973"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/11",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (K)",
+                coveringDates = "1975"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/12",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (L)",
+                coveringDates = "1977"
+              ),
+              ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/2",
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
@@ -200,7 +218,7 @@ class EditSetControllerSpec extends BaseSpec {
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (E)",
                 coveringDates = "1963"
               ),
-                ExpectedEditSetSummaryRow(
+              ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/6",
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (F)",
@@ -223,24 +241,6 @@ class EditSetControllerSpec extends BaseSpec {
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (I)",
                 coveringDates = "1971"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/10",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
-                coveringDates = "1973"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/11",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (K)",
-                coveringDates = "1975"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/12",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (L)",
-                coveringDates = "1977"
               )
             )
           )
@@ -271,24 +271,6 @@ class EditSetControllerSpec extends BaseSpec {
             ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/12",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (L)",
-                coveringDates = "1977"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/11",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (K)",
-                coveringDates = "1975"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/10",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
-                coveringDates = "1973"
-              ),
-              ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/9",
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (I)",
@@ -335,6 +317,24 @@ class EditSetControllerSpec extends BaseSpec {
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
                 coveringDates = "1966"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/12",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (L)",
+                coveringDates = "1977"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/11",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (K)",
+                coveringDates = "1975"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/10",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
+                coveringDates = "1973"
               ),
               ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/1",
@@ -777,6 +777,24 @@ class EditSetControllerSpec extends BaseSpec {
                 coveringDates = "1962"
               ),
               ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/10",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
+                coveringDates = "1973"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/11",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (K)",
+                coveringDates = "1975"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/12",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (L)",
+                coveringDates = "1977"
+              ),
+              ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/2",
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
@@ -823,24 +841,6 @@ class EditSetControllerSpec extends BaseSpec {
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (I)",
                 coveringDates = "1971"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/10",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
-                coveringDates = "1973"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/11",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (K)",
-                coveringDates = "1975"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/12",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (L)",
-                coveringDates = "1977"
               )
             )
           )
