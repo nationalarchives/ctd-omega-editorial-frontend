@@ -27,7 +27,7 @@ import play.api.test.Helpers._
 import play.api.test._
 import support.BaseSpec
 import support.CustomMatchers._
-import support.ExpectedValues.ExpectedSelectOption
+import support.ExpectedValues.{ ExpectedActionButton, ExpectedDate, ExpectedSelectOption }
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
@@ -46,9 +46,8 @@ class EditSetControllerSpec extends BaseSpec {
   "EditSetController GET /edit-set/{id}" should {
 
     "render the edit set page from a new instance of controller" in {
-      val defaultLang = play.api.i18n.Lang.defaultLang.code
       val messages: Map[String, Map[String, String]] =
-        Map(defaultLang -> Map("edit-set.heading" -> "Edit set: COAL 80 Sample"))
+        Map("en" -> Map("edit-set.heading" -> "Edit set: COAL 80 Sample"))
       val mockMessagesApi = stubMessagesApi(messages)
       val editSetInstance = inject[editSet]
       val editSetRecordEditInstance = inject[editSetRecordEdit]
@@ -74,7 +73,11 @@ class EditSetControllerSpec extends BaseSpec {
       )
       val editSet = controller
         .view("COAL.2022.V5RJW.P")
-        .apply(FakeRequest(GET, "/edit-set/1").withSession(SessionKeys.token -> validSessionToken))
+        .apply(
+          CSRFTokenHelper.addCSRFToken(
+            FakeRequest(GET, "/edit-set/1").withSession(SessionKeys.token -> validSessionToken)
+          )
+        )
 
       status(editSet) mustBe OK
       contentType(editSet) mustBe Some("text/html")
@@ -87,8 +90,10 @@ class EditSetControllerSpec extends BaseSpec {
       val editSet = controller
         .view("COAL.2022.V5RJW.P")
         .apply(
-          FakeRequest(GET, "/edit-set/1")
-            .withSession(SessionKeys.token -> validSessionToken)
+          CSRFTokenHelper.addCSRFToken(
+            FakeRequest(GET, "/edit-set/1")
+              .withSession(SessionKeys.token -> validSessionToken)
+          )
         )
 
       status(editSet) mustBe OK
@@ -126,6 +131,344 @@ class EditSetControllerSpec extends BaseSpec {
 
       status(editSet) mustBe SEE_OTHER
       redirectLocation(editSet) mustBe Some("/login")
+    }
+  }
+
+  "EditSetController POST /edit-set/{id}" should {
+    "render the records in the expected order, when ordering by" when {
+
+      def requestPage(values: Map[String, String]): Future[Result] =
+        route(
+          app,
+          CSRFTokenHelper.addCSRFToken(
+            FakeRequest(POST, "/edit-set/1")
+              .withFormUrlEncodedBody(values.toSeq: _*)
+              .withSession(SessionKeys.token -> validSessionToken)
+          )
+        ).get
+
+      "CCR, ascending" in {
+
+        val values = Map("field" -> "ccr", "direction" -> "ascending")
+
+        val page = requestPage(values)
+
+        status(page) mustBe OK
+        assertPageAsExpected(
+          asDocument(page),
+          ExpectedEditSetPage(
+            title = "Edit set",
+            caption = "Edit set: COAL 80 Sample",
+            button = ExpectedActionButton("reorder", "Sort edit set"),
+            expectedOptionsForField = Seq(
+              ExpectedSelectOption("ccr", "CCR", selected = true),
+              ExpectedSelectOption("scopeAndContent", "Scope and Content"),
+              ExpectedSelectOption("coveringDates", "Covering Dates")
+            ),
+            expectedOptionsForDirection = Seq(
+              ExpectedSelectOption("ascending", "Ascending", selected = true),
+              ExpectedSelectOption("descending", "Descending")
+            ),
+            expectedSummaryRows = Seq(
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/1",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
+                coveringDates = "1962"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/2",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
+                coveringDates = "1966"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/3",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (C)",
+                coveringDates = "1964"
+              )
+            )
+          )
+        )
+
+      }
+      "CCR, descending" in {
+
+        val values = Map("field" -> "ccr", "direction" -> "descending")
+
+        val page = requestPage(values)
+
+        status(page) mustBe OK
+        assertPageAsExpected(
+          asDocument(page),
+          ExpectedEditSetPage(
+            title = "Edit set",
+            caption = "Edit set: COAL 80 Sample",
+            button = ExpectedActionButton("reorder", "Sort edit set"),
+            expectedOptionsForField = Seq(
+              ExpectedSelectOption("ccr", "CCR", selected = true),
+              ExpectedSelectOption("scopeAndContent", "Scope and Content"),
+              ExpectedSelectOption("coveringDates", "Covering Dates")
+            ),
+            expectedOptionsForDirection = Seq(
+              ExpectedSelectOption("ascending", "Ascending"),
+              ExpectedSelectOption("descending", "Descending", selected = true)
+            ),
+            expectedSummaryRows = Seq(
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/3",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (C)",
+                coveringDates = "1964"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/2",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
+                coveringDates = "1966"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/1",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
+                coveringDates = "1962"
+              )
+            )
+          )
+        )
+
+      }
+      "Scope and Content, ascending" in {
+
+        val values = Map("field" -> "scopeAndContent", "direction" -> "ascending")
+
+        val page = requestPage(values)
+
+        status(page) mustBe OK
+        assertPageAsExpected(
+          asDocument(page),
+          ExpectedEditSetPage(
+            title = "Edit set",
+            caption = "Edit set: COAL 80 Sample",
+            button = ExpectedActionButton("reorder", "Sort edit set"),
+            expectedOptionsForField = Seq(
+              ExpectedSelectOption("ccr", "CCR"),
+              ExpectedSelectOption("scopeAndContent", "Scope and Content", selected = true),
+              ExpectedSelectOption("coveringDates", "Covering Dates")
+            ),
+            expectedOptionsForDirection = Seq(
+              ExpectedSelectOption("ascending", "Ascending", selected = true),
+              ExpectedSelectOption("descending", "Descending")
+            ),
+            expectedSummaryRows = Seq(
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/2",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
+                coveringDates = "1966"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/1",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
+                coveringDates = "1962"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/3",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (C)",
+                coveringDates = "1964"
+              )
+            )
+          )
+        )
+
+      }
+      "Scope and Content, descending" in {
+
+        val values = Map("field" -> "scopeAndContent", "direction" -> "descending")
+
+        val page = requestPage(values)
+
+        status(page) mustBe OK
+        assertPageAsExpected(
+          asDocument(page),
+          ExpectedEditSetPage(
+            title = "Edit set",
+            caption = "Edit set: COAL 80 Sample",
+            button = ExpectedActionButton("reorder", "Sort edit set"),
+            expectedOptionsForField = Seq(
+              ExpectedSelectOption("ccr", "CCR"),
+              ExpectedSelectOption("scopeAndContent", "Scope and Content", selected = true),
+              ExpectedSelectOption("coveringDates", "Covering Dates")
+            ),
+            expectedOptionsForDirection = Seq(
+              ExpectedSelectOption("ascending", "Ascending"),
+              ExpectedSelectOption("descending", "Descending", selected = true)
+            ),
+            expectedSummaryRows = Seq(
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/3",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (C)",
+                coveringDates = "1964"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/1",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
+                coveringDates = "1962"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/2",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
+                coveringDates = "1966"
+              )
+            )
+          )
+        )
+
+      }
+      "Covering dates, ascending" in {
+
+        val values = Map("field" -> "coveringDates", "direction" -> "ascending")
+
+        val page = requestPage(values)
+
+        status(page) mustBe OK
+        assertPageAsExpected(
+          asDocument(page),
+          ExpectedEditSetPage(
+            title = "Edit set",
+            caption = "Edit set: COAL 80 Sample",
+            button = ExpectedActionButton("reorder", "Sort edit set"),
+            expectedOptionsForField = Seq(
+              ExpectedSelectOption("ccr", "CCR"),
+              ExpectedSelectOption("scopeAndContent", "Scope and Content"),
+              ExpectedSelectOption("coveringDates", "Covering Dates", selected = true)
+            ),
+            expectedOptionsForDirection = Seq(
+              ExpectedSelectOption("ascending", "Ascending", selected = true),
+              ExpectedSelectOption("descending", "Descending")
+            ),
+            expectedSummaryRows = Seq(
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/1",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
+                coveringDates = "1962"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/3",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (C)",
+                coveringDates = "1964"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/2",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
+                coveringDates = "1966"
+              )
+            )
+          )
+        )
+
+      }
+      "Covering dates, descending" in {
+
+        val values = Map("field" -> "coveringDates", "direction" -> "descending")
+
+        val page = requestPage(values)
+
+        status(page) mustBe OK
+        assertPageAsExpected(
+          asDocument(page),
+          ExpectedEditSetPage(
+            title = "Edit set",
+            caption = "Edit set: COAL 80 Sample",
+            button = ExpectedActionButton("reorder", "Sort edit set"),
+            expectedOptionsForField = Seq(
+              ExpectedSelectOption("ccr", "CCR"),
+              ExpectedSelectOption("scopeAndContent", "Scope and Content"),
+              ExpectedSelectOption("coveringDates", "Covering Dates", selected = true)
+            ),
+            expectedOptionsForDirection = Seq(
+              ExpectedSelectOption("ascending", "Ascending"),
+              ExpectedSelectOption("descending", "Descending", selected = true)
+            ),
+            expectedSummaryRows = Seq(
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/2",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
+                coveringDates = "1966"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/3",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (C)",
+                coveringDates = "1964"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/1",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
+                coveringDates = "1962"
+              )
+            )
+          )
+        )
+
+      }
+      "Unknown field and direction" in {
+
+        val values = Map("field" -> "height", "direction" -> "upwards")
+
+        val page = requestPage(values)
+
+        status(page) mustBe OK
+        assertPageAsExpected(
+          asDocument(page),
+          ExpectedEditSetPage(
+            title = "Edit set",
+            caption = "Edit set: COAL 80 Sample",
+            button = ExpectedActionButton("reorder", "Sort edit set"),
+            expectedOptionsForField = Seq(
+              ExpectedSelectOption("ccr", "CCR", selected = true),
+              ExpectedSelectOption("scopeAndContent", "Scope and Content"),
+              ExpectedSelectOption("coveringDates", "Covering Dates")
+            ),
+            expectedOptionsForDirection = Seq(
+              ExpectedSelectOption("ascending", "Ascending", selected = true),
+              ExpectedSelectOption("descending", "Descending")
+            ),
+            expectedSummaryRows = Seq(
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/1",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
+                coveringDates = "1962"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/2",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
+                coveringDates = "1966"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/3",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (C)",
+                coveringDates = "1964"
+              )
+            )
+          )
+        )
+
+      }
     }
   }
 
@@ -190,32 +533,40 @@ class EditSetControllerSpec extends BaseSpec {
       document must haveHeading("TNA reference: COAL 80/80/1")
     }
 
-    "render the edit set page from the router" when {
+    "render the edit set record page from the router" when {
       "all data is valid" in {
         val request =
-          FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit").withSession(
-            SessionKeys.token -> validSessionToken
+          CSRFTokenHelper.addCSRFToken(
+            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit").withSession(
+              SessionKeys.token -> validSessionToken
+            )
           )
 
         val editRecordPage = route(app, request).get
 
         status(editRecordPage) mustBe OK
-        contentType(editRecordPage) mustBe Some("text/html")
         assertPageAsExpected(
           asDocument(editRecordPage),
-          ExpectedPage(
+          ExpectedEditRecordPage(
             title = "Edit record",
             heading = "TNA reference: COAL 80/80/1",
             legend = "Intellectual properties",
             classicCatalogueRef = "COAL 80/80/1",
             omegaCatalogueId = "COAL.2022.V1RJW.P",
-            scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-            coveringDates = "1960",
+            scopeAndContent =
+              "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
+            coveringDates = "1962",
             formerReferenceDepartment = "",
-            startDate = ExpectedDate("1", "1", "1960"),
-            endDate = ExpectedDate("31", "12", "1960"),
+            startDate = ExpectedDate("1", "1", "1962"),
+            endDate = ExpectedDate("31", "12", "1962"),
             legalStatus = "ref.1",
-            placeOfDeposit = "1"
+            placeOfDeposit = "1",
+            optionsForPlaceOfDeposit = Seq(
+              ExpectedSelectOption("", "Select where this record is held", disabled = true),
+              ExpectedSelectOption("1", "The National Archives, Kew", selected = true),
+              ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
+              ExpectedSelectOption("3", "British Library, National Sound Archive")
+            )
           )
         )
       }
@@ -230,19 +581,26 @@ class EditSetControllerSpec extends BaseSpec {
         contentType(editRecordPage) mustBe Some("text/html")
         assertPageAsExpected(
           asDocument(editRecordPage),
-          ExpectedPage(
+          ExpectedEditRecordPage(
             title = "Edit record",
             heading = "TNA reference: COAL 80/80/3",
             legend = "Intellectual properties",
             classicCatalogueRef = "COAL 80/80/3",
             omegaCatalogueId = "COAL.2022.V3RJW.P",
-            scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-            coveringDates = "1960",
+            scopeAndContent =
+              "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (C)",
+            coveringDates = "1964",
             formerReferenceDepartment = "",
-            startDate = ExpectedDate("1", "1", "1960"),
-            endDate = ExpectedDate("31", "12", "1960"),
+            startDate = ExpectedDate("1", "1", "1964"),
+            endDate = ExpectedDate("31", "12", "1964"),
             legalStatus = "",
-            placeOfDeposit = ""
+            placeOfDeposit = "",
+            optionsForPlaceOfDeposit = Seq(
+              ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
+              ExpectedSelectOption("1", "The National Archives, Kew"),
+              ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
+              ExpectedSelectOption("3", "British Library, National Sound Archive")
+            )
           )
         )
       }
@@ -310,7 +668,7 @@ class EditSetControllerSpec extends BaseSpec {
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedPage(
+              ExpectedEditRecordPage(
                 title = "Edit record",
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
@@ -322,7 +680,13 @@ class EditSetControllerSpec extends BaseSpec {
                 startDate = ExpectedDate("1", "10", "2020"),
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
-                placeOfDeposit = "2"
+                placeOfDeposit = "2",
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                )
               )
             )
           }
@@ -338,7 +702,7 @@ class EditSetControllerSpec extends BaseSpec {
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedPage(
+              ExpectedEditRecordPage(
                 title = "Edit record",
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
@@ -352,6 +716,12 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
                 summaryErrorMessages = Seq("Start date is not a valid date"),
                 errorMessageForStartDate = Some("Start date is not a valid date")
               )
@@ -368,7 +738,7 @@ class EditSetControllerSpec extends BaseSpec {
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedPage(
+              ExpectedEditRecordPage(
                 title = "Edit record",
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
@@ -382,6 +752,12 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
                 summaryErrorMessages = Seq("Start date is not a valid date"),
                 errorMessageForStartDate = Some("Start date is not a valid date")
               )
@@ -403,7 +779,7 @@ class EditSetControllerSpec extends BaseSpec {
             val result = submitWhileLoggedIn(2, "COAL.2022.V5RJW.R", values)
 
             status(result) mustBe BAD_REQUEST
-            val expectedPage = ExpectedPage(
+            val expectedPage = ExpectedEditRecordPage(
               title = "Edit record",
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
@@ -417,6 +793,12 @@ class EditSetControllerSpec extends BaseSpec {
               endDate = ExpectedDate("31", "10", "2022"),
               legalStatus = "ref.1",
               placeOfDeposit = "2",
+              optionsForPlaceOfDeposit = Seq(
+                ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                ExpectedSelectOption("1", "The National Archives, Kew"),
+                ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                ExpectedSelectOption("3", "British Library, National Sound Archive")
+              ),
               summaryErrorMessages = Seq("Start date is not a valid date"),
               errorMessageForStartDate = Some("Start date is not a valid date")
             )
@@ -435,7 +817,7 @@ class EditSetControllerSpec extends BaseSpec {
             val document = asDocument(result)
             assertPageAsExpected(
               document,
-              ExpectedPage(
+              ExpectedEditRecordPage(
                 title = "Edit record",
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
@@ -449,6 +831,12 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("", "", ""),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
                 summaryErrorMessages = Seq("End date is not a valid date"),
                 errorMessageForEndDate = Some("End date is not a valid date")
               )
@@ -464,7 +852,7 @@ class EditSetControllerSpec extends BaseSpec {
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedPage(
+              ExpectedEditRecordPage(
                 title = "Edit record",
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
@@ -478,6 +866,12 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("XX", "12", "2000"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
                 summaryErrorMessages = Seq("End date is not a valid date"),
                 errorMessageForEndDate = Some("End date is not a valid date")
               )
@@ -500,7 +894,7 @@ class EditSetControllerSpec extends BaseSpec {
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedPage(
+              ExpectedEditRecordPage(
                 title = "Edit record",
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
@@ -514,6 +908,12 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("29", "2", "2022"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
                 summaryErrorMessages = Seq("End date is not a valid date"),
                 errorMessageForEndDate = Some("End date is not a valid date")
               )
@@ -536,7 +936,7 @@ class EditSetControllerSpec extends BaseSpec {
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedPage(
+              ExpectedEditRecordPage(
                 title = "Edit record",
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
@@ -550,6 +950,12 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("11", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
                 summaryErrorMessages = Seq("End date cannot precede start date"),
                 errorMessageForEndDate = Some("End date cannot precede start date")
               )
@@ -573,7 +979,7 @@ class EditSetControllerSpec extends BaseSpec {
           status(result) mustBe BAD_REQUEST
           assertPageAsExpected(
             asDocument(result),
-            ExpectedPage(
+            ExpectedEditRecordPage(
               title = "Edit record",
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
@@ -587,6 +993,12 @@ class EditSetControllerSpec extends BaseSpec {
               endDate = ExpectedDate("42", "12", "2020"),
               legalStatus = "ref.1",
               placeOfDeposit = "2",
+              optionsForPlaceOfDeposit = Seq(
+                ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                ExpectedSelectOption("1", "The National Archives, Kew"),
+                ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                ExpectedSelectOption("3", "British Library, National Sound Archive")
+              ),
               summaryErrorMessages = Seq("Start date is not a valid date", "End date is not a valid date"),
               errorMessageForStartDate = Some("Start date is not a valid date"),
               errorMessageForEndDate = Some("End date is not a valid date")
@@ -603,7 +1015,7 @@ class EditSetControllerSpec extends BaseSpec {
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedPage(
+              ExpectedEditRecordPage(
                 title = "Edit record",
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
@@ -617,6 +1029,12 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
                 summaryErrorMessages = Seq("Covering date format is not valid"),
                 errorMessageForCoveringsDates = Some("Covering date format is not valid")
               )
@@ -632,7 +1050,7 @@ class EditSetControllerSpec extends BaseSpec {
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedPage(
+              ExpectedEditRecordPage(
                 title = "Edit record",
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
@@ -646,6 +1064,12 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
                 summaryErrorMessages = Seq("Covering date too long, maximum length 255 characters"),
                 errorMessageForCoveringsDates = Some("Covering date too long, maximum length 255 characters")
               )
@@ -660,7 +1084,7 @@ class EditSetControllerSpec extends BaseSpec {
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedPage(
+              ExpectedEditRecordPage(
                 title = "Edit record",
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
@@ -674,6 +1098,12 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
                 summaryErrorMessages = Seq("Enter the covering dates", "Covering date format is not valid"),
                 errorMessageForCoveringsDates = Some("Enter the covering dates")
               )
@@ -690,7 +1120,7 @@ class EditSetControllerSpec extends BaseSpec {
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedPage(
+              ExpectedEditRecordPage(
                 title = "Edit record",
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
@@ -704,6 +1134,12 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "",
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
                 summaryErrorMessages = Seq("You must choose an option"),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
@@ -718,7 +1154,7 @@ class EditSetControllerSpec extends BaseSpec {
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedPage(
+              ExpectedEditRecordPage(
                 title = "Edit record",
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
@@ -732,6 +1168,12 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "",
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
                 summaryErrorMessages = Seq("You must choose an option"),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
@@ -747,7 +1189,7 @@ class EditSetControllerSpec extends BaseSpec {
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedPage(
+              ExpectedEditRecordPage(
                 title = "Edit record",
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
@@ -761,6 +1203,12 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "",
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
                 summaryErrorMessages = Seq("You must choose an option"),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
@@ -778,7 +1226,7 @@ class EditSetControllerSpec extends BaseSpec {
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedPage(
+              ExpectedEditRecordPage(
                 title = "Edit record",
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
@@ -792,6 +1240,12 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "",
                 placeOfDeposit = "2",
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
                 summaryErrorMessages = Seq("You must choose an option"),
                 errorMessageForLegalStatus = Some("Error: You must choose an option")
               )
@@ -881,7 +1335,7 @@ class EditSetControllerSpec extends BaseSpec {
           val getRecordResult = getRecordForEditingWhileLoggedIn(1, "COAL.2022.V1RJW.P")
           assertPageAsExpected(
             asDocument(getRecordResult),
-            ExpectedPage(
+            ExpectedEditRecordPage(
               title = "Edit record",
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
@@ -894,7 +1348,13 @@ class EditSetControllerSpec extends BaseSpec {
               startDate = ExpectedDate("1", "10", "2020"),
               endDate = ExpectedDate("31", "10", "2020"),
               legalStatus = "ref.1",
-              placeOfDeposit = "2"
+              placeOfDeposit = "2",
+              optionsForPlaceOfDeposit = Seq(
+                ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                ExpectedSelectOption("1", "The National Archives, Kew"),
+                ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                ExpectedSelectOption("3", "British Library, National Sound Archive")
+              )
             )
           )
         }
@@ -943,7 +1403,7 @@ class EditSetControllerSpec extends BaseSpec {
           status(result) mustBe BAD_REQUEST
           assertPageAsExpected(
             asDocument(result),
-            ExpectedPage(
+            ExpectedEditRecordPage(
               title = "Edit record",
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
@@ -957,6 +1417,12 @@ class EditSetControllerSpec extends BaseSpec {
               endDate = ExpectedDate("31", "10", "2020"),
               legalStatus = "ref.1",
               placeOfDeposit = "2",
+              optionsForPlaceOfDeposit = Seq(
+                ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                ExpectedSelectOption("1", "The National Archives, Kew"),
+                ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                ExpectedSelectOption("3", "British Library, National Sound Archive")
+              ),
               summaryErrorMessages = Seq("Enter the covering dates", "Covering date format is not valid"),
               errorMessageForCoveringsDates = Some("Enter the covering dates")
             )
@@ -980,7 +1446,7 @@ class EditSetControllerSpec extends BaseSpec {
           status(result) mustBe BAD_REQUEST
           assertPageAsExpected(
             asDocument(result),
-            ExpectedPage(
+            ExpectedEditRecordPage(
               title = "Edit record",
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
@@ -994,6 +1460,12 @@ class EditSetControllerSpec extends BaseSpec {
               endDate = ExpectedDate("31", "10", "2020"),
               legalStatus = "ref.1",
               placeOfDeposit = "2",
+              optionsForPlaceOfDeposit = Seq(
+                ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                ExpectedSelectOption("1", "The National Archives, Kew"),
+                ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                ExpectedSelectOption("3", "British Library, National Sound Archive")
+              ),
               summaryErrorMessages = Seq("Covering date format is not valid"),
               errorMessageForCoveringsDates = Some("Covering date format is not valid")
             )
@@ -1017,7 +1489,7 @@ class EditSetControllerSpec extends BaseSpec {
           status(result) mustBe BAD_REQUEST
           assertPageAsExpected(
             asDocument(result),
-            ExpectedPage(
+            ExpectedEditRecordPage(
               title = "Edit record",
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
@@ -1031,6 +1503,12 @@ class EditSetControllerSpec extends BaseSpec {
               endDate = ExpectedDate("31", "10", "2020"),
               legalStatus = "ref.1",
               placeOfDeposit = "2",
+              optionsForPlaceOfDeposit = Seq(
+                ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                ExpectedSelectOption("1", "The National Archives, Kew"),
+                ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                ExpectedSelectOption("3", "British Library, National Sound Archive")
+              ),
               summaryErrorMessages = Seq("Covering date format is not valid"),
               errorMessageForCoveringsDates = Some("Covering date format is not valid")
             )
@@ -1048,7 +1526,7 @@ class EditSetControllerSpec extends BaseSpec {
           status(result) mustBe OK
           assertPageAsExpected(
             asDocument(result),
-            ExpectedPage(
+            ExpectedEditRecordPage(
               title = "Edit record",
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
@@ -1061,7 +1539,13 @@ class EditSetControllerSpec extends BaseSpec {
               startDate = ExpectedDate("1", "8", "1752"),
               endDate = ExpectedDate("12", "9", "1752"),
               legalStatus = "ref.1",
-              placeOfDeposit = "2"
+              placeOfDeposit = "2",
+              optionsForPlaceOfDeposit = Seq(
+                ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                ExpectedSelectOption("1", "The National Archives, Kew"),
+                ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                ExpectedSelectOption("3", "British Library, National Sound Archive")
+              )
             )
           )
 
@@ -1075,7 +1559,7 @@ class EditSetControllerSpec extends BaseSpec {
           status(result) mustBe OK
           assertPageAsExpected(
             asDocument(result),
-            ExpectedPage(
+            ExpectedEditRecordPage(
               title = "Edit record",
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
@@ -1088,7 +1572,13 @@ class EditSetControllerSpec extends BaseSpec {
               startDate = ExpectedDate("1", "12", "1984"),
               endDate = ExpectedDate("31", "12", "1984"),
               legalStatus = "ref.1",
-              placeOfDeposit = "2"
+              placeOfDeposit = "2",
+              optionsForPlaceOfDeposit = Seq(
+                ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                ExpectedSelectOption("1", "The National Archives, Kew"),
+                ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                ExpectedSelectOption("3", "British Library, National Sound Archive")
+              )
             )
           )
 
@@ -1102,7 +1592,7 @@ class EditSetControllerSpec extends BaseSpec {
           status(result) mustBe OK
           assertPageAsExpected(
             asDocument(result),
-            ExpectedPage(
+            ExpectedEditRecordPage(
               title = "Edit record",
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
@@ -1115,7 +1605,13 @@ class EditSetControllerSpec extends BaseSpec {
               startDate = ExpectedDate("1", "1", "1868"),
               endDate = ExpectedDate("31", "12", "1933"),
               legalStatus = "ref.1",
-              placeOfDeposit = "2"
+              placeOfDeposit = "2",
+              optionsForPlaceOfDeposit = Seq(
+                ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                ExpectedSelectOption("1", "The National Archives, Kew"),
+                ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                ExpectedSelectOption("3", "British Library, National Sound Archive")
+              )
             )
           )
 
@@ -1145,73 +1641,84 @@ class EditSetControllerSpec extends BaseSpec {
     route(app, request).get
   }
 
-  private def assertPageAsExpected(document: Document, expectedPage: ExpectedPage): Unit = {
-    document must haveTitle(expectedPage.title)
-    document must haveHeading(expectedPage.heading)
-    document must haveLegend(expectedPage.legend)
-    document must haveClassicCatalogueRef(expectedPage.classicCatalogueRef)
-    document must haveOmegaCatalogueId(expectedPage.omegaCatalogueId)
-    document must haveScopeAndContent(expectedPage.scopeAndContent)
-    document must haveCoveringDates(expectedPage.coveringDates)
-    document must haveFormerReferenceDepartment(expectedPage.formerReferenceDepartment)
-    document must haveStartDateDay(expectedPage.startDate.day)
-    document must haveStartDateMonth(expectedPage.startDate.month)
-    document must haveStartDateYear(expectedPage.startDate.year)
-    document must haveEndDateDay(expectedPage.endDate.day)
-    document must haveEndDateMonth(expectedPage.endDate.month)
-    document must haveEndDateYear(expectedPage.endDate.year)
+  private def assertPageAsExpected(document: Document, expectedEditRecordPage: ExpectedEditRecordPage): Unit = {
+    document must haveTitle(expectedEditRecordPage.title)
+    document must haveHeading(expectedEditRecordPage.heading)
+    document must haveLegend(expectedEditRecordPage.legend)
+    document must haveClassicCatalogueRef(expectedEditRecordPage.classicCatalogueRef)
+    document must haveOmegaCatalogueId(expectedEditRecordPage.omegaCatalogueId)
+    document must haveScopeAndContent(expectedEditRecordPage.scopeAndContent)
+    document must haveCoveringDates(expectedEditRecordPage.coveringDates)
+    document must haveFormerReferenceDepartment(expectedEditRecordPage.formerReferenceDepartment)
+    document must haveStartDateDay(expectedEditRecordPage.startDate.day)
+    document must haveStartDateMonth(expectedEditRecordPage.startDate.month)
+    document must haveStartDateYear(expectedEditRecordPage.startDate.year)
+    document must haveEndDateDay(expectedEditRecordPage.endDate.day)
+    document must haveEndDateMonth(expectedEditRecordPage.endDate.month)
+    document must haveEndDateYear(expectedEditRecordPage.endDate.year)
 
     document must haveVisibleLogoutLink
     document must haveLogoutLinkLabel("Sign out")
     document must haveLogoutLink
-    document must haveActionButtons("save", 2)
-    document must haveActionButtons("discard", 2)
+    document must haveActionButtons("save", "Save changes", 2)
+    document must haveActionButtons("discard", "Discard changes", 2)
 
-    val expectedSelectOptions =
-      (Seq(ExpectedSelectOption("", "Select where this record is held", selected = false, disabled = true)) ++
-        allCorporateBodies
-          .map(corporateBody =>
-            ExpectedSelectOption(corporateBody.id, corporateBody.name, selected = false, disabled = false)
-          ))
-        .map(expectedSelectOption =>
-          expectedSelectOption.copy(selected = expectedSelectOption.value == expectedPage.placeOfDeposit)
-        )
+    document must haveLegalStatus(expectedEditRecordPage.legalStatus)
 
-    document must haveLegalStatus(expectedPage.legalStatus)
-    document must haveSelectionForPlaceOfDeposit(expectedSelectOptions)
+    document must haveSelectionForPlaceOfDeposit(expectedEditRecordPage.optionsForPlaceOfDeposit)
 
-    if (expectedPage.summaryErrorMessages.nonEmpty) {
-      document must haveSummaryErrorMessages(expectedPage.summaryErrorMessages: _*)
+    if (expectedEditRecordPage.summaryErrorMessages.nonEmpty) {
+      document must haveSummaryErrorMessages(expectedEditRecordPage.summaryErrorMessages: _*)
     }
 
-    expectedPage.errorMessageForStartDate match {
+    expectedEditRecordPage.errorMessageForStartDate match {
       case Some(expectedErrorMessage) => document must haveErrorMessageForStartDate(expectedErrorMessage)
       case None                       => document must haveNoErrorMessageForStartDate
     }
 
-    expectedPage.errorMessageForEndDate match {
+    expectedEditRecordPage.errorMessageForEndDate match {
       case Some(expectedErrorMessage) => document must haveErrorMessageForEndDate(expectedErrorMessage)
       case None                       => document must haveNoErrorMessageForEndDate
     }
 
-    expectedPage.errorMessageForCoveringsDates match {
+    expectedEditRecordPage.errorMessageForCoveringsDates match {
       case Some(expectedErrorMessage) => document must haveErrorMessageForCoveringDates(expectedErrorMessage)
       case None                       => document must haveNoErrorMessageForCoveringDates
     }
 
-    expectedPage.errorMessageForLegalStatus match {
+    expectedEditRecordPage.errorMessageForLegalStatus match {
       case Some(expectedErrorMessage) => document must haveErrorMessageForLegalStatus(expectedErrorMessage)
       case None                       => document must haveNoErrorMessageForLegalStatus
     }
 
-    expectedPage.errorMessageForPlaceOfDeposit match {
+    expectedEditRecordPage.errorMessageForPlaceOfDeposit match {
       case Some(expectedErrorMessage) => document must haveErrorMessageForPlaceOfDeposit(expectedErrorMessage)
       case None                       => document must haveNoErrorMessageForPlaceOfDeposit
     }
 
   }
 
-  case class ExpectedPage(
+  private def assertPageAsExpected(document: Document, expectedEditRecordPage: ExpectedEditSetPage): Unit = {
+    document must haveTitle(expectedEditRecordPage.title)
+    document must haveCaption(expectedEditRecordPage.caption)
+    document must haveActionButtons(expectedEditRecordPage.button.value, expectedEditRecordPage.button.label)
+    document must haveSelectionForOrderingField(expectedEditRecordPage.expectedOptionsForField)
+    document must haveSelectionForOrderingDirection(expectedEditRecordPage.expectedOptionsForDirection)
+    document must haveSummaryRows(expectedEditRecordPage.expectedSummaryRows.size)
+    expectedEditRecordPage.expectedSummaryRows.zipWithIndex.foreach { case (expectedEditSetSummaryRow, index) =>
+      document must haveSummaryRowContents(
+        index + 1,
+        Seq(
+          expectedEditSetSummaryRow.ccr,
+          expectedEditSetSummaryRow.scopeAndContents,
+          expectedEditSetSummaryRow.coveringDates
+        )
+      )
+    }
+
+  }
+
+  case class ExpectedEditRecordPage(
     title: String,
     heading: String,
     legend: String,
@@ -1224,6 +1731,7 @@ class EditSetControllerSpec extends BaseSpec {
     endDate: ExpectedDate,
     legalStatus: String,
     placeOfDeposit: String,
+    optionsForPlaceOfDeposit: Seq[ExpectedSelectOption],
     summaryErrorMessages: Seq[String] = Seq.empty,
     errorMessageForStartDate: Option[String] = None,
     errorMessageForEndDate: Option[String] = None,
@@ -1232,6 +1740,19 @@ class EditSetControllerSpec extends BaseSpec {
     errorMessageForPlaceOfDeposit: Option[String] = None
   )
 
-  case class ExpectedDate(day: String, month: String, year: String)
+  case class ExpectedEditSetPage(
+    title: String,
+    caption: String,
+    button: ExpectedActionButton,
+    expectedOptionsForField: Seq[ExpectedSelectOption],
+    expectedOptionsForDirection: Seq[ExpectedSelectOption],
+    expectedSummaryRows: Seq[ExpectedEditSetSummaryRow]
+  )
+
+  case class ExpectedEditSetSummaryRow(
+    ccr: String,
+    scopeAndContents: String,
+    coveringDates: String
+  )
 
 }
