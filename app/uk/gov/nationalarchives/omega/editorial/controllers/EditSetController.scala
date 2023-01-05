@@ -22,7 +22,7 @@
 package uk.gov.nationalarchives.omega.editorial.controllers
 
 import play.api.Logger
-import play.api.data.Forms.{ mapping, seq, text }
+import play.api.data.Forms.{ mapping, text }
 import play.api.data.{ Form, FormError }
 import play.api.i18n.{ I18nSupport, Lang, Messages }
 import play.api.mvc._
@@ -202,7 +202,7 @@ class EditSetController @Inject() (
                   title,
                   legalStatus.getLegalStatusReferenceData(),
                   corporateBodies.all,
-                  Seq.empty,
+                  relatedMaterial.all,
                   formWithErrors
                 )
               )
@@ -332,7 +332,7 @@ class EditSetController @Inject() (
               title,
               legalStatus.getLegalStatusReferenceData(),
               corporateBodies.all,
-              Seq.empty,
+              relatedMaterial.all,
               formWithUpdatedDateFields(originalForm, singleDateRangeOpt)
             )
           )
@@ -344,7 +344,7 @@ class EditSetController @Inject() (
               title,
               legalStatus.getLegalStatusReferenceData(),
               corporateBodies.all,
-              Seq.empty,
+              relatedMaterial.all,
               formAfterCoveringDatesParseError(originalForm)
             )
           )
@@ -357,7 +357,7 @@ class EditSetController @Inject() (
           title,
           legalStatus.getLegalStatusReferenceData(),
           corporateBodies.all,
-          Seq.empty,
+          relatedMaterial.all,
           originalForm.copy(errors = errorsForCoveringDatesOnly)
         )
       )
