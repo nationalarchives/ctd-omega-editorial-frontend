@@ -31,15 +31,15 @@ package object editSetRecords {
       """{
         |  "ccr" : "COAL 80/80/1",
         |  "oci" : "COAL.2022.V5RJW.P",
-        |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-        |  "coveringDates" : "1960",
+        |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
+        |  "coveringDates" : "1962",
         |  "formerReferenceDepartment" : "",
         |  "startDateDay" : "1",
         |  "startDateMonth" : "1",
-        |  "startDateYear" : "1960",
+        |  "startDateYear" : "1962",
         |  "endDateDay" : "31",
         |  "endDateMonth" : "12",
-        |  "endDateYear" : "1960",
+        |  "endDateYear" : "1962",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1"
         |} """.stripMargin
@@ -52,15 +52,15 @@ package object editSetRecords {
       """{
         |  "ccr" : "COAL 80/80/1",
         |  "oci" : "COAL.2022.V4RJW.P",
-        |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-        |  "coveringDates" : "1960",
+        |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
+        |  "coveringDates" : "1966",
         |  "formerReferenceDepartment" : "",
         |  "startDateDay" : "1",
         |  "startDateMonth" : "1",
-        |  "startDateYear" : "1960",
+        |  "startDateYear" : "1966",
         |  "endDateDay" : "31",
         |  "endDateMonth" : "12",
-        |  "endDateYear" : "1960",
+        |  "endDateYear" : "1966",
         |  "legalStatus": "ref.2",
         |  "placeOfDeposit" : ""
         |} """.stripMargin
@@ -73,15 +73,15 @@ package object editSetRecords {
       """{
         |  "ccr" : "COAL 80/80/1",
         |  "oci" : "COAL.2022.V3RJW.P",
-        |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-        |  "coveringDates" : "1960",
+        |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (C)",
+        |  "coveringDates" : "1964",
         |  "formerReferenceDepartment" : "",
         |  "startDateDay" : "1",
         |  "startDateMonth" : "1",
-        |  "startDateYear" : "1960",
+        |  "startDateYear" : "1964",
         |  "endDateDay" : "31",
         |  "endDateMonth" : "12",
-        |  "endDateYear" : "1960",
+        |  "endDateYear" : "1964",
         |  "legalStatus": "",
         |  "placeOfDeposit" : "6"
         |} """.stripMargin
@@ -115,20 +115,20 @@ package object editSets {
         |    {
         |      "ccr" : "COAL 80/80/1",
         |      "oci" : "COAL.2022.V5RJW.P",
-        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-        |      "coveringDates" : "1960"
+        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
+        |      "coveringDates" : "1962"
         |    },
         |    {
         |      "ccr" : "COAL 80/80/2",
         |      "oci" : "COAL.2022.V4RJW.P",
-        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-        |      "coveringDates" : "1960"
+        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
+        |      "coveringDates" : "1966"
         |    },
         |    {
         |      "ccr" : "COAL 80/80/3",
         |      "oci" : "COAL.2022.V3RJW.P",
-        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-        |      "coveringDates" : "1960"
+        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (C)",
+        |      "coveringDates" : "1964"
         |    }
         |  ]
         |}""".stripMargin
