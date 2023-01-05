@@ -223,7 +223,9 @@
 )
 )
 
-  <ul>
+
+  <label class="govuk-label">@messages("edit-set.record.related-material")</h3>
+  <ul class="govuk-list govuk-list--bullet">
     @{
 
       val id = editSetRecordForm.data.getOrElse("relatedMaterial", "")
