@@ -54,6 +54,15 @@
   <li><a class="relatedMaterialLink" href="@href">@linkText</a> - <span class="relatedMaterialText">@description</span></li>
 }
 
+@seperatedMaterialItem(href: String, linkText: String) = {
+  <li><a class="seperatedMaterialLink" href="@href">@linkText</a></li>
+}
+
+@seperatedMaterialItemWithDescription(href: String, linkText: String, description: String) = {
+  <li><a class="seperatedMaterialLink" href="@href">@linkText</a> - <span class="seperatedMaterialText">@description</span></li>
+}
+
+
 @backLink = {
     <a class="govuk-back-link" href="/edit-set/1">@messages("edit-set.record.edit.back-to-edit-set", editSetName)</a>
 }
@@ -254,6 +263,26 @@
       }
     }
   </ul>
+
+  <label class="govuk-label">@messages("edit-set.record.edit.seperated-material")</h3>
+  <ul class="govuk-list govuk-list--bullet">
+    @{
+      staticRecord.seperatedMaterial.map { entry =>
+        entry.description match {
+
+          case Some(description) => {
+            seperatedMaterialItemWithDescription(entry.linkHref, entry.linkText, description)
+          }
+
+          case None => {
+            seperatedMaterialItem(entry.linkHref, entry.linkText)
+          }
+
+        }
+      }
+    }
+  </ul>
+
 
     <div class="govuk-form-group">
         <input id="ccr" name="ccr" type="text" readonly="readonly" hidden="true" value="@staticRecord.ccr"/>
