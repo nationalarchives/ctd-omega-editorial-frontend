@@ -43,20 +43,6 @@ class BaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
     CorporateBody("3", "British Library, National Sound Archive")
   )
 
-  val allRelatedMaterial: Seq[RelatedMaterial] = Seq(
-    RelatedMaterial(
-      id = "1",
-      entries = Seq(
-        RelatedMaterialEntry(
-          linkHref = "#;",
-          linkText = "COAL 80/80/2",
-          description = Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-        ),
-        RelatedMaterialEntry(linkHref = "#;", linkText = "COAL 80/80/3")
-      )
-    )
-  )
-
   def asDocument(content: Content): Document = asDocument(contentAsString(content))
 
   def asDocument(rawContent: String): Document = Jsoup.parse(rawContent)

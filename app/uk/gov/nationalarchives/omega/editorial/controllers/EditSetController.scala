@@ -232,9 +232,8 @@ class EditSetController @Inject() (
       val editSetName = editSets.getEditSet().name
 
       val action = for {
-        record     <- findRecord(oci)
-        formValues <- validateForm(record)
-        action     <- getSubmitAction(request, record, formValues)
+        record <- findRecord(oci)
+        action <- getSubmitAction(record)
       } yield action
 
       action match {
@@ -351,12 +350,13 @@ class EditSetController @Inject() (
     editSetRecords.getEditSetRecordByOCI(oci).toRight(RecordNotFound(oci))
 
   private def getSubmitAction(
-    request: Request[AnyContent],
-    record: EditSetRecord,
-    values: EditSetRecordFormValues
-  ): Outcome[SubmitAction] =
+    record: EditSetRecord
+  )(implicit request: Request[AnyContent]): Outcome[SubmitAction] =
     request.body.asFormUrlEncoded.get("action").headOption match {
-      case Some("save")           => Right(Save(record, values))
+      case Some("save") =>
+        validateForm(record).map { form =>
+          Save(record, form)
+        }
       case Some("discard")        => Right(Discard)
       case Some("calculateDates") => Right(CalculateDates(record))
       case Some(badAction)        => Left(InvalidAction(badAction))
@@ -487,7 +487,7 @@ object EditSetController {
   case class EditSetReorder(field: String, direction: String)
 
   sealed abstract class SubmitAction
-  case class Save(record: EditSetRecord, values: EditSetRecordFormValues) extends SubmitAction
+  case class Save(record: EditSetRecord, form: EditSetRecordFormValues) extends SubmitAction
   case class CalculateDates(record: EditSetRecord) extends SubmitAction
   case object Discard extends SubmitAction
 

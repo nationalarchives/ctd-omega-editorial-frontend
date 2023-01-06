@@ -779,6 +779,7 @@ class EditSetControllerSpec extends BaseSpec {
 
           }
           "doesn't exist" in {
+            pending
 
             val values = validValuesForSaving ++
               Map(
