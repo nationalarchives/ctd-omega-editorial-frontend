@@ -229,10 +229,7 @@
   <ul class="govuk-list govuk-list--bullet">
     @{
 
-      val id = editSetRecordForm.data.getOrElse("relatedMaterial", "")
-      val applicableRelatedMaterial = allRelatedMaterial.filter(_.id == id).flatMap(_.entries)
-
-      applicableRelatedMaterial.map { entry =>
+      staticRecord.relatedMaterial.map { entry =>
         entry.description match {
 
           case Some(description) => {
@@ -249,8 +246,8 @@
   </ul>
 
     <div class="govuk-form-group">
-        <input id="ccr" name="ccr" type="text" readonly="readonly" hidden="true" value="@editSetRecordForm.data.get("ccr")"/>
-        <input id="ocr" name="oci" type="text" readonly="readonly" hidden="true" value="@editSetRecordForm.data.get("oci")"/>
+        <input id="ccr" name="ccr" type="text" readonly="readonly" hidden="true" value="@staticRecord.ccr"/>
+        <input id="ocr" name="oci" type="text" readonly="readonly" hidden="true" value="@staticRecord.oci"/>
     </div>
 @actionButtonGroup
 }
@@ -267,11 +264,11 @@
             title = Text(messages("error.summary.title"))
         ))
     }
-    <h1 class="govuk-heading-l">@messages("edit-set.record.edit.heading", editSetRecordForm.data.get("ccr").get)</h1>
-    <h2 class="govuk-heading-m">@messages("edit-set.record.edit.id", editSetRecordForm.data.get("oci").get)</h2>
+    <h1 class="govuk-heading-l">@messages("edit-set.record.edit.heading", staticRecord.ccr)</h1>
+    <h2 class="govuk-heading-m">@messages("edit-set.record.edit.id", staticRecord.oci)</h2>
     <p class="govuk-body">@messages("placeholder.series-national-coal-board")</p>
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
-    @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetController.submit("1", editSetRecordForm.data.get("oci").get)) {
+    @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetController.submit("1", staticRecord.oci)) {
         @actionButtonGroup
         @govukFieldset(Fieldset(
             html = fieldsetContent,

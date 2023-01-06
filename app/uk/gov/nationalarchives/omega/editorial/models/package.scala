@@ -42,15 +42,20 @@ package object editSetRecords {
         |  "endDateYear" : "1962",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "relatedMaterial" : {
-        |    "linkHref" : "#;",
-        |    "linkText" : "COAL 80/80/2",
-        |    "description" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
-        |  }
+        |  "relatedMaterial" : [
+        |    {
+        |      "linkHref" : "#;",
+        |      "linkText" : "COAL 80/80/3"
+        |    },
+        |    {
+        |      "linkHref" : "#;",
+        |      "linkText" : "COAL 80/80/2",
+        |      "description" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+        |    }
+        |  ]
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   val editSetRecord2: EditSetRecord = Json
     .parse(
@@ -67,12 +72,10 @@ package object editSetRecords {
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1966",
         |  "legalStatus": "ref.2",
-        |  "placeOfDeposit" : "",
-        |  "relatedMaterial" : "1"
+        |  "placeOfDeposit" : ""
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   val editSetRecord3: EditSetRecord = Json
     .parse(
@@ -89,12 +92,10 @@ package object editSetRecords {
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1964",
         |  "legalStatus": "",
-        |  "placeOfDeposit" : "6",
-        |  "relatedMaterial" : "1"
+        |  "placeOfDeposit" : "6"
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   var editSetRecordMap = Map(
     "COAL.2022.V5RJW.P" -> editSetRecord1,
@@ -140,8 +141,7 @@ package object editSets {
         |  ]
         |}""".stripMargin
     )
-    .validate[EditSet]
-    .get
+    .as[EditSet]
 
   def getEditSet(): EditSet =
     editSet1
