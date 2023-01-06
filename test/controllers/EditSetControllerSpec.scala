@@ -958,6 +958,20 @@ class EditSetControllerSpec extends BaseSpec {
                 linkHref = "#;",
                 linkText = "COAL 80/80/3"
               )
+            ),
+            seperatedMaterial = Seq(
+              ExpectedSeperatedMaterial(
+                linkHref = "#;",
+                linkText = "COAL 80/80/5"
+              ),
+              ExpectedSeperatedMaterial(
+                linkHref = "#;",
+                linkText = "COAL 80/80/6"
+              ),
+              ExpectedSeperatedMaterial(
+                linkHref = "#;",
+                linkText = "COAL 80/80/7"
+              )
             )
           )
         )
@@ -2166,6 +2180,13 @@ class EditSetControllerSpec extends BaseSpec {
       }
     }
 
+    expectedEditRecordPage.seperatedMaterial.foreach { seperatedMaterial =>
+      document must haveSeperatedMaterialLink(seperatedMaterial.linkHref, seperatedMaterial.linkText)
+      seperatedMaterial.description.foreach { description =>
+        document must haveSeperatedMaterialText(description)
+      }
+    }
+
     document must haveVisibleLogoutLink
     document must haveLogoutLinkLabel("Sign out")
     document must haveLogoutLink
@@ -2243,6 +2264,7 @@ class EditSetControllerSpec extends BaseSpec {
     placeOfDeposit: String,
     optionsForPlaceOfDeposit: Seq[ExpectedSelectOption],
     relatedMaterial: Seq[ExpectedRelatedMaterial] = Seq.empty,
+    seperatedMaterial: Seq[ExpectedSeperatedMaterial] = Seq.empty,
     summaryErrorMessages: Seq[String] = Seq.empty,
     errorMessageForStartDate: Option[String] = None,
     errorMessageForEndDate: Option[String] = None,
@@ -2253,6 +2275,8 @@ class EditSetControllerSpec extends BaseSpec {
   )
 
   case class ExpectedRelatedMaterial(linkHref: String, linkText: String, description: Option[String] = None)
+
+  case class ExpectedSeperatedMaterial(linkHref: String, linkText: String, description: Option[String] = None)
 
   case class ExpectedDate(day: String, month: String, year: String)
   case class ExpectedEditSetPage(

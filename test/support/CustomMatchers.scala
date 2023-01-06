@@ -194,6 +194,25 @@ object CustomMatchers {
       possibleValues = document.select(".relatedMaterialText").eachText.asScala.toSet
     )
 
+  def haveSeperatedMaterialLink(expectedHref: String, expectedText: String): Matcher[Document] = (document: Document) => {
+    val actualLinks = document.select(".seperatedMaterialLink").asScala.map { element =>
+      (element.attr("href"), element.text)
+    }
+    oneOfMatcher(
+      label = "a link for seperated material",
+      expectedValue = (expectedHref, expectedText),
+      possibleValues = actualLinks.toSet
+    )
+  }
+
+  def haveSeperatedMaterialText(expectedValue: String): Matcher[Document] = (document: Document) =>
+    oneOfMatcher(
+      label = "text for seperated material",
+      expectedValue = expectedValue,
+      possibleValues = document.select(".seperatedMaterialText").eachText.asScala.toSet
+    )
+
+
   def haveSummaryErrorTitle(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "an error summary title",
