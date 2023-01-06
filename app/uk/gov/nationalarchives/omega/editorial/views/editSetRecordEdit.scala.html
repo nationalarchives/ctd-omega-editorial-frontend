@@ -31,9 +31,9 @@
   user: User,
   editSetName: String,
   title: String,
+  staticRecord: EditSetRecord,
   legalStatusReferenceData: Seq[LegalStatus],
   corporateBodies: Seq[CorporateBody],
-  allRelatedMaterial: Seq[RelatedMaterial],
   editSetRecordForm: Form[EditSetRecordFormValues]
 )(implicit messages: Messages, request: Request[AnyContent])
 

@@ -41,11 +41,11 @@ case class EditSetRecord(
   endDateYear: String,
   legalStatus: String,
   placeOfDeposit: String,
-  relatedMaterial: String
+  relatedMaterial: Seq[RelatedMaterial] = Seq.empty
 )
 
 object EditSetRecord {
-  implicit val editSetRecordReads = Json.reads[EditSetRecord]
+  implicit val editSetRecordReads = Json.using[Json.WithDefaultValues].reads[EditSetRecord]
 }
 
 object EditSetEntry {

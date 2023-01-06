@@ -42,7 +42,10 @@ case class EditSetRecordFormValues(
 
 object EditSetRecordFormValues {
 
-  def modifyEditSetRecordWithFormValues(editSetRecord: EditSetRecord, formValues: EditSetRecordFormValues): EditSetRecord =
+  def modifyEditSetRecordWithFormValues(
+    editSetRecord: EditSetRecord,
+    formValues: EditSetRecordFormValues
+  ): EditSetRecord =
     editSetRecord.copy(
       scopeAndContent = formValues.scopeAndContent,
       coveringDates = formValues.coveringDates,

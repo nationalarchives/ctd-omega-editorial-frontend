@@ -23,12 +23,7 @@ package uk.gov.nationalarchives.omega.editorial.models
 
 import play.api.libs.json._
 
-case class RelatedMaterial(id: String, entries: Seq[RelatedMaterialEntry])
-case class RelatedMaterialEntry(linkHref: String, linkText: String, description: Option[String] = None)
-
-object RelatedMaterialEntry {
-  implicit val relatedMaterialEntryReads = Json.using[Json.WithDefaultValues].reads[RelatedMaterialEntry]
-}
+case class RelatedMaterial(linkHref: String, linkText: String, description: Option[String] = None)
 
 object RelatedMaterial {
   implicit val relatedMaterialReads = Json.using[Json.WithDefaultValues].reads[RelatedMaterial]

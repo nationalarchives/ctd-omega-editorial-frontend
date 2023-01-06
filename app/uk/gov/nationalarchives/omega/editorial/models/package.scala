@@ -42,7 +42,11 @@ package object editSetRecords {
         |  "endDateYear" : "1962",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "relatedMaterial" : "1"
+        |  "relatedMaterial" : {
+        |    "linkHref" : "#;",
+        |    "linkText" : "COAL 80/80/2",
+        |    "description" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+        |  }
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -160,24 +164,6 @@ package object corporateBodies {
     CorporateBody("1", "The National Archives, Kew"),
     CorporateBody("2", "British Museum, Department of Libraries and Archives"),
     CorporateBody("3", "British Library, National Sound Archive")
-  )
-
-}
-
-package object relatedMaterial {
-
-  val all: Seq[RelatedMaterial] = Seq(
-    RelatedMaterial(
-      id = "1",
-      entries = Seq(
-        RelatedMaterialEntry(linkHref = "#;", linkText = "COAL 80/80/3"),
-        RelatedMaterialEntry(
-          linkHref = "#;",
-          linkText = "COAL 80/80/2",
-          description = Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-        )
-      )
-    )
   )
 
 }
