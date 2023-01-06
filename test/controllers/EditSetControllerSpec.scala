@@ -1017,8 +1017,6 @@ class EditSetControllerSpec extends BaseSpec {
 
     val validValues: Map[String, String] =
       Map(
-        "ccr"             -> "COAL 80/80/1",
-        "oci"             -> "COAL.2022.V1RJW.P",
         "scopeAndContent" -> "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         "formerReferenceDepartment" -> "1234",
         "coveringDates"             -> "2020 Oct",
@@ -1031,8 +1029,7 @@ class EditSetControllerSpec extends BaseSpec {
         "legalStatus"               -> "ref.1",
         "placeOfDeposit"            -> "2",
         "note"                      -> "Need to check copyright info.",
-        "background"                -> "Photo was taken by a daughter of one of the coal miners who used them.",
-        "action"                    -> "save"
+        "background"                -> "Photo was taken by a daughter of one of the coal miners who used them."
       )
 
     "when the action is to save the record" when {
@@ -1043,7 +1040,11 @@ class EditSetControllerSpec extends BaseSpec {
         "and yet preserve the CCR" when {
           "there are errors" in {
             val blankScopeAndContentToFailValidation = ""
-            val values = validValuesForSaving ++ Map("scopeAndContent" -> blankScopeAndContentToFailValidation)
+            val values = validValuesForSaving ++ Map(
+              "ccr"             -> "COAL 80/80/1",
+              "oci"             -> "COAL.2022.V1RJW.P",
+              "scopeAndContent" -> blankScopeAndContentToFailValidation
+            )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1078,7 +1079,13 @@ class EditSetControllerSpec extends BaseSpec {
           "is empty" in {
 
             val values =
-              validValuesForSaving ++ Map("startDateDay" -> "", "startDateMonth" -> "", "startDateYear" -> "")
+              validValuesForSaving ++ Map(
+                "ccr"            -> "COAL 80/80/1",
+                "oci"            -> "COAL.2022.V1RJW.P",
+                "startDateDay"   -> "",
+                "startDateMonth" -> "",
+                "startDateYear"  -> ""
+              )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1115,7 +1122,13 @@ class EditSetControllerSpec extends BaseSpec {
           "is of an invalid format" in {
 
             val values =
-              validValuesForSaving ++ Map("startDateDay" -> "XX", "startDateMonth" -> "11", "startDateYear" -> "1960")
+              validValuesForSaving ++ Map(
+                "ccr"            -> "COAL 80/80/1",
+                "oci"            -> "COAL.2022.V1RJW.P",
+                "startDateDay"   -> "XX",
+                "startDateMonth" -> "11",
+                "startDateYear"  -> "1960"
+              )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1153,6 +1166,8 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values = validValuesForSaving ++
               Map(
+                "ccr"            -> "COAL 80/80/1",
+                "oci"            -> "COAL.2022.V1RJW.P",
                 "startDateDay"   -> "29",
                 "startDateMonth" -> "2",
                 "startDateYear"  -> "2022",
@@ -1161,7 +1176,7 @@ class EditSetControllerSpec extends BaseSpec {
                 "endDateYear"    -> "2022"
               )
 
-            val result = submitWhileLoggedIn(2, "COAL.2022.V1RJW.R", values)
+            val result = submitWhileLoggedIn(2, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             val expectedPage = ExpectedEditRecordPage(
@@ -1195,7 +1210,13 @@ class EditSetControllerSpec extends BaseSpec {
         "end date" when {
           "is empty" in {
 
-            val values = validValuesForSaving ++ Map("endDateDay" -> "", "endDateMonth" -> "", "endDateYear" -> "")
+            val values = validValuesForSaving ++ Map(
+              "ccr"          -> "COAL 80/80/1",
+              "oci"          -> "COAL.2022.V1RJW.P",
+              "endDateDay"   -> "",
+              "endDateMonth" -> "",
+              "endDateYear"  -> ""
+            )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1233,7 +1254,14 @@ class EditSetControllerSpec extends BaseSpec {
           "is of an invalid format" in {
 
             val values =
-              validValuesForSaving ++ Map("endDateDay" -> "XX", "endDateMonth" -> "12", "endDateYear" -> "2000")
+              validValuesForSaving ++ Map(
+                "ccr"          -> "COAL 80/80/1",
+                "oci"          -> "COAL.2022.V1RJW.P",
+                "endDateDay"   -> "XX",
+                "endDateMonth" -> "12",
+                "endDateYear"  -> "2000"
+              )
+
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
@@ -1270,6 +1298,8 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values = validValuesForSaving ++
               Map(
+                "ccr"            -> "COAL 80/80/1",
+                "oci"            -> "COAL.2022.V1RJW.P",
                 "startDateDay"   -> "1",
                 "startDateMonth" -> "2",
                 "startDateYear"  -> "2022",
@@ -1312,6 +1342,8 @@ class EditSetControllerSpec extends BaseSpec {
           "is before start date" in {
 
             val values = validValuesForSaving ++ Map(
+              "ccr"            -> "COAL 80/80/1",
+              "oci"            -> "COAL.2022.V1RJW.P",
               "startDateDay"   -> "12",
               "startDateMonth" -> "10",
               "startDateYear"  -> "2020",
@@ -1356,6 +1388,8 @@ class EditSetControllerSpec extends BaseSpec {
         "neither start date nor end date is valid" in {
 
           val values = validValuesForSaving ++ Map(
+            "ccr"            -> "COAL 80/80/1",
+            "oci"            -> "COAL.2022.V1RJW.P",
             "startDateDay"   -> "12",
             "startDateMonth" -> "14",
             "startDateYear"  -> "2020",
@@ -1399,7 +1433,12 @@ class EditSetControllerSpec extends BaseSpec {
         }
         "covering date" when {
           "is invalid" in {
-            val values = validValuesForSaving ++ Map("coveringDates" -> "Oct 1 2004")
+
+            val values = validValuesForSaving ++ Map(
+              "ccr"           -> "COAL 80/80/1",
+              "oci"           -> "COAL.2022.V1RJW.P",
+              "coveringDates" -> "Oct 1 2004"
+            )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1435,7 +1474,11 @@ class EditSetControllerSpec extends BaseSpec {
           }
           "is too long" in {
             val gapDateTooLong = (1 to 100).map(_ => "2004 Oct 1").mkString(";")
-            val values = validValuesForSaving ++ Map("coveringDates" -> gapDateTooLong)
+            val values = validValuesForSaving ++ Map(
+              "ccr"           -> "COAL 80/80/1",
+              "oci"           -> "COAL.2022.V1RJW.P",
+              "coveringDates" -> gapDateTooLong
+            )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1470,7 +1513,12 @@ class EditSetControllerSpec extends BaseSpec {
 
           }
           "is empty; showing error correctly" in {
-            val values = validValuesForSaving ++ Map("coveringDates" -> "  ")
+
+            val values = validValuesForSaving ++ Map(
+              "ccr"           -> "COAL 80/80/1",
+              "oci"           -> "COAL.2022.V1RJW.P",
+              "coveringDates" -> "  "
+            )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1507,7 +1555,9 @@ class EditSetControllerSpec extends BaseSpec {
         }
         "place of deposit" when {
           "isn't selected" in {
-            val values = validValuesForSaving ++ Map("placeOfDeposit" -> "")
+
+            val values =
+              validValuesForSaving ++ Map("ccr" -> "COAL 80/80/1", "oci" -> "COAL.2022.V1RJW.P", "placeOfDeposit" -> "")
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1542,7 +1592,11 @@ class EditSetControllerSpec extends BaseSpec {
 
           }
           "is absent" in {
-            val values = validValuesForSaving.removed("placeOfDeposit")
+
+            val values = validValuesForSaving.removed("placeOfDeposit") ++ Map(
+              "ccr" -> "COAL 80/80/1",
+              "oci" -> "COAL.2022.V1RJW.P"
+            )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1578,7 +1632,11 @@ class EditSetControllerSpec extends BaseSpec {
           }
           "isn't recognised" in {
 
-            val values = validValuesForSaving ++ Map("placeOfDeposit" -> "6")
+            val values = validValuesForSaving ++ Map(
+              "ccr"            -> "COAL 80/80/1",
+              "oci"            -> "COAL.2022.V1RJW.P",
+              "placeOfDeposit" -> "6"
+            )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1616,7 +1674,8 @@ class EditSetControllerSpec extends BaseSpec {
         "legal status" when {
           "is not selected" in {
 
-            val values = validValuesForSaving ++ Map("legalStatus" -> "")
+            val values =
+              validValuesForSaving ++ Map("ccr" -> "COAL 80/80/1", "oci" -> "COAL.2022.V1RJW.P", "legalStatus" -> "")
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1653,7 +1712,12 @@ class EditSetControllerSpec extends BaseSpec {
 
           "value doesn't exist" in {
 
-            val values = validValues ++ Map("legalStatus" -> "ref.10")
+            val values =
+              validValuesForSaving ++ Map(
+                "ccr"         -> "COAL 80/80/1",
+                "oci"         -> "COAL.2022.V1RJW.P",
+                "legalStatus" -> "ref.10"
+              )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1667,7 +1731,11 @@ class EditSetControllerSpec extends BaseSpec {
           "is too long" in {
 
             val excessivelyLongNote = "Something about something else." * 100
-            val values = validValuesForSaving ++ Map("note" -> excessivelyLongNote)
+            val values = validValuesForSaving ++ Map(
+              "ccr"  -> "COAL 80/80/1",
+              "oci"  -> "COAL.2022.V1RJW.P",
+              "note" -> excessivelyLongNote
+            )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1706,9 +1774,12 @@ class EditSetControllerSpec extends BaseSpec {
           "is too long" in {
 
             val excessivelyLongBackground = "Something about one of the people." * 400
-            val values = validValuesForSaving ++ Map("background" -> excessivelyLongBackground)
-
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val values = validValuesForSaving ++ Map(
+              "ccr"        -> "COAL 80/80/1",
+              "oci"        -> "COAL.2022.V1RJW.P",
+              "background" -> excessivelyLongBackground
+            )
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1772,13 +1843,15 @@ class EditSetControllerSpec extends BaseSpec {
             editSetRecordEditSaveInstance
           )
 
+          val values = validValuesForSaving ++ Map("ccr" -> "COAL 80/80/1", "oci" -> "COAL.2022.V1RJW.P")
+
           val editRecordPage = controller
             .submit("1", "COAL.2022.V1RJW.P")
             .apply(
               CSRFTokenHelper
                 .addCSRFToken(
                   FakeRequest(POST, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
-                    .withFormUrlEncodedBody(validValuesForSaving.toSeq: _*)
+                    .withFormUrlEncodedBody(values.toSeq: _*)
                     .withSession(SessionKeys.token -> validSessionToken)
                 )
             )
@@ -1789,12 +1862,13 @@ class EditSetControllerSpec extends BaseSpec {
 
         "redirect to result page of the application" in {
           val controller = inject[EditSetController]
+          val values = validValuesForSaving ++ Map("ccr" -> "COAL 80/80/1", "oci" -> "COAL.2022.V1RJW.P")
           val editRecordPage = controller
             .submit("1", "COAL.2022.V1RJW.P")
             .apply(
               CSRFTokenHelper.addCSRFToken(
                 FakeRequest(POST, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
-                  .withFormUrlEncodedBody(validValuesForSaving.toSeq: _*)
+                  .withFormUrlEncodedBody(values.toSeq: _*)
                   .withSession(SessionKeys.token -> validSessionToken)
               )
             )
@@ -1807,7 +1881,8 @@ class EditSetControllerSpec extends BaseSpec {
 
           "all fields are provided" in {
 
-            val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", validValuesForSaving)
+            val values = validValuesForSaving ++ Map("ccr" -> "COAL 80/80/1", "oci" -> "COAL.2022.V1RJW.P")
+            val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(editRecordPageResponse) mustBe SEE_OTHER
             redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
@@ -1843,7 +1918,8 @@ class EditSetControllerSpec extends BaseSpec {
 
           "the 'note' field is blank" in {
 
-            val values = validValuesForSaving ++ Map("note" -> "")
+            val values =
+              validValuesForSaving ++ Map("ccr" -> "COAL 80/80/1", "oci" -> "COAL.2022.V1RJW.P", "note" -> "")
 
             val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1880,12 +1956,13 @@ class EditSetControllerSpec extends BaseSpec {
           }
           "the 'background' field is blank" in {
 
-            val values = validValuesForSaving ++ Map("background" -> "")
+            val values =
+              validValuesForSaving ++ Map("ccr" -> "COAL 80/80/5", "oci" -> "COAL.2022.V5RJW.P", "background" -> "")
 
             val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
             status(editRecordPageResponse) mustBe SEE_OTHER
-            redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+            redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/save")
 
             val getRecordResult = getRecordForEditingWhileLoggedIn(1, "COAL.2022.V5RJW.P")
             assertPageAsExpected(
@@ -1898,17 +1975,17 @@ class EditSetControllerSpec extends BaseSpec {
                 omegaCatalogueId = "COAL.2022.V5RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-                coveringDates = "1960",
-                formerReferenceDepartment = "",
-                startDate = ExpectedDate("1", "1", "1960"),
-                endDate = ExpectedDate("31", "12", "1960"),
+                coveringDates = "2020 Oct",
+                formerReferenceDepartment = "1234",
+                startDate = ExpectedDate("1", "10", "2020"),
+                endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 note = "Need to check copyright info.",
                 background = "",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew", selected = true),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 )
               )
@@ -1945,6 +2022,8 @@ class EditSetControllerSpec extends BaseSpec {
         "blank" in {
 
           val values = validValuesForCalculatingDates ++ Map(
+            "ccr"            -> "COAL 80/80/1",
+            "oci"            -> "COAL.2022.V1RJW.P",
             "coveringDates"  -> "   ",
             "startDateDay"   -> "1",
             "startDateMonth" -> "10",
@@ -1989,6 +2068,8 @@ class EditSetControllerSpec extends BaseSpec {
         "invalid format" in {
 
           val values = validValuesForCalculatingDates ++ Map(
+            "ccr"            -> "COAL 80/80/1",
+            "oci"            -> "COAL.2022.V1RJW.P",
             "coveringDates"  -> "1270s",
             "startDateDay"   -> "1",
             "startDateMonth" -> "10",
@@ -2033,6 +2114,8 @@ class EditSetControllerSpec extends BaseSpec {
         "contains a non-existent date" in {
 
           val values = validValuesForCalculatingDates ++ Map(
+            "ccr"            -> "COAL 80/80/1",
+            "oci"            -> "COAL.2022.V1RJW.P",
             "coveringDates"  -> "2022 Feb 1-2022 Feb 29",
             "startDateDay"   -> "1",
             "startDateMonth" -> "10",
@@ -2078,7 +2161,11 @@ class EditSetControllerSpec extends BaseSpec {
       "successful" when {
         "covers period of the switchover" in {
 
-          val values = validValuesForCalculatingDates ++ Map("coveringDates" -> "1752 Aug 1-1752 Sept 12")
+          val values = validValuesForCalculatingDates ++ Map(
+            "ccr"           -> "COAL 80/80/1",
+            "oci"           -> "COAL.2022.V1RJW.P",
+            "coveringDates" -> "1752 Aug 1-1752 Sept 12"
+          )
 
           val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -2112,7 +2199,11 @@ class EditSetControllerSpec extends BaseSpec {
         }
         "covers period after the switchover" in {
 
-          val values = validValuesForCalculatingDates ++ Map("coveringDates" -> "1984 Dec")
+          val values = validValuesForCalculatingDates ++ Map(
+            "ccr"           -> "COAL 80/80/1",
+            "oci"           -> "COAL.2022.V1RJW.P",
+            "coveringDates" -> "1984 Dec"
+          )
 
           val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -2146,7 +2237,11 @@ class EditSetControllerSpec extends BaseSpec {
         }
         "covers multiple ranges" in {
 
-          val values = validValuesForCalculatingDates ++ Map("coveringDates" -> "1868; 1890-1902; 1933")
+          val values = validValuesForCalculatingDates ++ Map(
+            "ccr"           -> "COAL 80/80/1",
+            "oci"           -> "COAL.2022.V1RJW.P",
+            "coveringDates" -> "1868; 1890-1902; 1933"
+          )
 
           val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 

@@ -302,7 +302,7 @@ package object editSetRecords {
     .validate[EditSetRecord]
     .get
 
-  var editSetRecordMap = Map(
+  private var editSetRecordMap = Map(
     "COAL.2022.V1RJW.P"  -> editSetRecord1,
     "COAL.2022.V2RJW.P"  -> editSetRecord2,
     "COAL.2022.V3RJW.P"  -> editSetRecord3,
