@@ -54,12 +54,12 @@
   <li><a class="relatedMaterialLink" href="@href">@linkText</a> - <span class="relatedMaterialText">@description</span></li>
 }
 
-@seperatedMaterialItem(href: String, linkText: String) = {
-  <li><a class="seperatedMaterialLink" href="@href">@linkText</a></li>
+@separatedMaterialItem(href: String, linkText: String) = {
+  <li><a class="separatedMaterialLink" href="@href">@linkText</a></li>
 }
 
-@seperatedMaterialItemWithDescription(href: String, linkText: String, description: String) = {
-  <li><a class="seperatedMaterialLink" href="@href">@linkText</a> - <span class="seperatedMaterialText">@description</span></li>
+@separatedMaterialItemWithDescription(href: String, linkText: String, description: String) = {
+  <li><a class="separatedMaterialLink" href="@href">@linkText</a> - <span class="separatedMaterialText">@description</span></li>
 }
 
 
@@ -264,18 +264,18 @@
     }
   </ul>
 
-  <label class="govuk-label">@messages("edit-set.record.edit.seperated-material")</h3>
+  <label class="govuk-label">@messages("edit-set.record.edit.separated-material")</h3>
   <ul class="govuk-list govuk-list--bullet">
     @{
-      staticRecord.seperatedMaterial.map { entry =>
+      staticRecord.separatedMaterial.map { entry =>
         entry.description match {
 
           case Some(description) => {
-            seperatedMaterialItemWithDescription(entry.linkHref, entry.linkText, description)
+            separatedMaterialItemWithDescription(entry.linkHref, entry.linkText, description)
           }
 
           case None => {
-            seperatedMaterialItem(entry.linkHref, entry.linkText)
+            separatedMaterialItem(entry.linkHref, entry.linkText)
           }
 
         }

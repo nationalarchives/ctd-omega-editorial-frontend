@@ -959,16 +959,16 @@ class EditSetControllerSpec extends BaseSpec {
                 linkText = "COAL 80/80/3"
               )
             ),
-            seperatedMaterial = Seq(
-              ExpectedSeperatedMaterial(
+            separatedMaterial = Seq(
+              ExpectedSeparatedMaterial(
                 linkHref = "#;",
                 linkText = "COAL 80/80/5"
               ),
-              ExpectedSeperatedMaterial(
+              ExpectedSeparatedMaterial(
                 linkHref = "#;",
                 linkText = "COAL 80/80/6"
               ),
-              ExpectedSeperatedMaterial(
+              ExpectedSeparatedMaterial(
                 linkHref = "#;",
                 linkText = "COAL 80/80/7"
               )
@@ -2180,10 +2180,10 @@ class EditSetControllerSpec extends BaseSpec {
       }
     }
 
-    expectedEditRecordPage.seperatedMaterial.foreach { seperatedMaterial =>
-      document must haveSeperatedMaterialLink(seperatedMaterial.linkHref, seperatedMaterial.linkText)
-      seperatedMaterial.description.foreach { description =>
-        document must haveSeperatedMaterialText(description)
+    expectedEditRecordPage.separatedMaterial.foreach { separatedMaterial =>
+      document must haveSeparatedMaterialLink(separatedMaterial.linkHref, separatedMaterial.linkText)
+      separatedMaterial.description.foreach { description =>
+        document must haveSeparatedMaterialText(description)
       }
     }
 
@@ -2264,7 +2264,7 @@ class EditSetControllerSpec extends BaseSpec {
     placeOfDeposit: String,
     optionsForPlaceOfDeposit: Seq[ExpectedSelectOption],
     relatedMaterial: Seq[ExpectedRelatedMaterial] = Seq.empty,
-    seperatedMaterial: Seq[ExpectedSeperatedMaterial] = Seq.empty,
+    separatedMaterial: Seq[ExpectedSeparatedMaterial] = Seq.empty,
     summaryErrorMessages: Seq[String] = Seq.empty,
     errorMessageForStartDate: Option[String] = None,
     errorMessageForEndDate: Option[String] = None,
@@ -2276,7 +2276,7 @@ class EditSetControllerSpec extends BaseSpec {
 
   case class ExpectedRelatedMaterial(linkHref: String, linkText: String, description: Option[String] = None)
 
-  case class ExpectedSeperatedMaterial(linkHref: String, linkText: String, description: Option[String] = None)
+  case class ExpectedSeparatedMaterial(linkHref: String, linkText: String, description: Option[String] = None)
 
   case class ExpectedDate(day: String, month: String, year: String)
   case class ExpectedEditSetPage(

@@ -23,8 +23,8 @@ package uk.gov.nationalarchives.omega.editorial.models
 
 import play.api.libs.json._
 
-case class SeperatedMaterial(linkHref: String, linkText: String, description: Option[String] = None)
+case class SeparatedMaterial(linkHref: String, linkText: String, description: Option[String] = None)
 
-object SeperatedMaterial {
-  implicit val seperatedMaterialReads = Json.using[Json.WithDefaultValues].reads[SeperatedMaterial]
+object SeparatedMaterial {
+  implicit val separatedMaterialReads = Json.using[Json.WithDefaultValues].reads[SeparatedMaterial]
 }

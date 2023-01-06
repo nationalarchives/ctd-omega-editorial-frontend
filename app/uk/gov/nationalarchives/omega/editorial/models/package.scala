@@ -54,7 +54,7 @@ package object editSetRecords {
         |      "description" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
         |    }
         |  ],
-        |  "seperatedMaterial" : [
+        |  "separatedMaterial" : [
         |    {
         |      "linkHref" : "#;",
         |      "linkText" : "COAL 80/80/5"

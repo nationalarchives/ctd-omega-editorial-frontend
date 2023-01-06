@@ -43,7 +43,7 @@ case class EditSetRecord(
   placeOfDeposit: String,
   note: String,
   relatedMaterial: Seq[RelatedMaterial] = Seq.empty,
-  seperatedMaterial: Seq[SeperatedMaterial] = Seq.empty
+  separatedMaterial: Seq[SeparatedMaterial] = Seq.empty
 )
 
 object EditSetRecord {
