@@ -73,7 +73,7 @@ class EditSetControllerSpec extends BaseSpec {
         editSetRecordEditSaveInstance
       )
       val editSet = controller
-        .view("COAL.2022.V5RJW.P")
+        .view("1")
         .apply(
           CSRFTokenHelper.addCSRFToken(
             FakeRequest(GET, "/edit-set/1").withSession(SessionKeys.token -> validSessionToken)
@@ -89,7 +89,7 @@ class EditSetControllerSpec extends BaseSpec {
     "render the edit set page from the application" in {
       val controller = inject[EditSetController]
       val editSet = controller
-        .view("COAL.2022.V5RJW.P")
+        .view("1")
         .apply(
           CSRFTokenHelper.addCSRFToken(
             FakeRequest(GET, "/edit-set/1")
@@ -116,7 +116,7 @@ class EditSetControllerSpec extends BaseSpec {
     "redirect to the login page from the application when requested with invalid session token" in {
       val controller = inject[EditSetController]
       val editSet = controller
-        .view("COAL.2022.V5RJW.P")
+        .view("1")
         .apply(
           FakeRequest(GET, "/edit-set/1")
             .withSession(SessionKeys.token -> invalidSessionToken)
@@ -178,6 +178,24 @@ class EditSetControllerSpec extends BaseSpec {
                 coveringDates = "1962"
               ),
               ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/10",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
+                coveringDates = "1973"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/11",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (K)",
+                coveringDates = "1975"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/12",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (L)",
+                coveringDates = "1977"
+              ),
+              ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/2",
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
@@ -188,6 +206,42 @@ class EditSetControllerSpec extends BaseSpec {
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (C)",
                 coveringDates = "1964"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/4",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (D)",
+                coveringDates = "1961"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/5",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (E)",
+                coveringDates = "1963"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/6",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (F)",
+                coveringDates = "1965"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/7",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (G)",
+                coveringDates = "1967"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/8",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (H)",
+                coveringDates = "1969"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/9",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (I)",
+                coveringDates = "1971"
               )
             )
           )
@@ -218,6 +272,42 @@ class EditSetControllerSpec extends BaseSpec {
             ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/9",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (I)",
+                coveringDates = "1971"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/8",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (H)",
+                coveringDates = "1969"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/7",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (G)",
+                coveringDates = "1967"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/6",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (F)",
+                coveringDates = "1965"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/5",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (E)",
+                coveringDates = "1963"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/4",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (D)",
+                coveringDates = "1961"
+              ),
+              ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/3",
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (C)",
@@ -228,6 +318,24 @@ class EditSetControllerSpec extends BaseSpec {
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
                 coveringDates = "1966"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/12",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (L)",
+                coveringDates = "1977"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/11",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (K)",
+                coveringDates = "1975"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/10",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
+                coveringDates = "1973"
               ),
               ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/1",
@@ -280,6 +388,60 @@ class EditSetControllerSpec extends BaseSpec {
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (C)",
                 coveringDates = "1964"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/4",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (D)",
+                coveringDates = "1961"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/5",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (E)",
+                coveringDates = "1963"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/6",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (F)",
+                coveringDates = "1965"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/7",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (G)",
+                coveringDates = "1967"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/8",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (H)",
+                coveringDates = "1969"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/9",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (I)",
+                coveringDates = "1971"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/10",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
+                coveringDates = "1973"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/11",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (K)",
+                coveringDates = "1975"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/12",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (L)",
+                coveringDates = "1977"
               )
             )
           )
@@ -309,6 +471,60 @@ class EditSetControllerSpec extends BaseSpec {
               ExpectedSelectOption("descending", "Descending", selected = true)
             ),
             expectedSummaryRows = Seq(
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/12",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (L)",
+                coveringDates = "1977"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/11",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (K)",
+                coveringDates = "1975"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/10",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
+                coveringDates = "1973"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/9",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (I)",
+                coveringDates = "1971"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/8",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (H)",
+                coveringDates = "1969"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/7",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (G)",
+                coveringDates = "1967"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/6",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (F)",
+                coveringDates = "1965"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/5",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (E)",
+                coveringDates = "1963"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/4",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (D)",
+                coveringDates = "1961"
+              ),
               ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/3",
                 scopeAndContents =
@@ -356,10 +572,22 @@ class EditSetControllerSpec extends BaseSpec {
             ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/4",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (D)",
+                coveringDates = "1961"
+              ),
+              ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/1",
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
                 coveringDates = "1962"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/5",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (E)",
+                coveringDates = "1963"
               ),
               ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/3",
@@ -368,10 +596,52 @@ class EditSetControllerSpec extends BaseSpec {
                 coveringDates = "1964"
               ),
               ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/6",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (F)",
+                coveringDates = "1965"
+              ),
+              ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/2",
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
                 coveringDates = "1966"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/7",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (G)",
+                coveringDates = "1967"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/8",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (H)",
+                coveringDates = "1969"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/9",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (I)",
+                coveringDates = "1971"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/10",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
+                coveringDates = "1973"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/11",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (K)",
+                coveringDates = "1975"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/12",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (L)",
+                coveringDates = "1977"
               )
             )
           )
@@ -402,10 +672,52 @@ class EditSetControllerSpec extends BaseSpec {
             ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/12",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (L)",
+                coveringDates = "1977"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/11",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (K)",
+                coveringDates = "1975"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/10",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
+                coveringDates = "1973"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/9",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (I)",
+                coveringDates = "1971"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/8",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (H)",
+                coveringDates = "1969"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/7",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (G)",
+                coveringDates = "1967"
+              ),
+              ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/2",
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
                 coveringDates = "1966"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/6",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (F)",
+                coveringDates = "1965"
               ),
               ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/3",
@@ -414,10 +726,22 @@ class EditSetControllerSpec extends BaseSpec {
                 coveringDates = "1964"
               ),
               ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/5",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (E)",
+                coveringDates = "1963"
+              ),
+              ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/1",
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
                 coveringDates = "1962"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/4",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (D)",
+                coveringDates = "1961"
               )
             )
           )
@@ -454,6 +778,24 @@ class EditSetControllerSpec extends BaseSpec {
                 coveringDates = "1962"
               ),
               ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/10",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
+                coveringDates = "1973"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/11",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (K)",
+                coveringDates = "1975"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/12",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (L)",
+                coveringDates = "1977"
+              ),
+              ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/2",
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
@@ -464,6 +806,42 @@ class EditSetControllerSpec extends BaseSpec {
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (C)",
                 coveringDates = "1964"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/4",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (D)",
+                coveringDates = "1961"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/5",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (E)",
+                coveringDates = "1963"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/6",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (F)",
+                coveringDates = "1965"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/7",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (G)",
+                coveringDates = "1967"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/8",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (H)",
+                coveringDates = "1969"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/9",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (I)",
+                coveringDates = "1971"
               )
             )
           )
@@ -503,10 +881,10 @@ class EditSetControllerSpec extends BaseSpec {
         editSetRecordEditSaveInstance
       )
       val editRecordPage = controller
-        .editRecord("COAL.2022.V5RJW.P", "COAL.2022.V5RJW.P")
+        .editRecord("1", "COAL.2022.V1RJW.P")
         .apply(
           CSRFTokenHelper.addCSRFToken(
-            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
               .withSession(SessionKeys.token -> validSessionToken)
           )
         )
@@ -520,10 +898,10 @@ class EditSetControllerSpec extends BaseSpec {
     "render the edit set page from the application" in {
       val controller = inject[EditSetController]
       val editRecordPage = controller
-        .editRecord("COAL.2022.V5RJW.P", "COAL.2022.V5RJW.P")
+        .editRecord("1", "COAL.2022.V1RJW.P")
         .apply(
           CSRFTokenHelper.addCSRFToken(
-            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
               .withSession(SessionKeys.token -> validSessionToken)
           )
         )
@@ -538,7 +916,7 @@ class EditSetControllerSpec extends BaseSpec {
       "all data is valid" in {
         val request =
           CSRFTokenHelper.addCSRFToken(
-            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit").withSession(
+            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit").withSession(
               SessionKeys.token -> validSessionToken
             )
           )
@@ -553,7 +931,7 @@ class EditSetControllerSpec extends BaseSpec {
             heading = "TNA reference: COAL 80/80/1",
             legend = "Intellectual properties",
             classicCatalogueRef = "COAL 80/80/1",
-            omegaCatalogueId = "COAL.2022.V5RJW.P",
+            omegaCatalogueId = "COAL.2022.V1RJW.P",
             scopeAndContent =
               "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
             coveringDates = "1962",
@@ -562,6 +940,7 @@ class EditSetControllerSpec extends BaseSpec {
             endDate = ExpectedDate("31", "12", "1962"),
             legalStatus = "ref.1",
             placeOfDeposit = "1",
+            note = "A note about COAL.2022.V1RJW.P.",
             optionsForPlaceOfDeposit = Seq(
               ExpectedSelectOption("", "Select where this record is held", disabled = true),
               ExpectedSelectOption("1", "The National Archives, Kew", selected = true),
@@ -596,9 +975,9 @@ class EditSetControllerSpec extends BaseSpec {
           asDocument(editRecordPage),
           ExpectedEditRecordPage(
             title = "Edit record",
-            heading = "TNA reference: COAL 80/80/1",
+            heading = "TNA reference: COAL 80/80/3",
             legend = "Intellectual properties",
-            classicCatalogueRef = "COAL 80/80/1",
+            classicCatalogueRef = "COAL 80/80/3",
             omegaCatalogueId = "COAL.2022.V3RJW.P",
             scopeAndContent =
               "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (C)",
@@ -608,6 +987,7 @@ class EditSetControllerSpec extends BaseSpec {
             endDate = ExpectedDate("31", "12", "1964"),
             legalStatus = "",
             placeOfDeposit = "",
+            note = "",
             optionsForPlaceOfDeposit = Seq(
               ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
               ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -622,10 +1002,10 @@ class EditSetControllerSpec extends BaseSpec {
     "redirect to the login page from the application when requested with invalid session token" in {
       val controller = inject[EditSetController]
       val editRecordPage = controller
-        .editRecord("COAL.2022.V5RJW.P", "COAL.2022.V5RJW.P")
+        .editRecord("1", "COAL.2022.V1RJW.P")
         .apply(
           CSRFTokenHelper.addCSRFToken(
-            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
               .withSession(SessionKeys.token -> invalidSessionToken)
           )
         )
@@ -636,7 +1016,7 @@ class EditSetControllerSpec extends BaseSpec {
 
     "redirect to the login page from the router when requested with invalid session token" in {
       val request =
-        FakeRequest(GET, "/edit-set/1/record/COAL.2022.V5RJW.P/edit").withSession(
+        FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit").withSession(
           SessionKeys.token -> invalidSessionToken
         )
       val editRecordPage = route(app, request).get
@@ -651,7 +1031,7 @@ class EditSetControllerSpec extends BaseSpec {
     val validValues: Map[String, String] =
       Map(
         "ccr"             -> "COAL 80/80/1",
-        "oci"             -> "COAL.2022.V5RJW.P",
+        "oci"             -> "COAL.2022.V1RJW.P",
         "scopeAndContent" -> "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         "formerReferenceDepartment" -> "1234",
         "coveringDates"             -> "2020 Oct",
@@ -663,7 +1043,7 @@ class EditSetControllerSpec extends BaseSpec {
         "endDateYear"               -> "2020",
         "legalStatus"               -> "ref.1",
         "placeOfDeposit"            -> "2",
-        "relatedMaterial"           -> "1",
+        "note"                      -> "Need to check copyright info.",
         "action"                    -> "save"
       )
 
@@ -677,7 +1057,7 @@ class EditSetControllerSpec extends BaseSpec {
             val blankScopeAndContentToFailValidation = ""
             val values = validValuesForSaving ++ Map("scopeAndContent" -> blankScopeAndContentToFailValidation)
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -687,7 +1067,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent = "",
                 coveringDates = "2020 Oct",
                 formerReferenceDepartment = "1234",
@@ -695,6 +1075,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -711,7 +1092,7 @@ class EditSetControllerSpec extends BaseSpec {
             val values =
               validValuesForSaving ++ Map("startDateDay" -> "", "startDateMonth" -> "", "startDateYear" -> "")
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -721,7 +1102,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -730,6 +1111,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -747,7 +1129,7 @@ class EditSetControllerSpec extends BaseSpec {
             val values =
               validValuesForSaving ++ Map("startDateDay" -> "XX", "startDateMonth" -> "11", "startDateYear" -> "1960")
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -757,7 +1139,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -766,6 +1148,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -791,7 +1174,7 @@ class EditSetControllerSpec extends BaseSpec {
                 "endDateYear"    -> "2022"
               )
 
-            val result = submitWhileLoggedIn(2, "COAL.2022.V5RJW.R", values)
+            val result = submitWhileLoggedIn(2, "COAL.2022.V1RJW.R", values)
 
             status(result) mustBe BAD_REQUEST
             val expectedPage = ExpectedEditRecordPage(
@@ -799,7 +1182,7 @@ class EditSetControllerSpec extends BaseSpec {
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
               classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V5RJW.P",
+              omegaCatalogueId = "COAL.2022.V1RJW.P",
               scopeAndContent =
                 "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
               coveringDates = "2020 Oct",
@@ -808,6 +1191,7 @@ class EditSetControllerSpec extends BaseSpec {
               endDate = ExpectedDate("31", "10", "2022"),
               legalStatus = "ref.1",
               placeOfDeposit = "2",
+              note = "Need to check copyright info.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -826,7 +1210,7 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values = validValuesForSaving ++ Map("endDateDay" -> "", "endDateMonth" -> "", "endDateYear" -> "")
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             val document = asDocument(result)
@@ -837,7 +1221,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -846,6 +1230,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("", "", ""),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -862,7 +1247,7 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values =
               validValuesForSaving ++ Map("endDateDay" -> "XX", "endDateMonth" -> "12", "endDateYear" -> "2000")
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -872,7 +1257,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -881,6 +1266,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("XX", "12", "2000"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -904,7 +1290,7 @@ class EditSetControllerSpec extends BaseSpec {
                 "endDateMonth"   -> "2",
                 "endDateYear"    -> "2022"
               )
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -914,7 +1300,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -923,6 +1309,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("29", "2", "2022"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -946,7 +1333,7 @@ class EditSetControllerSpec extends BaseSpec {
               "endDateYear"    -> "2020"
             )
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -956,7 +1343,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -965,6 +1352,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("11", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -989,7 +1377,7 @@ class EditSetControllerSpec extends BaseSpec {
             "endDateYear"    -> "2020"
           )
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
           status(result) mustBe BAD_REQUEST
           assertPageAsExpected(
@@ -999,7 +1387,7 @@ class EditSetControllerSpec extends BaseSpec {
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
               classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V5RJW.P",
+              omegaCatalogueId = "COAL.2022.V1RJW.P",
               scopeAndContent =
                 "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
               coveringDates = "2020 Oct",
@@ -1008,6 +1396,7 @@ class EditSetControllerSpec extends BaseSpec {
               endDate = ExpectedDate("42", "12", "2020"),
               legalStatus = "ref.1",
               placeOfDeposit = "2",
+              note = "Need to check copyright info.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1025,7 +1414,7 @@ class EditSetControllerSpec extends BaseSpec {
           "is invalid" in {
             val values = validValuesForSaving ++ Map("coveringDates" -> "Oct 1 2004")
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1035,7 +1424,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "Oct 1 2004",
@@ -1044,6 +1433,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1060,7 +1450,7 @@ class EditSetControllerSpec extends BaseSpec {
             val gapDateTooLong = (1 to 100).map(_ => "2004 Oct 1").mkString(";")
             val values = validValuesForSaving ++ Map("coveringDates" -> gapDateTooLong)
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1070,7 +1460,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = gapDateTooLong,
@@ -1079,6 +1469,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1094,7 +1485,7 @@ class EditSetControllerSpec extends BaseSpec {
           "is empty; showing error correctly" in {
             val values = validValuesForSaving ++ Map("coveringDates" -> "  ")
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1104,7 +1495,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "  ",
@@ -1113,6 +1504,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1131,7 +1523,7 @@ class EditSetControllerSpec extends BaseSpec {
           "isn't selected" in {
             val values = validValuesForSaving ++ Map("placeOfDeposit" -> "")
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1141,7 +1533,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -1150,6 +1542,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1165,7 +1558,7 @@ class EditSetControllerSpec extends BaseSpec {
           "is absent" in {
             val values = validValuesForSaving.removed("placeOfDeposit")
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1175,7 +1568,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -1184,6 +1577,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1200,7 +1594,7 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values = validValuesForSaving ++ Map("placeOfDeposit" -> "6")
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1210,7 +1604,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -1219,6 +1613,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
                 placeOfDeposit = "",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1237,7 +1632,7 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values = validValuesForSaving ++ Map("legalStatus" -> "")
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
@@ -1247,7 +1642,7 @@ class EditSetControllerSpec extends BaseSpec {
                 heading = "TNA reference: COAL 80/80/1",
                 legend = "Intellectual properties",
                 classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -1256,6 +1651,7 @@ class EditSetControllerSpec extends BaseSpec {
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "",
                 placeOfDeposit = "2",
+                note = "Need to check copyright info.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1273,11 +1669,50 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values = validValues ++ Map("legalStatus" -> "ref.10")
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe SEE_OTHER
 
-            redirectLocation(result) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/save")
+            redirectLocation(result) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+
+          }
+        }
+        "note" when {
+          "is too long" in {
+
+            val excessivelyLongNote = "Something about something else." * 100
+            val values = validValuesForSaving ++ Map("note" -> excessivelyLongNote)
+
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+
+            status(result) mustBe BAD_REQUEST
+            assertPageAsExpected(
+              asDocument(result),
+              ExpectedEditRecordPage(
+                title = "Edit record",
+                heading = "TNA reference: COAL 80/80/1",
+                legend = "Intellectual properties",
+                classicCatalogueRef = "COAL 80/80/1",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
+                scopeAndContent =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+                coveringDates = "2020 Oct",
+                formerReferenceDepartment = "1234",
+                startDate = ExpectedDate("1", "10", "2020"),
+                endDate = ExpectedDate("31", "10", "2020"),
+                legalStatus = "ref.1",
+                placeOfDeposit = "2",
+                note = excessivelyLongNote,
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
+                summaryErrorMessages = Seq("Note too long, maximum length 1000 characters"),
+                errorMessageForNote = Some("Note too long, maximum length 1000 characters")
+              )
+            )
 
           }
         }
@@ -1311,71 +1746,113 @@ class EditSetControllerSpec extends BaseSpec {
           )
 
           val editRecordPage = controller
-            .submit("1", "COAL.2022.V5RJW.P")
+            .submit("1", "COAL.2022.V1RJW.P")
             .apply(
               CSRFTokenHelper
                 .addCSRFToken(
-                  FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+                  FakeRequest(POST, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
                     .withFormUrlEncodedBody(validValuesForSaving.toSeq: _*)
                     .withSession(SessionKeys.token -> validSessionToken)
                 )
             )
 
           status(editRecordPage) mustBe SEE_OTHER
-          redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/save")
+          redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
         }
 
         "redirect to result page of the application" in {
           val controller = inject[EditSetController]
           val editRecordPage = controller
-            .submit("1", "COAL.2022.V5RJW.P")
+            .submit("1", "COAL.2022.V1RJW.P")
             .apply(
               CSRFTokenHelper.addCSRFToken(
-                FakeRequest(POST, "/edit-set/1/record/COAL.2022.V5RJW.P/edit")
+                FakeRequest(POST, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
                   .withFormUrlEncodedBody(validValuesForSaving.toSeq: _*)
                   .withSession(SessionKeys.token -> validSessionToken)
               )
             )
 
           status(editRecordPage) mustBe SEE_OTHER
-          redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/save")
+          redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
         }
 
-        "redirect to result page from the router" in {
+        "redirect to result page from the router" when {
 
-          val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", validValuesForSaving)
+          "all fields are provided" in {
 
-          status(editRecordPageResponse) mustBe SEE_OTHER
-          redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/save")
+            val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", validValuesForSaving)
 
-          val getRecordResult = getRecordForEditingWhileLoggedIn(1, "COAL.2022.V5RJW.P")
-          assertPageAsExpected(
-            asDocument(getRecordResult),
-            ExpectedEditRecordPage(
-              title = "Edit record",
-              heading = "TNA reference: COAL 80/80/1",
-              legend = "Intellectual properties",
-              classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V5RJW.P",
-              scopeAndContent =
-                "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-              coveringDates = "2020 Oct",
-              formerReferenceDepartment = "1234",
-              startDate = ExpectedDate("1", "10", "2020"),
-              endDate = ExpectedDate("31", "10", "2020"),
-              legalStatus = "ref.1",
-              placeOfDeposit = "2",
-              optionsForPlaceOfDeposit = Seq(
-                ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                ExpectedSelectOption("1", "The National Archives, Kew"),
-                ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                ExpectedSelectOption("3", "British Library, National Sound Archive")
+            status(editRecordPageResponse) mustBe SEE_OTHER
+            redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+
+            val getRecordResult = getRecordForEditingWhileLoggedIn(1, "COAL.2022.V1RJW.P")
+            assertPageAsExpected(
+              asDocument(getRecordResult),
+              ExpectedEditRecordPage(
+                title = "Edit record",
+                heading = "TNA reference: COAL 80/80/1",
+                legend = "Intellectual properties",
+                classicCatalogueRef = "COAL 80/80/1",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
+                scopeAndContent =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+                coveringDates = "2020 Oct",
+                formerReferenceDepartment = "1234",
+                startDate = ExpectedDate("1", "10", "2020"),
+                endDate = ExpectedDate("31", "10", "2020"),
+                legalStatus = "ref.1",
+                placeOfDeposit = "2",
+                note = "Need to check copyright info.",
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                )
               )
             )
-          )
+
+          }
+
+          "the 'note' field is blank" in {
+
+            val values = validValuesForSaving ++ Map("note" -> "")
+
+            val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+
+            status(editRecordPageResponse) mustBe SEE_OTHER
+            redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+
+            val getRecordResult = getRecordForEditingWhileLoggedIn(1, "COAL.2022.V1RJW.P")
+            assertPageAsExpected(
+              asDocument(getRecordResult),
+              ExpectedEditRecordPage(
+                title = "Edit record",
+                heading = "TNA reference: COAL 80/80/1",
+                legend = "Intellectual properties",
+                classicCatalogueRef = "COAL 80/80/1",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
+                scopeAndContent =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+                coveringDates = "2020 Oct",
+                formerReferenceDepartment = "1234",
+                startDate = ExpectedDate("1", "10", "2020"),
+                endDate = ExpectedDate("31", "10", "2020"),
+                legalStatus = "ref.1",
+                placeOfDeposit = "2",
+                note = "",
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                )
+              )
+            )
+
+          }
         }
       }
-
     }
 
     "when the action is to discard all changes" when {
@@ -1388,10 +1865,10 @@ class EditSetControllerSpec extends BaseSpec {
           val blankScopeAndContentToFailValidation = ""
           val values = validValuesForDiscarding ++ Map("coveringDates" -> blankScopeAndContentToFailValidation)
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/discard")
+          redirectLocation(result) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/discard")
 
         }
       }
@@ -1414,7 +1891,7 @@ class EditSetControllerSpec extends BaseSpec {
             "endDateYear"    -> "2020"
           )
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
           status(result) mustBe BAD_REQUEST
           assertPageAsExpected(
@@ -1424,7 +1901,7 @@ class EditSetControllerSpec extends BaseSpec {
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
               classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V5RJW.P",
+              omegaCatalogueId = "COAL.2022.V1RJW.P",
               scopeAndContent =
                 "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
               coveringDates = "   ",
@@ -1433,6 +1910,7 @@ class EditSetControllerSpec extends BaseSpec {
               endDate = ExpectedDate("31", "10", "2020"),
               legalStatus = "ref.1",
               placeOfDeposit = "2",
+              note = "Need to check copyright info.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1457,7 +1935,7 @@ class EditSetControllerSpec extends BaseSpec {
             "endDateYear"    -> "2020"
           )
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
           status(result) mustBe BAD_REQUEST
           assertPageAsExpected(
@@ -1467,7 +1945,7 @@ class EditSetControllerSpec extends BaseSpec {
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
               classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V5RJW.P",
+              omegaCatalogueId = "COAL.2022.V1RJW.P",
               scopeAndContent =
                 "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
               coveringDates = "1270s",
@@ -1476,6 +1954,7 @@ class EditSetControllerSpec extends BaseSpec {
               endDate = ExpectedDate("31", "10", "2020"),
               legalStatus = "ref.1",
               placeOfDeposit = "2",
+              note = "Need to check copyright info.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1500,7 +1979,7 @@ class EditSetControllerSpec extends BaseSpec {
             "endDateYear"    -> "2020"
           )
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
           status(result) mustBe BAD_REQUEST
           assertPageAsExpected(
@@ -1510,7 +1989,7 @@ class EditSetControllerSpec extends BaseSpec {
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
               classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V5RJW.P",
+              omegaCatalogueId = "COAL.2022.V1RJW.P",
               scopeAndContent =
                 "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
               coveringDates = "2022 Feb 1-2022 Feb 29",
@@ -1519,6 +1998,7 @@ class EditSetControllerSpec extends BaseSpec {
               endDate = ExpectedDate("31", "10", "2020"),
               legalStatus = "ref.1",
               placeOfDeposit = "2",
+              note = "Need to check copyright info.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1537,7 +2017,7 @@ class EditSetControllerSpec extends BaseSpec {
 
           val values = validValuesForCalculatingDates ++ Map("coveringDates" -> "1752 Aug 1-1752 Sept 12")
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
           status(result) mustBe OK
           assertPageAsExpected(
@@ -1547,7 +2027,7 @@ class EditSetControllerSpec extends BaseSpec {
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
               classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V5RJW.P",
+              omegaCatalogueId = "COAL.2022.V1RJW.P",
               scopeAndContent =
                 "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
               coveringDates = "1752 Aug 1-1752 Sept 12",
@@ -1556,6 +2036,7 @@ class EditSetControllerSpec extends BaseSpec {
               endDate = ExpectedDate("12", "9", "1752"),
               legalStatus = "ref.1",
               placeOfDeposit = "2",
+              note = "Need to check copyright info.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1570,7 +2051,7 @@ class EditSetControllerSpec extends BaseSpec {
 
           val values = validValuesForCalculatingDates ++ Map("coveringDates" -> "1984 Dec")
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
           status(result) mustBe OK
           assertPageAsExpected(
@@ -1580,7 +2061,7 @@ class EditSetControllerSpec extends BaseSpec {
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
               classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V5RJW.P",
+              omegaCatalogueId = "COAL.2022.V1RJW.P",
               scopeAndContent =
                 "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
               coveringDates = "1984 Dec",
@@ -1589,6 +2070,7 @@ class EditSetControllerSpec extends BaseSpec {
               endDate = ExpectedDate("31", "12", "1984"),
               legalStatus = "ref.1",
               placeOfDeposit = "2",
+              note = "Need to check copyright info.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1603,7 +2085,7 @@ class EditSetControllerSpec extends BaseSpec {
 
           val values = validValuesForCalculatingDates ++ Map("coveringDates" -> "1868; 1890-1902; 1933")
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
           status(result) mustBe OK
           assertPageAsExpected(
@@ -1613,7 +2095,7 @@ class EditSetControllerSpec extends BaseSpec {
               heading = "TNA reference: COAL 80/80/1",
               legend = "Intellectual properties",
               classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V5RJW.P",
+              omegaCatalogueId = "COAL.2022.V1RJW.P",
               scopeAndContent =
                 "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
               coveringDates = "1868; 1890-1902; 1933",
@@ -1622,6 +2104,7 @@ class EditSetControllerSpec extends BaseSpec {
               endDate = ExpectedDate("31", "12", "1933"),
               legalStatus = "ref.1",
               placeOfDeposit = "2",
+              note = "Need to check copyright info.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1672,6 +2155,9 @@ class EditSetControllerSpec extends BaseSpec {
     document must haveEndDateDay(expectedEditRecordPage.endDate.day)
     document must haveEndDateMonth(expectedEditRecordPage.endDate.month)
     document must haveEndDateYear(expectedEditRecordPage.endDate.year)
+    document must haveLegalStatus(expectedEditRecordPage.legalStatus)
+    document must haveSelectionForPlaceOfDeposit(expectedEditRecordPage.optionsForPlaceOfDeposit)
+    document must haveNote(expectedEditRecordPage.note)
 
     expectedEditRecordPage.relatedMaterial.foreach { relatedMaterial =>
       document must haveRelatedMaterialLink(relatedMaterial.linkHref, relatedMaterial.linkText)
@@ -1685,10 +2171,6 @@ class EditSetControllerSpec extends BaseSpec {
     document must haveLogoutLink
     document must haveActionButtons("save", "Save changes", 2)
     document must haveActionButtons("discard", "Discard changes", 2)
-
-    document must haveLegalStatus(expectedEditRecordPage.legalStatus)
-
-    document must haveSelectionForPlaceOfDeposit(expectedEditRecordPage.optionsForPlaceOfDeposit)
 
     if (expectedEditRecordPage.summaryErrorMessages.nonEmpty) {
       document must haveSummaryErrorMessages(expectedEditRecordPage.summaryErrorMessages: _*)
@@ -1719,6 +2201,10 @@ class EditSetControllerSpec extends BaseSpec {
       case None                       => document must haveNoErrorMessageForPlaceOfDeposit
     }
 
+    expectedEditRecordPage.errorMessageForNote match {
+      case Some(expectedErrorMessage) => document must haveErrorMessageForNote(expectedErrorMessage)
+      case None                       => document must haveNoErrorMessageForNote
+    }
   }
 
   private def assertPageAsExpected(document: Document, expectedEditRecordPage: ExpectedEditSetPage): Unit = {
@@ -1753,6 +2239,7 @@ class EditSetControllerSpec extends BaseSpec {
     startDate: ExpectedDate,
     endDate: ExpectedDate,
     legalStatus: String,
+    note: String,
     placeOfDeposit: String,
     optionsForPlaceOfDeposit: Seq[ExpectedSelectOption],
     relatedMaterial: Seq[ExpectedRelatedMaterial] = Seq.empty,
@@ -1761,7 +2248,8 @@ class EditSetControllerSpec extends BaseSpec {
     errorMessageForEndDate: Option[String] = None,
     errorMessageForCoveringsDates: Option[String] = None,
     errorMessageForLegalStatus: Option[String] = None,
-    errorMessageForPlaceOfDeposit: Option[String] = None
+    errorMessageForPlaceOfDeposit: Option[String] = None,
+    errorMessageForNote: Option[String] = None
   )
 
   case class ExpectedRelatedMaterial(linkHref: String, linkText: String, description: Option[String] = None)

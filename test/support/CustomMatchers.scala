@@ -374,6 +374,18 @@ object CustomMatchers {
   def haveSelectionForOrderingDirection(expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
     haveSelectionOptions("direction", "ordering direction", expectedSelectOptions)
 
+  def haveNote(expectedValue: String): Matcher[Document] = (document: Document) =>
+    singleValueMatcher(
+      label = "a note",
+      expectedValue = expectedValue,
+      actualValue = document.select("#note").text()
+    )
+
+  def haveErrorMessageForNote(expectedValue: String): Matcher[Document] =
+    haveErrorMessageForField("note", "#note-error", expectedValue)
+
+  def haveNoErrorMessageForNote: Matcher[Document] = haveErrorMessageForNote("")
+
   private def haveSelectionOptions(
     id: String,
     label: String,

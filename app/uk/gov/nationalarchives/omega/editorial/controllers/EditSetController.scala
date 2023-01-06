@@ -67,6 +67,7 @@ class EditSetController @Inject() (
     val orderField = "field"
     val formerReferenceDepartment = "formerReferenceDepartment"
     val legalStatus = "legalStatus"
+    val note = "note"
     val oci = "oci"
     val placeOfDeposit = "placeOfDeposit"
     val relatedMaterial = "relatedMaterial"
@@ -88,6 +89,7 @@ class EditSetController @Inject() (
     val formerReferenceDepartmentInvalid = "edit-set.record.error.former-reference-department"
     val heading = "edit-set.record.edit.heading"
     val legalStatusMissing = "edit-set.record.error.choose-an-option"
+    val noteTooLong = "edit-set.record.error.note-too-long"
     val placeOfDepositMissingOrInvalid = "edit-set.record.error.choose-an-option"
     val scopeAndContentInvalid = "edit-set.record.error.scope-and-content"
     val scopeAndContentMissing = "edit-set.record.missing.scope-and-content"
@@ -141,6 +143,11 @@ class EditSetController @Inject() (
         .verifying(
           resolvedMessage(MessageKeys.placeOfDepositMissingOrInvalid),
           _.trim.nonEmpty
+        ),
+      FieldNames.note -> text
+        .verifying(
+          resolvedMessage(MessageKeys.noteTooLong),
+          value => value.length <= 1000
         )
     )(EditSetRecordFormValues.apply)(EditSetRecordFormValues.unapply)
   )

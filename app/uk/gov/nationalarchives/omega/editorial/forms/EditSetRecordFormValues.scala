@@ -37,7 +37,8 @@ case class EditSetRecordFormValues(
   endDateMonth: String,
   endDateYear: String,
   legalStatus: String,
-  placeOfDeposit: String
+  placeOfDeposit: String,
+  note: String
 )
 
 object EditSetRecordFormValues {
@@ -57,7 +58,8 @@ object EditSetRecordFormValues {
       endDateMonth = formValues.endDateMonth,
       endDateYear = formValues.endDateYear,
       legalStatus = formValues.legalStatus,
-      placeOfDeposit = formValues.placeOfDeposit
+      placeOfDeposit = formValues.placeOfDeposit,
+      note = formValues.note
     )
 
   def populateForm(editSetRecord: EditSetRecord): EditSetRecordFormValues =
@@ -72,7 +74,8 @@ object EditSetRecordFormValues {
       endDateMonth = editSetRecord.endDateMonth,
       endDateYear = editSetRecord.endDateYear,
       legalStatus = editSetRecord.legalStatus,
-      placeOfDeposit = editSetRecord.placeOfDeposit
+      placeOfDeposit = editSetRecord.placeOfDeposit,
+      note = editSetRecord.note
     )
 
 }

@@ -223,6 +223,18 @@
     },
 )
 )
+@govukTextarea(Textarea(
+    id = "note",
+    name = "note",
+    value = editSetRecordForm.data.get("note"),
+    label = Label(forAttr = Some("note"), content = Text(messages("edit-set.record.edit.note"))),
+    errorMessage = editSetRecordForm.error("note").map { error =>
+        ErrorMessage(
+            content = Text(error.message),
+            attributes = Map("for" -> "note")
+        )
+    },
+    attributes = Map("rows" -> "5", "autofocus" -> "true")))
 
 
   <label class="govuk-label">@messages("edit-set.record.related-material")</h3>
