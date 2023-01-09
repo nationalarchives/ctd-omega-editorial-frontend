@@ -194,16 +194,17 @@ object CustomMatchers {
       possibleValues = document.select(".relatedMaterialText").eachText.asScala.toSet
     )
 
-  def haveSeparatedMaterialLink(expectedHref: String, expectedText: String): Matcher[Document] = (document: Document) => {
-    val actualLinks = document.select(".separatedMaterialLink").asScala.map { element =>
-      (element.attr("href"), element.text)
+  def haveSeparatedMaterialLink(expectedHref: String, expectedText: String): Matcher[Document] = (document: Document) =>
+    {
+      val actualLinks = document.select(".separatedMaterialLink").asScala.map { element =>
+        (element.attr("href"), element.text)
+      }
+      oneOfMatcher(
+        label = "a link for separated material",
+        expectedValue = (expectedHref, expectedText),
+        possibleValues = actualLinks.toSet
+      )
     }
-    oneOfMatcher(
-      label = "a link for separated material",
-      expectedValue = (expectedHref, expectedText),
-      possibleValues = actualLinks.toSet
-    )
-  }
 
   def haveSeparatedMaterialText(expectedValue: String): Matcher[Document] = (document: Document) =>
     oneOfMatcher(
@@ -211,7 +212,6 @@ object CustomMatchers {
       expectedValue = expectedValue,
       possibleValues = document.select(".separatedMaterialText").eachText.asScala.toSet
     )
-
 
   def haveSummaryErrorTitle(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(

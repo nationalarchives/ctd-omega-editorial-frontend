@@ -58,14 +58,17 @@
   <li><a class="relatedMaterialLink" href="@linkAndDescription.linkHref">@linkAndDescription.linkText</a> - <span class="relatedMaterialText">@linkAndDescription.description</span></li>
 }
 
-@separatedMaterialItem(href: String, linkText: String) = {
-  <li><a class="separatedMaterialLink" href="@href">@linkText</a></li>
+@separatedMaterialLink(link: SeparatedMaterial.LinkOnly) = {
+  <li><a class="separatedMaterialLink" href="@link.linkHref">@link.linkText</a></li>
 }
 
-@separatedMaterialItemWithDescription(href: String, linkText: String, description: String) = {
-  <li><a class="separatedMaterialLink" href="@href">@linkText</a> - <span class="separatedMaterialText">@description</span></li>
+@separatedMaterialDescription(description: SeparatedMaterial.DescriptionOnly) = {
+  <li><span class="separatedMaterialText">@description.description</span></li>
 }
 
+@separatedMaterialLinkAndDescription(linkAndDescription: SeparatedMaterial.LinkAndDescription) = {
+  <li><a class="separatedMaterialLink" href="@linkAndDescription.linkHref">@linkAndDescription.linkText</a> - <span class="separatedMaterialText">@linkAndDescription.description</span></li>
+}
 
 @backLink = {
     <a class="govuk-back-link" href="/edit-set/1">@messages("edit-set.record.edit.back-to-edit-set", editSetName)</a>
@@ -270,21 +273,23 @@
     }
   </ul>
 
-  <label class="govuk-label">@messages("edit-set.record.edit.separated-material")</h3>
+  <h3 class="govuk-heading-s">@messages("edit-set.record.edit.separated-material")</h3>
   <ul class="govuk-list govuk-list--bullet">
     @{
-      staticRecord.separatedMaterial.map { entry =>
-        entry.description match {
+      staticRecord.separatedMaterial.map {
 
-          case Some(description) => {
-            separatedMaterialItemWithDescription(entry.linkHref, entry.linkText, description)
-          }
-
-          case None => {
-            separatedMaterialItem(entry.linkHref, entry.linkText)
-          }
-
+        case e: SeparatedMaterial.LinkAndDescription => {
+          separatedMaterialLinkAndDescription(e)
         }
+
+        case e: SeparatedMaterial.LinkOnly => {
+          separatedMaterialLink(e)
+        }
+
+        case e: SeparatedMaterial.DescriptionOnly => {
+          separatedMaterialDescription(e)
+        }
+
       }
     }
   </ul>
