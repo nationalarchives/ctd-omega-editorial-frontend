@@ -46,12 +46,16 @@
     ))
 }
 
-@relatedMaterialItem(href: String, linkText: String) = {
-  <li><a class="relatedMaterialLink" href="@href">@linkText</a></li>
+@relatedMaterialLink(link: RelatedMaterial.LinkOnly) = {
+  <li><a class="relatedMaterialLink" href="@link.linkHref">@link.linkText</a></li>
 }
 
-@relatedMaterialItemWithDescription(href: String, linkText: String, description: String) = {
-  <li><a class="relatedMaterialLink" href="@href">@linkText</a> - <span class="relatedMaterialText">@description</span></li>
+@relatedMaterialDescription(description: RelatedMaterial.DescriptionOnly) = {
+  <li><span class="relatedMaterialText">@description.description</span></li>
+}
+
+@relatedMaterialLinkAndDescription(linkAndDescription: RelatedMaterial.LinkAndDescription) = {
+  <li><a class="relatedMaterialLink" href="@linkAndDescription.linkHref">@linkAndDescription.linkText</a> - <span class="relatedMaterialText">@linkAndDescription.description</span></li>
 }
 
 @backLink = {
@@ -236,21 +240,23 @@
     attributes = Map("rows" -> "5", "autofocus" -> "true")))
 
 
-  <label class="govuk-label">@messages("edit-set.record.related-material")</h3>
+  <h3 class="govuk-heading-s">@messages("edit-set.record.related-material")</h3>
   <ul class="govuk-list govuk-list--bullet">
     @{
-      staticRecord.relatedMaterial.map { entry =>
-        entry.description match {
+      staticRecord.relatedMaterial.map {
 
-          case Some(description) => {
-            relatedMaterialItemWithDescription(entry.linkHref, entry.linkText, description)
-          }
-
-          case None => {
-            relatedMaterialItem(entry.linkHref, entry.linkText)
-          }
-
+        case e: RelatedMaterial.LinkAndDescription => {
+          relatedMaterialLinkAndDescription(e)
         }
+
+        case e: RelatedMaterial.LinkOnly => {
+          relatedMaterialLink(e)
+        }
+
+        case e: RelatedMaterial.DescriptionOnly => {
+          relatedMaterialDescription(e)
+        }
+
       }
     }
   </ul>

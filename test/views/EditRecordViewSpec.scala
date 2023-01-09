@@ -61,7 +61,7 @@ class EditRecordViewSpec extends BaseSpec {
 
   val editSetRecord = EditSetRecord(
     ccr = "COAL 80/80/1",
-    oci = "COAL.2022.V5RJW.P",
+    oci = "COAL.2022.V1RJW.P",
     scopeAndContent = "",
     coveringDates = "",
     formerReferenceDepartment = "",
@@ -75,12 +75,15 @@ class EditRecordViewSpec extends BaseSpec {
     placeOfDeposit = "",
     note = "",
     relatedMaterial = Seq(
-      RelatedMaterial(
+      RelatedMaterial.DescriptionOnly(
+        description = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+      ),
+      RelatedMaterial.LinkAndDescription(
         linkHref = "#;",
         linkText = "COAL 80/80/2",
-        description = Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+        description = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
       ),
-      RelatedMaterial(linkHref = "#;", linkText = "COAL 80/80/3")
+      RelatedMaterial.LinkOnly(linkHref = "#;", linkText = "COAL 80/80/3")
     )
   )
 
@@ -124,7 +127,7 @@ class EditRecordViewSpec extends BaseSpec {
       document must haveTitle("TNA reference: COAL 80/80/1")
       document must haveHeading("edit-set.record.edit.heading")
       document must haveClassicCatalogueRef("COAL 80/80/1")
-      document must haveOmegaCatalogueId("COAL.2022.V5RJW.P")
+      document must haveOmegaCatalogueId("COAL.2022.V1RJW.P")
       document must haveScopeAndContent(
         "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
       )
