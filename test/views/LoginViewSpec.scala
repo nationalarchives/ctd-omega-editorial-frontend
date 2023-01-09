@@ -27,6 +27,7 @@ import play.api.test.Helpers._
 import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import support.BaseSpec
 import support.CustomMatchers._
+import support.ExpectedValues.ExpectedSummaryErrorMessage
 import uk.gov.nationalarchives.omega.editorial.forms.CredentialsFormProvider
 import uk.gov.nationalarchives.omega.editorial.models.Credentials
 import uk.gov.nationalarchives.omega.editorial.views.html.login
@@ -86,7 +87,10 @@ class LoginViewSpec extends BaseSpec {
         login(title, heading, userForm)(Helpers.stubMessages(messagesApi), CSRFTokenHelper.addCSRFToken(FakeRequest()))
 
       val document = asDocument(loginHtml)
-      document must haveSummaryErrorMessages("Enter a username", "Enter a password")
+      document must haveSummaryErrorMessages(
+        ExpectedSummaryErrorMessage("Enter a username", "#username"),
+        ExpectedSummaryErrorMessage("Enter a password", "#password")
+      )
       document must haveErrorMessageForUsername("Enter a username")
       document must haveErrorMessageForPassword("Enter a password")
     }
@@ -96,7 +100,7 @@ class LoginViewSpec extends BaseSpec {
       val heading = "HeadingTest"
       val credentialsForm: Form[Credentials] = CredentialsFormProvider()
         .fill(Credentials.apply("11", "22"))
-        .withError(FormError("", "Username and/or password is incorrect."))
+        .withError(FormError("username", "Username and/or password is incorrect."))
       val login = inject[login]
       val loginHtml =
         login(title, heading, credentialsForm)(
@@ -106,7 +110,9 @@ class LoginViewSpec extends BaseSpec {
 
       val document = asDocument(loginHtml)
       document must haveSummaryErrorTitle(errorSummaryTitle)
-      document must haveSummaryErrorMessages("Username and/or password is incorrect.")
+      document must haveSummaryErrorMessages(
+        ExpectedSummaryErrorMessage("Username and/or password is incorrect.", "#username")
+      )
     }
 
     "render an error when no username given" in {
@@ -124,7 +130,7 @@ class LoginViewSpec extends BaseSpec {
 
       val document = asDocument(loginHtml)
       document must haveSummaryErrorTitle(errorSummaryTitle)
-      document must haveSummaryErrorMessages("Enter a username")
+      document must haveSummaryErrorMessages(ExpectedSummaryErrorMessage("Enter a username", "#username"))
       document must haveErrorMessageForUsername("Enter a username")
     }
 
@@ -143,7 +149,7 @@ class LoginViewSpec extends BaseSpec {
 
       val document = asDocument(loginHtml)
       document must haveSummaryErrorTitle(errorSummaryTitle)
-      document must haveSummaryErrorMessages("Enter a password")
+      document must haveSummaryErrorMessages(ExpectedSummaryErrorMessage("Enter a password", "#password"))
       document must haveErrorMessageForPassword("Enter a password")
     }
   }

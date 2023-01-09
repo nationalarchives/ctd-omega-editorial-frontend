@@ -27,7 +27,7 @@ import play.api.test.Helpers._
 import play.api.test._
 import support.BaseSpec
 import support.CustomMatchers._
-import support.ExpectedValues.{ ExpectedActionButton, ExpectedDate, ExpectedSelectOption }
+import support.ExpectedValues.{ ExpectedActionButton, ExpectedDate, ExpectedSelectOption, ExpectedSummaryErrorMessage }
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
@@ -1113,7 +1113,8 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("Start date is not a valid date"),
+                summaryErrorMessages =
+                  Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", "#startDateDay")),
                 errorMessageForStartDate = Some("Start date is not a valid date")
               )
             )
@@ -1156,7 +1157,8 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("Start date is not a valid date"),
+                summaryErrorMessages =
+                  Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", "#startDateDay")),
                 errorMessageForStartDate = Some("Start date is not a valid date")
               )
             )
@@ -1200,7 +1202,8 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
-              summaryErrorMessages = Seq("Start date is not a valid date"),
+              summaryErrorMessages =
+                Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", "#startDateDay")),
               errorMessageForStartDate = Some("Start date is not a valid date")
             )
             assertPageAsExpected(asDocument(result), expectedPage)
@@ -1245,7 +1248,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("End date is not a valid date"),
+                summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("End date is not a valid date", "#endDateDay")),
                 errorMessageForEndDate = Some("End date is not a valid date")
               )
             )
@@ -1288,7 +1291,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("End date is not a valid date"),
+                summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("End date is not a valid date", "#endDateDay")),
                 errorMessageForEndDate = Some("End date is not a valid date")
               )
             )
@@ -1333,7 +1336,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("End date is not a valid date"),
+                summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("End date is not a valid date", "#endDateDay")),
                 errorMessageForEndDate = Some("End date is not a valid date")
               )
             )
@@ -1378,7 +1381,8 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("End date cannot precede start date"),
+                summaryErrorMessages =
+                  Seq(ExpectedSummaryErrorMessage("End date cannot precede start date", "#endDateDay")),
                 errorMessageForEndDate = Some("End date cannot precede start date")
               )
             )
@@ -1424,7 +1428,10 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
-              summaryErrorMessages = Seq("Start date is not a valid date", "End date is not a valid date"),
+              summaryErrorMessages = Seq(
+                ExpectedSummaryErrorMessage("Start date is not a valid date", "#startDateDay"),
+                ExpectedSummaryErrorMessage("End date is not a valid date", "#endDateDay")
+              ),
               errorMessageForStartDate = Some("Start date is not a valid date"),
               errorMessageForEndDate = Some("End date is not a valid date")
             )
@@ -1466,7 +1473,8 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("Covering date format is not valid"),
+                summaryErrorMessages =
+                  Seq(ExpectedSummaryErrorMessage("Covering date format is not valid", "#coveringDates")),
                 errorMessageForCoveringsDates = Some("Covering date format is not valid")
               )
             )
@@ -1506,7 +1514,9 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("Covering date too long, maximum length 255 characters"),
+                summaryErrorMessages = Seq(
+                  ExpectedSummaryErrorMessage("Covering date too long, maximum length 255 characters", "#coveringDates")
+                ),
                 errorMessageForCoveringsDates = Some("Covering date too long, maximum length 255 characters")
               )
             )
@@ -1546,7 +1556,10 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("Enter the covering dates", "Covering date format is not valid"),
+                summaryErrorMessages = Seq(
+                  ExpectedSummaryErrorMessage("Enter the covering dates", "#coveringDates"),
+                  ExpectedSummaryErrorMessage("Covering date format is not valid", "#coveringDates")
+                ),
                 errorMessageForCoveringsDates = Some("Enter the covering dates")
               )
             )
@@ -1585,7 +1598,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("You must choose an option"),
+                summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("You must choose an option", "#placeOfDeposit")),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
             )
@@ -1624,7 +1637,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("You must choose an option"),
+                summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("You must choose an option", "#placeOfDeposit")),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
             )
@@ -1664,7 +1677,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("You must choose an option"),
+                summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("You must choose an option", "#placeOfDeposit")),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
             )
@@ -1703,7 +1716,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("You must choose an option"),
+                summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("You must choose an option", "#legalStatus")),
                 errorMessageForLegalStatus = Some("Error: You must choose an option")
               )
             )
@@ -1763,7 +1776,8 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("Note too long, maximum length 1000 characters"),
+                summaryErrorMessages =
+                  Seq(ExpectedSummaryErrorMessage("Note too long, maximum length 1000 characters", "#note")),
                 errorMessageForNote = Some("Note too long, maximum length 1000 characters")
               )
             )
@@ -1805,8 +1819,12 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages =
-                  Seq("Administrative / biographical background too long, maximum length 8000 characters"),
+                summaryErrorMessages = Seq(
+                  ExpectedSummaryErrorMessage(
+                    "Administrative / biographical background too long, maximum length 8000 characters",
+                    "#background"
+                  )
+                ),
                 errorMessageForBackground =
                   Some("Administrative / biographical background too long, maximum length 8000 characters")
               )
@@ -2059,7 +2077,10 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
-              summaryErrorMessages = Seq("Enter the covering dates", "Covering date format is not valid"),
+              summaryErrorMessages = Seq(
+                ExpectedSummaryErrorMessage("Enter the covering dates", "#coveringDates"),
+                ExpectedSummaryErrorMessage("Covering date format is not valid", "#coveringDates")
+              ),
               errorMessageForCoveringsDates = Some("Enter the covering dates")
             )
           )
@@ -2105,7 +2126,8 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
-              summaryErrorMessages = Seq("Covering date format is not valid"),
+              summaryErrorMessages =
+                Seq(ExpectedSummaryErrorMessage("Covering date format is not valid", "#coveringDates")),
               errorMessageForCoveringsDates = Some("Covering date format is not valid")
             )
           )
@@ -2151,7 +2173,8 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
-              summaryErrorMessages = Seq("Covering date format is not valid"),
+              summaryErrorMessages =
+                Seq(ExpectedSummaryErrorMessage("Covering date format is not valid", "#coveringDates")),
               errorMessageForCoveringsDates = Some("Covering date format is not valid")
             )
           )
@@ -2399,7 +2422,7 @@ class EditSetControllerSpec extends BaseSpec {
     note: String,
     background: String,
     optionsForPlaceOfDeposit: Seq[ExpectedSelectOption],
-    summaryErrorMessages: Seq[String] = Seq.empty,
+    summaryErrorMessages: Seq[ExpectedSummaryErrorMessage] = Seq.empty,
     errorMessageForStartDate: Option[String] = None,
     errorMessageForEndDate: Option[String] = None,
     errorMessageForCoveringsDates: Option[String] = None,

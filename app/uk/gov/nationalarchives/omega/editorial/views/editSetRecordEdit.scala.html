@@ -23,7 +23,9 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.nationalarchives.omega.editorial.models.{CorporateBody, EditSetRecord, User}
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
-@import uk.gov.nationalarchives.omega.editorial.models.{EditSetRecord, User, LegalStatus}
+@import uk.gov.nationalarchives.omega.editorial.models.LegalStatus
+@import uk.gov.hmrc.hmrcfrontend.views.Implicits.RichErrorSummary
+
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(govukButton: GovukButton, govukInput: GovukInput, govukTextarea: GovukTextarea, govukFieldset: GovukFieldset, govukErrorSummary: GovukErrorSummary, govukSelect: GovukSelect)
@@ -62,12 +64,8 @@
     <label class="govuk-label">
     @messages(labelKey)
     </label>
-@editSetRecordForm.error(prefix + "Date").map { error =>
-    <p id="@{
-        prefix
-    }DateFieldError" class="govuk-error-message">@{
-        error.message
-    }</p>
+@editSetRecordForm.error(prefix + "DateDay").map { error =>
+    <p id="@{prefix}DateFieldError" class="govuk-error-message">@{error.message}</p>
 }
     <div class="govuk-date-input" id="@prefix">
         <div class="govuk-date-input__item">
@@ -241,15 +239,7 @@
 
 @template(Some(user), title, Some(backLink)) {
     @if(editSetRecordForm.hasErrors) {
-        @govukErrorSummary(ErrorSummary(
-            errorList = editSetRecordForm.errors.map { error =>
-                ErrorLink(
-                    href = Some("#"),
-                    content = Text(error.message),
-                )
-            },
-            title = Text(messages("error.summary.title"))
-        ))
+        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(editSetRecordForm))
     }
     <h1 class="govuk-heading-l">@messages("edit-set.record.edit.heading", editSetRecordForm.data.get("ccr").get)</h1>
     <h2 class="govuk-heading-m">@messages("edit-set.record.edit.id", editSetRecordForm.data.get("oci").get)</h2>
