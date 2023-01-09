@@ -101,8 +101,7 @@ package object editSetRecords {
         |  "note": ""
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   private val editSetRecord4: EditSetRecord = Json
     .parse(
@@ -123,8 +122,7 @@ package object editSetRecords {
         |  "note": ""
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   private val editSetRecord5: EditSetRecord = Json
     .parse(
@@ -145,8 +143,7 @@ package object editSetRecords {
         |  "note": ""
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   private val editSetRecord6: EditSetRecord = Json
     .parse(
@@ -167,8 +164,7 @@ package object editSetRecords {
         |  "note": ""
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   private val editSetRecord7: EditSetRecord = Json
     .parse(
@@ -189,8 +185,7 @@ package object editSetRecords {
         |  "note": ""
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   private val editSetRecord8: EditSetRecord = Json
     .parse(
@@ -211,8 +206,7 @@ package object editSetRecords {
         |  "note": ""
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   private val editSetRecord9: EditSetRecord = Json
     .parse(
@@ -233,8 +227,7 @@ package object editSetRecords {
         |  "note": ""
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   private val editSetRecord10: EditSetRecord = Json
     .parse(
@@ -255,8 +248,7 @@ package object editSetRecords {
         |  "note": ""
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   private val editSetRecord11: EditSetRecord = Json
     .parse(
@@ -277,8 +269,7 @@ package object editSetRecords {
         |  "note": ""
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   private val editSetRecord12: EditSetRecord = Json
     .parse(

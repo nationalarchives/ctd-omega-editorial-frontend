@@ -949,14 +949,18 @@ class EditSetControllerSpec extends BaseSpec {
             ),
             relatedMaterial = Seq(
               ExpectedRelatedMaterial(
-                linkHref = "#;",
-                linkText = "COAL 80/80/2",
                 description =
                   Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
               ),
               ExpectedRelatedMaterial(
-                linkHref = "#;",
-                linkText = "COAL 80/80/3"
+                linkHref = Some("#;"),
+                linkText = Some("COAL 80/80/2"),
+                description =
+                  Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+              ),
+              ExpectedRelatedMaterial(
+                linkHref = Some("#;"),
+                linkText = Some("COAL 80/80/3")
               )
             )
           )
@@ -1161,6 +1165,20 @@ class EditSetControllerSpec extends BaseSpec {
             )
 
           }
+        }
+        "doesn't exist" in {
+          val values = validValuesForSaving ++ Map(
+            "startDateDay"   -> "29",
+            "startDateMonth" -> "2",
+            "startDateYear"  -> "2022",
+            "endDateDay"     -> "31",
+            "endDateMonth"   -> "10",
+            "endDateYear"    -> "2022"
+          )
+
+          val result = submitWhileLoggedIn(2, "COAL.2022.V1RJW.R", values)
+
+          status(result) mustBe BAD_REQUEST
         }
         "end date" when {
           "is empty" in {
@@ -2117,7 +2135,10 @@ class EditSetControllerSpec extends BaseSpec {
     document must haveNote(expectedEditRecordPage.note)
 
     expectedEditRecordPage.relatedMaterial.foreach { relatedMaterial =>
-      document must haveRelatedMaterialLink(relatedMaterial.linkHref, relatedMaterial.linkText)
+      for {
+        linkHref <- relatedMaterial.linkHref
+        linkText <- relatedMaterial.linkText
+      } yield document must haveRelatedMaterialLink(linkHref, linkText)
       relatedMaterial.description.foreach { description =>
         document must haveRelatedMaterialText(description)
       }
@@ -2209,7 +2230,11 @@ class EditSetControllerSpec extends BaseSpec {
     errorMessageForNote: Option[String] = None
   )
 
-  case class ExpectedRelatedMaterial(linkHref: String, linkText: String, description: Option[String] = None)
+  case class ExpectedRelatedMaterial(
+    linkHref: Option[String] = None,
+    linkText: Option[String] = None,
+    description: Option[String] = None
+  )
 
   case class ExpectedDate(day: String, month: String, year: String)
   case class ExpectedEditSetPage(

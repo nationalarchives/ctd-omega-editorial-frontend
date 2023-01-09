@@ -240,22 +240,19 @@
     attributes = Map("rows" -> "5", "autofocus" -> "true")))
 
 
-  <h3 class="govuk-heading-s">@messages("edit-set.record.related-material")</h3>
+  <h3 class="govuk-heading-s">@messages("edit-set.record.edit.related-material")</h3>
   <ul class="govuk-list govuk-list--bullet">
     @{
       staticRecord.relatedMaterial.map {
 
-        case e: RelatedMaterial.LinkAndDescription => {
+        case e: RelatedMaterial.LinkAndDescription =>
           relatedMaterialLinkAndDescription(e)
-        }
 
-        case e: RelatedMaterial.LinkOnly => {
+        case e: RelatedMaterial.LinkOnly =>
           relatedMaterialLink(e)
-        }
 
-        case e: RelatedMaterial.DescriptionOnly => {
+        case e: RelatedMaterial.DescriptionOnly =>
           relatedMaterialDescription(e)
-        }
 
       }
     }

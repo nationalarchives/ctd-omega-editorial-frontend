@@ -68,7 +68,6 @@ class EditSetController @Inject() (
     val note = "note"
     val oci = "oci"
     val placeOfDeposit = "placeOfDeposit"
-    val relatedMaterial = "relatedMaterial"
     val scopeAndContent = "scopeAndContent"
     val startDate = "startDate"
     val startDateDay = "startDateDay"
@@ -270,8 +269,8 @@ class EditSetController @Inject() (
         case Left(RecordNotFound(missingOci)) =>
           BadRequest(s"Record with $missingOci not found")
 
-        case Left(InvalidAction(_)) =>
-          BadRequest("This action is not allowed")
+        case Left(InvalidAction(badAction)) =>
+          BadRequest(s"$badAction is not allowed action")
 
         case Left(MissingAction) =>
           BadRequest("This action is not allowed")
