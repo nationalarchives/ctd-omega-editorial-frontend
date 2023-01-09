@@ -220,7 +220,7 @@
     id = "background",
     name = "background",
     value = editSetRecordForm.data.get("background"),
-    label = Label(forAttr = Some("background"), content = Text(messages("edit-set.record.edit.background"))),
+    label = Label(forAttr = Some("background"), classes = "govuk-label--s", content = Text(messages("edit-set.record.edit.background"))),
     errorMessage = editSetRecordForm.error("background").map { error =>
         ErrorMessage(
             content = Text(error.message),
