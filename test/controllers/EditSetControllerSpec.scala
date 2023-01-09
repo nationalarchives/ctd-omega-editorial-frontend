@@ -28,7 +28,7 @@ import play.api.test._
 import org.scalatest.compatible.Assertion
 import support.BaseSpec
 import support.CustomMatchers._
-import support.ExpectedValues.{ ExpectedActionButton, ExpectedDate, ExpectedSelectOption }
+import support.ExpectedValues.{ ExpectedActionButton, ExpectedSelectOption }
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }

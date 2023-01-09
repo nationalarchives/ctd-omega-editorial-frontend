@@ -23,9 +23,6 @@ package uk.gov.nationalarchives.omega.editorial.forms
 
 import uk.gov.nationalarchives.omega.editorial.models.EditSetRecord
 
-import play.api.data.{ Form, FormError }
-import play.api.data.Forms.{ mapping, text }
-
 case class EditSetRecordFormValues(
   scopeAndContent: String,
   coveringDates: String,

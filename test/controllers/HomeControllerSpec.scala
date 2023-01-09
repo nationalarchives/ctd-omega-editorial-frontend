@@ -23,10 +23,9 @@ package controllers
 
 import org.scalatestplus.play._
 import org.scalatestplus.play.guice._
-import play.api.mvc.{ AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesActionBuilderImpl, DefaultMessagesControllerComponents, MessagesControllerComponents }
+import play.api.mvc.{ AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesActionBuilderImpl, DefaultMessagesControllerComponents }
 import play.api.test._
 import play.api.test.Helpers._
-import play.i18n.MessagesApi
 import uk.gov.nationalarchives.omega.editorial.controllers.{ HomeController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 

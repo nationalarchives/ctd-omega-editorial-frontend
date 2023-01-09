@@ -27,7 +27,6 @@ import play.api.data.{ Form, FormError }
 import play.api.i18n.{ I18nSupport, Lang }
 import play.api.mvc._
 import uk.gov.nationalarchives.omega.editorial._
-import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.EditSetReorder
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
 import uk.gov.nationalarchives.omega.editorial.models.{ DateRange, EditSetEntry, EditSetRecord, User }
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateCalculator.getStartAndEndDates
@@ -40,7 +39,6 @@ import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetReco
 import java.time.LocalDate
 import java.time.temporal.ChronoField.{ DAY_OF_MONTH, MONTH_OF_YEAR, YEAR }
 import javax.inject._
-import uk.gov.nationalarchives.omega.editorial.models.RelatedMaterial
 
 /** This controller creates an `Action` to handle HTTP requests to the application's home page.
   */
