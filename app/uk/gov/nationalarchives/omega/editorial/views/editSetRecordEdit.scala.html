@@ -52,18 +52,6 @@
   <li>None</li>
 }
 
-@separatedMaterialLink(link: SeparatedMaterial.LinkOnly) = {
-  <li><a href="@link.linkHref">@link.linkText</a></li>
-}
-
-@separatedMaterialDescription(description: SeparatedMaterial.DescriptionOnly) = {
-  <li><span>@description.description</span></li>
-}
-
-@separatedMaterialLinkAndDescription(linkAndDescription: SeparatedMaterial.LinkAndDescription) = {
-  <li><a href="@linkAndDescription.linkHref">@linkAndDescription.linkText</a> - <span>@linkAndDescription.description</span></li>
-}
-
 @relatedMaterialLink(link: RelatedMaterial.LinkOnly) = {
   <li><a href="@link.linkHref">@link.linkText</a></li>
 }
@@ -76,6 +64,17 @@
   <li><a href="@linkAndDescription.linkHref">@linkAndDescription.linkText</a> - <span>@linkAndDescription.description</span></li>
 }
 
+@separatedMaterialLink(link: SeparatedMaterial.LinkOnly) = {
+  <li><a href="@link.linkHref">@link.linkText</a></li>
+}
+
+@separatedMaterialDescription(description: SeparatedMaterial.DescriptionOnly) = {
+  <li><span>@description.description</span></li>
+}
+
+@separatedMaterialLinkAndDescription(linkAndDescription: SeparatedMaterial.LinkAndDescription) = {
+  <li><a href="@linkAndDescription.linkHref">@linkAndDescription.linkText</a> - <span>@linkAndDescription.description</span></li>
+}
 
 @backLink = {
   <a class="govuk-back-link" href="/edit-set/1">@messages("edit-set.record.edit.back-to-edit-set", editSetName)</a>
