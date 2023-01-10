@@ -40,6 +40,7 @@ import scala.concurrent.Future
   * For more information, see https://www.playframework.com/documentation/latest/ScalaTestingWithScalaTest
   */
 class EditSetControllerSpec extends BaseSpec {
+  import EditSetControllerSpec._
 
   val validSessionToken: String = Session.generateToken("1234")
   val invalidSessionToken: String = Session.generateToken("invalid-user")
@@ -1176,9 +1177,33 @@ class EditSetControllerSpec extends BaseSpec {
             "endDateYear"    -> "2022"
           )
 
-          val result = submitWhileLoggedIn(2, "COAL.2022.V1RJW.R", values)
+          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
           status(result) mustBe BAD_REQUEST
+          val expectedPage = ExpectedEditRecordPage(
+            title = "Edit record",
+            heading = "TNA reference: COAL 80/80/1",
+            legend = "Intellectual properties",
+            classicCatalogueRef = "COAL 80/80/1",
+            omegaCatalogueId = "COAL.2022.V1RJW.P",
+            scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+            coveringDates = "2020 Oct",
+            formerReferenceDepartment = "1234",
+            startDate = ExpectedDate("29", "2", "2022"),
+            endDate = ExpectedDate("31", "10", "2022"),
+            legalStatus = "ref.1",
+            placeOfDeposit = "2",
+            note = "Need to check copyright info.",
+            optionsForPlaceOfDeposit = Seq(
+              ExpectedSelectOption("", "Select where this record is held", disabled = true),
+              ExpectedSelectOption("1", "The National Archives, Kew"),
+              ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+              ExpectedSelectOption("3", "British Library, National Sound Archive")
+            ),
+            summaryErrorMessages = Seq("Start date is not a valid date"),
+            errorMessageForStartDate = Some("Start date is not a valid date")
+          )
+          assertPageAsExpected(asDocument(result), expectedPage)
         }
         "end date" when {
           "is empty" in {
@@ -2133,17 +2158,7 @@ class EditSetControllerSpec extends BaseSpec {
     document must haveLegalStatus(expectedEditRecordPage.legalStatus)
     document must haveSelectionForPlaceOfDeposit(expectedEditRecordPage.optionsForPlaceOfDeposit)
     document must haveNote(expectedEditRecordPage.note)
-
-    expectedEditRecordPage.relatedMaterial.foreach { relatedMaterial =>
-      for {
-        linkHref <- relatedMaterial.linkHref
-        linkText <- relatedMaterial.linkText
-      } yield document must haveRelatedMaterialLink(linkHref, linkText)
-      relatedMaterial.description.foreach { description =>
-        document must haveRelatedMaterialText(description)
-      }
-    }
-
+    document must haveRelatedMaterial(expectedEditRecordPage.relatedMaterial: _*)
     document must haveVisibleLogoutLink
     document must haveLogoutLinkLabel("Sign out")
     document must haveLogoutLink
@@ -2204,6 +2219,10 @@ class EditSetControllerSpec extends BaseSpec {
     }
 
   }
+
+}
+
+object EditSetControllerSpec {
 
   case class ExpectedEditRecordPage(
     title: String,

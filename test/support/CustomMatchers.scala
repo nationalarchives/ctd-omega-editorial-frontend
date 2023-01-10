@@ -25,6 +25,7 @@ import org.jsoup.nodes.Document
 import org.scalatest.matchers.{ MatchResult, Matcher }
 import support.ExpectedValues.ExpectedSelectOption
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError
+import controllers.EditSetControllerSpec._
 
 import scala.jdk.CollectionConverters._
 
@@ -176,22 +177,11 @@ object CustomMatchers {
       actualValue = document.select("#endDateYear").attr("value")
     )
 
-  def haveRelatedMaterialLink(expectedHref: String, expectedText: String): Matcher[Document] = (document: Document) => {
-    val actualLinks = document.select(".relatedMaterialLink").asScala.map { element =>
-      (element.attr("href"), element.text)
-    }
-    oneOfMatcher(
-      label = "a link for related material",
-      expectedValue = (expectedHref, expectedText),
-      possibleValues = actualLinks.toSet
-    )
-  }
-
-  def haveRelatedMaterialText(expectedValue: String): Matcher[Document] = (document: Document) =>
-    oneOfMatcher(
-      label = "text for related material",
-      expectedValue = expectedValue,
-      possibleValues = document.select(".relatedMaterialText").eachText.asScala.toSet
+  def haveRelatedMaterial(relatedMaterials: ExpectedRelatedMaterial*): Matcher[Document] = (document: Document) =>
+    singleValueMatcher(
+      label = "a list of related material",
+      expectedValue = relatedMaterials.toSeq,
+      actualValue = getActualRelatedMaterial(document)
     )
 
   def haveSummaryErrorTitle(expectedValue: String): Matcher[Document] = (document: Document) =>
@@ -436,16 +426,18 @@ object CustomMatchers {
     )
   }
 
-  private def oneOfMatcher[T](label: String, expectedValue: T, possibleValues: Set[T]) = {
-    val errorMessageIfExpected =
-      s"The page didn't have any $label of '$expectedValue'. The actual values were '$possibleValues'"
-    val errorMessageIfNotExpected = s"The page did indeed have $label of '$expectedValue', which was not expected."
-    MatchResult(
-      possibleValues.contains(expectedValue),
-      errorMessageIfExpected,
-      errorMessageIfNotExpected
-    )
-  }
+  private def getActualRelatedMaterial(document: Document): Seq[ExpectedRelatedMaterial] =
+    document
+      .select("#related-material > li")
+      .asScala
+      .toSeq
+      .map { listItem =>
+        ExpectedRelatedMaterial(
+          linkHref = noneIfEmpty(listItem.select("a").attr("href")),
+          linkText = noneIfEmpty(listItem.select("a").text()),
+          description = noneIfEmpty(listItem.select("span").text())
+        )
+      }
 
   private def removeInvisibleErrorMessagePrefix(original: String) = original.replace("login.hidden.error ", "")
 
@@ -459,5 +451,11 @@ object CustomMatchers {
       expectedValue,
       removeInvisibleErrorMessagePrefix(document.select(valueSelector).text().replace("Error: ", ""))
     )
+
+  private def noneIfEmpty(input: String): Option[String] =
+    if (input.trim.isEmpty)
+      None
+    else
+      Some(input)
 
 }
