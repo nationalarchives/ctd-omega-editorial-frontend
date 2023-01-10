@@ -945,7 +945,8 @@ class EditSetControllerSpec extends BaseSpec {
               ExpectedSelectOption("1", "The National Archives, Kew", selected = true),
               ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
               ExpectedSelectOption("3", "British Library, National Sound Archive")
-            )
+            ),
+            custodialHistory = "Files originally created by successor or predecessor departments for COAL"
           )
         )
       }
@@ -980,7 +981,8 @@ class EditSetControllerSpec extends BaseSpec {
               ExpectedSelectOption("1", "The National Archives, Kew"),
               ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
               ExpectedSelectOption("3", "British Library, National Sound Archive")
-            )
+            ),
+            custodialHistory = ""
           )
         )
       }
@@ -1029,7 +1031,8 @@ class EditSetControllerSpec extends BaseSpec {
         "legalStatus"               -> "ref.1",
         "placeOfDeposit"            -> "2",
         "note"                      -> "Need to check copyright info.",
-        "background"                -> "Photo was taken by a daughter of one of the coal miners who used them."
+        "background"                -> "Photo was taken by a daughter of one of the coal miners who used them.",
+        "custodialHistory"          -> "Files originally created by successor or predecessor departments for COAL"
       )
 
     "when the action is to save the record" when {
@@ -1070,7 +1073,8 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
-                )
+                ),
+                custodialHistory = "Files originally created by successor or predecessor departments for COAL"
               )
             )
           }
@@ -1113,6 +1117,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages =
                   Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", "#startDateDay")),
                 errorMessageForStartDate = Some("Start date is not a valid date")
@@ -1157,6 +1162,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages =
                   Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", "#startDateDay")),
                 errorMessageForStartDate = Some("Start date is not a valid date")
@@ -1202,6 +1208,7 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
+              custodialHistory = "Files originally created by successor or predecessor departments for COAL",
               summaryErrorMessages =
                 Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", "#startDateDay")),
               errorMessageForStartDate = Some("Start date is not a valid date")
@@ -1248,6 +1255,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("End date is not a valid date", "#endDateDay")),
                 errorMessageForEndDate = Some("End date is not a valid date")
               )
@@ -1291,6 +1299,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("End date is not a valid date", "#endDateDay")),
                 errorMessageForEndDate = Some("End date is not a valid date")
               )
@@ -1336,6 +1345,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("End date is not a valid date", "#endDateDay")),
                 errorMessageForEndDate = Some("End date is not a valid date")
               )
@@ -1381,6 +1391,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages =
                   Seq(ExpectedSummaryErrorMessage("End date cannot precede start date", "#endDateDay")),
                 errorMessageForEndDate = Some("End date cannot precede start date")
@@ -1428,6 +1439,7 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
+              custodialHistory = "Files originally created by successor or predecessor departments for COAL",
               summaryErrorMessages = Seq(
                 ExpectedSummaryErrorMessage("Start date is not a valid date", "#startDateDay"),
                 ExpectedSummaryErrorMessage("End date is not a valid date", "#endDateDay")
@@ -1473,6 +1485,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages =
                   Seq(ExpectedSummaryErrorMessage("Covering date format is not valid", "#coveringDates")),
                 errorMessageForCoveringsDates = Some("Covering date format is not valid")
@@ -1514,6 +1527,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages = Seq(
                   ExpectedSummaryErrorMessage("Covering date too long, maximum length 255 characters", "#coveringDates")
                 ),
@@ -1556,6 +1570,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages = Seq(
                   ExpectedSummaryErrorMessage("Enter the covering dates", "#coveringDates"),
                   ExpectedSummaryErrorMessage("Covering date format is not valid", "#coveringDates")
@@ -1598,6 +1613,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("You must choose an option", "#placeOfDeposit")),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
@@ -1637,6 +1653,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("You must choose an option", "#placeOfDeposit")),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
@@ -1677,6 +1694,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("You must choose an option", "#placeOfDeposit")),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
@@ -1716,6 +1734,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("You must choose an option", "#legalStatus")),
                 errorMessageForLegalStatus = Some("Error: You must choose an option")
               )
@@ -1776,6 +1795,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages =
                   Seq(ExpectedSummaryErrorMessage("Note too long, maximum length 1000 characters", "#note")),
                 errorMessageForNote = Some("Note too long, maximum length 1000 characters")
@@ -1819,6 +1839,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages = Seq(
                   ExpectedSummaryErrorMessage(
                     "Administrative / biographical background too long, maximum length 8000 characters",
@@ -1827,6 +1848,56 @@ class EditSetControllerSpec extends BaseSpec {
                 ),
                 errorMessageForBackground =
                   Some("Administrative / biographical background too long, maximum length 8000 characters")
+              )
+            )
+          }
+        }
+
+        "custodial history" when {
+          "is too long" in {
+
+            val custodialHistoryTooLong =
+              "Files originally created by successor or predecessor departments for COAL" * 100
+            val values = validValuesForSaving ++ Map(
+              "ccr"              -> "COAL 80/80/1",
+              "oci"              -> "COAL.2022.V1RJW.P",
+              "custodialHistory" -> custodialHistoryTooLong
+            )
+
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+
+            status(result) mustBe BAD_REQUEST
+            assertPageAsExpected(
+              asDocument(result),
+              ExpectedEditRecordPage(
+                title = "Edit record",
+                heading = "TNA reference: COAL 80/80/1",
+                legend = "Intellectual properties",
+                classicCatalogueRef = "COAL 80/80/1",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
+                scopeAndContent =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+                coveringDates = "2020 Oct",
+                formerReferenceDepartment = "1234",
+                startDate = ExpectedDate("1", "10", "2020"),
+                endDate = ExpectedDate("31", "10", "2020"),
+                legalStatus = "ref.1",
+                note = "Need to check copyright info.",
+                background = "Photo was taken by a daughter of one of the coal miners who used them.",
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
+                custodialHistory = custodialHistoryTooLong,
+                summaryErrorMessages = Seq(
+                  ExpectedSummaryErrorMessage(
+                    "Custodial history too long, maximum length 1000 characters",
+                    "#custodialHistory"
+                  )
+                ),
+                errorMessageForCustodialHistory = Some("Custodial history too long, maximum length 1000 characters")
               )
             )
 
@@ -1928,7 +1999,8 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
-                )
+                ),
+                custodialHistory = "Files originally created by successor or predecessor departments for COAL"
               )
             )
 
@@ -1967,7 +2039,51 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
-                )
+                ),
+                custodialHistory = "Files originally created by successor or predecessor departments for COAL"
+              )
+            )
+
+          }
+
+          "the 'custodial history' field is blank" in {
+
+            val values = validValuesForSaving ++ Map(
+              "ccr"              -> "COAL 80/80/1",
+              "oci"              -> "COAL.2022.V1RJW.P",
+              "custodialHistory" -> ""
+            )
+
+            val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+
+            status(editRecordPageResponse) mustBe SEE_OTHER
+            redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+
+            val getRecordResult = getRecordForEditingWhileLoggedIn(1, "COAL.2022.V1RJW.P")
+            assertPageAsExpected(
+              asDocument(getRecordResult),
+              ExpectedEditRecordPage(
+                title = "Edit record",
+                heading = "TNA reference: COAL 80/80/1",
+                legend = "Intellectual properties",
+                classicCatalogueRef = "COAL 80/80/1",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
+                scopeAndContent =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+                coveringDates = "2020 Oct",
+                formerReferenceDepartment = "1234",
+                startDate = ExpectedDate("1", "10", "2020"),
+                endDate = ExpectedDate("31", "10", "2020"),
+                legalStatus = "ref.1",
+                note = "Need to check copyright info.",
+                background = "Photo was taken by a daughter of one of the coal miners who used them.",
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
+                custodialHistory = ""
               )
             )
 
@@ -2005,7 +2121,8 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
-                )
+                ),
+                custodialHistory = "Files originally created by successor or predecessor departments for COAL"
               )
             )
           }
@@ -2077,6 +2194,7 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
+              custodialHistory = "Files originally created by successor or predecessor departments for COAL",
               summaryErrorMessages = Seq(
                 ExpectedSummaryErrorMessage("Enter the covering dates", "#coveringDates"),
                 ExpectedSummaryErrorMessage("Covering date format is not valid", "#coveringDates")
@@ -2126,6 +2244,7 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
+              custodialHistory = "Files originally created by successor or predecessor departments for COAL",
               summaryErrorMessages =
                 Seq(ExpectedSummaryErrorMessage("Covering date format is not valid", "#coveringDates")),
               errorMessageForCoveringsDates = Some("Covering date format is not valid")
@@ -2173,6 +2292,7 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
+              custodialHistory = "Files originally created by successor or predecessor departments for COAL",
               summaryErrorMessages =
                 Seq(ExpectedSummaryErrorMessage("Covering date format is not valid", "#coveringDates")),
               errorMessageForCoveringsDates = Some("Covering date format is not valid")
@@ -2215,7 +2335,8 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("1", "The National Archives, Kew"),
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
-              )
+              ),
+              custodialHistory = "Files originally created by successor or predecessor departments for COAL"
             )
           )
 
@@ -2253,7 +2374,8 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("1", "The National Archives, Kew"),
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
-              )
+              ),
+              custodialHistory = "Files originally created by successor or predecessor departments for COAL"
             )
           )
 
@@ -2291,7 +2413,8 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("1", "The National Archives, Kew"),
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
-              )
+              ),
+              custodialHistory = "Files originally created by successor or predecessor departments for COAL"
             )
           )
 
@@ -2340,6 +2463,7 @@ class EditSetControllerSpec extends BaseSpec {
     document must haveSelectionForPlaceOfDeposit(expectedEditRecordPage.optionsForPlaceOfDeposit)
     document must haveNote(expectedEditRecordPage.note)
     document must haveBackground(expectedEditRecordPage.background)
+    document must haveCustodialHistory(expectedEditRecordPage.custodialHistory)
 
     document must haveVisibleLogoutLink
     document must haveLogoutLinkLabel("Sign out")
@@ -2385,6 +2509,12 @@ class EditSetControllerSpec extends BaseSpec {
       case Some(expectedErrorMessage) => document must haveErrorMessageForBackground(expectedErrorMessage)
       case None                       => document must haveNoErrorMessageForBackground
     }
+
+    expectedEditRecordPage.errorMessageForCustodialHistory match {
+      case Some(expectedErrorMessage) => document must haveErrorMessageForCustodialHistory(expectedErrorMessage)
+      case None                       => document must haveNoErrorMessageForCustodialHistory
+    }
+
   }
 
   private def assertPageAsExpected(document: Document, expectedEditRecordPage: ExpectedEditSetPage): Unit = {
@@ -2421,6 +2551,7 @@ class EditSetControllerSpec extends BaseSpec {
     legalStatus: String,
     note: String,
     background: String,
+    custodialHistory: String,
     optionsForPlaceOfDeposit: Seq[ExpectedSelectOption],
     summaryErrorMessages: Seq[ExpectedSummaryErrorMessage] = Seq.empty,
     errorMessageForStartDate: Option[String] = None,
@@ -2429,7 +2560,8 @@ class EditSetControllerSpec extends BaseSpec {
     errorMessageForLegalStatus: Option[String] = None,
     errorMessageForPlaceOfDeposit: Option[String] = None,
     errorMessageForNote: Option[String] = None,
-    errorMessageForBackground: Option[String] = None
+    errorMessageForBackground: Option[String] = None,
+    errorMessageForCustodialHistory: Option[String] = None
   )
 
   case class ExpectedEditSetPage(

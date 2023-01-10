@@ -179,6 +179,19 @@
 )
 )
 
+@govukTextarea(Textarea(
+id = "custodialHistory",
+name = "custodialHistory",
+value = editSetRecordForm.data.get("custodialHistory"),
+label = Label(forAttr = Some("custodialHistory"), classes = "govuk-label--s", content = Text(messages("edit-set.record.edit.custodial-history"))),
+errorMessage = editSetRecordForm.error("custodialHistory").map { error =>
+ErrorMessage(
+content = Text(error.message),
+attributes = Map("for" -> "custodialHistory")
+)
+},
+attributes = Map("rows" -> "5", "autofocus" -> "true")))
+
 @govukSelect(Select(
     id = "placeOfDeposit",
     name = "placeOfDeposit",

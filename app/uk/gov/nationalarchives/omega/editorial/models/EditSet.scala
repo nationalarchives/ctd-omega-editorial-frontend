@@ -42,7 +42,8 @@ case class EditSetRecord(
   legalStatus: String,
   placeOfDeposit: String,
   note: String,
-  background: String
+  background: String,
+  custodialHistory: String
 )
 
 object EditSetRecord {

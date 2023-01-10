@@ -70,6 +70,7 @@ class EditSetController @Inject() (
     val startDateDay = "startDateDay"
     val startDateMonth = "startDateMonth"
     val startDateYear = "startDateYear"
+    val custodialHistory = "custodialHistory"
   }
 
   object MessageKeys {
@@ -90,6 +91,7 @@ class EditSetController @Inject() (
     val scopeAndContentMissing = "edit-set.record.missing.scope-and-content"
     val startDateInvalid = "edit-set.record.error.start-date"
     val title = "edit-set.record.edit.title"
+    val custodialHistoryTooLong = "edit-set.record.error.custodial-history-long"
   }
 
   private val noSelectionForPlaceOfDeposit = ""
@@ -150,6 +152,11 @@ class EditSetController @Inject() (
         .verifying(
           resolvedMessage(MessageKeys.backgroundTooLong),
           value => value.length <= 8000
+        ),
+      FieldNames.custodialHistory -> text
+        .verifying(
+          resolvedMessage(MessageKeys.custodialHistoryTooLong),
+          value => value.length <= 1000
         )
     )(EditSetRecord.apply)(EditSetRecord.unapply)
   )
