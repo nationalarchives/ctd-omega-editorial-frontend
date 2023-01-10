@@ -180,8 +180,8 @@ object CustomMatchers {
   def haveRelatedMaterial(relatedMaterials: ExpectedRelatedMaterial*): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "a list of related material",
-      expectedValue = relatedMaterials.toSeq,
-      actualValue = getActualRelatedMaterial(document)
+      expectedValue = relatedMaterials.toSet,
+      actualValue = getActualRelatedMaterial(document).toSet
     )
 
   def haveSummaryErrorTitle(expectedValue: String): Matcher[Document] = (document: Document) =>
@@ -417,7 +417,7 @@ object CustomMatchers {
 
   private def singleValueMatcher[T](label: String, expectedValue: T, actualValue: T) = {
     val errorMessageIfExpected =
-      s"The page didn't have $label of '$expectedValue'. The actual value was '$actualValue'"
+      s"The page didn't have $label of:\n'$expectedValue'.\nThe actual value was\n'$actualValue'"
     val errorMessageIfNotExpected = s"The page did indeed have $label of '$expectedValue', which was not expected."
     MatchResult(
       actualValue == expectedValue,

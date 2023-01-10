@@ -1086,6 +1086,22 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
+                relatedMaterial = Seq(
+                  ExpectedRelatedMaterial(
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/3")
+                  )
                 )
               )
             )
@@ -1124,7 +1140,23 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages = Seq("Start date is not a valid date"),
-                errorMessageForStartDate = Some("Start date is not a valid date")
+                errorMessageForStartDate = Some("Start date is not a valid date"),
+                relatedMaterial = Seq(
+                  ExpectedRelatedMaterial(
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/3")
+                  )
+                )
               )
             )
 
@@ -1161,7 +1193,23 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages = Seq("Start date is not a valid date"),
-                errorMessageForStartDate = Some("Start date is not a valid date")
+                errorMessageForStartDate = Some("Start date is not a valid date"),
+                relatedMaterial = Seq(
+                  ExpectedRelatedMaterial(
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/3")
+                  )
+                )
               )
             )
 
@@ -1201,7 +1249,23 @@ class EditSetControllerSpec extends BaseSpec {
               ExpectedSelectOption("3", "British Library, National Sound Archive")
             ),
             summaryErrorMessages = Seq("Start date is not a valid date"),
-            errorMessageForStartDate = Some("Start date is not a valid date")
+            errorMessageForStartDate = Some("Start date is not a valid date"),
+            relatedMaterial = Seq(
+              ExpectedRelatedMaterial(
+                description =
+                  Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+              ),
+              ExpectedRelatedMaterial(
+                linkHref = Some("#;"),
+                linkText = Some("COAL 80/80/2"),
+                description =
+                  Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+              ),
+              ExpectedRelatedMaterial(
+                linkHref = Some("#;"),
+                linkText = Some("COAL 80/80/3")
+              )
+            )
           )
           assertPageAsExpected(asDocument(result), expectedPage)
         }
@@ -1238,7 +1302,23 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages = Seq("End date is not a valid date"),
-                errorMessageForEndDate = Some("End date is not a valid date")
+                errorMessageForEndDate = Some("End date is not a valid date"),
+                relatedMaterial = Seq(
+                  ExpectedRelatedMaterial(
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/3")
+                  )
+                )
               )
             )
 
@@ -1274,7 +1354,23 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages = Seq("End date is not a valid date"),
-                errorMessageForEndDate = Some("End date is not a valid date")
+                errorMessageForEndDate = Some("End date is not a valid date"),
+                relatedMaterial = Seq(
+                  ExpectedRelatedMaterial(
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/3")
+                  )
+                )
               )
             )
 
@@ -1317,7 +1413,23 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages = Seq("End date is not a valid date"),
-                errorMessageForEndDate = Some("End date is not a valid date")
+                errorMessageForEndDate = Some("End date is not a valid date"),
+                relatedMaterial = Seq(
+                  ExpectedRelatedMaterial(
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/3")
+                  )
+                )
               )
             )
 
@@ -1360,7 +1472,23 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages = Seq("End date cannot precede start date"),
-                errorMessageForEndDate = Some("End date cannot precede start date")
+                errorMessageForEndDate = Some("End date cannot precede start date"),
+                relatedMaterial = Seq(
+                  ExpectedRelatedMaterial(
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/3")
+                  )
+                )
               )
             )
 
@@ -1405,7 +1533,23 @@ class EditSetControllerSpec extends BaseSpec {
               ),
               summaryErrorMessages = Seq("Start date is not a valid date", "End date is not a valid date"),
               errorMessageForStartDate = Some("Start date is not a valid date"),
-              errorMessageForEndDate = Some("End date is not a valid date")
+              errorMessageForEndDate = Some("End date is not a valid date"),
+              relatedMaterial = Seq(
+                ExpectedRelatedMaterial(
+                  description =
+                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                ),
+                ExpectedRelatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/2"),
+                  description =
+                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                ),
+                ExpectedRelatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/3")
+                )
+              )
             )
           )
 
@@ -1441,7 +1585,23 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages = Seq("Covering date format is not valid"),
-                errorMessageForCoveringsDates = Some("Covering date format is not valid")
+                errorMessageForCoveringsDates = Some("Covering date format is not valid"),
+                relatedMaterial = Seq(
+                  ExpectedRelatedMaterial(
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/3")
+                  )
+                )
               )
             )
 
@@ -1477,7 +1637,23 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages = Seq("Covering date too long, maximum length 255 characters"),
-                errorMessageForCoveringsDates = Some("Covering date too long, maximum length 255 characters")
+                errorMessageForCoveringsDates = Some("Covering date too long, maximum length 255 characters"),
+                relatedMaterial = Seq(
+                  ExpectedRelatedMaterial(
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/3")
+                  )
+                )
               )
             )
 
@@ -1512,7 +1688,23 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages = Seq("Enter the covering dates", "Covering date format is not valid"),
-                errorMessageForCoveringsDates = Some("Enter the covering dates")
+                errorMessageForCoveringsDates = Some("Enter the covering dates"),
+                relatedMaterial = Seq(
+                  ExpectedRelatedMaterial(
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/3")
+                  )
+                )
               )
             )
 
@@ -1550,7 +1742,23 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages = Seq("You must choose an option"),
-                errorMessageForPlaceOfDeposit = Some("You must choose an option")
+                errorMessageForPlaceOfDeposit = Some("You must choose an option"),
+                relatedMaterial = Seq(
+                  ExpectedRelatedMaterial(
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/3")
+                  )
+                )
               )
             )
 
@@ -1585,7 +1793,23 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages = Seq("You must choose an option"),
-                errorMessageForPlaceOfDeposit = Some("You must choose an option")
+                errorMessageForPlaceOfDeposit = Some("You must choose an option"),
+                relatedMaterial = Seq(
+                  ExpectedRelatedMaterial(
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/3")
+                  )
+                )
               )
             )
 
@@ -1621,7 +1845,23 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages = Seq("You must choose an option"),
-                errorMessageForPlaceOfDeposit = Some("You must choose an option")
+                errorMessageForPlaceOfDeposit = Some("You must choose an option"),
+                relatedMaterial = Seq(
+                  ExpectedRelatedMaterial(
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/3")
+                  )
+                )
               )
             )
 
@@ -1659,7 +1899,23 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages = Seq("You must choose an option"),
-                errorMessageForLegalStatus = Some("Error: You must choose an option")
+                errorMessageForLegalStatus = Some("Error: You must choose an option"),
+                relatedMaterial = Seq(
+                  ExpectedRelatedMaterial(
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/3")
+                  )
+                )
               )
             )
 
@@ -1710,7 +1966,23 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages = Seq("Note too long, maximum length 1000 characters"),
-                errorMessageForNote = Some("Note too long, maximum length 1000 characters")
+                errorMessageForNote = Some("Note too long, maximum length 1000 characters"),
+                relatedMaterial = Seq(
+                  ExpectedRelatedMaterial(
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/3")
+                  )
+                )
               )
             )
 
@@ -1808,6 +2080,22 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
+                relatedMaterial = Seq(
+                  ExpectedRelatedMaterial(
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/3")
+                  )
                 )
               )
             )
@@ -1846,6 +2134,22 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
+                relatedMaterial = Seq(
+                  ExpectedRelatedMaterial(
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/3")
+                  )
                 )
               )
             )
@@ -1918,7 +2222,23 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
               summaryErrorMessages = Seq("Enter the covering dates", "Covering date format is not valid"),
-              errorMessageForCoveringsDates = Some("Enter the covering dates")
+              errorMessageForCoveringsDates = Some("Enter the covering dates"),
+              relatedMaterial = Seq(
+                ExpectedRelatedMaterial(
+                  description =
+                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                ),
+                ExpectedRelatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/2"),
+                  description =
+                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                ),
+                ExpectedRelatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/3")
+                )
+              )
             )
           )
 
@@ -1962,7 +2282,23 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
               summaryErrorMessages = Seq("Covering date format is not valid"),
-              errorMessageForCoveringsDates = Some("Covering date format is not valid")
+              errorMessageForCoveringsDates = Some("Covering date format is not valid"),
+              relatedMaterial = Seq(
+                ExpectedRelatedMaterial(
+                  description =
+                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                ),
+                ExpectedRelatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/2"),
+                  description =
+                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                ),
+                ExpectedRelatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/3")
+                )
+              )
             )
           )
 
@@ -2006,7 +2342,23 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
               summaryErrorMessages = Seq("Covering date format is not valid"),
-              errorMessageForCoveringsDates = Some("Covering date format is not valid")
+              errorMessageForCoveringsDates = Some("Covering date format is not valid"),
+              relatedMaterial = Seq(
+                ExpectedRelatedMaterial(
+                  description =
+                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                ),
+                ExpectedRelatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/2"),
+                  description =
+                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                ),
+                ExpectedRelatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/3")
+                )
+              )
             )
           )
 
@@ -2042,6 +2394,22 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("1", "The National Archives, Kew"),
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
+              ),
+              relatedMaterial = Seq(
+                ExpectedRelatedMaterial(
+                  description =
+                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                ),
+                ExpectedRelatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/2"),
+                  description =
+                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                ),
+                ExpectedRelatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/3")
+                )
               )
             )
           )
@@ -2076,6 +2444,22 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("1", "The National Archives, Kew"),
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
+              ),
+              relatedMaterial = Seq(
+                ExpectedRelatedMaterial(
+                  description =
+                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                ),
+                ExpectedRelatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/2"),
+                  description =
+                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                ),
+                ExpectedRelatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/3")
+                )
               )
             )
           )
@@ -2110,6 +2494,22 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("1", "The National Archives, Kew"),
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
+              ),
+              relatedMaterial = Seq(
+                ExpectedRelatedMaterial(
+                  description =
+                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                ),
+                ExpectedRelatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/2"),
+                  description =
+                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                ),
+                ExpectedRelatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/3")
+                )
               )
             )
           )
