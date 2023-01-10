@@ -2736,6 +2736,7 @@ class EditSetControllerSpec extends BaseSpec {
     document must haveSelectionForPlaceOfDeposit(expectedEditRecordPage.optionsForPlaceOfDeposit)
     document must haveNote(expectedEditRecordPage.note)
     document must haveRelatedMaterial(expectedEditRecordPage.relatedMaterial: _*)
+    document must haveSeparatedMaterial(expectedEditRecordPage.separatedMaterial: _*)
     document must haveBackground(expectedEditRecordPage.background)
 
     document must haveVisibleLogoutLink
@@ -2824,6 +2825,7 @@ object EditSetControllerSpec {
     background: String,
     optionsForPlaceOfDeposit: Seq[ExpectedSelectOption],
     relatedMaterial: Seq[ExpectedRelatedMaterial] = Seq.empty,
+    separatedMaterial: Seq[ExpectedSeparatedMaterial] = Seq.empty,
     summaryErrorMessages: Seq[ExpectedSummaryErrorMessage] = Seq.empty,
     errorMessageForStartDate: Option[String] = None,
     errorMessageForEndDate: Option[String] = None,
@@ -2835,6 +2837,12 @@ object EditSetControllerSpec {
   )
 
   case class ExpectedRelatedMaterial(
+    linkHref: Option[String] = None,
+    linkText: Option[String] = None,
+    description: Option[String] = None
+  )
+
+  case class ExpectedSeparatedMaterial(
     linkHref: Option[String] = None,
     linkText: Option[String] = None,
     description: Option[String] = None

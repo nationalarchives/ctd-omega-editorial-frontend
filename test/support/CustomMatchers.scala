@@ -188,7 +188,21 @@ object CustomMatchers {
       singleValueMatcher(
         label = "a list of related material",
         expectedValue = relatedMaterials.toSeq,
-        actualValue = getActualRelatedMaterial(document).toSeq
+        actualValue = getMaterialListItems(document, listId = "related-material").toSeq
+      )
+
+  def haveSeparatedMaterial(separatedMaterials: ExpectedSeparatedMaterial*): Matcher[Document] = (document: Document) =>
+    if (separatedMaterials.isEmpty)
+      singleValueMatcher(
+        label = "a single list item with the text None",
+        expectedValue = "None",
+        actualValue = document.select("#separated-material > li").text()
+      )
+    else
+      singleValueMatcher(
+        label = "a list of separated material",
+        expectedValue = separatedMaterials.toSeq,
+        actualValue = getMaterialListItems(document, listId = "separated-material").toSeq
       )
 
   def haveSummaryErrorTitle(expectedValue: String): Matcher[Document] = (document: Document) =>
@@ -456,9 +470,9 @@ object CustomMatchers {
     )
   }
 
-  private def getActualRelatedMaterial(document: Document): Seq[ExpectedRelatedMaterial] =
+  private def getMaterialListItems(document: Document, listId: String): Seq[ExpectedRelatedMaterial] =
     document
-      .select("#related-material > li")
+      .select(s"#${listId} > li")
       .asScala
       .toSeq
       .map { listItem =>
