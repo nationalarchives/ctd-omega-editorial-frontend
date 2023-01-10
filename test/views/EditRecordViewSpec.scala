@@ -78,6 +78,7 @@ class EditRecordViewSpec extends BaseSpec {
     placeOfDeposit = "",
     background = "",
     note = "",
+    custodialHistory = "",
     relatedMaterial = Seq(
       RelatedMaterial.DescriptionOnly(
         description = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."

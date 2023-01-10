@@ -2168,6 +2168,22 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
                 custodialHistory = custodialHistoryTooLong,
+                relatedMaterial = Seq(
+                  ExpectedRelatedMaterial(
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/3")
+                  ),
+                  ExpectedRelatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  )
+                ),
                 summaryErrorMessages = Seq(
                   ExpectedSummaryErrorMessage(
                     "Custodial history too long, maximum length 1000 characters",
