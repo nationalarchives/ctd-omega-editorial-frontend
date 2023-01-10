@@ -53,19 +53,19 @@
 }
 
 @relatedMaterialLink(link: RelatedMaterial.LinkOnly) = {
-  <li><a class="relatedMaterialLink" href="@link.linkHref">@link.linkText</a></li>
+  <li><a href="@link.linkHref">@link.linkText</a></li>
 }
 
 @relatedMaterialDescription(description: RelatedMaterial.DescriptionOnly) = {
-  <li><span class="relatedMaterialText">@description.description</span></li>
+  <li><span>@description.description</span></li>
 }
 
 @relatedMaterialLinkAndDescription(linkAndDescription: RelatedMaterial.LinkAndDescription) = {
-  <li><a class="relatedMaterialLink" href="@linkAndDescription.linkHref">@linkAndDescription.linkText</a> - <span class="relatedMaterialText">@linkAndDescription.description</span></li>
+  <li><a href="@linkAndDescription.linkHref">@linkAndDescription.linkText</a> - <span>@linkAndDescription.description</span></li>
 }
 
 @backLink = {
-    <a class="govuk-back-link" href="/edit-set/1">@messages("edit-set.record.edit.back-to-edit-set", editSetName)</a>
+  <a class="govuk-back-link" href="/edit-set/1">@messages("edit-set.record.edit.back-to-edit-set", editSetName)</a>
 }
 
 @actionButtonGroup = {
