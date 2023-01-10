@@ -178,11 +178,18 @@ object CustomMatchers {
     )
 
   def haveRelatedMaterial(relatedMaterials: ExpectedRelatedMaterial*): Matcher[Document] = (document: Document) =>
-    singleValueMatcher(
-      label = "a list of related material",
-      expectedValue = relatedMaterials.toSet,
-      actualValue = getActualRelatedMaterial(document).toSet
-    )
+    if (relatedMaterials.isEmpty)
+      singleValueMatcher(
+        label = "a single list item with the text None",
+        expectedValue = "None",
+        actualValue = document.select("#related-material > li").text()
+      )
+    else
+      singleValueMatcher(
+        label = "a list of related material",
+        expectedValue = relatedMaterials.toSet,
+        actualValue = getActualRelatedMaterial(document).toSet
+      )
 
   def haveSummaryErrorTitle(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(

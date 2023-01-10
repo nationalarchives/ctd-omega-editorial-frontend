@@ -379,7 +379,7 @@ class EditRecordViewSpec extends BaseSpec {
         user = user,
         editSetName = "COAL 80 Sample",
         title = title,
-        staticRecord = editSetRecord,
+        record = editSetRecord,
         legalStatusReferenceData,
         corporateBodies = allCorporateBodies,
         editSetRecordForm = form

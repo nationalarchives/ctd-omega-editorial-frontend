@@ -31,7 +31,7 @@
   user: User,
   editSetName: String,
   title: String,
-  staticRecord: EditSetRecord,
+  record: EditSetRecord,
   legalStatusReferenceData: Seq[LegalStatus],
   corporateBodies: Seq[CorporateBody],
   editSetRecordForm: Form[EditSetRecordFormValues]
@@ -44,6 +44,10 @@
         value = None,
         text = "Select a Legal Status",
     ))
+}
+
+@noRelatedMaterial = {
+  <li>None</li>
 }
 
 @relatedMaterialLink(link: RelatedMaterial.LinkOnly) = {
@@ -243,24 +247,27 @@
   <h3 class="govuk-heading-s">@messages("edit-set.record.edit.related-material")</h3>
   <ul id="related-material" class="govuk-list govuk-list--bullet">
     @{
-      staticRecord.relatedMaterial.map {
+      if (record.relatedMaterial.isEmpty)
+        noRelatedMaterial
+      else
+        record.relatedMaterial.map {
 
-        case e: RelatedMaterial.LinkAndDescription =>
-          relatedMaterialLinkAndDescription(e)
+          case e: RelatedMaterial.LinkAndDescription =>
+            relatedMaterialLinkAndDescription(e)
 
-        case e: RelatedMaterial.LinkOnly =>
-          relatedMaterialLink(e)
+          case e: RelatedMaterial.LinkOnly =>
+            relatedMaterialLink(e)
 
-        case e: RelatedMaterial.DescriptionOnly =>
-          relatedMaterialDescription(e)
+          case e: RelatedMaterial.DescriptionOnly =>
+            relatedMaterialDescription(e)
 
-      }
+        }
     }
   </ul>
 
     <div class="govuk-form-group">
-        <input id="ccr" name="ccr" type="text" readonly="readonly" hidden="true" value="@staticRecord.ccr"/>
-        <input id="ocr" name="oci" type="text" readonly="readonly" hidden="true" value="@staticRecord.oci"/>
+        <input id="ccr" name="ccr" type="text" readonly="readonly" hidden="true" value="@record.ccr"/>
+        <input id="ocr" name="oci" type="text" readonly="readonly" hidden="true" value="@record.oci"/>
     </div>
 @actionButtonGroup
 }
@@ -277,11 +284,11 @@
             title = Text(messages("error.summary.title"))
         ))
     }
-    <h1 class="govuk-heading-l">@messages("edit-set.record.edit.heading", staticRecord.ccr)</h1>
-    <h2 class="govuk-heading-m">@messages("edit-set.record.edit.id", staticRecord.oci)</h2>
+    <h1 class="govuk-heading-l">@messages("edit-set.record.edit.heading", record.ccr)</h1>
+    <h2 class="govuk-heading-m">@messages("edit-set.record.edit.id", record.oci)</h2>
     <p class="govuk-body">@messages("placeholder.series-national-coal-board")</p>
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
-    @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetController.submit("1", staticRecord.oci)) {
+    @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetController.submit("1", record.oci)) {
         @actionButtonGroup
         @govukFieldset(Fieldset(
             html = fieldsetContent,
