@@ -187,8 +187,8 @@ object CustomMatchers {
     else
       singleValueMatcher(
         label = "a list of related material",
-        expectedValue = relatedMaterials.toSet,
-        actualValue = getActualRelatedMaterial(document).toSet
+        expectedValue = relatedMaterials.toSeq,
+        actualValue = getActualRelatedMaterial(document).toSeq
       )
 
   def haveSummaryErrorTitle(expectedValue: String): Matcher[Document] = (document: Document) =>

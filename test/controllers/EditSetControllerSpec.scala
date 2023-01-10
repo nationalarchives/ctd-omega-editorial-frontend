@@ -955,13 +955,13 @@ class EditSetControllerSpec extends BaseSpec {
               ),
               ExpectedRelatedMaterial(
                 linkHref = Some("#;"),
-                linkText = Some("COAL 80/80/2"),
-                description =
-                  Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                linkText = Some("COAL 80/80/3")
               ),
               ExpectedRelatedMaterial(
                 linkHref = Some("#;"),
-                linkText = Some("COAL 80/80/3")
+                linkText = Some("COAL 80/80/2"),
+                description =
+                  Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
               )
             )
           )
@@ -1096,13 +1096,13 @@ class EditSetControllerSpec extends BaseSpec {
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                    linkText = Some("COAL 80/80/3")
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                   )
                 )
               )
@@ -1154,13 +1154,13 @@ class EditSetControllerSpec extends BaseSpec {
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                    linkText = Some("COAL 80/80/3")
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                   )
                 ),
                 summaryErrorMessages =
@@ -1214,13 +1214,13 @@ class EditSetControllerSpec extends BaseSpec {
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                    linkText = Some("COAL 80/80/3")
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                   )
                 ),
                 summaryErrorMessages =
@@ -1273,13 +1273,13 @@ class EditSetControllerSpec extends BaseSpec {
               ),
               ExpectedRelatedMaterial(
                 linkHref = Some("#;"),
-                linkText = Some("COAL 80/80/2"),
-                description =
-                  Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                linkText = Some("COAL 80/80/3")
               ),
               ExpectedRelatedMaterial(
                 linkHref = Some("#;"),
-                linkText = Some("COAL 80/80/3")
+                linkText = Some("COAL 80/80/2"),
+                description =
+                  Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
               )
             )
           )
@@ -1330,13 +1330,13 @@ class EditSetControllerSpec extends BaseSpec {
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                    linkText = Some("COAL 80/80/3")
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                   )
                 ),
                 summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("End date is not a valid date", "#endDateDay")),
@@ -1389,13 +1389,13 @@ class EditSetControllerSpec extends BaseSpec {
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                    linkText = Some("COAL 80/80/3")
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                   )
                 ),
                 summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("End date is not a valid date", "#endDateDay")),
@@ -1448,13 +1448,13 @@ class EditSetControllerSpec extends BaseSpec {
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                    linkText = Some("COAL 80/80/3")
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                   )
                 ),
                 summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("End date is not a valid date", "#endDateDay")),
@@ -1507,13 +1507,13 @@ class EditSetControllerSpec extends BaseSpec {
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                    linkText = Some("COAL 80/80/3")
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                   )
                 ),
                 summaryErrorMessages =
@@ -1574,13 +1574,13 @@ class EditSetControllerSpec extends BaseSpec {
                 ),
                 ExpectedRelatedMaterial(
                   linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/2"),
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  linkText = Some("COAL 80/80/3")
                 ),
                 ExpectedRelatedMaterial(
                   linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/3")
+                  linkText = Some("COAL 80/80/2"),
+                  description =
+                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                 )
               )
             )
@@ -1627,13 +1627,13 @@ class EditSetControllerSpec extends BaseSpec {
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                    linkText = Some("COAL 80/80/3")
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                   )
                 ),
                 summaryErrorMessages =
@@ -1682,13 +1682,13 @@ class EditSetControllerSpec extends BaseSpec {
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                    linkText = Some("COAL 80/80/3")
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                   )
                 ),
                 summaryErrorMessages = Seq(
@@ -1738,13 +1738,13 @@ class EditSetControllerSpec extends BaseSpec {
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                    linkText = Some("COAL 80/80/3")
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                   )
                 ),
                 summaryErrorMessages = Seq(
@@ -1797,13 +1797,13 @@ class EditSetControllerSpec extends BaseSpec {
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                    linkText = Some("COAL 80/80/3")
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                   )
                 ),
                 summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("You must choose an option", "#placeOfDeposit")),
@@ -1849,13 +1849,13 @@ class EditSetControllerSpec extends BaseSpec {
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                    linkText = Some("COAL 80/80/3")
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                   )
                 ),
                 summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("You must choose an option", "#placeOfDeposit")),
@@ -1903,13 +1903,13 @@ class EditSetControllerSpec extends BaseSpec {
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                    linkText = Some("COAL 80/80/3")
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                   )
                 ),
                 summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("You must choose an option", "#placeOfDeposit")),
@@ -1958,13 +1958,13 @@ class EditSetControllerSpec extends BaseSpec {
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                    linkText = Some("COAL 80/80/3")
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                   )
                 ),
                 summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("You must choose an option", "#legalStatus")),
@@ -2030,13 +2030,13 @@ class EditSetControllerSpec extends BaseSpec {
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                    linkText = Some("COAL 80/80/3")
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                   )
                 ),
                 summaryErrorMessages =
@@ -2087,13 +2087,13 @@ class EditSetControllerSpec extends BaseSpec {
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                    linkText = Some("COAL 80/80/3")
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                   )
                 ),
                 summaryErrorMessages = Seq(
@@ -2213,13 +2213,13 @@ class EditSetControllerSpec extends BaseSpec {
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                    linkText = Some("COAL 80/80/3")
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                   )
                 )
               )
@@ -2268,13 +2268,13 @@ class EditSetControllerSpec extends BaseSpec {
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                    linkText = Some("COAL 80/80/3")
                   ),
                   ExpectedRelatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
+                    linkText = Some("COAL 80/80/2"),
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                   )
                 )
               )
@@ -2392,13 +2392,13 @@ class EditSetControllerSpec extends BaseSpec {
                 ),
                 ExpectedRelatedMaterial(
                   linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/2"),
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  linkText = Some("COAL 80/80/3")
                 ),
                 ExpectedRelatedMaterial(
                   linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/3")
+                  linkText = Some("COAL 80/80/2"),
+                  description =
+                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                 )
               ),
               summaryErrorMessages = Seq(
@@ -2455,13 +2455,13 @@ class EditSetControllerSpec extends BaseSpec {
                 ),
                 ExpectedRelatedMaterial(
                   linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/2"),
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  linkText = Some("COAL 80/80/3")
                 ),
                 ExpectedRelatedMaterial(
                   linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/3")
+                  linkText = Some("COAL 80/80/2"),
+                  description =
+                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                 )
               ),
               summaryErrorMessages =
@@ -2516,13 +2516,13 @@ class EditSetControllerSpec extends BaseSpec {
                 ),
                 ExpectedRelatedMaterial(
                   linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/2"),
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  linkText = Some("COAL 80/80/3")
                 ),
                 ExpectedRelatedMaterial(
                   linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/3")
+                  linkText = Some("COAL 80/80/2"),
+                  description =
+                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                 )
               ),
               summaryErrorMessages =
@@ -2575,13 +2575,13 @@ class EditSetControllerSpec extends BaseSpec {
                 ),
                 ExpectedRelatedMaterial(
                   linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/2"),
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  linkText = Some("COAL 80/80/3")
                 ),
                 ExpectedRelatedMaterial(
                   linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/3")
+                  linkText = Some("COAL 80/80/2"),
+                  description =
+                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                 )
               )
             )
@@ -2627,13 +2627,13 @@ class EditSetControllerSpec extends BaseSpec {
                 ),
                 ExpectedRelatedMaterial(
                   linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/2"),
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  linkText = Some("COAL 80/80/3")
                 ),
                 ExpectedRelatedMaterial(
                   linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/3")
+                  linkText = Some("COAL 80/80/2"),
+                  description =
+                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                 )
               )
             )
@@ -2679,13 +2679,13 @@ class EditSetControllerSpec extends BaseSpec {
                 ),
                 ExpectedRelatedMaterial(
                   linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/2"),
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  linkText = Some("COAL 80/80/3")
                 ),
                 ExpectedRelatedMaterial(
                   linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/3")
+                  linkText = Some("COAL 80/80/2"),
+                  description =
+                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                 )
               )
             )
