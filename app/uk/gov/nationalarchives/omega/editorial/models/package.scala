@@ -22,7 +22,7 @@
 package uk.gov.nationalarchives.omega.editorial
 
 import play.api.libs.json._
-import uk.gov.nationalarchives.omega.editorial.models.{ CorporateBody, EditSet, EditSetRecord, LegalStatus }
+import uk.gov.nationalarchives.omega.editorial.models._
 
 package object editSetRecords {
 
@@ -43,11 +43,24 @@ package object editSetRecords {
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
         |  "note": "A note about COAL.2022.V1RJW.P.",
+        |  "relatedMaterial" : [
+        |    {
+        |      "description" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+        |    },
+        |    {
+        |      "linkHref" : "#;",
+        |      "linkText" : "COAL 80/80/3"
+        |    },
+        |    {
+        |      "linkHref" : "#;",
+        |      "linkText" : "COAL 80/80/2",
+        |      "description" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+        |    }
+        |  ],
         |  "background": "Photo was taken by a daughter of one of the coal miners who used them."
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   private val editSetRecord2: EditSetRecord = Json
     .parse(
@@ -69,8 +82,7 @@ package object editSetRecords {
         |  "background": ""
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   private val editSetRecord3: EditSetRecord = Json
     .parse(
@@ -92,8 +104,7 @@ package object editSetRecords {
         |  "background": "Photo was taken by a son of one of the coal miners who used them."
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   private val editSetRecord4: EditSetRecord = Json
     .parse(
@@ -115,8 +126,7 @@ package object editSetRecords {
         |  "background": ""
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   private val editSetRecord5: EditSetRecord = Json
     .parse(
@@ -138,8 +148,7 @@ package object editSetRecords {
         |  "background": ""
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   private val editSetRecord6: EditSetRecord = Json
     .parse(
@@ -161,8 +170,7 @@ package object editSetRecords {
         |  "background": ""
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   private val editSetRecord7: EditSetRecord = Json
     .parse(
@@ -184,8 +192,7 @@ package object editSetRecords {
         |  "background": ""
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   private val editSetRecord8: EditSetRecord = Json
     .parse(
@@ -207,8 +214,7 @@ package object editSetRecords {
         |  "background": ""
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   private val editSetRecord9: EditSetRecord = Json
     .parse(
@@ -230,8 +236,7 @@ package object editSetRecords {
         |  "background": ""
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   private val editSetRecord10: EditSetRecord = Json
     .parse(
@@ -253,8 +258,7 @@ package object editSetRecords {
         |  "background": ""
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   private val editSetRecord11: EditSetRecord = Json
     .parse(
@@ -276,8 +280,7 @@ package object editSetRecords {
         |  "background": ""
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   private val editSetRecord12: EditSetRecord = Json
     .parse(
@@ -299,8 +302,7 @@ package object editSetRecords {
         |  "background": ""
         |} """.stripMargin
     )
-    .validate[EditSetRecord]
-    .get
+    .as[EditSetRecord]
 
   private var editSetRecordMap = Map(
     "COAL.2022.V1RJW.P"  -> editSetRecord1,
@@ -409,8 +411,7 @@ package object editSets {
         |  ]
         |}""".stripMargin
     )
-    .validate[EditSet]
-    .get
+    .as[EditSet]
 
   def getEditSet(): EditSet =
     editSet1

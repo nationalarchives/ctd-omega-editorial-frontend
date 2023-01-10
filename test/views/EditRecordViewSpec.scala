@@ -28,16 +28,15 @@ import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import play.twirl.api.Html
 import support.BaseSpec
 import support.CustomMatchers._
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, LegalStatus, RelatedMaterial }
+import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
 import support.ExpectedValues.ExpectedSummaryErrorMessage
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, LegalStatus }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEdit
 
 class EditRecordViewSpec extends BaseSpec {
 
-  private val emptyForm: Form[EditSetRecord] = Form(
+  private val emptyForm: Form[EditSetRecordFormValues] = Form(
     mapping(
-      "ccr"                       -> text,
-      "oci"                       -> text,
       "scopeAndContent"           -> text,
       "coveringDates"             -> text,
       "formerReferenceDepartment" -> text,
@@ -51,7 +50,7 @@ class EditRecordViewSpec extends BaseSpec {
       "placeOfDeposit"            -> text,
       "note"                      -> text,
       "background"                -> text
-    )(EditSetRecord.apply)(EditSetRecord.unapply)
+    )(EditSetRecordFormValues.apply)(EditSetRecordFormValues.unapply)
   )
 
   val legalStatusReferenceData =
@@ -62,9 +61,36 @@ class EditRecordViewSpec extends BaseSpec {
       LegalStatus("ref.4", "Welsh Public Record(s)")
     )
 
-  val emptyRecord: EditSetRecord = EditSetRecord.apply(
-    ccr = "",
-    oci = "",
+  val editSetRecord = EditSetRecord(
+    ccr = "COAL 80/80/1",
+    oci = "COAL.2022.V1RJW.P",
+    scopeAndContent = "",
+    coveringDates = "",
+    formerReferenceDepartment = "",
+    startDateDay = "",
+    startDateMonth = "",
+    startDateYear = "",
+    endDateDay = "",
+    endDateMonth = "",
+    endDateYear = "",
+    legalStatus = "",
+    placeOfDeposit = "",
+    background = "",
+    note = "",
+    relatedMaterial = Seq(
+      RelatedMaterial.DescriptionOnly(
+        description = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+      ),
+      RelatedMaterial.LinkAndDescription(
+        linkHref = "#;",
+        linkText = "COAL 80/80/2",
+        description = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+      ),
+      RelatedMaterial.LinkOnly(linkHref = "#;", linkText = "COAL 80/80/3")
+    )
+  )
+
+  val emptyRecordValues: EditSetRecordFormValues = EditSetRecordFormValues.apply(
     scopeAndContent = "",
     coveringDates = "",
     formerReferenceDepartment = "",
@@ -86,9 +112,7 @@ class EditRecordViewSpec extends BaseSpec {
       val document = generateDocument(
         title = "TNA reference: COAL 80/80/1",
         form = emptyForm.fill(
-          emptyRecord.copy(
-            ccr = "COAL 80/80/1",
-            oci = "COAL.2022.V5RJW.P",
+          emptyRecordValues.copy(
             scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
             coveringDates = "1960",
             formerReferenceDepartment = "TestFormerReferenceDepartment",
@@ -107,7 +131,7 @@ class EditRecordViewSpec extends BaseSpec {
       document must haveTitle("TNA reference: COAL 80/80/1")
       document must haveHeading("edit-set.record.edit.heading")
       document must haveClassicCatalogueRef("COAL 80/80/1")
-      document must haveOmegaCatalogueId("COAL.2022.V5RJW.P")
+      document must haveOmegaCatalogueId("COAL.2022.V1RJW.P")
       document must haveScopeAndContent(
         "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
       )
@@ -134,11 +158,19 @@ class EditRecordViewSpec extends BaseSpec {
       val title = "EditRecordTitleTest"
       val editSetName = "COAL 80 Sample"
       val filledForm = emptyForm
-        .fill(emptyRecord)
+        .fill(emptyRecordValues)
         .withError(FormError("scopeAndContent", "Enter the scope and content."))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, editSetName, title, legalStatusReferenceData, allCorporateBodies, filledForm)(
+        editSetRecordEditInstance(
+          user,
+          editSetName,
+          title,
+          editSetRecord,
+          legalStatusReferenceData,
+          allCorporateBodies,
+          filledForm
+        )(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -159,14 +191,22 @@ class EditRecordViewSpec extends BaseSpec {
       val editSetName = "COAL 80 Sample"
       val filledForm = emptyForm
         .fill(
-          emptyRecord.copy(
+          emptyRecordValues.copy(
             scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
           )
         )
         .withError(FormError("scopeAndContent", "Scope and content too long, maximum length 8000 characters"))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, editSetName, title, legalStatusReferenceData, allCorporateBodies, filledForm)(
+        editSetRecordEditInstance(
+          user,
+          editSetName,
+          title,
+          editSetRecord,
+          legalStatusReferenceData,
+          allCorporateBodies,
+          filledForm
+        )(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -189,7 +229,7 @@ class EditRecordViewSpec extends BaseSpec {
       val editSetName = "COAL 80 Sample"
       val filledForm = emptyForm
         .fill(
-          emptyRecord.copy(
+          emptyRecordValues.copy(
             scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
             formerReferenceDepartment =
               "Former reference - Department Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing"
@@ -203,7 +243,15 @@ class EditRecordViewSpec extends BaseSpec {
         )
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, editSetName, title, legalStatusReferenceData, allCorporateBodies, filledForm)(
+        editSetRecordEditInstance(
+          user,
+          editSetName,
+          title,
+          editSetRecord,
+          legalStatusReferenceData,
+          allCorporateBodies,
+          filledForm
+        )(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -230,11 +278,19 @@ class EditRecordViewSpec extends BaseSpec {
       val title = "EditRecordTitleTest"
       val editSetName = "COAL 80 Sample"
       val filledForm = emptyForm
-        .fill(emptyRecord)
+        .fill(emptyRecordValues)
         .withError(FormError("legalStatus", "Select a valid legal status"))
 
       val editRecordHtml: Html =
-        editSetRecordEditInstance(user, editSetName, title, legalStatusReferenceData, allCorporateBodies, filledForm)(
+        editSetRecordEditInstance(
+          user,
+          editSetName,
+          title,
+          editSetRecord,
+          legalStatusReferenceData,
+          allCorporateBodies,
+          filledForm
+        )(
           Helpers.stubMessages(),
           CSRFTokenHelper.addCSRFToken(FakeRequest())
         )
@@ -249,9 +305,7 @@ class EditRecordViewSpec extends BaseSpec {
 
       val title = "EditRecordTitleTest"
       val editSetName = "COAL 80 Sample"
-      val inputData = EditSetRecord(
-        ccr = "",
-        oci = "",
+      val inputData = EditSetRecordFormValues(
         scopeAndContent = "",
         coveringDates = "Mon 1 Oct 1330",
         formerReferenceDepartment = "",
@@ -276,6 +330,7 @@ class EditRecordViewSpec extends BaseSpec {
           user,
           editSetName,
           title,
+          editSetRecord,
           legalStatusReferenceData,
           allCorporateBodies,
           editSetRecordForm
@@ -296,7 +351,7 @@ class EditRecordViewSpec extends BaseSpec {
 
       val document = generateDocument(
         form = emptyForm
-          .fill(emptyRecord)
+          .fill(emptyRecordValues)
           .withError(FormError("startDateDay", "Start date is not a valid date"))
       )
 
@@ -311,7 +366,7 @@ class EditRecordViewSpec extends BaseSpec {
 
       val document = generateDocument(
         form = emptyForm
-          .fill(emptyRecord)
+          .fill(emptyRecordValues)
           .withError(FormError("endDateDay", "End date is not a valid date"))
       )
 
@@ -324,7 +379,7 @@ class EditRecordViewSpec extends BaseSpec {
 
       val document = generateDocument(
         form = emptyForm
-          .fill(emptyRecord)
+          .fill(emptyRecordValues)
           .withError(FormError("endDateDay", "End date cannot precede start date"))
       )
 
@@ -337,13 +392,14 @@ class EditRecordViewSpec extends BaseSpec {
     }
   }
 
-  private def generateDocument(title: String = "", form: Form[EditSetRecord]): Document = {
+  private def generateDocument(title: String = "", form: Form[EditSetRecordFormValues]): Document = {
     val editSetRecordEditInstance: editSetRecordEdit = inject[editSetRecordEdit]
     asDocument(
       editSetRecordEditInstance(
         user = user,
         editSetName = "COAL 80 Sample",
         title = title,
+        record = editSetRecord,
         legalStatusReferenceData,
         corporateBodies = allCorporateBodies,
         editSetRecordForm = form

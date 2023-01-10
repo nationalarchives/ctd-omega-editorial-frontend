@@ -21,15 +21,23 @@
 
 @import helper._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.nationalarchives.omega.editorial.models.{CorporateBody, EditSetRecord, User}
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
-@import uk.gov.nationalarchives.omega.editorial.models.LegalStatus
+@import uk.gov.nationalarchives.omega.editorial.models._
+@import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
 @import uk.gov.hmrc.hmrcfrontend.views.Implicits.RichErrorSummary
 
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 
 @this(govukButton: GovukButton, govukInput: GovukInput, govukTextarea: GovukTextarea, govukFieldset: GovukFieldset, govukErrorSummary: GovukErrorSummary, govukSelect: GovukSelect)
-@(user: User, editSetName: String, title: String, legalStatusReferenceData: Seq[LegalStatus], corporateBodies: Seq[CorporateBody], editSetRecordForm: Form[EditSetRecord])(implicit messages: Messages, request: Request[AnyContent])
+@(
+  user: User,
+  editSetName: String,
+  title: String,
+  record: EditSetRecord,
+  legalStatusReferenceData: Seq[LegalStatus],
+  corporateBodies: Seq[CorporateBody],
+  editSetRecordForm: Form[EditSetRecordFormValues]
+)(implicit messages: Messages, request: Request[AnyContent])
 
 
 
@@ -40,8 +48,24 @@
     ))
 }
 
+@noRelatedMaterial = {
+  <li>None</li>
+}
+
+@relatedMaterialLink(link: RelatedMaterial.LinkOnly) = {
+  <li><a href="@link.linkHref">@link.linkText</a></li>
+}
+
+@relatedMaterialDescription(description: RelatedMaterial.DescriptionOnly) = {
+  <li><span>@description.description</span></li>
+}
+
+@relatedMaterialLinkAndDescription(linkAndDescription: RelatedMaterial.LinkAndDescription) = {
+  <li><a href="@linkAndDescription.linkHref">@linkAndDescription.linkText</a> - <span>@linkAndDescription.description</span></li>
+}
+
 @backLink = {
-    <a class="govuk-back-link" href="/edit-set/1">@messages("edit-set.record.edit.back-to-edit-set", editSetName)</a>
+  <a class="govuk-back-link" href="/edit-set/1">@messages("edit-set.record.edit.back-to-edit-set", editSetName)</a>
 }
 
 @actionButtonGroup = {
@@ -230,9 +254,31 @@
     attributes = Map("rows" -> "5", "autofocus" -> "true")))
 
 
+
+  <h3 class="govuk-heading-s">@messages("edit-set.record.edit.related-material")</h3>
+  <ul id="related-material" class="govuk-list govuk-list--bullet">
+    @{
+      if (record.relatedMaterial.isEmpty)
+        noRelatedMaterial
+      else
+        record.relatedMaterial.map {
+
+          case e: RelatedMaterial.LinkAndDescription =>
+            relatedMaterialLinkAndDescription(e)
+
+          case e: RelatedMaterial.LinkOnly =>
+            relatedMaterialLink(e)
+
+          case e: RelatedMaterial.DescriptionOnly =>
+            relatedMaterialDescription(e)
+
+        }
+    }
+  </ul>
+
     <div class="govuk-form-group">
-        <input id="ccr" name="ccr" type="text" readonly="readonly" hidden="true" value="@editSetRecordForm.data.get("ccr")"/>
-        <input id="ocr" name="oci" type="text" readonly="readonly" hidden="true" value="@editSetRecordForm.data.get("oci")"/>
+        <input id="ccr" name="ccr" type="text" readonly="readonly" hidden="true" value="@record.ccr"/>
+        <input id="ocr" name="oci" type="text" readonly="readonly" hidden="true" value="@record.oci"/>
     </div>
 @actionButtonGroup
 }
@@ -241,11 +287,11 @@
     @if(editSetRecordForm.hasErrors) {
         @govukErrorSummary(ErrorSummary().withFormErrorsAsText(editSetRecordForm))
     }
-    <h1 class="govuk-heading-l">@messages("edit-set.record.edit.heading", editSetRecordForm.data.get("ccr").get)</h1>
-    <h2 class="govuk-heading-m">@messages("edit-set.record.edit.id", editSetRecordForm.data.get("oci").get)</h2>
+    <h1 class="govuk-heading-l">@messages("edit-set.record.edit.heading", record.ccr)</h1>
+    <h2 class="govuk-heading-m">@messages("edit-set.record.edit.id", record.oci)</h2>
     <p class="govuk-body">@messages("placeholder.series-national-coal-board")</p>
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
-    @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetController.submit("1", editSetRecordForm.data.get("oci").get)) {
+    @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetController.submit("1", record.oci)) {
         @actionButtonGroup
         @govukFieldset(Fieldset(
             html = fieldsetContent,

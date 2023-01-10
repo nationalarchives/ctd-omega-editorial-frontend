@@ -22,39 +22,30 @@
 package uk.gov.nationalarchives.omega.editorial.models
 
 import play.api.libs.json._
+import play.api.libs.functional.syntax._
+import play.api.libs.json.Reads._
 
-case class EditSetEntry(ccr: String, oci: String, scopeAndContent: String, coveringDates: String)
+sealed abstract class RelatedMaterial
 
-case class EditSet(name: String, id: String, entries: Seq[EditSetEntry])
+object RelatedMaterial {
 
-case class EditSetRecord(
-  ccr: String,
-  oci: String,
-  scopeAndContent: String,
-  coveringDates: String,
-  formerReferenceDepartment: String,
-  startDateDay: String,
-  startDateMonth: String,
-  startDateYear: String,
-  endDateDay: String,
-  endDateMonth: String,
-  endDateYear: String,
-  legalStatus: String,
-  placeOfDeposit: String,
-  note: String,
-  background: String,
-  relatedMaterial: Seq[RelatedMaterial] = Seq.empty
-)
+  case class LinkAndDescription(linkHref: String, linkText: String, description: String) extends RelatedMaterial
+  case class LinkOnly(linkHref: String, linkText: String) extends RelatedMaterial
+  case class DescriptionOnly(description: String) extends RelatedMaterial
 
-object EditSetRecord {
-  implicit val editSetRecordReads = Json.using[Json.WithDefaultValues].reads[EditSetRecord]
-}
+  val linkHrefPropertyReads: Reads[String] = (__ \ "linkHref").read[String]
+  val linkTextPropertyReads: Reads[String] = (__ \ "linkText").read[String]
+  val descriptionPropertyReads: Reads[String] = (__ \ "description").read[String]
 
-object EditSetEntry {
-  implicit val editSetEntryReads = Json.reads[EditSetEntry]
-}
+  val linkAndDescriptionReads: Reads[RelatedMaterial] =
+    (linkHrefPropertyReads and linkTextPropertyReads and descriptionPropertyReads)(LinkAndDescription.apply _)
 
-object EditSet {
-  implicit val editSetReads = Json.reads[EditSet]
+  val linkReads: Reads[RelatedMaterial] =
+    (linkHrefPropertyReads and linkTextPropertyReads)(LinkOnly.apply _)
+
+  val descriptionReads: Reads[RelatedMaterial] =
+    descriptionPropertyReads.map(DescriptionOnly.apply)
+
+  implicit val relatedMaterialReads: Reads[RelatedMaterial] = linkAndDescriptionReads | linkReads | descriptionReads
 
 }
