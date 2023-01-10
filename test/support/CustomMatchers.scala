@@ -188,7 +188,7 @@ object CustomMatchers {
       singleValueMatcher(
         label = "a list of related material",
         expectedValue = relatedMaterials.toSeq,
-        actualValue = getMaterialListItems(document, listId = "related-material").toSeq
+        actualValue = getRelatedMaterialItems(document).toSeq
       )
 
   def haveSeparatedMaterial(separatedMaterials: ExpectedSeparatedMaterial*): Matcher[Document] = (document: Document) =>
@@ -202,7 +202,7 @@ object CustomMatchers {
       singleValueMatcher(
         label = "a list of separated material",
         expectedValue = separatedMaterials.toSeq,
-        actualValue = getMaterialListItems(document, listId = "separated-material").toSeq
+        actualValue = getSeperatedMaterialItems(document).toSeq
       )
 
   def haveSummaryErrorTitle(expectedValue: String): Matcher[Document] = (document: Document) =>
@@ -470,11 +470,8 @@ object CustomMatchers {
     )
   }
 
-  private def getMaterialListItems(document: Document, listId: String): Seq[ExpectedRelatedMaterial] =
-    document
-      .select(s"#${listId} > li")
-      .asScala
-      .toSeq
+  private def getRelatedMaterialItems(document: Document): Seq[ExpectedRelatedMaterial] =
+    getMaterialListItems(document, listId = "related-material")
       .map { listItem =>
         ExpectedRelatedMaterial(
           linkHref = noneIfEmpty(listItem.select("a").attr("href")),
@@ -482,6 +479,22 @@ object CustomMatchers {
           description = noneIfEmpty(listItem.select("span").text())
         )
       }
+
+  private def getSeperatedMaterialItems(document: Document): Seq[ExpectedSeparatedMaterial] =
+    getMaterialListItems(document, listId = "separated-material")
+      .map { listItem =>
+        ExpectedSeparatedMaterial(
+          linkHref = noneIfEmpty(listItem.select("a").attr("href")),
+          linkText = noneIfEmpty(listItem.select("a").text()),
+          description = noneIfEmpty(listItem.select("span").text())
+        )
+      }
+
+  private def getMaterialListItems(document: Document, listId: String): Seq[Element] =
+    document
+      .select(s"#$listId > li")
+      .asScala
+      .toSeq
 
   private def removeInvisibleErrorMessagePrefix(original: String) = original.replace("login.hidden.error ", "")
 

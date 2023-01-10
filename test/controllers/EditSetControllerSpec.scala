@@ -948,6 +948,20 @@ class EditSetControllerSpec extends BaseSpec {
               ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
               ExpectedSelectOption("3", "British Library, National Sound Archive")
             ),
+            separatedMaterial = Seq(
+              ExpectedSeparatedMaterial(
+                linkHref = Some("#;"),
+                linkText = Some("COAL 80/80/5")
+              ),
+              ExpectedSeparatedMaterial(
+                linkHref = Some("#;"),
+                linkText = Some("COAL 80/80/6")
+              ),
+              ExpectedSeparatedMaterial(
+                linkHref = Some("#;"),
+                linkText = Some("COAL 80/80/7")
+              )
+            ),
             relatedMaterial = Seq(
               ExpectedRelatedMaterial(
                 description =
@@ -1089,6 +1103,20 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                separatedMaterial = Seq(
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/5")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/6")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/7")
+                  )
+                ),
                 relatedMaterial = Seq(
                   ExpectedRelatedMaterial(
                     description =
@@ -1146,6 +1174,20 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
+                separatedMaterial = Seq(
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/5")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/6")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/7")
+                  )
                 ),
                 relatedMaterial = Seq(
                   ExpectedRelatedMaterial(
@@ -1207,6 +1249,20 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                separatedMaterial = Seq(
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/5")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/6")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/7")
+                  )
+                ),
                 relatedMaterial = Seq(
                   ExpectedRelatedMaterial(
                     description =
@@ -1266,6 +1322,20 @@ class EditSetControllerSpec extends BaseSpec {
             ),
             summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", "#startDateDay")),
             errorMessageForStartDate = Some("Start date is not a valid date"),
+            separatedMaterial = Seq(
+              ExpectedSeparatedMaterial(
+                linkHref = Some("#;"),
+                linkText = Some("COAL 80/80/5")
+              ),
+              ExpectedSeparatedMaterial(
+                linkHref = Some("#;"),
+                linkText = Some("COAL 80/80/6")
+              ),
+              ExpectedSeparatedMaterial(
+                linkHref = Some("#;"),
+                linkText = Some("COAL 80/80/7")
+              )
+            ),
             relatedMaterial = Seq(
               ExpectedRelatedMaterial(
                 description =
@@ -1322,6 +1392,20 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
+                separatedMaterial = Seq(
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/5")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/6")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/7")
+                  )
                 ),
                 relatedMaterial = Seq(
                   ExpectedRelatedMaterial(
@@ -1382,6 +1466,20 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                separatedMaterial = Seq(
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/5")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/6")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/7")
+                  )
+                ),
                 relatedMaterial = Seq(
                   ExpectedRelatedMaterial(
                     description =
@@ -1441,6 +1539,20 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                separatedMaterial = Seq(
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/5")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/6")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/7")
+                  )
+                ),
                 relatedMaterial = Seq(
                   ExpectedRelatedMaterial(
                     description =
@@ -1499,6 +1611,20 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
+                separatedMaterial = Seq(
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/5")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/6")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/7")
+                  )
                 ),
                 relatedMaterial = Seq(
                   ExpectedRelatedMaterial(
@@ -1567,6 +1693,20 @@ class EditSetControllerSpec extends BaseSpec {
               ),
               errorMessageForStartDate = Some("Start date is not a valid date"),
               errorMessageForEndDate = Some("End date is not a valid date"),
+              separatedMaterial = Seq(
+                ExpectedSeparatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/5")
+                ),
+                ExpectedSeparatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/6")
+                ),
+                ExpectedSeparatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/7")
+                )
+              ),
               relatedMaterial = Seq(
                 ExpectedRelatedMaterial(
                   description =
@@ -1619,6 +1759,20 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
+                separatedMaterial = Seq(
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/5")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/6")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/7")
+                  )
                 ),
                 relatedMaterial = Seq(
                   ExpectedRelatedMaterial(
@@ -1675,6 +1829,20 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                separatedMaterial = Seq(
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/5")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/6")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/7")
+                  )
+                ),
                 relatedMaterial = Seq(
                   ExpectedRelatedMaterial(
                     description =
@@ -1730,6 +1898,20 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
+                separatedMaterial = Seq(
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/5")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/6")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/7")
+                  )
                 ),
                 relatedMaterial = Seq(
                   ExpectedRelatedMaterial(
@@ -1790,6 +1972,20 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                separatedMaterial = Seq(
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/5")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/6")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/7")
+                  )
+                ),
                 relatedMaterial = Seq(
                   ExpectedRelatedMaterial(
                     description =
@@ -1841,6 +2037,20 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
+                separatedMaterial = Seq(
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/5")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/6")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/7")
+                  )
                 ),
                 relatedMaterial = Seq(
                   ExpectedRelatedMaterial(
@@ -1896,6 +2106,20 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                separatedMaterial = Seq(
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/5")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/6")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/7")
+                  )
+                ),
                 relatedMaterial = Seq(
                   ExpectedRelatedMaterial(
                     description =
@@ -1950,6 +2174,20 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
+                separatedMaterial = Seq(
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/5")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/6")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/7")
+                  )
                 ),
                 relatedMaterial = Seq(
                   ExpectedRelatedMaterial(
@@ -2023,6 +2261,20 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                separatedMaterial = Seq(
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/5")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/6")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/7")
+                  )
+                ),
                 relatedMaterial = Seq(
                   ExpectedRelatedMaterial(
                     description =
@@ -2079,6 +2331,20 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
+                separatedMaterial = Seq(
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/5")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/6")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/7")
+                  )
                 ),
                 relatedMaterial = Seq(
                   ExpectedRelatedMaterial(
@@ -2206,6 +2472,20 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                separatedMaterial = Seq(
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/5")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/6")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/7")
+                  )
+                ),
                 relatedMaterial = Seq(
                   ExpectedRelatedMaterial(
                     description =
@@ -2261,6 +2541,20 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                separatedMaterial = Seq(
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/5")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/6")
+                  ),
+                  ExpectedSeparatedMaterial(
+                    linkHref = Some("#;"),
+                    linkText = Some("COAL 80/80/7")
+                  )
+                ),
                 relatedMaterial = Seq(
                   ExpectedRelatedMaterial(
                     description =
@@ -2315,6 +2609,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                separatedMaterial = Seq.empty,
                 relatedMaterial = Seq.empty
               )
             )
@@ -2385,6 +2680,20 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
+              separatedMaterial = Seq(
+                ExpectedSeparatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/5")
+                ),
+                ExpectedSeparatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/6")
+                ),
+                ExpectedSeparatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/7")
+                )
+              ),
               relatedMaterial = Seq(
                 ExpectedRelatedMaterial(
                   description =
@@ -2448,6 +2757,20 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
+              separatedMaterial = Seq(
+                ExpectedSeparatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/5")
+                ),
+                ExpectedSeparatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/6")
+                ),
+                ExpectedSeparatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/7")
+                )
+              ),
               relatedMaterial = Seq(
                 ExpectedRelatedMaterial(
                   description =
@@ -2509,6 +2832,20 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
+              separatedMaterial = Seq(
+                ExpectedSeparatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/5")
+                ),
+                ExpectedSeparatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/6")
+                ),
+                ExpectedSeparatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/7")
+                )
+              ),
               relatedMaterial = Seq(
                 ExpectedRelatedMaterial(
                   description =
@@ -2568,6 +2905,20 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
+              separatedMaterial = Seq(
+                ExpectedSeparatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/5")
+                ),
+                ExpectedSeparatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/6")
+                ),
+                ExpectedSeparatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/7")
+                )
+              ),
               relatedMaterial = Seq(
                 ExpectedRelatedMaterial(
                   description =
@@ -2620,6 +2971,20 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
+              separatedMaterial = Seq(
+                ExpectedSeparatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/5")
+                ),
+                ExpectedSeparatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/6")
+                ),
+                ExpectedSeparatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/7")
+                )
+              ),
               relatedMaterial = Seq(
                 ExpectedRelatedMaterial(
                   description =
@@ -2671,6 +3036,20 @@ class EditSetControllerSpec extends BaseSpec {
                 ExpectedSelectOption("1", "The National Archives, Kew"),
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
+              ),
+              separatedMaterial = Seq(
+                ExpectedSeparatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/5")
+                ),
+                ExpectedSeparatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/6")
+                ),
+                ExpectedSeparatedMaterial(
+                  linkHref = Some("#;"),
+                  linkText = Some("COAL 80/80/7")
+                )
               ),
               relatedMaterial = Seq(
                 ExpectedRelatedMaterial(

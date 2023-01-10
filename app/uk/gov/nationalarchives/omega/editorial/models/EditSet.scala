@@ -44,7 +44,7 @@ case class EditSetRecord(
   note: String,
   background: String,
   separatedMaterial: Seq[SeparatedMaterial] = Seq.empty,
-  relatedMaterial: Seq[RelatedMaterial] = Seq.empty,
+  relatedMaterial: Seq[RelatedMaterial] = Seq.empty
 )
 
 object EditSetRecord {
