@@ -28,6 +28,7 @@ import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import play.twirl.api.Html
 import support.BaseSpec
 import support.CustomMatchers._
+import support.ExpectedValues.ExpectedSummaryErrorMessage
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, LegalStatus }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEdit
 
@@ -48,7 +49,8 @@ class EditRecordViewSpec extends BaseSpec {
       "endDateYear"               -> text,
       "legalStatus"               -> text,
       "placeOfDeposit"            -> text,
-      "note"                      -> text
+      "note"                      -> text,
+      "background"                -> text
     )(EditSetRecord.apply)(EditSetRecord.unapply)
   )
 
@@ -74,7 +76,8 @@ class EditRecordViewSpec extends BaseSpec {
     endDateYear = "",
     placeOfDeposit = "",
     legalStatus = "",
-    note = ""
+    note = "",
+    background = ""
   )
 
   "Edit record Html" should {
@@ -143,7 +146,9 @@ class EditRecordViewSpec extends BaseSpec {
       val document = asDocument(editRecordHtml)
       document must haveTitle("EditRecordTitleTest")
       document must haveSummaryErrorTitle("error.summary.title")
-      document must haveSummaryErrorMessages("Enter the scope and content.")
+      document must haveSummaryErrorMessages(
+        ExpectedSummaryErrorMessage("Enter the scope and content.", "#scopeAndContent")
+      )
       document must haveErrorMessageForScopeAndContent("Enter the scope and content.")
       document must haveScopeAndContent("")
     }
@@ -169,7 +174,9 @@ class EditRecordViewSpec extends BaseSpec {
       val document = asDocument(editRecordHtml)
       document must haveTitle("EditRecordTitleTest")
       document must haveSummaryErrorTitle("error.summary.title")
-      document must haveSummaryErrorMessages("Scope and content too long, maximum length 8000 characters")
+      document must haveSummaryErrorMessages(
+        ExpectedSummaryErrorMessage("Scope and content too long, maximum length 8000 characters", "#scopeAndContent")
+      )
       document must haveErrorMessageForScopeAndContent("Scope and content too long, maximum length 8000 characters")
       document must haveScopeAndContent(
         "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
@@ -204,7 +211,12 @@ class EditRecordViewSpec extends BaseSpec {
       val document = asDocument(editRecordHtml)
       document must haveTitle("EditRecordTitleTest")
       document must haveSummaryErrorTitle("error.summary.title")
-      document must haveSummaryErrorMessages("Former reference - Department too long, maximum length 255 characters")
+      document must haveSummaryErrorMessages(
+        ExpectedSummaryErrorMessage(
+          "Former reference - Department too long, maximum length 255 characters",
+          "#formerReferenceDepartment"
+        )
+      )
       document must haveErrorMessageForFormerReferenceDepartment(
         "Former reference - Department too long, maximum length 255 characters"
       )
@@ -219,7 +231,7 @@ class EditRecordViewSpec extends BaseSpec {
       val editSetName = "COAL 80 Sample"
       val filledForm = emptyForm
         .fill(emptyRecord)
-        .withError(FormError("", "Select a valid legal status"))
+        .withError(FormError("legalStatus", "Select a valid legal status"))
 
       val editRecordHtml: Html =
         editSetRecordEditInstance(user, editSetName, title, legalStatusReferenceData, allCorporateBodies, filledForm)(
@@ -229,7 +241,7 @@ class EditRecordViewSpec extends BaseSpec {
 
       val document = asDocument(editRecordHtml)
       document must haveSummaryErrorTitle("error.summary.title")
-      document must haveSummaryErrorMessages("Select a valid legal status")
+      document must haveSummaryErrorMessages(ExpectedSummaryErrorMessage("Select a valid legal status", "#legalStatus"))
     }
 
     "render an error when given invalid covering dates" in {
@@ -251,7 +263,8 @@ class EditRecordViewSpec extends BaseSpec {
         endDateYear = "1960",
         legalStatus = "ref.1",
         placeOfDeposit = "2",
-        note = ""
+        note = "",
+        background = ""
       )
 
       val editSetRecordForm = emptyForm
@@ -272,7 +285,9 @@ class EditRecordViewSpec extends BaseSpec {
         )
 
       val document = asDocument(editRecordHtml)
-      document must haveSummaryErrorMessages("covering date message string")
+      document must haveSummaryErrorMessages(
+        ExpectedSummaryErrorMessage("covering date message string", "#coveringDates")
+      )
     }
   }
 
@@ -282,10 +297,12 @@ class EditRecordViewSpec extends BaseSpec {
       val document = generateDocument(
         form = emptyForm
           .fill(emptyRecord)
-          .withError(FormError("startDate", "Start date is not a valid date"))
+          .withError(FormError("startDateDay", "Start date is not a valid date"))
       )
 
-      document must haveSummaryErrorMessages("Start date is not a valid date")
+      document must haveSummaryErrorMessages(
+        ExpectedSummaryErrorMessage("Start date is not a valid date", "#startDateDay")
+      )
       document must haveErrorMessageForStartDate("Start date is not a valid date")
       document must haveNoErrorMessageForEndDate
 
@@ -295,10 +312,10 @@ class EditRecordViewSpec extends BaseSpec {
       val document = generateDocument(
         form = emptyForm
           .fill(emptyRecord)
-          .withError(FormError("endDate", "End date is not a valid date"))
+          .withError(FormError("endDateDay", "End date is not a valid date"))
       )
 
-      document must haveSummaryErrorMessages("End date is not a valid date")
+      document must haveSummaryErrorMessages(ExpectedSummaryErrorMessage("End date is not a valid date", "#endDateDay"))
       document must haveNoErrorMessageForStartDate
       document must haveErrorMessageForEndDate("End date is not a valid date")
 
@@ -308,10 +325,12 @@ class EditRecordViewSpec extends BaseSpec {
       val document = generateDocument(
         form = emptyForm
           .fill(emptyRecord)
-          .withError(FormError("endDate", "End date cannot precede start date"))
+          .withError(FormError("endDateDay", "End date cannot precede start date"))
       )
 
-      document must haveSummaryErrorMessages("End date cannot precede start date")
+      document must haveSummaryErrorMessages(
+        ExpectedSummaryErrorMessage("End date cannot precede start date", "#endDateDay")
+      )
       document must haveNoErrorMessageForStartDate
       document must haveErrorMessageForEndDate("End date cannot precede start date")
 

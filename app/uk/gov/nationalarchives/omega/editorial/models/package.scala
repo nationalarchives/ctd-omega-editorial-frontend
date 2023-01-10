@@ -42,7 +42,8 @@ package object editSetRecords {
         |  "endDateYear" : "1962",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "note": "A note about COAL.2022.V1RJW.P."
+        |  "note": "A note about COAL.2022.V1RJW.P.",
+        |  "background": "Photo was taken by a daughter of one of the coal miners who used them."
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -64,7 +65,8 @@ package object editSetRecords {
         |  "endDateYear" : "1966",
         |  "legalStatus": "ref.2",
         |  "placeOfDeposit" : "",
-        |  "note": "A note about COAL.2022.V2RJW.P."
+        |  "note": "A note about COAL.2022.V2RJW.P.",
+        |  "background": ""
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -86,7 +88,8 @@ package object editSetRecords {
         |  "endDateYear" : "1964",
         |  "legalStatus": "",
         |  "placeOfDeposit" : "6",
-        |  "note": ""
+        |  "note": "",
+        |  "background": "Photo was taken by a son of one of the coal miners who used them."
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -108,7 +111,8 @@ package object editSetRecords {
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "note": ""
+        |  "note": "",
+        |  "background": ""
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -130,7 +134,8 @@ package object editSetRecords {
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "note": ""
+        |  "note": "Need to check copyright info.",
+        |  "background": ""
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -152,7 +157,8 @@ package object editSetRecords {
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "note": ""
+        |  "note": "",
+        |  "background": ""
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -174,7 +180,8 @@ package object editSetRecords {
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "note": ""
+        |  "note": "",
+        |  "background": ""
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -196,7 +203,8 @@ package object editSetRecords {
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "note": ""
+        |  "note": "",
+        |  "background": ""
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -218,7 +226,8 @@ package object editSetRecords {
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "note": ""
+        |  "note": "",
+        |  "background": ""
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -240,7 +249,8 @@ package object editSetRecords {
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "note": ""
+        |  "note": "",
+        |  "background": ""
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -262,7 +272,8 @@ package object editSetRecords {
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "note": ""
+        |  "note": "",
+        |  "background": ""
         |} """.stripMargin
     )
     .validate[EditSetRecord]
@@ -284,13 +295,14 @@ package object editSetRecords {
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "note": ""
+        |  "note": "",
+        |  "background": ""
         |} """.stripMargin
     )
     .validate[EditSetRecord]
     .get
 
-  var editSetRecordMap = Map(
+  private var editSetRecordMap = Map(
     "COAL.2022.V1RJW.P"  -> editSetRecord1,
     "COAL.2022.V2RJW.P"  -> editSetRecord2,
     "COAL.2022.V3RJW.P"  -> editSetRecord3,

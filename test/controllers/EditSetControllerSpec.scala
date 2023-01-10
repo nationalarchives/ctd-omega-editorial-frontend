@@ -27,7 +27,7 @@ import play.api.test.Helpers._
 import play.api.test._
 import support.BaseSpec
 import support.CustomMatchers._
-import support.ExpectedValues.{ ExpectedActionButton, ExpectedDate, ExpectedSelectOption }
+import support.ExpectedValues.{ ExpectedActionButton, ExpectedDate, ExpectedSelectOption, ExpectedSummaryErrorMessage }
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
@@ -938,8 +938,8 @@ class EditSetControllerSpec extends BaseSpec {
             startDate = ExpectedDate("1", "1", "1962"),
             endDate = ExpectedDate("31", "12", "1962"),
             legalStatus = "ref.1",
-            placeOfDeposit = "1",
             note = "A note about COAL.2022.V1RJW.P.",
+            background = "Photo was taken by a daughter of one of the coal miners who used them.",
             optionsForPlaceOfDeposit = Seq(
               ExpectedSelectOption("", "Select where this record is held", disabled = true),
               ExpectedSelectOption("1", "The National Archives, Kew", selected = true),
@@ -973,8 +973,8 @@ class EditSetControllerSpec extends BaseSpec {
             startDate = ExpectedDate("1", "1", "1964"),
             endDate = ExpectedDate("31", "12", "1964"),
             legalStatus = "",
-            placeOfDeposit = "",
             note = "",
+            background = "Photo was taken by a son of one of the coal miners who used them.",
             optionsForPlaceOfDeposit = Seq(
               ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
               ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1017,8 +1017,6 @@ class EditSetControllerSpec extends BaseSpec {
 
     val validValues: Map[String, String] =
       Map(
-        "ccr"             -> "COAL 80/80/1",
-        "oci"             -> "COAL.2022.V1RJW.P",
         "scopeAndContent" -> "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
         "formerReferenceDepartment" -> "1234",
         "coveringDates"             -> "2020 Oct",
@@ -1031,7 +1029,7 @@ class EditSetControllerSpec extends BaseSpec {
         "legalStatus"               -> "ref.1",
         "placeOfDeposit"            -> "2",
         "note"                      -> "Need to check copyright info.",
-        "action"                    -> "save"
+        "background"                -> "Photo was taken by a daughter of one of the coal miners who used them."
       )
 
     "when the action is to save the record" when {
@@ -1042,7 +1040,11 @@ class EditSetControllerSpec extends BaseSpec {
         "and yet preserve the CCR" when {
           "there are errors" in {
             val blankScopeAndContentToFailValidation = ""
-            val values = validValuesForSaving ++ Map("scopeAndContent" -> blankScopeAndContentToFailValidation)
+            val values = validValuesForSaving ++ Map(
+              "ccr"             -> "COAL 80/80/1",
+              "oci"             -> "COAL.2022.V1RJW.P",
+              "scopeAndContent" -> blankScopeAndContentToFailValidation
+            )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1061,8 +1063,8 @@ class EditSetControllerSpec extends BaseSpec {
                 startDate = ExpectedDate("1", "10", "2020"),
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
-                placeOfDeposit = "2",
                 note = "Need to check copyright info.",
+                background = "Photo was taken by a daughter of one of the coal miners who used them.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1077,7 +1079,13 @@ class EditSetControllerSpec extends BaseSpec {
           "is empty" in {
 
             val values =
-              validValuesForSaving ++ Map("startDateDay" -> "", "startDateMonth" -> "", "startDateYear" -> "")
+              validValuesForSaving ++ Map(
+                "ccr"            -> "COAL 80/80/1",
+                "oci"            -> "COAL.2022.V1RJW.P",
+                "startDateDay"   -> "",
+                "startDateMonth" -> "",
+                "startDateYear"  -> ""
+              )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1097,15 +1105,16 @@ class EditSetControllerSpec extends BaseSpec {
                 startDate = ExpectedDate("", "", ""),
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
-                placeOfDeposit = "2",
                 note = "Need to check copyright info.",
+                background = "Photo was taken by a daughter of one of the coal miners who used them.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("Start date is not a valid date"),
+                summaryErrorMessages =
+                  Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", "#startDateDay")),
                 errorMessageForStartDate = Some("Start date is not a valid date")
               )
             )
@@ -1114,7 +1123,13 @@ class EditSetControllerSpec extends BaseSpec {
           "is of an invalid format" in {
 
             val values =
-              validValuesForSaving ++ Map("startDateDay" -> "XX", "startDateMonth" -> "11", "startDateYear" -> "1960")
+              validValuesForSaving ++ Map(
+                "ccr"            -> "COAL 80/80/1",
+                "oci"            -> "COAL.2022.V1RJW.P",
+                "startDateDay"   -> "XX",
+                "startDateMonth" -> "11",
+                "startDateYear"  -> "1960"
+              )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1134,15 +1149,16 @@ class EditSetControllerSpec extends BaseSpec {
                 startDate = ExpectedDate("XX", "11", "1960"),
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
-                placeOfDeposit = "2",
                 note = "Need to check copyright info.",
+                background = "Photo was taken by a daughter of one of the coal miners who used them.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("Start date is not a valid date"),
+                summaryErrorMessages =
+                  Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", "#startDateDay")),
                 errorMessageForStartDate = Some("Start date is not a valid date")
               )
             )
@@ -1152,6 +1168,8 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values = validValuesForSaving ++
               Map(
+                "ccr"            -> "COAL 80/80/1",
+                "oci"            -> "COAL.2022.V1RJW.P",
                 "startDateDay"   -> "29",
                 "startDateMonth" -> "2",
                 "startDateYear"  -> "2022",
@@ -1160,7 +1178,7 @@ class EditSetControllerSpec extends BaseSpec {
                 "endDateYear"    -> "2022"
               )
 
-            val result = submitWhileLoggedIn(2, "COAL.2022.V1RJW.R", values)
+            val result = submitWhileLoggedIn(2, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             val expectedPage = ExpectedEditRecordPage(
@@ -1176,15 +1194,16 @@ class EditSetControllerSpec extends BaseSpec {
               startDate = ExpectedDate("29", "2", "2022"),
               endDate = ExpectedDate("31", "10", "2022"),
               legalStatus = "ref.1",
-              placeOfDeposit = "2",
               note = "Need to check copyright info.",
+              background = "Photo was taken by a daughter of one of the coal miners who used them.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
-              summaryErrorMessages = Seq("Start date is not a valid date"),
+              summaryErrorMessages =
+                Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", "#startDateDay")),
               errorMessageForStartDate = Some("Start date is not a valid date")
             )
             assertPageAsExpected(asDocument(result), expectedPage)
@@ -1194,7 +1213,13 @@ class EditSetControllerSpec extends BaseSpec {
         "end date" when {
           "is empty" in {
 
-            val values = validValuesForSaving ++ Map("endDateDay" -> "", "endDateMonth" -> "", "endDateYear" -> "")
+            val values = validValuesForSaving ++ Map(
+              "ccr"          -> "COAL 80/80/1",
+              "oci"          -> "COAL.2022.V1RJW.P",
+              "endDateDay"   -> "",
+              "endDateMonth" -> "",
+              "endDateYear"  -> ""
+            )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1215,15 +1240,15 @@ class EditSetControllerSpec extends BaseSpec {
                 startDate = ExpectedDate("1", "10", "2020"),
                 endDate = ExpectedDate("", "", ""),
                 legalStatus = "ref.1",
-                placeOfDeposit = "2",
                 note = "Need to check copyright info.",
+                background = "Photo was taken by a daughter of one of the coal miners who used them.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("End date is not a valid date"),
+                summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("End date is not a valid date", "#endDateDay")),
                 errorMessageForEndDate = Some("End date is not a valid date")
               )
             )
@@ -1232,7 +1257,14 @@ class EditSetControllerSpec extends BaseSpec {
           "is of an invalid format" in {
 
             val values =
-              validValuesForSaving ++ Map("endDateDay" -> "XX", "endDateMonth" -> "12", "endDateYear" -> "2000")
+              validValuesForSaving ++ Map(
+                "ccr"          -> "COAL 80/80/1",
+                "oci"          -> "COAL.2022.V1RJW.P",
+                "endDateDay"   -> "XX",
+                "endDateMonth" -> "12",
+                "endDateYear"  -> "2000"
+              )
+
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
@@ -1251,15 +1283,15 @@ class EditSetControllerSpec extends BaseSpec {
                 startDate = ExpectedDate("1", "10", "2020"),
                 endDate = ExpectedDate("XX", "12", "2000"),
                 legalStatus = "ref.1",
-                placeOfDeposit = "2",
                 note = "Need to check copyright info.",
+                background = "Photo was taken by a daughter of one of the coal miners who used them.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("End date is not a valid date"),
+                summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("End date is not a valid date", "#endDateDay")),
                 errorMessageForEndDate = Some("End date is not a valid date")
               )
             )
@@ -1269,6 +1301,8 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values = validValuesForSaving ++
               Map(
+                "ccr"            -> "COAL 80/80/1",
+                "oci"            -> "COAL.2022.V1RJW.P",
                 "startDateDay"   -> "1",
                 "startDateMonth" -> "2",
                 "startDateYear"  -> "2022",
@@ -1294,15 +1328,15 @@ class EditSetControllerSpec extends BaseSpec {
                 startDate = ExpectedDate("1", "2", "2022"),
                 endDate = ExpectedDate("29", "2", "2022"),
                 legalStatus = "ref.1",
-                placeOfDeposit = "2",
                 note = "Need to check copyright info.",
+                background = "Photo was taken by a daughter of one of the coal miners who used them.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("End date is not a valid date"),
+                summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("End date is not a valid date", "#endDateDay")),
                 errorMessageForEndDate = Some("End date is not a valid date")
               )
             )
@@ -1311,6 +1345,8 @@ class EditSetControllerSpec extends BaseSpec {
           "is before start date" in {
 
             val values = validValuesForSaving ++ Map(
+              "ccr"            -> "COAL 80/80/1",
+              "oci"            -> "COAL.2022.V1RJW.P",
               "startDateDay"   -> "12",
               "startDateMonth" -> "10",
               "startDateYear"  -> "2020",
@@ -1337,15 +1373,16 @@ class EditSetControllerSpec extends BaseSpec {
                 startDate = ExpectedDate("12", "10", "2020"),
                 endDate = ExpectedDate("11", "10", "2020"),
                 legalStatus = "ref.1",
-                placeOfDeposit = "2",
                 note = "Need to check copyright info.",
+                background = "Photo was taken by a daughter of one of the coal miners who used them.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("End date cannot precede start date"),
+                summaryErrorMessages =
+                  Seq(ExpectedSummaryErrorMessage("End date cannot precede start date", "#endDateDay")),
                 errorMessageForEndDate = Some("End date cannot precede start date")
               )
             )
@@ -1355,6 +1392,8 @@ class EditSetControllerSpec extends BaseSpec {
         "neither start date nor end date is valid" in {
 
           val values = validValuesForSaving ++ Map(
+            "ccr"            -> "COAL 80/80/1",
+            "oci"            -> "COAL.2022.V1RJW.P",
             "startDateDay"   -> "12",
             "startDateMonth" -> "14",
             "startDateYear"  -> "2020",
@@ -1381,15 +1420,18 @@ class EditSetControllerSpec extends BaseSpec {
               startDate = ExpectedDate("12", "14", "2020"),
               endDate = ExpectedDate("42", "12", "2020"),
               legalStatus = "ref.1",
-              placeOfDeposit = "2",
               note = "Need to check copyright info.",
+              background = "Photo was taken by a daughter of one of the coal miners who used them.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
-              summaryErrorMessages = Seq("Start date is not a valid date", "End date is not a valid date"),
+              summaryErrorMessages = Seq(
+                ExpectedSummaryErrorMessage("Start date is not a valid date", "#startDateDay"),
+                ExpectedSummaryErrorMessage("End date is not a valid date", "#endDateDay")
+              ),
               errorMessageForStartDate = Some("Start date is not a valid date"),
               errorMessageForEndDate = Some("End date is not a valid date")
             )
@@ -1398,7 +1440,12 @@ class EditSetControllerSpec extends BaseSpec {
         }
         "covering date" when {
           "is invalid" in {
-            val values = validValuesForSaving ++ Map("coveringDates" -> "Oct 1 2004")
+
+            val values = validValuesForSaving ++ Map(
+              "ccr"           -> "COAL 80/80/1",
+              "oci"           -> "COAL.2022.V1RJW.P",
+              "coveringDates" -> "Oct 1 2004"
+            )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1418,15 +1465,16 @@ class EditSetControllerSpec extends BaseSpec {
                 startDate = ExpectedDate("1", "10", "2020"),
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
-                placeOfDeposit = "2",
                 note = "Need to check copyright info.",
+                background = "Photo was taken by a daughter of one of the coal miners who used them.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("Covering date format is not valid"),
+                summaryErrorMessages =
+                  Seq(ExpectedSummaryErrorMessage("Covering date format is not valid", "#coveringDates")),
                 errorMessageForCoveringsDates = Some("Covering date format is not valid")
               )
             )
@@ -1434,7 +1482,11 @@ class EditSetControllerSpec extends BaseSpec {
           }
           "is too long" in {
             val gapDateTooLong = (1 to 100).map(_ => "2004 Oct 1").mkString(";")
-            val values = validValuesForSaving ++ Map("coveringDates" -> gapDateTooLong)
+            val values = validValuesForSaving ++ Map(
+              "ccr"           -> "COAL 80/80/1",
+              "oci"           -> "COAL.2022.V1RJW.P",
+              "coveringDates" -> gapDateTooLong
+            )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1454,22 +1506,29 @@ class EditSetControllerSpec extends BaseSpec {
                 startDate = ExpectedDate("1", "10", "2020"),
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
-                placeOfDeposit = "2",
                 note = "Need to check copyright info.",
+                background = "Photo was taken by a daughter of one of the coal miners who used them.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("Covering date too long, maximum length 255 characters"),
+                summaryErrorMessages = Seq(
+                  ExpectedSummaryErrorMessage("Covering date too long, maximum length 255 characters", "#coveringDates")
+                ),
                 errorMessageForCoveringsDates = Some("Covering date too long, maximum length 255 characters")
               )
             )
 
           }
           "is empty; showing error correctly" in {
-            val values = validValuesForSaving ++ Map("coveringDates" -> "  ")
+
+            val values = validValuesForSaving ++ Map(
+              "ccr"           -> "COAL 80/80/1",
+              "oci"           -> "COAL.2022.V1RJW.P",
+              "coveringDates" -> "  "
+            )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1489,15 +1548,18 @@ class EditSetControllerSpec extends BaseSpec {
                 startDate = ExpectedDate("1", "10", "2020"),
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
-                placeOfDeposit = "2",
                 note = "Need to check copyright info.",
+                background = "Photo was taken by a daughter of one of the coal miners who used them.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("Enter the covering dates", "Covering date format is not valid"),
+                summaryErrorMessages = Seq(
+                  ExpectedSummaryErrorMessage("Enter the covering dates", "#coveringDates"),
+                  ExpectedSummaryErrorMessage("Covering date format is not valid", "#coveringDates")
+                ),
                 errorMessageForCoveringsDates = Some("Enter the covering dates")
               )
             )
@@ -1506,7 +1568,9 @@ class EditSetControllerSpec extends BaseSpec {
         }
         "place of deposit" when {
           "isn't selected" in {
-            val values = validValuesForSaving ++ Map("placeOfDeposit" -> "")
+
+            val values =
+              validValuesForSaving ++ Map("ccr" -> "COAL 80/80/1", "oci" -> "COAL.2022.V1RJW.P", "placeOfDeposit" -> "")
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1526,22 +1590,26 @@ class EditSetControllerSpec extends BaseSpec {
                 startDate = ExpectedDate("1", "10", "2020"),
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
-                placeOfDeposit = "",
                 note = "Need to check copyright info.",
+                background = "Photo was taken by a daughter of one of the coal miners who used them.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("You must choose an option"),
+                summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("You must choose an option", "#placeOfDeposit")),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
             )
 
           }
           "is absent" in {
-            val values = validValuesForSaving.removed("placeOfDeposit")
+
+            val values = validValuesForSaving.removed("placeOfDeposit") ++ Map(
+              "ccr" -> "COAL 80/80/1",
+              "oci" -> "COAL.2022.V1RJW.P"
+            )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1561,15 +1629,15 @@ class EditSetControllerSpec extends BaseSpec {
                 startDate = ExpectedDate("1", "10", "2020"),
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
-                placeOfDeposit = "",
                 note = "Need to check copyright info.",
+                background = "Photo was taken by a daughter of one of the coal miners who used them.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("You must choose an option"),
+                summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("You must choose an option", "#placeOfDeposit")),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
             )
@@ -1577,7 +1645,11 @@ class EditSetControllerSpec extends BaseSpec {
           }
           "isn't recognised" in {
 
-            val values = validValuesForSaving ++ Map("placeOfDeposit" -> "6")
+            val values = validValuesForSaving ++ Map(
+              "ccr"            -> "COAL 80/80/1",
+              "oci"            -> "COAL.2022.V1RJW.P",
+              "placeOfDeposit" -> "6"
+            )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1597,15 +1669,15 @@ class EditSetControllerSpec extends BaseSpec {
                 startDate = ExpectedDate("1", "10", "2020"),
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
-                placeOfDeposit = "",
                 note = "Need to check copyright info.",
+                background = "Photo was taken by a daughter of one of the coal miners who used them.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("You must choose an option"),
+                summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("You must choose an option", "#placeOfDeposit")),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
             )
@@ -1615,7 +1687,8 @@ class EditSetControllerSpec extends BaseSpec {
         "legal status" when {
           "is not selected" in {
 
-            val values = validValuesForSaving ++ Map("legalStatus" -> "")
+            val values =
+              validValuesForSaving ++ Map("ccr" -> "COAL 80/80/1", "oci" -> "COAL.2022.V1RJW.P", "legalStatus" -> "")
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1635,15 +1708,15 @@ class EditSetControllerSpec extends BaseSpec {
                 startDate = ExpectedDate("1", "10", "2020"),
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "",
-                placeOfDeposit = "2",
                 note = "Need to check copyright info.",
+                background = "Photo was taken by a daughter of one of the coal miners who used them.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("You must choose an option"),
+                summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("You must choose an option", "#legalStatus")),
                 errorMessageForLegalStatus = Some("Error: You must choose an option")
               )
             )
@@ -1652,7 +1725,12 @@ class EditSetControllerSpec extends BaseSpec {
 
           "value doesn't exist" in {
 
-            val values = validValues ++ Map("legalStatus" -> "ref.10")
+            val values =
+              validValuesForSaving ++ Map(
+                "ccr"         -> "COAL 80/80/1",
+                "oci"         -> "COAL.2022.V1RJW.P",
+                "legalStatus" -> "ref.10"
+              )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1666,7 +1744,11 @@ class EditSetControllerSpec extends BaseSpec {
           "is too long" in {
 
             val excessivelyLongNote = "Something about something else." * 100
-            val values = validValuesForSaving ++ Map("note" -> excessivelyLongNote)
+            val values = validValuesForSaving ++ Map(
+              "ccr"  -> "COAL 80/80/1",
+              "oci"  -> "COAL.2022.V1RJW.P",
+              "note" -> excessivelyLongNote
+            )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1686,16 +1768,65 @@ class EditSetControllerSpec extends BaseSpec {
                 startDate = ExpectedDate("1", "10", "2020"),
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
-                placeOfDeposit = "2",
                 note = excessivelyLongNote,
+                background = "Photo was taken by a daughter of one of the coal miners who used them.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                summaryErrorMessages = Seq("Note too long, maximum length 1000 characters"),
+                summaryErrorMessages =
+                  Seq(ExpectedSummaryErrorMessage("Note too long, maximum length 1000 characters", "#note")),
                 errorMessageForNote = Some("Note too long, maximum length 1000 characters")
+              )
+            )
+
+          }
+        }
+        "background" when {
+          "is too long" in {
+
+            val excessivelyLongBackground = "Something about one of the people." * 400
+            val values = validValuesForSaving ++ Map(
+              "ccr"        -> "COAL 80/80/1",
+              "oci"        -> "COAL.2022.V1RJW.P",
+              "background" -> excessivelyLongBackground
+            )
+            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+
+            status(result) mustBe BAD_REQUEST
+            assertPageAsExpected(
+              asDocument(result),
+              ExpectedEditRecordPage(
+                title = "Edit record",
+                heading = "TNA reference: COAL 80/80/1",
+                legend = "Intellectual properties",
+                classicCatalogueRef = "COAL 80/80/1",
+                omegaCatalogueId = "COAL.2022.V1RJW.P",
+                scopeAndContent =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+                coveringDates = "2020 Oct",
+                formerReferenceDepartment = "1234",
+                startDate = ExpectedDate("1", "10", "2020"),
+                endDate = ExpectedDate("31", "10", "2020"),
+                legalStatus = "ref.1",
+                note = "Need to check copyright info.",
+                background = excessivelyLongBackground,
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                ),
+                summaryErrorMessages = Seq(
+                  ExpectedSummaryErrorMessage(
+                    "Administrative / biographical background too long, maximum length 8000 characters",
+                    "#background"
+                  )
+                ),
+                errorMessageForBackground =
+                  Some("Administrative / biographical background too long, maximum length 8000 characters")
               )
             )
 
@@ -1730,13 +1861,15 @@ class EditSetControllerSpec extends BaseSpec {
             editSetRecordEditSaveInstance
           )
 
+          val values = validValuesForSaving ++ Map("ccr" -> "COAL 80/80/1", "oci" -> "COAL.2022.V1RJW.P")
+
           val editRecordPage = controller
             .submit("1", "COAL.2022.V1RJW.P")
             .apply(
               CSRFTokenHelper
                 .addCSRFToken(
                   FakeRequest(POST, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
-                    .withFormUrlEncodedBody(validValuesForSaving.toSeq: _*)
+                    .withFormUrlEncodedBody(values.toSeq: _*)
                     .withSession(SessionKeys.token -> validSessionToken)
                 )
             )
@@ -1747,12 +1880,13 @@ class EditSetControllerSpec extends BaseSpec {
 
         "redirect to result page of the application" in {
           val controller = inject[EditSetController]
+          val values = validValuesForSaving ++ Map("ccr" -> "COAL 80/80/1", "oci" -> "COAL.2022.V1RJW.P")
           val editRecordPage = controller
             .submit("1", "COAL.2022.V1RJW.P")
             .apply(
               CSRFTokenHelper.addCSRFToken(
                 FakeRequest(POST, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
-                  .withFormUrlEncodedBody(validValuesForSaving.toSeq: _*)
+                  .withFormUrlEncodedBody(values.toSeq: _*)
                   .withSession(SessionKeys.token -> validSessionToken)
               )
             )
@@ -1765,7 +1899,8 @@ class EditSetControllerSpec extends BaseSpec {
 
           "all fields are provided" in {
 
-            val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", validValuesForSaving)
+            val values = validValuesForSaving ++ Map("ccr" -> "COAL 80/80/1", "oci" -> "COAL.2022.V1RJW.P")
+            val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
             status(editRecordPageResponse) mustBe SEE_OTHER
             redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
@@ -1786,8 +1921,8 @@ class EditSetControllerSpec extends BaseSpec {
                 startDate = ExpectedDate("1", "10", "2020"),
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
-                placeOfDeposit = "2",
                 note = "Need to check copyright info.",
+                background = "Photo was taken by a daughter of one of the coal miners who used them.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1801,7 +1936,8 @@ class EditSetControllerSpec extends BaseSpec {
 
           "the 'note' field is blank" in {
 
-            val values = validValuesForSaving ++ Map("note" -> "")
+            val values =
+              validValuesForSaving ++ Map("ccr" -> "COAL 80/80/1", "oci" -> "COAL.2022.V1RJW.P", "note" -> "")
 
             val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1824,8 +1960,8 @@ class EditSetControllerSpec extends BaseSpec {
                 startDate = ExpectedDate("1", "10", "2020"),
                 endDate = ExpectedDate("31", "10", "2020"),
                 legalStatus = "ref.1",
-                placeOfDeposit = "2",
                 note = "",
+                background = "Photo was taken by a daughter of one of the coal miners who used them.",
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -1835,6 +1971,43 @@ class EditSetControllerSpec extends BaseSpec {
               )
             )
 
+          }
+          "the 'background' field is blank" in {
+
+            val values =
+              validValuesForSaving ++ Map("ccr" -> "COAL 80/80/5", "oci" -> "COAL.2022.V5RJW.P", "background" -> "")
+
+            val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+
+            status(editRecordPageResponse) mustBe SEE_OTHER
+            redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/save")
+
+            val getRecordResult = getRecordForEditingWhileLoggedIn(1, "COAL.2022.V5RJW.P")
+            assertPageAsExpected(
+              asDocument(getRecordResult),
+              ExpectedEditRecordPage(
+                title = "Edit record",
+                heading = "TNA reference: COAL 80/80/5",
+                legend = "Intellectual properties",
+                classicCatalogueRef = "COAL 80/80/5",
+                omegaCatalogueId = "COAL.2022.V5RJW.P",
+                scopeAndContent =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+                coveringDates = "2020 Oct",
+                formerReferenceDepartment = "1234",
+                startDate = ExpectedDate("1", "10", "2020"),
+                endDate = ExpectedDate("31", "10", "2020"),
+                legalStatus = "ref.1",
+                note = "Need to check copyright info.",
+                background = "",
+                optionsForPlaceOfDeposit = Seq(
+                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
+                  ExpectedSelectOption("1", "The National Archives, Kew"),
+                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
+                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                )
+              )
+            )
           }
         }
       }
@@ -1867,6 +2040,8 @@ class EditSetControllerSpec extends BaseSpec {
         "blank" in {
 
           val values = validValuesForCalculatingDates ++ Map(
+            "ccr"            -> "COAL 80/80/1",
+            "oci"            -> "COAL.2022.V1RJW.P",
             "coveringDates"  -> "   ",
             "startDateDay"   -> "1",
             "startDateMonth" -> "10",
@@ -1894,15 +2069,18 @@ class EditSetControllerSpec extends BaseSpec {
               startDate = ExpectedDate("1", "10", "2020"),
               endDate = ExpectedDate("31", "10", "2020"),
               legalStatus = "ref.1",
-              placeOfDeposit = "2",
               note = "Need to check copyright info.",
+              background = "Photo was taken by a daughter of one of the coal miners who used them.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
-              summaryErrorMessages = Seq("Enter the covering dates", "Covering date format is not valid"),
+              summaryErrorMessages = Seq(
+                ExpectedSummaryErrorMessage("Enter the covering dates", "#coveringDates"),
+                ExpectedSummaryErrorMessage("Covering date format is not valid", "#coveringDates")
+              ),
               errorMessageForCoveringsDates = Some("Enter the covering dates")
             )
           )
@@ -1911,6 +2089,8 @@ class EditSetControllerSpec extends BaseSpec {
         "invalid format" in {
 
           val values = validValuesForCalculatingDates ++ Map(
+            "ccr"            -> "COAL 80/80/1",
+            "oci"            -> "COAL.2022.V1RJW.P",
             "coveringDates"  -> "1270s",
             "startDateDay"   -> "1",
             "startDateMonth" -> "10",
@@ -1938,15 +2118,16 @@ class EditSetControllerSpec extends BaseSpec {
               startDate = ExpectedDate("1", "10", "2020"),
               endDate = ExpectedDate("31", "10", "2020"),
               legalStatus = "ref.1",
-              placeOfDeposit = "2",
               note = "Need to check copyright info.",
+              background = "Photo was taken by a daughter of one of the coal miners who used them.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
-              summaryErrorMessages = Seq("Covering date format is not valid"),
+              summaryErrorMessages =
+                Seq(ExpectedSummaryErrorMessage("Covering date format is not valid", "#coveringDates")),
               errorMessageForCoveringsDates = Some("Covering date format is not valid")
             )
           )
@@ -1955,6 +2136,8 @@ class EditSetControllerSpec extends BaseSpec {
         "contains a non-existent date" in {
 
           val values = validValuesForCalculatingDates ++ Map(
+            "ccr"            -> "COAL 80/80/1",
+            "oci"            -> "COAL.2022.V1RJW.P",
             "coveringDates"  -> "2022 Feb 1-2022 Feb 29",
             "startDateDay"   -> "1",
             "startDateMonth" -> "10",
@@ -1982,15 +2165,16 @@ class EditSetControllerSpec extends BaseSpec {
               startDate = ExpectedDate("1", "10", "2020"),
               endDate = ExpectedDate("31", "10", "2020"),
               legalStatus = "ref.1",
-              placeOfDeposit = "2",
               note = "Need to check copyright info.",
+              background = "Photo was taken by a daughter of one of the coal miners who used them.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
                 ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                 ExpectedSelectOption("3", "British Library, National Sound Archive")
               ),
-              summaryErrorMessages = Seq("Covering date format is not valid"),
+              summaryErrorMessages =
+                Seq(ExpectedSummaryErrorMessage("Covering date format is not valid", "#coveringDates")),
               errorMessageForCoveringsDates = Some("Covering date format is not valid")
             )
           )
@@ -2000,7 +2184,11 @@ class EditSetControllerSpec extends BaseSpec {
       "successful" when {
         "covers period of the switchover" in {
 
-          val values = validValuesForCalculatingDates ++ Map("coveringDates" -> "1752 Aug 1-1752 Sept 12")
+          val values = validValuesForCalculatingDates ++ Map(
+            "ccr"           -> "COAL 80/80/1",
+            "oci"           -> "COAL.2022.V1RJW.P",
+            "coveringDates" -> "1752 Aug 1-1752 Sept 12"
+          )
 
           val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -2020,8 +2208,8 @@ class EditSetControllerSpec extends BaseSpec {
               startDate = ExpectedDate("1", "8", "1752"),
               endDate = ExpectedDate("12", "9", "1752"),
               legalStatus = "ref.1",
-              placeOfDeposit = "2",
               note = "Need to check copyright info.",
+              background = "Photo was taken by a daughter of one of the coal miners who used them.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -2034,7 +2222,11 @@ class EditSetControllerSpec extends BaseSpec {
         }
         "covers period after the switchover" in {
 
-          val values = validValuesForCalculatingDates ++ Map("coveringDates" -> "1984 Dec")
+          val values = validValuesForCalculatingDates ++ Map(
+            "ccr"           -> "COAL 80/80/1",
+            "oci"           -> "COAL.2022.V1RJW.P",
+            "coveringDates" -> "1984 Dec"
+          )
 
           val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -2054,8 +2246,8 @@ class EditSetControllerSpec extends BaseSpec {
               startDate = ExpectedDate("1", "12", "1984"),
               endDate = ExpectedDate("31", "12", "1984"),
               legalStatus = "ref.1",
-              placeOfDeposit = "2",
               note = "Need to check copyright info.",
+              background = "Photo was taken by a daughter of one of the coal miners who used them.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -2068,7 +2260,11 @@ class EditSetControllerSpec extends BaseSpec {
         }
         "covers multiple ranges" in {
 
-          val values = validValuesForCalculatingDates ++ Map("coveringDates" -> "1868; 1890-1902; 1933")
+          val values = validValuesForCalculatingDates ++ Map(
+            "ccr"           -> "COAL 80/80/1",
+            "oci"           -> "COAL.2022.V1RJW.P",
+            "coveringDates" -> "1868; 1890-1902; 1933"
+          )
 
           val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -2088,8 +2284,8 @@ class EditSetControllerSpec extends BaseSpec {
               startDate = ExpectedDate("1", "1", "1868"),
               endDate = ExpectedDate("31", "12", "1933"),
               legalStatus = "ref.1",
-              placeOfDeposit = "2",
               note = "Need to check copyright info.",
+              background = "Photo was taken by a daughter of one of the coal miners who used them.",
               optionsForPlaceOfDeposit = Seq(
                 ExpectedSelectOption("", "Select where this record is held", disabled = true),
                 ExpectedSelectOption("1", "The National Archives, Kew"),
@@ -2143,6 +2339,7 @@ class EditSetControllerSpec extends BaseSpec {
     document must haveLegalStatus(expectedEditRecordPage.legalStatus)
     document must haveSelectionForPlaceOfDeposit(expectedEditRecordPage.optionsForPlaceOfDeposit)
     document must haveNote(expectedEditRecordPage.note)
+    document must haveBackground(expectedEditRecordPage.background)
 
     document must haveVisibleLogoutLink
     document must haveLogoutLinkLabel("Sign out")
@@ -2183,6 +2380,11 @@ class EditSetControllerSpec extends BaseSpec {
       case Some(expectedErrorMessage) => document must haveErrorMessageForNote(expectedErrorMessage)
       case None                       => document must haveNoErrorMessageForNote
     }
+
+    expectedEditRecordPage.errorMessageForBackground match {
+      case Some(expectedErrorMessage) => document must haveErrorMessageForBackground(expectedErrorMessage)
+      case None                       => document must haveNoErrorMessageForBackground
+    }
   }
 
   private def assertPageAsExpected(document: Document, expectedEditRecordPage: ExpectedEditSetPage): Unit = {
@@ -2218,15 +2420,16 @@ class EditSetControllerSpec extends BaseSpec {
     endDate: ExpectedDate,
     legalStatus: String,
     note: String,
-    placeOfDeposit: String,
+    background: String,
     optionsForPlaceOfDeposit: Seq[ExpectedSelectOption],
-    summaryErrorMessages: Seq[String] = Seq.empty,
+    summaryErrorMessages: Seq[ExpectedSummaryErrorMessage] = Seq.empty,
     errorMessageForStartDate: Option[String] = None,
     errorMessageForEndDate: Option[String] = None,
     errorMessageForCoveringsDates: Option[String] = None,
     errorMessageForLegalStatus: Option[String] = None,
     errorMessageForPlaceOfDeposit: Option[String] = None,
-    errorMessageForNote: Option[String] = None
+    errorMessageForNote: Option[String] = None,
+    errorMessageForBackground: Option[String] = None
   )
 
   case class ExpectedEditSetPage(

@@ -53,10 +53,10 @@ class EditSetController @Inject() (
   private val logger: Logger = Logger(this.getClass)
 
   object FieldNames {
+    val background = "background"
     val ccr = "ccr"
     val coveringDates = "coveringDates"
     val orderDirection = "direction"
-    val endDate = "endDate"
     val endDateDay = "endDateDay"
     val endDateMonth = "endDateMonth"
     val endDateYear = "endDateYear"
@@ -67,13 +67,13 @@ class EditSetController @Inject() (
     val oci = "oci"
     val placeOfDeposit = "placeOfDeposit"
     val scopeAndContent = "scopeAndContent"
-    val startDate = "startDate"
     val startDateDay = "startDateDay"
     val startDateMonth = "startDateMonth"
     val startDateYear = "startDateYear"
   }
 
   object MessageKeys {
+    val backgroundTooLong = "edit-set.record.error.background-too-long"
     val buttonDiscard = "edit-set.record.discard.text"
     val buttonSave = "edit-set.record.save.text"
     val coveringDatesMissing = "edit-set.record.missing.covering-dates"
@@ -145,6 +145,11 @@ class EditSetController @Inject() (
         .verifying(
           resolvedMessage(MessageKeys.noteTooLong),
           value => value.length <= 1000
+        ),
+      FieldNames.background -> text
+        .verifying(
+          resolvedMessage(MessageKeys.backgroundTooLong),
+          value => value.length <= 8000
         )
     )(EditSetRecord.apply)(EditSetRecord.unapply)
   )
@@ -303,12 +308,17 @@ class EditSetController @Inject() (
       transformer(form)
     )
 
+  /** For both start date and end date, if any of the parts are at fault (like the month), we assign the error to the
+    * first field, the day. See: https://design-system.service.gov.uk/components/error-summary/
+    * @param form
+    * @return
+    */
   private def validateStartAndEndDates(form: Form[EditSetRecord]): Form[EditSetRecord] = {
     val errorForInvalidStartDate =
-      FormError(FieldNames.startDate, resolvedMessage(MessageKeys.startDateInvalid))
-    val errorForInvalidEndDate = FormError(FieldNames.endDate, resolvedMessage(MessageKeys.endDateInvalid))
+      FormError(FieldNames.startDateDay, resolvedMessage(MessageKeys.startDateInvalid))
+    val errorForInvalidEndDate = FormError(FieldNames.endDateDay, resolvedMessage(MessageKeys.endDateInvalid))
     val errorForEndDateBeforeStartDate =
-      FormError(FieldNames.endDate, resolvedMessage(MessageKeys.endDateBeforeStartDate))
+      FormError(FieldNames.endDateDay, resolvedMessage(MessageKeys.endDateBeforeStartDate))
     val formValues = form.data
     val additionalErrors = (extractStartDate(formValues), extractEndDate(formValues)) match {
       case (Some(startDate), Some(endDate)) if endDate.isBefore(startDate) => Seq(errorForEndDateBeforeStartDate)
