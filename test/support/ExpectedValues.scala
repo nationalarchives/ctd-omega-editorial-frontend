@@ -28,4 +28,6 @@ object ExpectedValues {
   case class ExpectedActionButton(value: String, label: String)
 
   case class ExpectedDate(day: String, month: String, year: String)
+
+  case class ExpectedSummaryErrorMessage(message: String, link: String)
 }

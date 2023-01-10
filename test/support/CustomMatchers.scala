@@ -21,9 +21,9 @@
 
 package support
 
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{ Document, Element }
 import org.scalatest.matchers.{ MatchResult, Matcher }
-import support.ExpectedValues.ExpectedSelectOption
+import support.ExpectedValues.{ ExpectedSelectOption, ExpectedSummaryErrorMessage }
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError
 import controllers.EditSetControllerSpec._
 
@@ -198,20 +198,31 @@ object CustomMatchers {
       actualValue = document.select("#error-summary-title").text()
     )
 
-  def haveSummaryErrorMessages(expectedValues: String*): Matcher[Document] = (document: Document) => {
-    val actualValues = document.select("ul.govuk-error-summary__list > li").eachText().asScala.toSeq
-    val actualValuesForDisplay = actualValues.mkString(",")
-    val expectedValuesForDisplay = expectedValues.toSet.mkString(",")
-    val errorMessageIfExpected =
-      s"The page didn't have summary error messages of ('$expectedValuesForDisplay'). The actual messages were ('$actualValuesForDisplay')"
-    val errorMessageIfNotExpected =
-      s"The page did indeed have a summary error messages of ('$expectedValuesForDisplay'), which was not expected."
-    MatchResult(
-      actualValues == expectedValues.toSeq,
-      errorMessageIfExpected,
-      errorMessageIfNotExpected
-    )
-  }
+  def haveSummaryErrorMessages(expectedSummaryErrorMessages: ExpectedSummaryErrorMessage*): Matcher[Document] =
+    (document: Document) => {
+
+      def display(summaryErrorMessages: Seq[ExpectedSummaryErrorMessage]) =
+        summaryErrorMessages
+          .map(summaryErrorMessage => s"[${summaryErrorMessage.message}] / [${summaryErrorMessage.link}]")
+          .mkString(",")
+
+      val actualAnchors = document.select("ul.govuk-error-summary__list > li > a").asScala.toSeq
+      val actualSummaryErrorMessages = actualAnchors.map(asExpectedSummaryErrorMessage)
+      val actualValuesForDisplay = display(actualSummaryErrorMessages)
+      val expectedValuesForDisplay = display(expectedSummaryErrorMessages)
+      val errorMessageIfExpected =
+        s"The page didn't have summary error messages of ('$expectedValuesForDisplay'). The actual messages were ('$actualValuesForDisplay')"
+      val errorMessageIfNotExpected =
+        s"The page did indeed have a summary error messages of ('$expectedValuesForDisplay'), which was not expected."
+      MatchResult(
+        actualSummaryErrorMessages == expectedSummaryErrorMessages,
+        errorMessageIfExpected,
+        errorMessageIfNotExpected
+      )
+    }
+
+  private def asExpectedSummaryErrorMessage(element: Element): ExpectedSummaryErrorMessage =
+    ExpectedSummaryErrorMessage(element.text(), element.attr("href"))
 
   def haveNoSummaryErrorMessages: Matcher[Document] = haveSummaryErrorMessages()
 
@@ -382,6 +393,18 @@ object CustomMatchers {
     haveErrorMessageForField("note", "#note-error", expectedValue)
 
   def haveNoErrorMessageForNote: Matcher[Document] = haveErrorMessageForNote("")
+
+  def haveBackground(expectedValue: String): Matcher[Document] = (document: Document) =>
+    singleValueMatcher(
+      label = "a background",
+      expectedValue = expectedValue,
+      actualValue = document.select("#background").text()
+    )
+
+  def haveErrorMessageForBackground(expectedValue: String): Matcher[Document] =
+    haveErrorMessageForField("background", "#background-error", expectedValue)
+
+  def haveNoErrorMessageForBackground: Matcher[Document] = haveErrorMessageForBackground("")
 
   private def haveSelectionOptions(
     id: String,

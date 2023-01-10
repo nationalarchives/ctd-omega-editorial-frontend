@@ -42,6 +42,7 @@ case class EditSetRecord(
   legalStatus: String,
   placeOfDeposit: String,
   note: String,
+  background: String,
   relatedMaterial: Seq[RelatedMaterial] = Seq.empty
 )
 

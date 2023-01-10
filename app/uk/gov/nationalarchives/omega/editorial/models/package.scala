@@ -56,7 +56,8 @@ package object editSetRecords {
         |      "linkText" : "COAL 80/80/2",
         |      "description" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
         |    }
-        |  ]
+        |  ],
+        |  "background": "Photo was taken by a daughter of one of the coal miners who used them."
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -77,7 +78,8 @@ package object editSetRecords {
         |  "endDateYear" : "1966",
         |  "legalStatus": "ref.2",
         |  "placeOfDeposit" : "",
-        |  "note": "A note about COAL.2022.V2RJW.P."
+        |  "note": "A note about COAL.2022.V2RJW.P.",
+        |  "background": ""
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -98,7 +100,8 @@ package object editSetRecords {
         |  "endDateYear" : "1964",
         |  "legalStatus": "",
         |  "placeOfDeposit" : "6",
-        |  "note": ""
+        |  "note": "",
+        |  "background": "Photo was taken by a son of one of the coal miners who used them."
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -119,7 +122,8 @@ package object editSetRecords {
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "note": ""
+        |  "note": "",
+        |  "background": ""
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -140,7 +144,8 @@ package object editSetRecords {
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "note": ""
+        |  "note": "Need to check copyright info.",
+        |  "background": ""
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -161,7 +166,8 @@ package object editSetRecords {
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "note": ""
+        |  "note": "",
+        |  "background": ""
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -182,7 +188,8 @@ package object editSetRecords {
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "note": ""
+        |  "note": "",
+        |  "background": ""
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -203,7 +210,8 @@ package object editSetRecords {
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "note": ""
+        |  "note": "",
+        |  "background": ""
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -224,7 +232,8 @@ package object editSetRecords {
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "note": ""
+        |  "note": "",
+        |  "background": ""
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -245,7 +254,8 @@ package object editSetRecords {
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "note": ""
+        |  "note": "",
+        |  "background": ""
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -266,7 +276,8 @@ package object editSetRecords {
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "note": ""
+        |  "note": "",
+        |  "background": ""
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -287,12 +298,13 @@ package object editSetRecords {
         |  "endDateYear" : "1960",
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
-        |  "note": ""
+        |  "note": "",
+        |  "background": ""
         |} """.stripMargin
     )
     .as[EditSetRecord]
 
-  var editSetRecordMap = Map(
+  private var editSetRecordMap = Map(
     "COAL.2022.V1RJW.P"  -> editSetRecord1,
     "COAL.2022.V2RJW.P"  -> editSetRecord2,
     "COAL.2022.V3RJW.P"  -> editSetRecord3,
