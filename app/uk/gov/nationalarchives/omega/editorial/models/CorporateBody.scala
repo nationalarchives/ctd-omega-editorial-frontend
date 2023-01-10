@@ -21,4 +21,4 @@
 
 package uk.gov.nationalarchives.omega.editorial.models
 
-case class CorporateBody(id: String, name: String)
+case class CorporateBody(id: String, name: String, startingYear: Option[Int] = None, endingYear: Option[Int] = None)

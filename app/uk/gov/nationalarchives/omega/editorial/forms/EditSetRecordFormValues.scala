@@ -37,7 +37,8 @@ case class EditSetRecordFormValues(
   placeOfDeposit: String,
   note: String,
   background: String,
-  custodialHistory: String
+  custodialHistory: String,
+  creatorIDs: Seq[String] = Seq.empty
 )
 
 object EditSetRecordFormValues {
@@ -60,7 +61,8 @@ object EditSetRecordFormValues {
       placeOfDeposit = formValues.placeOfDeposit,
       note = formValues.note,
       background = formValues.background,
-      custodialHistory = formValues.custodialHistory
+      custodialHistory = formValues.custodialHistory,
+      creatorIDs = formValues.creatorIDs
     )
 
   def populateForm(editSetRecord: EditSetRecord): EditSetRecordFormValues =
@@ -78,7 +80,8 @@ object EditSetRecordFormValues {
       placeOfDeposit = editSetRecord.placeOfDeposit,
       note = editSetRecord.note,
       background = editSetRecord.background,
-      custodialHistory = editSetRecord.custodialHistory
+      custodialHistory = editSetRecord.custodialHistory,
+      creatorIDs = editSetRecord.creatorIDs
     )
 
 }

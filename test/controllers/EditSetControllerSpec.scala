@@ -22,16 +22,18 @@
 package controllers
 
 import org.jsoup.nodes.Document
+import org.scalatest.compatible.Assertion
 import play.api.mvc._
 import play.api.test.Helpers._
 import play.api.test._
-import org.scalatest.compatible.Assertion
 import support.BaseSpec
 import support.CustomMatchers._
 import support.ExpectedValues._
-import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
+import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
+import uk.gov.nationalarchives.omega.editorial.editSetRecords.{ editSetRecordMap, restoreOriginalRecords }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, RelatedMaterial, SeparatedMaterial }
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
 import scala.concurrent.Future
@@ -45,6 +47,11 @@ class EditSetControllerSpec extends BaseSpec {
 
   val validSessionToken: String = Session.generateToken("1234")
   val invalidSessionToken: String = Session.generateToken("invalid-user")
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    restoreOriginalRecords()
+  }
 
   "EditSetController GET /edit-set/{id}" should {
 
@@ -69,6 +76,7 @@ class EditSetControllerSpec extends BaseSpec {
           stub.fileMimeTypes,
           stub.executionContext
         ),
+        testReferenceDataService,
         editSetInstance,
         editSetRecordEditInstance,
         editSetRecordEditDiscardInstance,
@@ -893,13 +901,14 @@ class EditSetControllerSpec extends BaseSpec {
           stub.fileMimeTypes,
           stub.executionContext
         ),
+        testReferenceDataService,
         editSetInstance,
         editSetRecordEditInstance,
         editSetRecordEditDiscardInstance,
         editSetRecordEditSaveInstance
       )
       val editRecordPage = controller
-        .editRecord("1", "COAL.2022.V1RJW.P")
+        .viewEditRecordForm("1", "COAL.2022.V1RJW.P")
         .apply(
           CSRFTokenHelper.addCSRFToken(
             FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
@@ -916,7 +925,7 @@ class EditSetControllerSpec extends BaseSpec {
     "render the edit set page from the application" in {
       val controller = inject[EditSetController]
       val editRecordPage = controller
-        .editRecord("1", "COAL.2022.V1RJW.P")
+        .viewEditRecordForm("1", "COAL.2022.V1RJW.P")
         .apply(
           CSRFTokenHelper.addCSRFToken(
             FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
@@ -993,6 +1002,22 @@ class EditSetControllerSpec extends BaseSpec {
               ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
               ExpectedSelectOption("3", "British Library, National Sound Archive")
             ),
+            optionsForCreators = Seq(
+              Seq(
+                ExpectedSelectOption("", "Select creator", disabled = true),
+                ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)", selected = true),
+                ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+              ),
+              Seq(
+                ExpectedSelectOption("", "Select creator", disabled = true),
+                ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
+                ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+              )
+            ),
             separatedMaterial = Seq(
               ExpectedSeparatedMaterial(
                 linkHref = Some("#;"),
@@ -1059,16 +1084,138 @@ class EditSetControllerSpec extends BaseSpec {
               ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
               ExpectedSelectOption("3", "British Library, National Sound Archive")
             ),
-            custodialHistory = ""
+            optionsForCreators = Seq(
+              Seq(
+                ExpectedSelectOption("", "Select creator", disabled = true),
+                ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+              ),
+              Seq(
+                ExpectedSelectOption("", "Select creator", disabled = true),
+                ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
+                ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+              ),
+              Seq(
+                ExpectedSelectOption("", "Select creator", disabled = true),
+                ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+              )
+            ),
+            custodialHistory = "",
+            relatedMaterial = Seq.empty
           )
         )
       }
+      "all data is valid, except that the one creator ID is unrecognised" in {
+        val request =
+          FakeRequest(GET, "/edit-set/1/record/COAL.2022.V10RJW.P/edit").withSession(
+            SessionKeys.token -> validSessionToken
+          )
+        val editRecordPage = route(app, request).get
+
+        status(editRecordPage) mustBe OK
+        contentType(editRecordPage) mustBe Some("text/html")
+        assertPageAsExpected(
+          asDocument(editRecordPage),
+          ExpectedEditRecordPage(
+            title = "Edit record",
+            heading = "TNA reference: COAL 80/80/10",
+            legend = "Intellectual properties",
+            classicCatalogueRef = "COAL 80/80/10",
+            omegaCatalogueId = "COAL.2022.V10RJW.P",
+            scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+            coveringDates = "1960",
+            formerReferenceDepartment = "",
+            startDate = ExpectedDate("1", "1", "1960"),
+            endDate = ExpectedDate("31", "12", "1960"),
+            legalStatus = "ref.1",
+            note = "",
+            background = "",
+            optionsForPlaceOfDeposit = Seq(
+              ExpectedSelectOption("", "Select where this record is held", disabled = true),
+              ExpectedSelectOption("1", "The National Archives, Kew", selected = true),
+              ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
+              ExpectedSelectOption("3", "British Library, National Sound Archive")
+            ),
+            optionsForCreators = Seq(
+              Seq(
+                ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
+                ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+              )
+            ),
+            custodialHistory = "",
+            relatedMaterial = Seq.empty,
+            separatedMaterial = Seq(
+              ExpectedSeparatedMaterial(description =
+                Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+              )
+            )
+          )
+        )
+      }
+
+      "all data is valid, except that no creator ID was previously selected" in {
+        val request =
+          FakeRequest(GET, "/edit-set/1/record/COAL.2022.V4RJW.P/edit").withSession(
+            SessionKeys.token -> validSessionToken
+          )
+        val editRecordPage = route(app, request).get
+
+        status(editRecordPage) mustBe OK
+        contentType(editRecordPage) mustBe Some("text/html")
+        assertPageAsExpected(
+          asDocument(editRecordPage),
+          ExpectedEditRecordPage(
+            title = "Edit record",
+            heading = "TNA reference: COAL 80/80/4",
+            legend = "Intellectual properties",
+            classicCatalogueRef = "COAL 80/80/4",
+            omegaCatalogueId = "COAL.2022.V4RJW.P",
+            scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+            coveringDates = "1960",
+            formerReferenceDepartment = "",
+            startDate = ExpectedDate("1", "1", "1960"),
+            endDate = ExpectedDate("31", "12", "1960"),
+            legalStatus = "ref.1",
+            note = "",
+            background = "",
+            optionsForPlaceOfDeposit = Seq(
+              ExpectedSelectOption("", "Select where this record is held", disabled = true),
+              ExpectedSelectOption("1", "The National Archives, Kew", selected = true),
+              ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
+              ExpectedSelectOption("3", "British Library, National Sound Archive")
+            ),
+            optionsForCreators = Seq(
+              Seq(
+                ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
+                ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+              )
+            ),
+            custodialHistory = "",
+            relatedMaterial = Seq.empty,
+            separatedMaterial = Seq.empty
+          )
+        )
+      }
+
     }
 
     "redirect to the login page from the application when requested with invalid session token" in {
       val controller = inject[EditSetController]
       val editRecordPage = controller
-        .editRecord("1", "COAL.2022.V1RJW.P")
+        .viewEditRecordForm("1", "COAL.2022.V1RJW.P")
         .apply(
           CSRFTokenHelper.addCSRFToken(
             FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
@@ -1093,164 +1240,46 @@ class EditSetControllerSpec extends BaseSpec {
   }
 
   "EditSetController POST /edit-set/{id}/record/{recordId}/edit" should {
-
-    val validValues: Map[String, String] =
-      Map(
-        FieldNames.scopeAndContent -> "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-        FieldNames.formerReferenceDepartment -> "1234",
-        FieldNames.coveringDates             -> "2020 Oct",
-        FieldNames.startDateDay              -> "1",
-        FieldNames.startDateMonth            -> "10",
-        FieldNames.startDateYear             -> "2020",
-        FieldNames.endDateDay                -> "31",
-        FieldNames.endDateMonth              -> "10",
-        FieldNames.endDateYear               -> "2020",
-        FieldNames.legalStatus               -> "ref.1",
-        FieldNames.placeOfDeposit            -> "2",
-        FieldNames.note                      -> "Need to check copyright info.",
-        FieldNames.background       -> "Photo was taken by a daughter of one of the coal miners who used them.",
-        FieldNames.custodialHistory -> "Files originally created by successor or predecessor departments for COAL"
-      )
-
     "when the action is to save the record" when {
-
-      val validValuesForSaving = validValues ++ Map("action" -> "save")
 
       "fail" when {
         "and yet preserve the CCR" when {
           "there are errors" in {
+
             val blankScopeAndContentToFailValidation = ""
-            val values = validValuesForSaving ++ Map(
+            val oci = "COAL.2022.V1RJW.P"
+            val values = valuesFromRecord(oci) ++ Map(
               FieldNames.scopeAndContent -> blankScopeAndContentToFailValidation
             )
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+            val result = submitWhileLoggedIn("save", 1, oci, values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedEditRecordPage(
-                title = "Edit record",
-                heading = "TNA reference: COAL 80/80/1",
-                legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V1RJW.P",
-                scopeAndContent = "",
-                coveringDates = "2020 Oct",
-                formerReferenceDepartment = "1234",
-                startDate = ExpectedDate("1", "10", "2020"),
-                endDate = ExpectedDate("31", "10", "2020"),
-                legalStatus = "ref.1",
-                note = "Need to check copyright info.",
-                background = "Photo was taken by a daughter of one of the coal miners who used them.",
-                optionsForPlaceOfDeposit = Seq(
-                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
-                ),
-                separatedMaterial = Seq(
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/5")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/6")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/7")
-                  )
-                ),
-                relatedMaterial = Seq(
-                  ExpectedRelatedMaterial(
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  )
-                ),
-                custodialHistory = "Files originally created by successor or predecessor departments for COAL"
-              )
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(omegaCatalogueId = oci, scopeAndContent = blankScopeAndContentToFailValidation)
             )
           }
         }
         "start date" when {
           "is empty" in {
 
+            val oci = "COAL.2022.V1RJW.P"
             val values =
-              validValuesForSaving ++ Map(
+              valuesFromRecord(oci) ++ Map(
                 FieldNames.startDateDay   -> "",
                 FieldNames.startDateMonth -> "",
                 FieldNames.startDateYear  -> ""
               )
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+            val result = submitWhileLoggedIn("save", 1, oci, values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedEditRecordPage(
-                title = "Edit record",
-                heading = "TNA reference: COAL 80/80/1",
-                legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V1RJW.P",
-                scopeAndContent =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-                coveringDates = "2020 Oct",
-                formerReferenceDepartment = "1234",
+              generateExpectedEditRecordPageFromRecord(oci).copy(
                 startDate = ExpectedDate("", "", ""),
-                endDate = ExpectedDate("31", "10", "2020"),
-                legalStatus = "ref.1",
-                note = "Need to check copyright info.",
-                background = "Photo was taken by a daughter of one of the coal miners who used them.",
-                optionsForPlaceOfDeposit = Seq(
-                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
-                ),
-                separatedMaterial = Seq(
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/5")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/6")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/7")
-                  )
-                ),
-                relatedMaterial = Seq(
-                  ExpectedRelatedMaterial(
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  )
-                ),
-                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages =
                   Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", s"#${FieldNames.startDateDay}")),
                 errorMessageForStartDate = Some("Start date is not a valid date")
@@ -1260,70 +1289,21 @@ class EditSetControllerSpec extends BaseSpec {
           }
           "is of an invalid format" in {
 
+            val oci = "COAL.2022.V1RJW.P"
             val values =
-              validValuesForSaving ++ Map(
+              valuesFromRecord(oci) ++ Map(
                 FieldNames.startDateDay   -> "XX",
                 FieldNames.startDateMonth -> "11",
                 FieldNames.startDateYear  -> "1960"
               )
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+            val result = submitWhileLoggedIn("save", 1, "COAL.2022.V1RJW.P", values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedEditRecordPage(
-                title = "Edit record",
-                heading = "TNA reference: COAL 80/80/1",
-                legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V1RJW.P",
-                scopeAndContent =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-                coveringDates = "2020 Oct",
-                formerReferenceDepartment = "1234",
+              generateExpectedEditRecordPageFromRecord(oci).copy(
                 startDate = ExpectedDate("XX", "11", "1960"),
-                endDate = ExpectedDate("31", "10", "2020"),
-                legalStatus = "ref.1",
-                note = "Need to check copyright info.",
-                background = "Photo was taken by a daughter of one of the coal miners who used them.",
-                optionsForPlaceOfDeposit = Seq(
-                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
-                ),
-                separatedMaterial = Seq(
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/5")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/6")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/7")
-                  )
-                ),
-                relatedMaterial = Seq(
-                  ExpectedRelatedMaterial(
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  )
-                ),
-                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages =
                   Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", s"#${FieldNames.startDateDay}")),
                 errorMessageForStartDate = Some("Start date is not a valid date")
@@ -1333,215 +1313,74 @@ class EditSetControllerSpec extends BaseSpec {
           }
         }
         "doesn't exist" in {
-          val values = validValuesForSaving ++ Map(
-            FieldNames.startDateDay   -> "29",
-            FieldNames.startDateMonth -> "2",
-            FieldNames.startDateYear  -> "2022",
-            FieldNames.endDateDay     -> "31",
-            FieldNames.endDateMonth   -> "10",
-            FieldNames.endDateYear    -> "2022"
-          )
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+          val oci = "COAL.2022.V1RJW.P"
+          val values =
+            valuesFromRecord(oci) ++ Map(
+              FieldNames.startDateDay   -> "29",
+              FieldNames.startDateMonth -> "2",
+              FieldNames.startDateYear  -> "2022",
+              FieldNames.endDateDay     -> "31",
+              FieldNames.endDateMonth   -> "10",
+              FieldNames.endDateYear    -> "2022"
+            )
+
+          val result = submitWhileLoggedIn("save", 1, oci, values)
 
           status(result) mustBe BAD_REQUEST
-          val expectedPage = ExpectedEditRecordPage(
-            title = "Edit record",
-            heading = "TNA reference: COAL 80/80/1",
-            legend = "Intellectual properties",
-            classicCatalogueRef = "COAL 80/80/1",
-            omegaCatalogueId = "COAL.2022.V1RJW.P",
-            scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-            coveringDates = "2020 Oct",
-            formerReferenceDepartment = "1234",
-            startDate = ExpectedDate("29", "2", "2022"),
-            endDate = ExpectedDate("31", "10", "2022"),
-            legalStatus = "ref.1",
-            note = "Need to check copyright info.",
-            background = "Photo was taken by a daughter of one of the coal miners who used them.",
-            optionsForPlaceOfDeposit = Seq(
-              ExpectedSelectOption("", "Select where this record is held", disabled = true),
-              ExpectedSelectOption("1", "The National Archives, Kew"),
-              ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-              ExpectedSelectOption("3", "British Library, National Sound Archive")
-            ),
-            custodialHistory = "Files originally created by successor or predecessor departments for COAL",
-            summaryErrorMessages =
-              Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", s"#${FieldNames.startDateDay}")),
-            errorMessageForStartDate = Some("Start date is not a valid date"),
-            separatedMaterial = Seq(
-              ExpectedSeparatedMaterial(
-                linkHref = Some("#;"),
-                linkText = Some("COAL 80/80/5")
-              ),
-              ExpectedSeparatedMaterial(
-                linkHref = Some("#;"),
-                linkText = Some("COAL 80/80/6")
-              ),
-              ExpectedSeparatedMaterial(
-                linkHref = Some("#;"),
-                linkText = Some("COAL 80/80/7")
-              )
-            ),
-            relatedMaterial = Seq(
-              ExpectedRelatedMaterial(
-                description =
-                  Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-              ),
-              ExpectedRelatedMaterial(
-                linkHref = Some("#;"),
-                linkText = Some("COAL 80/80/3")
-              ),
-              ExpectedRelatedMaterial(
-                linkHref = Some("#;"),
-                linkText = Some("COAL 80/80/2"),
-                description =
-                  Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-              )
+          assertPageAsExpected(
+            asDocument(result),
+            generateExpectedEditRecordPageFromRecord(oci).copy(
+              startDate = ExpectedDate("29", "2", "2022"),
+              endDate = ExpectedDate("31", "10", "2022"),
+              summaryErrorMessages =
+                Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", s"#${FieldNames.startDateDay}")),
+              errorMessageForStartDate = Some("Start date is not a valid date")
             )
           )
-          assertPageAsExpected(asDocument(result), expectedPage)
+
         }
         "end date" when {
           "is empty" in {
 
-            val values = validValuesForSaving ++ Map(
-              FieldNames.endDateDay   -> "",
-              FieldNames.endDateMonth -> "",
-              FieldNames.endDateYear  -> ""
-            )
+            val oci = "COAL.2022.V1RJW.P"
+            val values =
+              valuesFromRecord(oci) ++ Map(
+                FieldNames.endDateDay   -> "",
+                FieldNames.endDateMonth -> "",
+                FieldNames.endDateYear  -> ""
+              )
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+            val result = submitWhileLoggedIn("save", 1, oci, values)
 
             status(result) mustBe BAD_REQUEST
-            val document = asDocument(result)
             assertPageAsExpected(
-              document,
-              ExpectedEditRecordPage(
-                title = "Edit record",
-                heading = "TNA reference: COAL 80/80/1",
-                legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V1RJW.P",
-                scopeAndContent =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-                coveringDates = "2020 Oct",
-                formerReferenceDepartment = "1234",
-                startDate = ExpectedDate("1", "10", "2020"),
+              asDocument(result),
+              generateExpectedEditRecordPageFromRecord(oci).copy(
                 endDate = ExpectedDate("", "", ""),
-                legalStatus = "ref.1",
-                note = "Need to check copyright info.",
-                background = "Photo was taken by a daughter of one of the coal miners who used them.",
-                optionsForPlaceOfDeposit = Seq(
-                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
-                ),
-                separatedMaterial = Seq(
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/5")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/6")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/7")
-                  )
-                ),
-                relatedMaterial = Seq(
-                  ExpectedRelatedMaterial(
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  )
-                ),
-                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages =
                   Seq(ExpectedSummaryErrorMessage("End date is not a valid date", s"#${FieldNames.endDateDay}")),
                 errorMessageForEndDate = Some("End date is not a valid date")
               )
             )
-
           }
           "is of an invalid format" in {
 
+            val oci = "COAL.2022.V1RJW.P"
             val values =
-              validValuesForSaving ++ Map(
+              valuesFromRecord(oci) ++ Map(
                 FieldNames.endDateDay   -> "XX",
                 FieldNames.endDateMonth -> "12",
                 FieldNames.endDateYear  -> "2000"
               )
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+            val result = submitWhileLoggedIn("save", 1, oci, values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedEditRecordPage(
-                title = "Edit record",
-                heading = "TNA reference: COAL 80/80/1",
-                legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V1RJW.P",
-                scopeAndContent =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-                coveringDates = "2020 Oct",
-                formerReferenceDepartment = "1234",
-                startDate = ExpectedDate("1", "10", "2020"),
+              generateExpectedEditRecordPageFromRecord(oci).copy(
                 endDate = ExpectedDate("XX", "12", "2000"),
-                legalStatus = "ref.1",
-                note = "Need to check copyright info.",
-                background = "Photo was taken by a daughter of one of the coal miners who used them.",
-                optionsForPlaceOfDeposit = Seq(
-                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
-                ),
-                separatedMaterial = Seq(
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/5")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/6")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/7")
-                  )
-                ),
-                relatedMaterial = Seq(
-                  ExpectedRelatedMaterial(
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  )
-                ),
-                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages =
                   Seq(ExpectedSummaryErrorMessage("End date is not a valid date", s"#${FieldNames.endDateDay}")),
                 errorMessageForEndDate = Some("End date is not a valid date")
@@ -1551,8 +1390,9 @@ class EditSetControllerSpec extends BaseSpec {
           }
           "doesn't exist" in {
 
-            val values = validValuesForSaving ++
-              Map(
+            val oci = "COAL.2022.V1RJW.P"
+            val values =
+              valuesFromRecord(oci) ++ Map(
                 FieldNames.startDateDay   -> "1",
                 FieldNames.startDateMonth -> "2",
                 FieldNames.startDateYear  -> "2022",
@@ -1560,63 +1400,15 @@ class EditSetControllerSpec extends BaseSpec {
                 FieldNames.endDateMonth   -> "2",
                 FieldNames.endDateYear    -> "2022"
               )
-            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+
+            val result = submitWhileLoggedIn("save", 1, oci, values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedEditRecordPage(
-                title = "Edit record",
-                heading = "TNA reference: COAL 80/80/1",
-                legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V1RJW.P",
-                scopeAndContent =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-                coveringDates = "2020 Oct",
-                formerReferenceDepartment = "1234",
+              generateExpectedEditRecordPageFromRecord(oci).copy(
                 startDate = ExpectedDate("1", "2", "2022"),
                 endDate = ExpectedDate("29", "2", "2022"),
-                legalStatus = "ref.1",
-                note = "Need to check copyright info.",
-                background = "Photo was taken by a daughter of one of the coal miners who used them.",
-                optionsForPlaceOfDeposit = Seq(
-                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
-                ),
-                separatedMaterial = Seq(
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/5")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/6")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/7")
-                  )
-                ),
-                relatedMaterial = Seq(
-                  ExpectedRelatedMaterial(
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  )
-                ),
-                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages =
                   Seq(ExpectedSummaryErrorMessage("End date is not a valid date", s"#${FieldNames.endDateDay}")),
                 errorMessageForEndDate = Some("End date is not a valid date")
@@ -1626,72 +1418,25 @@ class EditSetControllerSpec extends BaseSpec {
           }
           "is before start date" in {
 
-            val values = validValuesForSaving ++ Map(
-              FieldNames.startDateDay   -> "12",
-              FieldNames.startDateMonth -> "10",
-              FieldNames.startDateYear  -> "2020",
-              FieldNames.endDateDay     -> "11",
-              FieldNames.endDateMonth   -> "10",
-              FieldNames.endDateYear    -> "2020"
-            )
+            val oci = "COAL.2022.V1RJW.P"
+            val values =
+              valuesFromRecord(oci) ++ Map(
+                FieldNames.startDateDay   -> "12",
+                FieldNames.startDateMonth -> "10",
+                FieldNames.startDateYear  -> "2020",
+                FieldNames.endDateDay     -> "11",
+                FieldNames.endDateMonth   -> "10",
+                FieldNames.endDateYear    -> "2020"
+              )
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+            val result = submitWhileLoggedIn("save", 1, oci, values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedEditRecordPage(
-                title = "Edit record",
-                heading = "TNA reference: COAL 80/80/1",
-                legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V1RJW.P",
-                scopeAndContent =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-                coveringDates = "2020 Oct",
-                formerReferenceDepartment = "1234",
+              generateExpectedEditRecordPageFromRecord(oci).copy(
                 startDate = ExpectedDate("12", "10", "2020"),
                 endDate = ExpectedDate("11", "10", "2020"),
-                legalStatus = "ref.1",
-                note = "Need to check copyright info.",
-                background = "Photo was taken by a daughter of one of the coal miners who used them.",
-                optionsForPlaceOfDeposit = Seq(
-                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
-                ),
-                separatedMaterial = Seq(
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/5")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/6")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/7")
-                  )
-                ),
-                relatedMaterial = Seq(
-                  ExpectedRelatedMaterial(
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  )
-                ),
-                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages =
                   Seq(ExpectedSummaryErrorMessage("End date cannot precede start date", s"#${FieldNames.endDateDay}")),
                 errorMessageForEndDate = Some("End date cannot precede start date")
@@ -1702,78 +1447,31 @@ class EditSetControllerSpec extends BaseSpec {
         }
         "neither start date nor end date is valid" in {
 
-          val values = validValuesForSaving ++ Map(
-            FieldNames.startDateDay   -> "12",
-            FieldNames.startDateMonth -> "14",
-            FieldNames.startDateYear  -> "2020",
-            FieldNames.endDateDay     -> "42",
-            FieldNames.endDateMonth   -> "12",
-            FieldNames.endDateYear    -> "2020"
-          )
+          val oci = "COAL.2022.V1RJW.P"
+          val values =
+            valuesFromRecord(oci) ++ Map(
+              FieldNames.startDateDay   -> "12",
+              FieldNames.startDateMonth -> "14",
+              FieldNames.startDateYear  -> "2020",
+              FieldNames.endDateDay     -> "42",
+              FieldNames.endDateMonth   -> "12",
+              FieldNames.endDateYear    -> "2020"
+            )
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+          val result = submitWhileLoggedIn("save", 1, oci, values)
 
           status(result) mustBe BAD_REQUEST
           assertPageAsExpected(
             asDocument(result),
-            ExpectedEditRecordPage(
-              title = "Edit record",
-              heading = "TNA reference: COAL 80/80/1",
-              legend = "Intellectual properties",
-              classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V1RJW.P",
-              scopeAndContent =
-                "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-              coveringDates = "2020 Oct",
-              formerReferenceDepartment = "1234",
+            generateExpectedEditRecordPageFromRecord(oci).copy(
               startDate = ExpectedDate("12", "14", "2020"),
               endDate = ExpectedDate("42", "12", "2020"),
-              legalStatus = "ref.1",
-              note = "Need to check copyright info.",
-              background = "Photo was taken by a daughter of one of the coal miners who used them.",
-              optionsForPlaceOfDeposit = Seq(
-                ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                ExpectedSelectOption("1", "The National Archives, Kew"),
-                ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                ExpectedSelectOption("3", "British Library, National Sound Archive")
-              ),
-              custodialHistory = "Files originally created by successor or predecessor departments for COAL",
               summaryErrorMessages = Seq(
                 ExpectedSummaryErrorMessage("Start date is not a valid date", s"#${FieldNames.startDateDay}"),
                 ExpectedSummaryErrorMessage("End date is not a valid date", s"#${FieldNames.endDateDay}")
               ),
               errorMessageForStartDate = Some("Start date is not a valid date"),
-              errorMessageForEndDate = Some("End date is not a valid date"),
-              separatedMaterial = Seq(
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/5")
-                ),
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/6")
-                ),
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/7")
-                )
-              ),
-              relatedMaterial = Seq(
-                ExpectedRelatedMaterial(
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                ),
-                ExpectedRelatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/3")
-                ),
-                ExpectedRelatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/2"),
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                )
-              )
+              errorMessageForEndDate = Some("End date is not a valid date")
             )
           )
 
@@ -1781,67 +1479,19 @@ class EditSetControllerSpec extends BaseSpec {
         "covering date" when {
           "is invalid" in {
 
-            val values = validValuesForSaving ++ Map(
-              FieldNames.coveringDates -> "Oct 1 2004"
-            )
+            val oci = "COAL.2022.V1RJW.P"
+            val values =
+              valuesFromRecord(oci) ++ Map(
+                FieldNames.coveringDates -> "Oct 1 2004"
+              )
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+            val result = submitWhileLoggedIn("save", 1, oci, values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedEditRecordPage(
-                title = "Edit record",
-                heading = "TNA reference: COAL 80/80/1",
-                legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V1RJW.P",
-                scopeAndContent =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+              generateExpectedEditRecordPageFromRecord(oci).copy(
                 coveringDates = "Oct 1 2004",
-                formerReferenceDepartment = "1234",
-                startDate = ExpectedDate("1", "10", "2020"),
-                endDate = ExpectedDate("31", "10", "2020"),
-                legalStatus = "ref.1",
-                note = "Need to check copyright info.",
-                background = "Photo was taken by a daughter of one of the coal miners who used them.",
-                optionsForPlaceOfDeposit = Seq(
-                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
-                ),
-                separatedMaterial = Seq(
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/5")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/6")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/7")
-                  )
-                ),
-                relatedMaterial = Seq(
-                  ExpectedRelatedMaterial(
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  )
-                ),
-                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages = Seq(
                   ExpectedSummaryErrorMessage("Covering date format is not valid", s"#${FieldNames.coveringDates}")
                 ),
@@ -1851,68 +1501,21 @@ class EditSetControllerSpec extends BaseSpec {
 
           }
           "is too long" in {
-            val gapDateTooLong = (1 to 100).map(_ => "2004 Oct 1").mkString(";")
-            val values = validValuesForSaving ++ Map(
-              FieldNames.coveringDates -> gapDateTooLong
-            )
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+            val oci = "COAL.2022.V1RJW.P"
+            val gapDateTooLong = (1 to 100).map(_ => "2004 Oct 1").mkString(";")
+            val values =
+              valuesFromRecord(oci) ++ Map(
+                FieldNames.coveringDates -> gapDateTooLong
+              )
+
+            val result = submitWhileLoggedIn("save", 1, oci, values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedEditRecordPage(
-                title = "Edit record",
-                heading = "TNA reference: COAL 80/80/1",
-                legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V1RJW.P",
-                scopeAndContent =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+              generateExpectedEditRecordPageFromRecord(oci).copy(
                 coveringDates = gapDateTooLong,
-                formerReferenceDepartment = "1234",
-                startDate = ExpectedDate("1", "10", "2020"),
-                endDate = ExpectedDate("31", "10", "2020"),
-                legalStatus = "ref.1",
-                note = "Need to check copyright info.",
-                background = "Photo was taken by a daughter of one of the coal miners who used them.",
-                optionsForPlaceOfDeposit = Seq(
-                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
-                ),
-                separatedMaterial = Seq(
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/5")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/6")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/7")
-                  )
-                ),
-                relatedMaterial = Seq(
-                  ExpectedRelatedMaterial(
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  )
-                ),
-                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages = Seq(
                   ExpectedSummaryErrorMessage(
                     "Covering date too long, maximum length 255 characters",
@@ -1926,67 +1529,19 @@ class EditSetControllerSpec extends BaseSpec {
           }
           "is empty; showing error correctly" in {
 
-            val values = validValuesForSaving ++ Map(
-              FieldNames.coveringDates -> "  "
-            )
+            val oci = "COAL.2022.V1RJW.P"
+            val values =
+              valuesFromRecord(oci) ++ Map(
+                FieldNames.coveringDates -> "  "
+              )
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+            val result = submitWhileLoggedIn("save", 1, oci, values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedEditRecordPage(
-                title = "Edit record",
-                heading = "TNA reference: COAL 80/80/1",
-                legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V1RJW.P",
-                scopeAndContent =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+              generateExpectedEditRecordPageFromRecord(oci).copy(
                 coveringDates = "  ",
-                formerReferenceDepartment = "1234",
-                startDate = ExpectedDate("1", "10", "2020"),
-                endDate = ExpectedDate("31", "10", "2020"),
-                legalStatus = "ref.1",
-                note = "Need to check copyright info.",
-                background = "Photo was taken by a daughter of one of the coal miners who used them.",
-                optionsForPlaceOfDeposit = Seq(
-                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
-                ),
-                separatedMaterial = Seq(
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/5")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/6")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/7")
-                  )
-                ),
-                relatedMaterial = Seq(
-                  ExpectedRelatedMaterial(
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  )
-                ),
-                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages = Seq(
                   ExpectedSummaryErrorMessage("Enter the covering dates", s"#${FieldNames.coveringDates}"),
                   ExpectedSummaryErrorMessage("Covering date format is not valid", s"#${FieldNames.coveringDates}")
@@ -2001,66 +1556,24 @@ class EditSetControllerSpec extends BaseSpec {
         "place of deposit" when {
           "isn't selected" in {
 
+            val oci = "COAL.2022.V1RJW.P"
             val values =
-              validValuesForSaving ++ Map(FieldNames.placeOfDeposit -> "")
+              valuesFromRecord(oci) ++ Map(
+                FieldNames.placeOfDeposit -> ""
+              )
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+            val result = submitWhileLoggedIn("save", 1, oci, values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedEditRecordPage(
-                title = "Edit record",
-                heading = "TNA reference: COAL 80/80/1",
-                legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V1RJW.P",
-                scopeAndContent =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-                coveringDates = "2020 Oct",
-                formerReferenceDepartment = "1234",
-                startDate = ExpectedDate("1", "10", "2020"),
-                endDate = ExpectedDate("31", "10", "2020"),
-                legalStatus = "ref.1",
-                note = "Need to check copyright info.",
-                background = "Photo was taken by a daughter of one of the coal miners who used them.",
+              generateExpectedEditRecordPageFromRecord(oci).copy(
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                separatedMaterial = Seq(
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/5")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/6")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/7")
-                  )
-                ),
-                relatedMaterial = Seq(
-                  ExpectedRelatedMaterial(
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  )
-                ),
-                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages =
                   Seq(ExpectedSummaryErrorMessage("You must choose an option", s"#${FieldNames.placeOfDeposit}")),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
@@ -2070,65 +1583,21 @@ class EditSetControllerSpec extends BaseSpec {
           }
           "is absent" in {
 
-            val values = validValuesForSaving.removed(FieldNames.placeOfDeposit)
+            val oci = "COAL.2022.V1RJW.P"
+            val values = valuesFromRecord(oci) - FieldNames.placeOfDeposit
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+            val result = submitWhileLoggedIn("save", 1, oci, values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedEditRecordPage(
-                title = "Edit record",
-                heading = "TNA reference: COAL 80/80/1",
-                legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V1RJW.P",
-                scopeAndContent =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-                coveringDates = "2020 Oct",
-                formerReferenceDepartment = "1234",
-                startDate = ExpectedDate("1", "10", "2020"),
-                endDate = ExpectedDate("31", "10", "2020"),
-                legalStatus = "ref.1",
-                note = "Need to check copyright info.",
-                background = "Photo was taken by a daughter of one of the coal miners who used them.",
+              generateExpectedEditRecordPageFromRecord(oci).copy(
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                separatedMaterial = Seq(
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/5")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/6")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/7")
-                  )
-                ),
-                relatedMaterial = Seq(
-                  ExpectedRelatedMaterial(
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  )
-                ),
-                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages =
                   Seq(ExpectedSummaryErrorMessage("You must choose an option", s"#${FieldNames.placeOfDeposit}")),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
@@ -2138,67 +1607,21 @@ class EditSetControllerSpec extends BaseSpec {
           }
           "isn't recognised" in {
 
-            val values = validValuesForSaving ++ Map(
-              FieldNames.placeOfDeposit -> "6"
-            )
-
-            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+            val oci = "COAL.2022.V1RJW.P"
+            val values =
+              valuesFromRecord(oci) ++ Map(FieldNames.placeOfDeposit -> "6")
+            val result = submitWhileLoggedIn("save", 1, oci, values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedEditRecordPage(
-                title = "Edit record",
-                heading = "TNA reference: COAL 80/80/1",
-                legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V1RJW.P",
-                scopeAndContent =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-                coveringDates = "2020 Oct",
-                formerReferenceDepartment = "1234",
-                startDate = ExpectedDate("1", "10", "2020"),
-                endDate = ExpectedDate("31", "10", "2020"),
-                legalStatus = "ref.1",
-                note = "Need to check copyright info.",
-                background = "Photo was taken by a daughter of one of the coal miners who used them.",
+              generateExpectedEditRecordPageFromRecord(oci).copy(
                 optionsForPlaceOfDeposit = Seq(
                   ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
-                separatedMaterial = Seq(
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/5")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/6")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/7")
-                  )
-                ),
-                relatedMaterial = Seq(
-                  ExpectedRelatedMaterial(
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  )
-                ),
-                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages =
                   Seq(ExpectedSummaryErrorMessage("You must choose an option", s"#${FieldNames.placeOfDeposit}")),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
@@ -2210,66 +1633,19 @@ class EditSetControllerSpec extends BaseSpec {
         "legal status" when {
           "is not selected" in {
 
+            val oci = "COAL.2022.V1RJW.P"
             val values =
-              validValuesForSaving ++ Map(FieldNames.legalStatus -> "")
+              valuesFromRecord(oci) ++ Map(
+                FieldNames.legalStatus -> ""
+              )
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+            val result = submitWhileLoggedIn("save", 1, oci, values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedEditRecordPage(
-                title = "Edit record",
-                heading = "TNA reference: COAL 80/80/1",
-                legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V1RJW.P",
-                scopeAndContent =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-                coveringDates = "2020 Oct",
-                formerReferenceDepartment = "1234",
-                startDate = ExpectedDate("1", "10", "2020"),
-                endDate = ExpectedDate("31", "10", "2020"),
+              generateExpectedEditRecordPageFromRecord(oci).copy(
                 legalStatus = "",
-                note = "Need to check copyright info.",
-                background = "Photo was taken by a daughter of one of the coal miners who used them.",
-                optionsForPlaceOfDeposit = Seq(
-                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
-                ),
-                separatedMaterial = Seq(
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/5")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/6")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/7")
-                  )
-                ),
-                relatedMaterial = Seq(
-                  ExpectedRelatedMaterial(
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  )
-                ),
-                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages =
                   Seq(ExpectedSummaryErrorMessage("You must choose an option", s"#${FieldNames.legalStatus}")),
                 errorMessageForLegalStatus = Some("Error: You must choose an option")
@@ -2280,15 +1656,15 @@ class EditSetControllerSpec extends BaseSpec {
 
           "value doesn't exist" in {
 
+            val oci = "COAL.2022.V1RJW.P"
             val values =
-              validValuesForSaving ++ Map(
+              valuesFromRecord(oci) ++ Map(
                 FieldNames.legalStatus -> "ref.10"
               )
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+            val result = submitWhileLoggedIn("save", 1, oci, values)
 
             status(result) mustBe SEE_OTHER
-
             redirectLocation(result) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
 
           }
@@ -2296,71 +1672,22 @@ class EditSetControllerSpec extends BaseSpec {
         "note" when {
           "is too long" in {
 
+            val oci = "COAL.2022.V1RJW.P"
             val excessivelyLongNote = "Something about something else." * 100
-            val values = validValuesForSaving ++ Map(
-              FieldNames.note -> excessivelyLongNote
-            )
+            val values =
+              valuesFromRecord(oci) ++ Map(
+                FieldNames.note -> excessivelyLongNote
+              )
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+            val result = submitWhileLoggedIn("save", 1, oci, values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedEditRecordPage(
-                title = "Edit record",
-                heading = "TNA reference: COAL 80/80/1",
-                legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V1RJW.P",
-                scopeAndContent =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-                coveringDates = "2020 Oct",
-                formerReferenceDepartment = "1234",
-                startDate = ExpectedDate("1", "10", "2020"),
-                endDate = ExpectedDate("31", "10", "2020"),
-                legalStatus = "ref.1",
+              generateExpectedEditRecordPageFromRecord(oci).copy(
                 note = excessivelyLongNote,
-                background = "Photo was taken by a daughter of one of the coal miners who used them.",
-                optionsForPlaceOfDeposit = Seq(
-                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
-                ),
-                separatedMaterial = Seq(
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/5")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/6")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/7")
-                  )
-                ),
-                relatedMaterial = Seq(
-                  ExpectedRelatedMaterial(
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  )
-                ),
-                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
-                summaryErrorMessages = Seq(
-                  ExpectedSummaryErrorMessage("Note too long, maximum length 1000 characters", s"#${FieldNames.note}")
-                ),
+                summaryErrorMessages =
+                  Seq(ExpectedSummaryErrorMessage("Note too long, maximum length 1000 characters", "#note")),
                 errorMessageForNote = Some("Note too long, maximum length 1000 characters")
               )
             )
@@ -2370,67 +1697,20 @@ class EditSetControllerSpec extends BaseSpec {
         "background" when {
           "is too long" in {
 
+            val oci = "COAL.2022.V1RJW.P"
             val excessivelyLongBackground = "Something about one of the people." * 400
-            val values = validValuesForSaving ++ Map(
-              FieldNames.background -> excessivelyLongBackground
-            )
-            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+            val values =
+              valuesFromRecord(oci) ++ Map(
+                FieldNames.background -> excessivelyLongBackground
+              )
+
+            val result = submitWhileLoggedIn("save", 1, oci, values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedEditRecordPage(
-                title = "Edit record",
-                heading = "TNA reference: COAL 80/80/1",
-                legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V1RJW.P",
-                scopeAndContent =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-                coveringDates = "2020 Oct",
-                formerReferenceDepartment = "1234",
-                startDate = ExpectedDate("1", "10", "2020"),
-                endDate = ExpectedDate("31", "10", "2020"),
-                legalStatus = "ref.1",
-                note = "Need to check copyright info.",
+              generateExpectedEditRecordPageFromRecord(oci).copy(
                 background = excessivelyLongBackground,
-                optionsForPlaceOfDeposit = Seq(
-                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
-                ),
-                separatedMaterial = Seq(
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/5")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/6")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/7")
-                  )
-                ),
-                relatedMaterial = Seq(
-                  ExpectedRelatedMaterial(
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  )
-                ),
-                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages = Seq(
                   ExpectedSummaryErrorMessage(
                     "Administrative / biographical background too long, maximum length 8000 characters",
@@ -2441,75 +1721,28 @@ class EditSetControllerSpec extends BaseSpec {
                   Some("Administrative / biographical background too long, maximum length 8000 characters")
               )
             )
+
           }
         }
 
         "custodial history" when {
           "is too long" in {
 
+            val oci = "COAL.2022.V1RJW.P"
             val custodialHistoryTooLong =
               "Files originally created by successor or predecessor departments for COAL" * 100
-            val values = validValuesForSaving ++ Map(
-              FieldNames.custodialHistory -> custodialHistoryTooLong
-            )
+            val values =
+              valuesFromRecord(oci) ++ Map(
+                FieldNames.custodialHistory -> custodialHistoryTooLong
+              )
 
-            val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+            val result = submitWhileLoggedIn("save", 1, oci, values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
-              ExpectedEditRecordPage(
-                title = "Edit record",
-                heading = "TNA reference: COAL 80/80/1",
-                legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V1RJW.P",
-                scopeAndContent =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-                coveringDates = "2020 Oct",
-                formerReferenceDepartment = "1234",
-                startDate = ExpectedDate("1", "10", "2020"),
-                endDate = ExpectedDate("31", "10", "2020"),
-                legalStatus = "ref.1",
-                note = "Need to check copyright info.",
-                background = "Photo was taken by a daughter of one of the coal miners who used them.",
-                optionsForPlaceOfDeposit = Seq(
-                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
-                ),
+              generateExpectedEditRecordPageFromRecord(oci).copy(
                 custodialHistory = custodialHistoryTooLong,
-                relatedMaterial = Seq(
-                  ExpectedRelatedMaterial(
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  )
-                ),
-                separatedMaterial = Seq(
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/5")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/6")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/7")
-                  )
-                ),
                 summaryErrorMessages = Seq(
                   ExpectedSummaryErrorMessage(
                     "Custodial history too long, maximum length 1000 characters",
@@ -2521,6 +1754,48 @@ class EditSetControllerSpec extends BaseSpec {
             )
 
           }
+        }
+        "no creator has been selected" in {
+
+          val oci = "COAL.2022.V1RJW.P"
+          val values =
+            valuesFromRecord(oci) ++ Map(
+              s"${FieldNames.creatorIDs}[0]" -> "",
+              s"${FieldNames.creatorIDs}[1]" -> ""
+            )
+
+          val result = submitWhileLoggedIn("save", 1, oci, values)
+
+          status(result) mustBe BAD_REQUEST
+          assertPageAsExpected(
+            asDocument(result),
+            generateExpectedEditRecordPageFromRecord(oci).copy(
+              optionsForCreators = Seq(
+                Seq(
+                  ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
+                  ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                  ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                  ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                  ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                ),
+                Seq(
+                  ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
+                  ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                  ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                  ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                  ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                )
+              ),
+              summaryErrorMessages = Seq(
+                ExpectedSummaryErrorMessage(
+                  "You must select at least one creator",
+                  "#creator-id-0"
+                )
+              ),
+              errorMessageForCreator = Some("You must select at least one creator")
+            )
+          )
+
         }
       }
       "successful" when {
@@ -2545,16 +1820,21 @@ class EditSetControllerSpec extends BaseSpec {
               stub.fileMimeTypes,
               stub.executionContext
             ),
+            testReferenceDataService,
             editSetInstance,
             editSetRecordEditInstance,
             editSetRecordEditDiscardInstance,
             editSetRecordEditSaveInstance
           )
 
-          val values = validValuesForSaving
+          val oci = "COAL.2022.V1RJW.P"
+          val values =
+            valuesFromRecord(oci) ++ Map(
+              "action" -> "save"
+            )
 
           val editRecordPage = controller
-            .submit("1", "COAL.2022.V1RJW.P")
+            .submit("1", oci)
             .apply(
               CSRFTokenHelper
                 .addCSRFToken(
@@ -2570,9 +1850,12 @@ class EditSetControllerSpec extends BaseSpec {
 
         "redirect to result page of the application" in {
           val controller = inject[EditSetController]
-          val values = validValuesForSaving
+          val oci = "COAL.2022.V1RJW.P"
+          val values = valuesFromRecord(oci) ++ Map(
+            "action" -> "save"
+          )
           val editRecordPage = controller
-            .submit("1", "COAL.2022.V1RJW.P")
+            .submit("1", oci)
             .apply(
               CSRFTokenHelper.addCSRFToken(
                 FakeRequest(POST, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
@@ -2589,123 +1872,36 @@ class EditSetControllerSpec extends BaseSpec {
 
           "all fields are provided" in {
 
-            val values = validValuesForSaving
-            val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+            val oci = "COAL.2022.V1RJW.P"
+            val values = valuesFromRecord(oci)
+            val editRecordPageResponse = submitWhileLoggedIn("save", 1, "COAL.2022.V1RJW.P", values)
 
             status(editRecordPageResponse) mustBe SEE_OTHER
             redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
 
-            val getRecordResult = getRecordForEditingWhileLoggedIn(1, "COAL.2022.V1RJW.P")
-            assertPageAsExpected(
-              asDocument(getRecordResult),
-              ExpectedEditRecordPage(
-                title = "Edit record",
-                heading = "TNA reference: COAL 80/80/1",
-                legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V1RJW.P",
-                scopeAndContent =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-                coveringDates = "2020 Oct",
-                formerReferenceDepartment = "1234",
-                startDate = ExpectedDate("1", "10", "2020"),
-                endDate = ExpectedDate("31", "10", "2020"),
-                legalStatus = "ref.1",
-                note = "Need to check copyright info.",
-                background = "Photo was taken by a daughter of one of the coal miners who used them.",
-                optionsForPlaceOfDeposit = Seq(
-                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
-                ),
-                separatedMaterial = Seq(
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/5")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/6")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/7")
-                  )
-                ),
-                relatedMaterial = Seq(
-                  ExpectedRelatedMaterial(
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  )
-                ),
-                custodialHistory = "Files originally created by successor or predecessor departments for COAL"
-              )
-            )
+            val getRecordResult = getRecordForEditingWhileLoggedIn(1, oci)
+            assertPageAsExpected(asDocument(getRecordResult), generateExpectedEditRecordPageFromRecord(oci))
 
           }
 
           "the 'note' field is blank" in {
 
+            val oci = "COAL.2022.V12RJW.P"
             val values =
-              validValuesForSaving ++ Map(FieldNames.note -> "")
+              valuesFromRecord(oci) ++ Map(
+                FieldNames.note -> ""
+              )
 
-            val editRecordPageResponse = submitWhileLoggedIn(12, "COAL.2022.V12RJW.P", values)
+            val editRecordPageResponse = submitWhileLoggedIn("save", 12, oci, values)
 
             status(editRecordPageResponse) mustBe SEE_OTHER
             redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/12/record/COAL.2022.V12RJW.P/edit/save")
 
-            val getRecordResult = getRecordForEditingWhileLoggedIn(12, "COAL.2022.V12RJW.P")
+            val getRecordResult = getRecordForEditingWhileLoggedIn(12, oci)
             assertPageAsExpected(
               asDocument(getRecordResult),
-              ExpectedEditRecordPage(
-                title = "Edit record",
-                heading = "TNA reference: COAL 80/80/12",
-                legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/12",
-                omegaCatalogueId = "COAL.2022.V12RJW.P",
-                scopeAndContent =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-                coveringDates = "2020 Oct",
-                formerReferenceDepartment = "1234",
-                startDate = ExpectedDate("1", "10", "2020"),
-                endDate = ExpectedDate("31", "10", "2020"),
-                legalStatus = "ref.1",
-                note = "",
-                background = "Photo was taken by a daughter of one of the coal miners who used them.",
-                optionsForPlaceOfDeposit = Seq(
-                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
-                ),
-                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
-                separatedMaterial = Seq(
-                  ExpectedSeparatedMaterial(
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/5")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/8"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  )
-                )
+              generateExpectedEditRecordPageFromRecord(oci).copy(
+                note = ""
               )
             )
 
@@ -2713,69 +1909,21 @@ class EditSetControllerSpec extends BaseSpec {
 
           "the 'custodial history' field is blank" in {
 
-            val values = validValuesForSaving ++ Map(
-              FieldNames.custodialHistory -> ""
-            )
+            val oci = "COAL.2022.V1RJW.P"
+            val values =
+              valuesFromRecord(oci) ++ Map(
+                FieldNames.custodialHistory -> ""
+              )
 
-            val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+            val editRecordPageResponse = submitWhileLoggedIn("save", 1, oci, values)
 
             status(editRecordPageResponse) mustBe SEE_OTHER
             redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
 
-            val getRecordResult = getRecordForEditingWhileLoggedIn(1, "COAL.2022.V1RJW.P")
+            val getRecordResult = getRecordForEditingWhileLoggedIn(1, oci)
             assertPageAsExpected(
               asDocument(getRecordResult),
-              ExpectedEditRecordPage(
-                title = "Edit record",
-                heading = "TNA reference: COAL 80/80/1",
-                legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V1RJW.P",
-                scopeAndContent =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-                coveringDates = "2020 Oct",
-                formerReferenceDepartment = "1234",
-                startDate = ExpectedDate("1", "10", "2020"),
-                endDate = ExpectedDate("31", "10", "2020"),
-                legalStatus = "ref.1",
-                note = "Need to check copyright info.",
-                background = "Photo was taken by a daughter of one of the coal miners who used them.",
-                optionsForPlaceOfDeposit = Seq(
-                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
-                ),
-                relatedMaterial = Seq(
-                  ExpectedRelatedMaterial(
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  )
-                ),
-                separatedMaterial = Seq(
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/5")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/6")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/7")
-                  )
-                ),
+              generateExpectedEditRecordPageFromRecord(oci).copy(
                 custodialHistory = ""
               )
             )
@@ -2783,59 +1931,158 @@ class EditSetControllerSpec extends BaseSpec {
           }
           "the 'background' field is blank" in {
 
+            val oci = "COAL.2022.V1RJW.P"
             val values =
-              validValuesForSaving ++ Map(FieldNames.background -> "")
+              valuesFromRecord(oci) ++ Map(
+                FieldNames.background -> ""
+              )
 
-            val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
+            val editRecordPageResponse = submitWhileLoggedIn("save", 1, oci, values)
 
             status(editRecordPageResponse) mustBe SEE_OTHER
-            redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V5RJW.P/edit/save")
+            redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
 
-            val getRecordResult = getRecordForEditingWhileLoggedIn(1, "COAL.2022.V5RJW.P")
+            val getRecordResult = getRecordForEditingWhileLoggedIn(1, oci)
             assertPageAsExpected(
               asDocument(getRecordResult),
-              ExpectedEditRecordPage(
-                title = "Edit record",
-                heading = "TNA reference: COAL 80/80/5",
-                legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/5",
-                omegaCatalogueId = "COAL.2022.V5RJW.P",
-                scopeAndContent =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-                coveringDates = "2020 Oct",
-                formerReferenceDepartment = "1234",
-                startDate = ExpectedDate("1", "10", "2020"),
-                endDate = ExpectedDate("31", "10", "2020"),
-                legalStatus = "ref.1",
-                note = "Need to check copyright info.",
-                background = "",
-                optionsForPlaceOfDeposit = Seq(
-                  ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
-                ),
-                separatedMaterial = Seq.empty,
-                relatedMaterial = Seq.empty,
-                custodialHistory = "Files originally created by successor or predecessor departments for COAL"
+              generateExpectedEditRecordPageFromRecord(oci).copy(
+                background = ""
               )
             )
           }
+        }
+        "multiple creators have been selected" in {
+
+          val oci = "COAL.2022.V4RJW.P"
+          val values = valuesFromRecord(oci) ++ Map(
+            s"${FieldNames.creatorIDs}[0]" -> "48N",
+            s"${FieldNames.creatorIDs}[1]" -> "46F"
+          )
+
+          val editRecordPageResponse = submitWhileLoggedIn("save", 1, oci, values)
+
+          status(editRecordPageResponse) mustBe SEE_OTHER
+          redirectLocation(editRecordPageResponse) mustBe Some(s"/edit-set/1/record/$oci/edit/save")
+
+          val getRecordResult = getRecordForEditingWhileLoggedIn(1, oci)
+          assertPageAsExpected(
+            asDocument(getRecordResult),
+            generateExpectedEditRecordPageFromRecord(oci).copy(
+              optionsForCreators = Seq(
+                Seq(
+                  ExpectedSelectOption("", "Select creator", disabled = true),
+                  ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)", selected = true),
+                  ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                  ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                  ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                ),
+                Seq(
+                  ExpectedSelectOption("", "Select creator", disabled = true),
+                  ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                  ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                  ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                  ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                )
+              )
+            )
+          )
+        }
+        "multiple creators have been selected, as one empty selection" in {
+
+          val oci = "COAL.2022.V4RJW.P"
+          val values = valuesFromRecord(oci) ++ Map(
+            s"${FieldNames.creatorIDs}[0]" -> "48N",
+            s"${FieldNames.creatorIDs}[1]" -> "46F",
+            s"${FieldNames.creatorIDs}[2]" -> ""
+          )
+          val editRecordPageResponse = submitWhileLoggedIn("save", 1, oci, values)
+
+          status(editRecordPageResponse) mustBe SEE_OTHER
+          redirectLocation(editRecordPageResponse) mustBe Some(s"/edit-set/1/record/$oci/edit/save")
+
+          val getRecordResult = getRecordForEditingWhileLoggedIn(1, oci)
+          assertPageAsExpected(
+            asDocument(getRecordResult),
+            generateExpectedEditRecordPageFromRecord(oci).copy(
+              optionsForCreators = Seq(
+                Seq(
+                  ExpectedSelectOption("", "Select creator", disabled = true),
+                  ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)", selected = true),
+                  ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                  ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                  ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                ),
+                Seq(
+                  ExpectedSelectOption("", "Select creator", disabled = true),
+                  ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                  ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                  ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                  ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                )
+              )
+            )
+          )
+        }
+        "multiple creators have been selected, including duplicates" in {
+
+          val oci = "COAL.2022.V4RJW.P"
+          val values = valuesFromRecord(oci) ++ Map(
+            s"${FieldNames.creatorIDs}[0]" -> "48N",
+            s"${FieldNames.creatorIDs}[1]" -> "46F",
+            s"${FieldNames.creatorIDs}[2]" -> "46F"
+          )
+          val editRecordPageResponse = submitWhileLoggedIn("save", 1, oci, values)
+
+          status(editRecordPageResponse) mustBe SEE_OTHER
+          redirectLocation(editRecordPageResponse) mustBe Some(s"/edit-set/1/record/$oci/edit/save")
+
+          val getRecordResult = getRecordForEditingWhileLoggedIn(1, oci)
+          assertPageAsExpected(
+            asDocument(getRecordResult),
+            generateExpectedEditRecordPageFromRecord(oci).copy(
+              optionsForCreators = Seq(
+                Seq(
+                  ExpectedSelectOption("", "Select creator", disabled = true),
+                  ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)", selected = true),
+                  ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                  ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                  ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                ),
+                Seq(
+                  ExpectedSelectOption("", "Select creator", disabled = true),
+                  ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                  ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                  ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                  ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                ),
+                Seq(
+                  ExpectedSelectOption("", "Select creator", disabled = true),
+                  ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                  ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                  ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                  ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                )
+              )
+            )
+          )
+
         }
       }
     }
 
     "when the action is to discard all changes" when {
 
-      val validValuesForDiscarding = validValues ++ Map("action" -> "discard")
-
       "successful" when {
         "even if the validation fails" in {
 
+          val oci = "COAL.2022.V1RJW.P"
           val blankScopeAndContentToFailValidation = ""
-          val values = validValuesForDiscarding ++ Map("coveringDates" -> blankScopeAndContentToFailValidation)
+          val values =
+            valuesFromRecord(oci) ++ Map(
+              "coveringDates" -> blankScopeAndContentToFailValidation
+            )
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+          val result = submitWhileLoggedIn("discard", 1, oci, values)
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/discard")
@@ -2846,78 +2093,22 @@ class EditSetControllerSpec extends BaseSpec {
 
     "when the action is to calculate the start and end dates from the covering dates" when {
 
-      val validValuesForCalculatingDates = validValues ++ Map("action" -> "calculateDates")
-
       "failure" when {
         "blank" in {
 
-          val values = validValuesForCalculatingDates ++ Map(
-            FieldNames.coveringDates  -> "   ",
-            FieldNames.startDateDay   -> "1",
-            FieldNames.startDateMonth -> "10",
-            FieldNames.startDateYear  -> "2020",
-            FieldNames.endDateDay     -> "31",
-            FieldNames.endDateMonth   -> "10",
-            FieldNames.endDateYear    -> "2020"
-          )
+          val oci = "COAL.2022.V1RJW.P"
+          val values =
+            valuesFromRecord(oci) ++ Map(
+              FieldNames.coveringDates -> "   "
+            )
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+          val result = submitWhileLoggedIn("calculateDates", 1, oci, values)
 
           status(result) mustBe BAD_REQUEST
           assertPageAsExpected(
             asDocument(result),
-            ExpectedEditRecordPage(
-              title = "Edit record",
-              heading = "TNA reference: COAL 80/80/1",
-              legend = "Intellectual properties",
-              classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V1RJW.P",
-              scopeAndContent =
-                "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+            generateExpectedEditRecordPageFromRecord(oci).copy(
               coveringDates = "   ",
-              formerReferenceDepartment = "1234",
-              startDate = ExpectedDate("1", "10", "2020"),
-              endDate = ExpectedDate("31", "10", "2020"),
-              legalStatus = "ref.1",
-              note = "Need to check copyright info.",
-              background = "Photo was taken by a daughter of one of the coal miners who used them.",
-              optionsForPlaceOfDeposit = Seq(
-                ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                ExpectedSelectOption("1", "The National Archives, Kew"),
-                ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                ExpectedSelectOption("3", "British Library, National Sound Archive")
-              ),
-              separatedMaterial = Seq(
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/5")
-                ),
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/6")
-                ),
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/7")
-                )
-              ),
-              relatedMaterial = Seq(
-                ExpectedRelatedMaterial(
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                ),
-                ExpectedRelatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/3")
-                ),
-                ExpectedRelatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/2"),
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                )
-              ),
-              custodialHistory = "Files originally created by successor or predecessor departments for COAL",
               summaryErrorMessages = Seq(
                 ExpectedSummaryErrorMessage("Enter the covering dates", s"#${FieldNames.coveringDates}"),
                 ExpectedSummaryErrorMessage("Covering date format is not valid", s"#${FieldNames.coveringDates}")
@@ -2929,75 +2120,22 @@ class EditSetControllerSpec extends BaseSpec {
         }
         "invalid format" in {
 
-          val values = validValuesForCalculatingDates ++ Map(
-            FieldNames.coveringDates  -> "1270s",
-            FieldNames.startDateDay   -> "1",
-            FieldNames.startDateMonth -> "10",
-            FieldNames.startDateYear  -> "2020",
-            FieldNames.endDateDay     -> "31",
-            FieldNames.endDateMonth   -> "10",
-            FieldNames.endDateYear    -> "2020"
-          )
+          val oci = "COAL.2022.V1RJW.P"
+          val values =
+            valuesFromRecord(oci) ++ Map(
+              FieldNames.coveringDates -> "1270s"
+            )
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+          val result = submitWhileLoggedIn("calculateDates", 1, oci, values)
 
           status(result) mustBe BAD_REQUEST
           assertPageAsExpected(
             asDocument(result),
-            ExpectedEditRecordPage(
-              title = "Edit record",
-              heading = "TNA reference: COAL 80/80/1",
-              legend = "Intellectual properties",
-              classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V1RJW.P",
-              scopeAndContent =
-                "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+            generateExpectedEditRecordPageFromRecord(oci).copy(
               coveringDates = "1270s",
-              formerReferenceDepartment = "1234",
-              startDate = ExpectedDate("1", "10", "2020"),
-              endDate = ExpectedDate("31", "10", "2020"),
-              legalStatus = "ref.1",
-              note = "Need to check copyright info.",
-              background = "Photo was taken by a daughter of one of the coal miners who used them.",
-              optionsForPlaceOfDeposit = Seq(
-                ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                ExpectedSelectOption("1", "The National Archives, Kew"),
-                ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                ExpectedSelectOption("3", "British Library, National Sound Archive")
+              summaryErrorMessages = Seq(
+                ExpectedSummaryErrorMessage("Covering date format is not valid", s"#${FieldNames.coveringDates}")
               ),
-              separatedMaterial = Seq(
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/5")
-                ),
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/6")
-                ),
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/7")
-                )
-              ),
-              relatedMaterial = Seq(
-                ExpectedRelatedMaterial(
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                ),
-                ExpectedRelatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/3")
-                ),
-                ExpectedRelatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/2"),
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                )
-              ),
-              custodialHistory = "Files originally created by successor or predecessor departments for COAL",
-              summaryErrorMessages =
-                Seq(ExpectedSummaryErrorMessage("Covering date format is not valid", s"#${FieldNames.coveringDates}")),
               errorMessageForCoveringsDates = Some("Covering date format is not valid")
             )
           )
@@ -3005,75 +2143,22 @@ class EditSetControllerSpec extends BaseSpec {
         }
         "contains a non-existent date" in {
 
-          val values = validValuesForCalculatingDates ++ Map(
-            FieldNames.coveringDates  -> "2022 Feb 1-2022 Feb 29",
-            FieldNames.startDateDay   -> "1",
-            FieldNames.startDateMonth -> "10",
-            FieldNames.startDateYear  -> "2020",
-            FieldNames.endDateDay     -> "31",
-            FieldNames.endDateMonth   -> "10",
-            FieldNames.endDateYear    -> "2020"
-          )
+          val oci = "COAL.2022.V1RJW.P"
+          val values =
+            valuesFromRecord(oci) ++ Map(
+              FieldNames.coveringDates -> "2022 Feb 1-2022 Feb 29"
+            )
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+          val result = submitWhileLoggedIn("calculateDates", 1, oci, values)
 
           status(result) mustBe BAD_REQUEST
           assertPageAsExpected(
             asDocument(result),
-            ExpectedEditRecordPage(
-              title = "Edit record",
-              heading = "TNA reference: COAL 80/80/1",
-              legend = "Intellectual properties",
-              classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V1RJW.P",
-              scopeAndContent =
-                "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+            generateExpectedEditRecordPageFromRecord(oci).copy(
               coveringDates = "2022 Feb 1-2022 Feb 29",
-              formerReferenceDepartment = "1234",
-              startDate = ExpectedDate("1", "10", "2020"),
-              endDate = ExpectedDate("31", "10", "2020"),
-              legalStatus = "ref.1",
-              note = "Need to check copyright info.",
-              background = "Photo was taken by a daughter of one of the coal miners who used them.",
-              optionsForPlaceOfDeposit = Seq(
-                ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                ExpectedSelectOption("1", "The National Archives, Kew"),
-                ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                ExpectedSelectOption("3", "British Library, National Sound Archive")
+              summaryErrorMessages = Seq(
+                ExpectedSummaryErrorMessage("Covering date format is not valid", s"#${FieldNames.coveringDates}")
               ),
-              separatedMaterial = Seq(
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/5")
-                ),
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/6")
-                ),
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/7")
-                )
-              ),
-              relatedMaterial = Seq(
-                ExpectedRelatedMaterial(
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                ),
-                ExpectedRelatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/3")
-                ),
-                ExpectedRelatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/2"),
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                )
-              ),
-              custodialHistory = "Files originally created by successor or predecessor departments for COAL",
-              summaryErrorMessages =
-                Seq(ExpectedSummaryErrorMessage("Covering date format is not valid", s"#${FieldNames.coveringDates}")),
               errorMessageForCoveringsDates = Some("Covering date format is not valid")
             )
           )
@@ -3083,201 +2168,63 @@ class EditSetControllerSpec extends BaseSpec {
       "successful" when {
         "covers period of the switchover" in {
 
-          val values = validValuesForCalculatingDates ++ Map(
-            FieldNames.coveringDates -> "1752 Aug 1-1752 Sept 12"
-          )
+          val oci = "COAL.2022.V1RJW.P"
+          val values =
+            valuesFromRecord(oci) ++ Map(
+              FieldNames.coveringDates -> "1752 Aug 1-1752 Sept 12"
+            )
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+          val result = submitWhileLoggedIn("calculateDates", 1, oci, values)
 
           status(result) mustBe OK
           assertPageAsExpected(
             asDocument(result),
-            ExpectedEditRecordPage(
-              title = "Edit record",
-              heading = "TNA reference: COAL 80/80/1",
-              legend = "Intellectual properties",
-              classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V1RJW.P",
-              scopeAndContent =
-                "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+            generateExpectedEditRecordPageFromRecord(oci).copy(
               coveringDates = "1752 Aug 1-1752 Sept 12",
-              formerReferenceDepartment = "1234",
               startDate = ExpectedDate("1", "8", "1752"),
-              endDate = ExpectedDate("12", "9", "1752"),
-              legalStatus = "ref.1",
-              note = "Need to check copyright info.",
-              background = "Photo was taken by a daughter of one of the coal miners who used them.",
-              optionsForPlaceOfDeposit = Seq(
-                ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                ExpectedSelectOption("1", "The National Archives, Kew"),
-                ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                ExpectedSelectOption("3", "British Library, National Sound Archive")
-              ),
-              separatedMaterial = Seq(
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/5")
-                ),
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/6")
-                ),
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/7")
-                )
-              ),
-              relatedMaterial = Seq(
-                ExpectedRelatedMaterial(
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                ),
-                ExpectedRelatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/3")
-                ),
-                ExpectedRelatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/2"),
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                )
-              ),
-              custodialHistory = "Files originally created by successor or predecessor departments for COAL"
+              endDate = ExpectedDate("12", "9", "1752")
             )
           )
 
         }
         "covers period after the switchover" in {
 
-          val values = validValuesForCalculatingDates ++ Map(
-            FieldNames.coveringDates -> "1984 Dec"
-          )
+          val oci = "COAL.2022.V1RJW.P"
+          val values =
+            valuesFromRecord(oci) ++ Map(
+              FieldNames.coveringDates -> "1984 Dec"
+            )
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+          val result = submitWhileLoggedIn("calculateDates", 1, oci, values)
 
           status(result) mustBe OK
           assertPageAsExpected(
             asDocument(result),
-            ExpectedEditRecordPage(
-              title = "Edit record",
-              heading = "TNA reference: COAL 80/80/1",
-              legend = "Intellectual properties",
-              classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V1RJW.P",
-              scopeAndContent =
-                "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+            generateExpectedEditRecordPageFromRecord(oci).copy(
               coveringDates = "1984 Dec",
-              formerReferenceDepartment = "1234",
               startDate = ExpectedDate("1", "12", "1984"),
-              endDate = ExpectedDate("31", "12", "1984"),
-              legalStatus = "ref.1",
-              note = "Need to check copyright info.",
-              background = "Photo was taken by a daughter of one of the coal miners who used them.",
-              optionsForPlaceOfDeposit = Seq(
-                ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                ExpectedSelectOption("1", "The National Archives, Kew"),
-                ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                ExpectedSelectOption("3", "British Library, National Sound Archive")
-              ),
-              separatedMaterial = Seq(
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/5")
-                ),
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/6")
-                ),
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/7")
-                )
-              ),
-              relatedMaterial = Seq(
-                ExpectedRelatedMaterial(
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                ),
-                ExpectedRelatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/3")
-                ),
-                ExpectedRelatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/2"),
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                )
-              ),
-              custodialHistory = "Files originally created by successor or predecessor departments for COAL"
+              endDate = ExpectedDate("31", "12", "1984")
             )
           )
 
         }
         "covers multiple ranges" in {
 
-          val values = validValuesForCalculatingDates ++ Map(
-            FieldNames.coveringDates -> "1868; 1890-1902; 1933"
-          )
+          val oci = "COAL.2022.V1RJW.P"
+          val values =
+            valuesFromRecord(oci) ++ Map(
+              FieldNames.coveringDates -> "1868; 1890-1902; 1933"
+            )
 
-          val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+          val result = submitWhileLoggedIn("calculateDates", 1, oci, values)
 
           status(result) mustBe OK
           assertPageAsExpected(
             asDocument(result),
-            ExpectedEditRecordPage(
-              title = "Edit record",
-              heading = "TNA reference: COAL 80/80/1",
-              legend = "Intellectual properties",
-              classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V1RJW.P",
-              scopeAndContent =
-                "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+            generateExpectedEditRecordPageFromRecord(oci).copy(
               coveringDates = "1868; 1890-1902; 1933",
-              formerReferenceDepartment = "1234",
               startDate = ExpectedDate("1", "1", "1868"),
-              endDate = ExpectedDate("31", "12", "1933"),
-              legalStatus = "ref.1",
-              note = "Need to check copyright info.",
-              background = "Photo was taken by a daughter of one of the coal miners who used them.",
-              optionsForPlaceOfDeposit = Seq(
-                ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                ExpectedSelectOption("1", "The National Archives, Kew"),
-                ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
-                ExpectedSelectOption("3", "British Library, National Sound Archive")
-              ),
-              separatedMaterial = Seq(
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/5")
-                ),
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/6")
-                ),
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/7")
-                )
-              ),
-              relatedMaterial = Seq(
-                ExpectedRelatedMaterial(
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                ),
-                ExpectedRelatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/3")
-                ),
-                ExpectedRelatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/2"),
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                )
-              ),
-              custodialHistory = "Files originally created by successor or predecessor departments for COAL"
+              endDate = ExpectedDate("31", "12", "1933")
             )
           )
 
@@ -3285,12 +2232,921 @@ class EditSetControllerSpec extends BaseSpec {
       }
 
     }
+
+    "when the action is to add another selection 'slot' for a creator" when {
+      "successful" when {
+        "a single creator had been previously assigned and we" when {
+          "keep that same selection" in {
+
+            val oci = "COAL.2022.V11RJW.P"
+
+            val getRecordResultBeforehand = getRecordForEditingWhileLoggedIn(1, oci)
+
+            status(getRecordResultBeforehand) mustBe OK
+            assertPageAsExpected(
+              asDocument(getRecordResultBeforehand),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(optionsForCreators =
+                  Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+                    )
+                  )
+                )
+            )
+
+            val submissionValues = valuesFromRecord(oci) ++ Map(
+              s"${FieldNames.creatorIDs}[0]" -> "8R6"
+            )
+
+            val submissionResult = submitWhileLoggedIn("addAnotherCreator", 1, oci, submissionValues)
+
+            status(submissionResult) mustBe OK
+            assertPageAsExpected(
+              asDocument(submissionResult),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(optionsForCreators =
+                  Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    )
+                  )
+                )
+            )
+
+            val getRecordResultAfterwards = getRecordForEditingWhileLoggedIn(1, oci)
+
+            status(getRecordResultAfterwards) mustBe OK
+            assertPageAsExpected(
+              asDocument(getRecordResultAfterwards),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(optionsForCreators =
+                  Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+                    )
+                  )
+                )
+            )
+
+          }
+          "keep that same selection, but already have an empty slot" in {
+
+            val oci = "COAL.2022.V11RJW.P"
+
+            val getRecordResultBeforehand = getRecordForEditingWhileLoggedIn(1, oci)
+
+            status(getRecordResultBeforehand) mustBe OK
+            assertPageAsExpected(
+              asDocument(getRecordResultBeforehand),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(optionsForCreators =
+                  Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+                    )
+                  )
+                )
+            )
+
+            val submissionValues = valuesFromRecord(oci) ++ Map(
+              s"${FieldNames.creatorIDs}[0]" -> "8R6",
+              s"${FieldNames.creatorIDs}[1]" -> ""
+            )
+
+            val submissionResult = submitWhileLoggedIn("addAnotherCreator", 1, oci, submissionValues)
+
+            status(submissionResult) mustBe OK
+            assertPageAsExpected(
+              asDocument(submissionResult),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(optionsForCreators =
+                  Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    )
+                  )
+                )
+            )
+
+            val getRecordResultAfterwards = getRecordForEditingWhileLoggedIn(1, oci)
+
+            status(getRecordResultAfterwards) mustBe OK
+            assertPageAsExpected(
+              asDocument(getRecordResultAfterwards),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(optionsForCreators =
+                  Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+                    )
+                  )
+                )
+            )
+
+          }
+          "clear that selection" in {
+
+            val oci = "COAL.2022.V11RJW.P"
+
+            val getRecordResultBeforehand = getRecordForEditingWhileLoggedIn(1, oci)
+
+            status(getRecordResultBeforehand) mustBe OK
+            assertPageAsExpected(
+              asDocument(getRecordResultBeforehand),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(optionsForCreators =
+                  Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+                    )
+                  )
+                )
+            )
+
+            val submissionValues = valuesFromRecord(oci) ++ Map(
+              s"${FieldNames.creatorIDs}[0]" -> ""
+            )
+
+            val submissionResult = submitWhileLoggedIn("addAnotherCreator", 1, oci, submissionValues)
+
+            status(submissionResult) mustBe OK
+            assertPageAsExpected(
+              asDocument(submissionResult),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(
+                  optionsForCreators = Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    )
+                  )
+                )
+            )
+
+            val getRecordResultAfterwards = getRecordForEditingWhileLoggedIn(1, oci)
+
+            status(getRecordResultAfterwards) mustBe OK
+            assertPageAsExpected(
+              asDocument(getRecordResultAfterwards),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(optionsForCreators =
+                  Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+                    )
+                  )
+                )
+            )
+
+          }
+          "change that selection" in {
+
+            val oci = "COAL.2022.V11RJW.P"
+
+            val getRecordResultBeforehand = getRecordForEditingWhileLoggedIn(1, oci)
+
+            status(getRecordResultBeforehand) mustBe OK
+            assertPageAsExpected(
+              asDocument(getRecordResultBeforehand),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(optionsForCreators =
+                  Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+                    )
+                  )
+                )
+            )
+
+            val submissionValues = valuesFromRecord(oci) ++ Map(
+              s"${FieldNames.creatorIDs}[0]" -> "92W"
+            )
+
+            val submissionResult = submitWhileLoggedIn("addAnotherCreator", 1, oci, submissionValues)
+
+            status(submissionResult) mustBe OK
+            assertPageAsExpected(
+              asDocument(submissionResult),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(
+                  optionsForCreators = Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    )
+                  )
+                )
+            )
+
+            val getRecordResultAfterwards = getRecordForEditingWhileLoggedIn(1, oci)
+
+            status(getRecordResultAfterwards) mustBe OK
+            assertPageAsExpected(
+              asDocument(getRecordResultAfterwards),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(optionsForCreators =
+                  Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+                    )
+                  )
+                )
+            )
+
+          }
+        }
+        "the record had multiple creators assigned" when {
+          "and we keep those selections" in {
+
+            val oci = "COAL.2022.V7RJW.P"
+
+            val getRecordResultBeforehand = getRecordForEditingWhileLoggedIn(1, oci)
+
+            status(getRecordResultBeforehand) mustBe OK
+            assertPageAsExpected(
+              asDocument(getRecordResultBeforehand),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(optionsForCreators =
+                  Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption(
+                        "48N",
+                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
+                        selected = true
+                      ),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    )
+                  )
+                )
+            )
+
+            val submissionValues = valuesFromRecord(oci) ++ Map(
+              s"${FieldNames.creatorIDs}[0]" -> "48N",
+              s"${FieldNames.creatorIDs}[1]" -> "92W"
+            )
+
+            val result = submitWhileLoggedIn("addAnotherCreator", 1, oci, submissionValues)
+
+            status(result) mustBe OK
+            assertPageAsExpected(
+              asDocument(result),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(
+                  optionsForCreators = Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption(
+                        "48N",
+                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
+                        selected = true
+                      ),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    )
+                  )
+                )
+            )
+
+            val getRecordResultAfterwards = getRecordForEditingWhileLoggedIn(1, oci)
+
+            status(getRecordResultAfterwards) mustBe OK
+            assertPageAsExpected(
+              asDocument(getRecordResultAfterwards),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(optionsForCreators =
+                  Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption(
+                        "48N",
+                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
+                        selected = true
+                      ),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    )
+                  )
+                )
+            )
+
+          }
+          "(including duplicates) and keep those selections" in {
+
+            val oci = "COAL.2022.V5RJW.P"
+
+            val getRecordResultBeforehand = getRecordForEditingWhileLoggedIn(1, oci)
+
+            status(getRecordResultBeforehand) mustBe OK
+            assertPageAsExpected(
+              asDocument(getRecordResultBeforehand),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(optionsForCreators =
+                  Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption(
+                        "48N",
+                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
+                        selected = true
+                      ),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    )
+                  )
+                )
+            )
+
+            val submissionValues = valuesFromRecord(oci) ++ Map(
+              s"${FieldNames.creatorIDs}[0]" -> "46F",
+              s"${FieldNames.creatorIDs}[1]" -> "48N",
+              s"${FieldNames.creatorIDs}[2]" -> "46F"
+            )
+
+            val result = submitWhileLoggedIn("addAnotherCreator", 1, oci, submissionValues)
+
+            status(result) mustBe OK
+            assertPageAsExpected(
+              asDocument(result),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(
+                  optionsForCreators = Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption(
+                        "48N",
+                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
+                        selected = true
+                      ),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    )
+                  )
+                )
+            )
+
+            val getRecordResultAfterwards = getRecordForEditingWhileLoggedIn(1, oci)
+
+            status(getRecordResultAfterwards) mustBe OK
+            assertPageAsExpected(
+              asDocument(getRecordResultAfterwards),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(optionsForCreators =
+                  Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption(
+                        "48N",
+                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
+                        selected = true
+                      ),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    )
+                  )
+                )
+            )
+
+          }
+          "but we change those selections" in {
+
+            val oci = "COAL.2022.V5RJW.P"
+
+            val getRecordResultBeforehand = getRecordForEditingWhileLoggedIn(1, oci)
+
+            status(getRecordResultBeforehand) mustBe OK
+            assertPageAsExpected(
+              asDocument(getRecordResultBeforehand),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(optionsForCreators =
+                  Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption(
+                        "48N",
+                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
+                        selected = true
+                      ),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    )
+                  )
+                )
+            )
+
+            val submissionValues = valuesFromRecord(oci) ++ Map(
+              s"${FieldNames.creatorIDs}[0]" -> "8R6",
+              s"${FieldNames.creatorIDs}[1]" -> "92W",
+              s"${FieldNames.creatorIDs}[2]" -> "48N"
+            )
+
+            val result = submitWhileLoggedIn("addAnotherCreator", 1, oci, submissionValues)
+
+            status(result) mustBe OK
+            assertPageAsExpected(
+              asDocument(result),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(
+                  optionsForCreators = Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption(
+                        "48N",
+                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
+                        selected = true
+                      ),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    )
+                  )
+                )
+            )
+
+            val getRecordResultAfterwards = getRecordForEditingWhileLoggedIn(1, oci)
+
+            status(getRecordResultAfterwards) mustBe OK
+            assertPageAsExpected(
+              asDocument(getRecordResultAfterwards),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(optionsForCreators =
+                  Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption(
+                        "48N",
+                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
+                        selected = true
+                      ),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    )
+                  )
+                )
+            )
+
+          }
+
+        }
+      }
+    }
+
+    "when the action is to remove the last selection for a creator" when {
+
+      "successful" when {
+        "we have two selections and" when {
+          "we leave the first selection unchanged" in {
+
+            val oci = "COAL.2022.V1RJW.P"
+            val values = valuesFromRecord(oci) ++ Map(
+              s"${FieldNames.creatorIDs}[0]" -> "48N",
+              s"${FieldNames.creatorIDs}[1]" -> "92W"
+            )
+
+            val result = submitWhileLoggedIn("removeLastCreator", 1, oci, values)
+
+            status(result) mustBe OK
+            assertPageAsExpected(
+              asDocument(result),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(
+                  optionsForCreators = Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption(
+                        "48N",
+                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
+                        selected = true
+                      ),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    )
+                  )
+                )
+            )
+
+          }
+          "we change the first selection" in {
+
+            val oci = "COAL.2022.V1RJW.P"
+            val values = valuesFromRecord(oci) ++ Map(
+              s"${FieldNames.creatorIDs}[0]" -> "46F",
+              s"${FieldNames.creatorIDs}[1]" -> "92W"
+            )
+
+            val result = submitWhileLoggedIn("removeLastCreator", 1, oci, values)
+
+            status(result) mustBe OK
+            assertPageAsExpected(
+              asDocument(result),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(
+                  optionsForCreators = Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    )
+                  )
+                )
+            )
+
+          }
+          "we blank out the first" in {
+
+            val oci = "COAL.2022.V1RJW.P"
+            val values = valuesFromRecord(oci) ++ Map(
+              s"${FieldNames.creatorIDs}[0]" -> "",
+              s"${FieldNames.creatorIDs}[1]" -> "92W"
+            )
+
+            val result = submitWhileLoggedIn("removeLastCreator", 1, oci, values)
+
+            status(result) mustBe OK
+            assertPageAsExpected(
+              asDocument(result),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(
+                  optionsForCreators = Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    )
+                  )
+                )
+            )
+
+          }
+
+        }
+        "we have three selections and" when {
+          "we leave the first two selection unchanged" in {
+
+            val oci = "COAL.2022.V8RJW.P"
+            val values = valuesFromRecord(oci) ++ Map(
+              s"${FieldNames.creatorIDs}[0]" -> "48N",
+              s"${FieldNames.creatorIDs}[1]" -> "46F",
+              s"${FieldNames.creatorIDs}[2]" -> "8R6"
+            )
+
+            val result = submitWhileLoggedIn("removeLastCreator", 1, oci, values)
+
+            status(result) mustBe OK
+            assertPageAsExpected(
+              asDocument(result),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(
+                  optionsForCreators = Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption(
+                        "48N",
+                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
+                        selected = true
+                      ),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    )
+                  )
+                )
+            )
+
+          }
+          "we change the first two selections" in {
+
+            val oci = "COAL.2022.V8RJW.P"
+            val values = valuesFromRecord(oci) ++ Map(
+              s"${FieldNames.creatorIDs}[0]" -> "92W",
+              s"${FieldNames.creatorIDs}[1]" -> "48N",
+              s"${FieldNames.creatorIDs}[2]" -> "8R6"
+            )
+
+            val result = submitWhileLoggedIn("removeLastCreator", 1, oci, values)
+
+            status(result) mustBe OK
+            assertPageAsExpected(
+              asDocument(result),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(
+                  optionsForCreators = Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption(
+                        "48N",
+                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
+                        selected = true
+                      ),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    )
+                  )
+                )
+            )
+
+          }
+          "we remove two in a row" in {
+
+            val oci = "COAL.2022.V8RJW.P"
+            val valuesForFirstRemoval = valuesFromRecord(oci) ++ Map(
+              s"${FieldNames.creatorIDs}[0]" -> "92W",
+              s"${FieldNames.creatorIDs}[1]" -> "48N",
+              s"${FieldNames.creatorIDs}[2]" -> "8R6"
+            )
+
+            val resultAfterFirstRemoval = submitWhileLoggedIn("removeLastCreator", 1, oci, valuesForFirstRemoval)
+
+            status(resultAfterFirstRemoval) mustBe OK
+            assertPageAsExpected(
+              asDocument(resultAfterFirstRemoval),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(
+                  optionsForCreators = Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ),
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption(
+                        "48N",
+                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
+                        selected = true
+                      ),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    )
+                  )
+                )
+            )
+
+            val valuesForSecondRemoval = (valuesFromRecord(oci) - s"${FieldNames.creatorIDs}[2]") ++ Map(
+              s"${FieldNames.creatorIDs}[0]" -> "92W",
+              s"${FieldNames.creatorIDs}[1]" -> "48N"
+            )
+
+            val resultAfterSecondRemoval = submitWhileLoggedIn("removeLastCreator", 1, oci, valuesForSecondRemoval)
+
+            status(resultAfterSecondRemoval) mustBe OK
+            assertPageAsExpected(
+              asDocument(resultAfterSecondRemoval),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(
+                  optionsForCreators = Seq(
+                    Seq(
+                      ExpectedSelectOption("", "Select creator", disabled = true),
+                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
+                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    )
+                  )
+                )
+            )
+
+          }
+        }
+      }
+    }
   }
 
-  private def submitWhileLoggedIn(editSetId: Int, recordId: String, values: Map[String, String]): Future[Result] = {
+  private def submitWhileLoggedIn(
+    action: String,
+    editSetId: Int,
+    recordId: String,
+    values: Map[String, String]
+  ): Future[Result] = {
     val request = CSRFTokenHelper.addCSRFToken(
       FakeRequest(POST, s"/edit-set/$editSetId/record/$recordId/edit")
-        .withFormUrlEncodedBody(values.toSeq: _*)
+        .withFormUrlEncodedBody((values ++ Map("action" -> action)).toSeq: _*)
         .withSession(SessionKeys.token -> validSessionToken)
     )
     route(app, request).get
@@ -3324,6 +3180,12 @@ class EditSetControllerSpec extends BaseSpec {
     document must haveEndDateYear(expectedEditRecordPage.endDate.year)
     document must haveLegalStatus(expectedEditRecordPage.legalStatus)
     document must haveSelectionForPlaceOfDeposit(expectedEditRecordPage.optionsForPlaceOfDeposit)
+
+    document must haveNumberOfSelectionsForCreator(expectedEditRecordPage.optionsForCreators.size)
+    expectedEditRecordPage.optionsForCreators.zipWithIndex.foreach { case (expectedSelectOptions, index) =>
+      document must haveSelectionForCreator(index, expectedSelectOptions)
+    }
+
     document must haveNote(expectedEditRecordPage.note)
     document must haveRelatedMaterial(expectedEditRecordPage.relatedMaterial: _*)
     document must haveSeparatedMaterial(expectedEditRecordPage.separatedMaterial: _*)
@@ -3380,6 +3242,10 @@ class EditSetControllerSpec extends BaseSpec {
       case None                       => document must haveNoErrorMessageForCustodialHistory
     }
 
+    expectedEditRecordPage.errorMessageForCreator match {
+      case Some(expectedErrorMessage) => document must haveErrorMessageForCreator(expectedErrorMessage)
+      case None                       => document must haveNoErrorMessageForCreator
+    }
   }
 
   private def assertPageAsExpected(document: Document, expectedEditRecordPage: ExpectedEditSetPage): Unit = {
@@ -3402,6 +3268,96 @@ class EditSetControllerSpec extends BaseSpec {
 
   }
 
+  private def valuesFromRecord(oci: String): Map[String, String] = {
+    val editSetRecord = getExpectedEditSetRecord(oci)
+    val mapOfCreatorIDs = editSetRecord.creatorIDs.zipWithIndex.map { case (creatorId, index) =>
+      val key = s"${FieldNames.creatorIDs}[$index]"
+      (key, creatorId)
+    }.toMap
+    Map(
+      FieldNames.background                -> editSetRecord.background,
+      FieldNames.coveringDates             -> editSetRecord.coveringDates,
+      FieldNames.custodialHistory          -> editSetRecord.custodialHistory,
+      FieldNames.endDateDay                -> editSetRecord.endDateDay,
+      FieldNames.endDateMonth              -> editSetRecord.endDateMonth,
+      FieldNames.endDateYear               -> editSetRecord.endDateYear,
+      FieldNames.formerReferenceDepartment -> editSetRecord.formerReferenceDepartment,
+      FieldNames.legalStatus               -> editSetRecord.legalStatus,
+      FieldNames.note                      -> editSetRecord.note,
+      FieldNames.oci                       -> editSetRecord.oci,
+      FieldNames.placeOfDeposit            -> editSetRecord.placeOfDeposit,
+      FieldNames.scopeAndContent           -> editSetRecord.scopeAndContent,
+      FieldNames.startDateDay              -> editSetRecord.startDateDay,
+      FieldNames.startDateMonth            -> editSetRecord.startDateMonth,
+      FieldNames.startDateYear             -> editSetRecord.startDateYear
+    ) ++ mapOfCreatorIDs
+
+  }
+
+  private def generateExpectedEditRecordPageFromRecord(oci: String): ExpectedEditRecordPage = {
+    val editSetRecord = getExpectedEditSetRecord(oci)
+    ExpectedEditRecordPage(
+      title = "Edit record",
+      heading = s"TNA reference: ${editSetRecord.ccr}",
+      legend = "Intellectual properties",
+      classicCatalogueRef = editSetRecord.ccr,
+      omegaCatalogueId = editSetRecord.oci,
+      scopeAndContent = editSetRecord.scopeAndContent,
+      coveringDates = editSetRecord.coveringDates,
+      formerReferenceDepartment = editSetRecord.formerReferenceDepartment,
+      startDate = ExpectedDate(editSetRecord.startDateDay, editSetRecord.startDateMonth, editSetRecord.startDateYear),
+      endDate = ExpectedDate(editSetRecord.endDateDay, editSetRecord.endDateMonth, editSetRecord.endDateYear),
+      legalStatus = editSetRecord.legalStatus,
+      note = editSetRecord.note,
+      background = editSetRecord.background,
+      optionsForPlaceOfDeposit = Seq(
+        ExpectedSelectOption("", "Select where this record is held", disabled = true),
+        ExpectedSelectOption("1", "The National Archives, Kew", selected = true),
+        ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
+        ExpectedSelectOption("3", "British Library, National Sound Archive")
+      ).map(expectedSelectedOption =>
+        expectedSelectedOption.copy(selected = expectedSelectedOption.value == editSetRecord.placeOfDeposit)
+      ),
+      optionsForCreators = editSetRecord.creatorIDs
+        .filter(creatorId => allCreators.exists(_.id == creatorId))
+        .map(creatorId =>
+          Seq(
+            ExpectedSelectOption("", "Select creator", disabled = true),
+            ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+            ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+            ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+            ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+          ).map(expectedSelectedOption =>
+            expectedSelectedOption.copy(selected = expectedSelectedOption.value == creatorId)
+          )
+        ),
+      relatedMaterial = editSetRecord.relatedMaterial.map {
+        case RelatedMaterial.LinkAndDescription(linkHref, linkText, description) =>
+          ExpectedRelatedMaterial(linkHref = Some(linkHref), linkText = Some(linkText), description = Some(description))
+        case RelatedMaterial.LinkOnly(linkHref, linkText) =>
+          ExpectedRelatedMaterial(linkHref = Some(linkHref), linkText = Some(linkText))
+        case RelatedMaterial.DescriptionOnly(description) => ExpectedRelatedMaterial(description = Some(description))
+      },
+      separatedMaterial = editSetRecord.separatedMaterial.map {
+        case SeparatedMaterial.LinkAndDescription(linkHref, linkText, description) =>
+          ExpectedSeparatedMaterial(
+            linkHref = Some(linkHref),
+            linkText = Some(linkText),
+            description = Some(description)
+          )
+        case SeparatedMaterial.LinkOnly(linkHref, linkText) =>
+          ExpectedSeparatedMaterial(linkHref = Some(linkHref), linkText = Some(linkText))
+        case SeparatedMaterial.DescriptionOnly(description) =>
+          ExpectedSeparatedMaterial(description = Some(description))
+      },
+      custodialHistory = editSetRecord.custodialHistory
+    )
+
+  }
+
+  private def getExpectedEditSetRecord(oci: String): EditSetRecord =
+    editSetRecordMap.getOrElse(oci, fail(s"Unable to get record for OCI [$oci]"))
+
 }
 
 object EditSetControllerSpec {
@@ -3422,6 +3378,7 @@ object EditSetControllerSpec {
     background: String,
     custodialHistory: String,
     optionsForPlaceOfDeposit: Seq[ExpectedSelectOption],
+    optionsForCreators: Seq[Seq[ExpectedSelectOption]],
     relatedMaterial: Seq[ExpectedRelatedMaterial] = Seq.empty,
     separatedMaterial: Seq[ExpectedSeparatedMaterial] = Seq.empty,
     summaryErrorMessages: Seq[ExpectedSummaryErrorMessage] = Seq.empty,
@@ -3432,7 +3389,8 @@ object EditSetControllerSpec {
     errorMessageForPlaceOfDeposit: Option[String] = None,
     errorMessageForNote: Option[String] = None,
     errorMessageForBackground: Option[String] = None,
-    errorMessageForCustodialHistory: Option[String] = None
+    errorMessageForCustodialHistory: Option[String] = None,
+    errorMessageForCreator: Option[String] = None
   )
 
   case class ExpectedRelatedMaterial(

@@ -181,7 +181,7 @@ object CustomMatchers {
   def haveRelatedMaterial(relatedMaterials: ExpectedRelatedMaterial*): Matcher[Document] = (document: Document) =>
     if (relatedMaterials.isEmpty)
       singleValueMatcher(
-        label = "a single list item with the text None",
+        label = "a single list item for related material with the text None",
         expectedValue = "None",
         actualValue = document.select("#related-material > li").text()
       )
@@ -195,7 +195,7 @@ object CustomMatchers {
   def haveSeparatedMaterial(separatedMaterials: ExpectedSeparatedMaterial*): Matcher[Document] = (document: Document) =>
     if (separatedMaterials.isEmpty)
       singleValueMatcher(
-        label = "a single list item with the text None",
+        label = "a single list item for separate material with the text None",
         expectedValue = "None",
         actualValue = document.select("#separated-material > li").text()
       )
@@ -412,6 +412,22 @@ object CustomMatchers {
   def haveSelectionForOrderingDirection(expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
     haveSelectionOptions(orderDirectionKey, "ordering direction", expectedSelectOptions)
 
+  def haveSelectionForCreator(index: Int, expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
+    haveSelectionOptions(s"creator-id-$index", s"creator (at index [$index])", expectedSelectOptions)
+
+  def haveNumberOfSelectionsForCreator(expectedNumber: Int): Matcher[Document] = (document: Document) => {
+    val actualNumber = document.select("select").asScala.count(_.attr("id").startsWith("creator-id-"))
+    val errorMessageIfExpected =
+      s"We expected $expectedNumber creator selections, but there were actually $actualNumber."
+    val errorMessageIfNotExpected =
+      s"We didn't expect $expectedNumber creator selections, but that's what we found"
+    MatchResult(
+      actualNumber == expectedNumber,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
   def haveNote(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "a note",
@@ -447,6 +463,11 @@ object CustomMatchers {
     haveErrorMessageForField(FieldNames.custodialHistory, s"#${FieldNames.custodialHistory}-error", expectedValue)
 
   def haveNoErrorMessageForCustodialHistory: Matcher[Document] = haveErrorMessageForCustodialHistory("")
+
+  def haveErrorMessageForCreator(expectedValue: String): Matcher[Document] =
+    haveErrorMessageForField(FieldNames.creatorIDs, "#creator-id-0-error", expectedValue)
+
+  def haveNoErrorMessageForCreator: Matcher[Document] = haveErrorMessageForCreator("")
 
   def haveAllLowerCaseIds: Matcher[Document] = (document: Document) =>
     singleValueMatcher(

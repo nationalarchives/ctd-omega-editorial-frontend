@@ -22,18 +22,19 @@
 package uk.gov.nationalarchives.omega.editorial.controllers
 
 import play.api.Logger
-import play.api.data.Forms.{ mapping, text }
+import play.api.data.Forms.{ mapping, seq, text }
 import play.api.data.{ Form, FormError }
 import play.api.i18n.{ I18nSupport, Lang }
 import play.api.mvc._
+import play.twirl.api.HtmlFormat
 import uk.gov.nationalarchives.omega.editorial._
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
-import uk.gov.nationalarchives.omega.editorial.models.{ DateRange, EditSetEntry, EditSetRecord, User }
-import uk.gov.nationalarchives.omega.editorial.services.CoveringDateCalculator.getStartAndEndDates
-import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError
-import uk.gov.nationalarchives.omega.editorial.support.DateParser
 import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
 import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues._
+import uk.gov.nationalarchives.omega.editorial.models._
+import uk.gov.nationalarchives.omega.editorial.services.CoveringDateCalculator.getStartAndEndDates
+import uk.gov.nationalarchives.omega.editorial.services.{ CoveringDateError, ReferenceDataService }
+import uk.gov.nationalarchives.omega.editorial.support.{ DateParser, DisplayedCreator }
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
 import java.time.LocalDate
@@ -44,7 +45,8 @@ import javax.inject._
   */
 @Singleton
 class EditSetController @Inject() (
-  val messagesControllerComponents: MessagesControllerComponents,
+  messagesControllerComponents: MessagesControllerComponents,
+  referenceDataService: ReferenceDataService,
   editSet: editSet,
   editSetRecordEdit: editSetRecordEdit,
   editSetRecordEditDiscard: editSetRecordEditDiscard,
@@ -54,6 +56,13 @@ class EditSetController @Inject() (
 
   private val logger: Logger = Logger(this.getClass)
 
+  private lazy val displayedCreators: Seq[DisplayedCreator] =
+    referenceDataService.getCreators.map(DisplayedCreator.fromCreator)
+
+  private lazy val placesOfDeposit: Seq[PlaceOfDeposit] = referenceDataService.getPlacesOfDeposit
+
+  private lazy val legalStatuses: Seq[LegalStatus] = referenceDataService.getLegalStatuses
+
   object MessageKeys {
     val backgroundTooLong = "edit-set.record.error.background-too-long"
     val buttonDiscard = "edit-set.record.discard.text"
@@ -62,6 +71,7 @@ class EditSetController @Inject() (
     val coveringDatesTooLong = "edit-set.record.error.covering-dates-too-long"
     val coveringDatesUnparseable = "edit-set.record.error.covering-dates"
     val custodialHistoryTooLong = "edit-set.record.error.custodial-history-long"
+    val creatorMissing = "edit-set.record.error.minimum-creators"
     val endDateBeforeStartDate = "edit-set.record.error.end-date-before-start-date"
     val endDateInvalid = "edit-set.record.error.end-date"
     val formerReferenceDepartmentInvalid = "edit-set.record.error.former-reference-department"
@@ -76,6 +86,7 @@ class EditSetController @Inject() (
   }
 
   type FormTransformer = Form[EditSetRecordFormValues] => Form[EditSetRecordFormValues]
+  type RecordTransformer = EditSetRecord => EditSetRecord
 
   private val editSetRecordForm: Form[EditSetRecordFormValues] = Form(
     mapping(
@@ -132,7 +143,9 @@ class EditSetController @Inject() (
         .verifying(
           resolvedMessage(MessageKeys.custodialHistoryTooLong),
           value => value.length <= 1000
-        )
+        ),
+      FieldNames.creatorIDs -> seq(text)
+        .verifying(resolvedMessage(MessageKeys.creatorMissing), _.nonEmpty)
     )(EditSetRecordFormValues.apply)(EditSetRecordFormValues.unapply)
   )
 
@@ -166,59 +179,28 @@ class EditSetController @Inject() (
     }
   }
 
-  private def generateEditSetView(id: String, user: User, editSetReorder: EditSetReorder)(implicit
-    request: Request[AnyContent]
-  ): Result = {
-    logger.info(s"The edit set id is $id ")
-    val currentEditSet = editSets.getEditSet()
-    val title = resolvedMessage("edit-set.title")
-    val heading: String = resolvedMessage("edit-set.heading", currentEditSet.name)
-    val editSetEntries = currentEditSet.entries.sorted(getSorter(editSetReorder))
-    Ok(editSet(user, title, heading, editSetEntries, reorderForm.fill(editSetReorder)))
-  }
-
-  private def getSorter(editSetReorder: EditSetReorder): Ordering[EditSetEntry] = {
-    val fieldOrdering: Ordering[EditSetEntry] = editSetReorder.field match {
-      case FieldNames.ccr             => Ordering.by(_.ccr)
-      case FieldNames.scopeAndContent => Ordering.by(_.scopeAndContent)
-      case FieldNames.coveringDates   => Ordering.by(_.coveringDates)
-      case _                          => Ordering.by(_.ccr)
-    }
-    if (editSetReorder.direction == orderDirectionDescending) fieldOrdering.reverse else fieldOrdering
-  }
-
   /** Create an Action for the edit set record edit page.
     *
     * The configuration in the `routes` file means that this method will be called when the application receives a `GET`
     * request with a path of `/edit-set/{id}/record/{recordId}/edit`.
     */
-  def editRecord(id: String, recordId: String): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
-    withUser { user =>
-      logger.info(s"The edit set id is $id for record id $recordId")
-      val editSetName = editSets.getEditSet().name
-      editSetRecords.getEditSetRecordByOCI(recordId) match {
-        case Some(record) =>
-          val title: String = resolvedMessage(MessageKeys.title)
-          val recordForm = correctBeforePresenting(editSetRecordForm.fill(populateForm(record)))
-          Ok(
-            editSetRecordEdit(
-              user,
-              editSetName,
-              title,
-              record,
-              legalStatus.getLegalStatusReferenceData(),
-              corporateBodies.all,
-              recordForm
-            )
-          )
-        case None => NotFound
+  def viewEditRecordForm(id: String, recordId: String): Action[AnyContent] = Action {
+    implicit request: Request[AnyContent] =>
+      withUser { user =>
+        logger.info(s"The edit set id is $id for record id $recordId")
+        val editSetName = editSets.getEditSet().name
+        editSetRecords.getEditSetRecordByOCI(recordId) match {
+          case Some(record) =>
+            val recordPreparedForDisplay = prepareForDisplay(record)
+            val recordForm = bindFormFromRecordForDisplay(recordPreparedForDisplay)
+            Ok(generateEditSetRecordEditView(user, editSetName, recordPreparedForDisplay, recordForm))
+          case None => NotFound
+        }
       }
-    }
   }
 
   def submit(id: String, oci: String): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     withUser { user =>
-      val title: String = resolvedMessage(MessageKeys.title)
       logger.info(s"The edit set id is $id for record id $oci")
       val editSetName = editSets.getEditSet().name
 
@@ -234,24 +216,16 @@ class EditSetController @Inject() (
           editSetRecords.saveEditSetRecord(newRecord)
           Redirect(controllers.routes.EditSetController.save(id, record.oci))
 
-        case Right(Discard) =>
-          Redirect(controllers.routes.EditSetController.discard(id, oci))
+        case Right(Discard) => Redirect(controllers.routes.EditSetController.discard(id, oci))
 
-        case Right(CalculateDates(record)) =>
-          calculateDates(user, title, record)
+        case Right(CalculateDates(record)) => calculateDates(user, record)
+
+        case Right(AddAnotherCreator(record)) => addAnotherCreator(user, editSetName, record)
+
+        case Right(RemoveLastCreator(record)) => removeLastCreator(user, editSetName, record)
 
         case Left(FormValidationFailed(formWithErrors, record)) =>
-          BadRequest(
-            editSetRecordEdit(
-              user,
-              editSetName,
-              title,
-              record,
-              legalStatus.getLegalStatusReferenceData(),
-              corporateBodies.all,
-              formWithErrors
-            )
-          )
+          BadRequest(generateEditSetRecordEditView(user, editSetName, record, formWithErrors))
 
         case Left(RecordNotFound(missingOci)) =>
           BadRequest(s"Record with $missingOci not found")
@@ -296,13 +270,46 @@ class EditSetController @Inject() (
     }
   }
 
+  private def prepareForDisplay(originalEditSetRecord: EditSetRecord): EditSetRecord =
+    Seq[RecordTransformer](prepareCreatorIDs, preparePlaceOfDeposit).foldLeft(originalEditSetRecord)(
+      (editSetRecord, transformer) => transformer(editSetRecord)
+    )
+
+  private def prepareCreatorIDs(editSetRecord: EditSetRecord): EditSetRecord = {
+    val recognisedCreatorIds = editSetRecord.creatorIDs.filter(isCreatorRecognised)
+    val updatedCreatorIds = if (recognisedCreatorIds.nonEmpty) recognisedCreatorIds else List("")
+    editSetRecord.copy(creatorIDs = updatedCreatorIds)
+  }
+
+  private def preparePlaceOfDeposit(editSetRecord: EditSetRecord): EditSetRecord = {
+    val correctedValue =
+      if (isPlaceOfDepositRecognised(editSetRecord.placeOfDeposit)) editSetRecord.placeOfDeposit else ""
+    editSetRecord.copy(placeOfDeposit = correctedValue)
+  }
+
+  private def generateEditSetView(id: String, user: User, editSetReorder: EditSetReorder)(implicit
+    request: Request[AnyContent]
+  ): Result = {
+    logger.info(s"The edit set id is $id ")
+    val currentEditSet = editSets.getEditSet()
+    val title = resolvedMessage("edit-set.title")
+    val heading: String = resolvedMessage("edit-set.heading", currentEditSet.name)
+    val editSetEntries = currentEditSet.entries.sorted(getSorter(editSetReorder))
+    Ok(editSet(user, title, heading, editSetEntries, reorderForm.fill(editSetReorder)))
+  }
+
+  private def getSorter(editSetReorder: EditSetReorder): Ordering[EditSetEntry] = {
+    val fieldOrdering: Ordering[EditSetEntry] = editSetReorder.field match {
+      case FieldNames.ccr             => Ordering.by(_.ccr)
+      case FieldNames.scopeAndContent => Ordering.by(_.scopeAndContent)
+      case FieldNames.coveringDates   => Ordering.by(_.coveringDates)
+      case _                          => Ordering.by(_.ccr)
+    }
+    if (editSetReorder.direction == orderDirectionDescending) fieldOrdering.reverse else fieldOrdering
+  }
+
   private def formToEither[A](form: Form[A]): Either[Form[A], A] =
     form.fold(Left.apply, Right.apply)
-
-  private def performAdditionalValidation(originalForm: Form[EditSetRecordFormValues]): Form[EditSetRecordFormValues] =
-    Seq[FormTransformer](validateStartAndEndDates, validatePlaceOfDeposit).foldLeft(originalForm)((form, transformer) =>
-      transformer(form)
-    )
 
   /** For both start date and end date, if any of the parts are at fault (like the month), we assign the error to the
     * first field, the day. See: https://design-system.service.gov.uk/components/error-summary/
@@ -345,29 +352,60 @@ class EditSetController @Inject() (
   private def findRecord(oci: String): Outcome[EditSetRecord] =
     editSetRecords.getEditSetRecordByOCI(oci).toRight(RecordNotFound(oci))
 
-  private def getSubmitAction(
-    record: EditSetRecord
-  )(implicit request: Request[AnyContent]): Outcome[SubmitAction] =
+  private def getSubmitAction(record: EditSetRecord)(implicit request: Request[AnyContent]): Outcome[SubmitAction] =
     request.body.asFormUrlEncoded.get("action").headOption match {
       case Some("save") =>
         validateForm(record).map { form =>
           Save(record, form)
         }
-      case Some("discard")        => Right(Discard)
-      case Some("calculateDates") => Right(CalculateDates(record))
-      case Some(badAction)        => Left(InvalidAction(badAction))
-      case None                   => Left(MissingAction)
+      case Some("discard")           => Right(Discard)
+      case Some("calculateDates")    => Right(CalculateDates(record))
+      case Some("addAnotherCreator") => Right(AddAnotherCreator(record))
+      case Some("removeLastCreator") => Right(RemoveLastCreator(record))
+      case Some(badAction)           => Left(InvalidAction(badAction))
+      case None                      => Left(MissingAction)
     }
 
   private def validateForm(
     record: EditSetRecord
   )(implicit request: Request[AnyContent]): Outcome[EditSetRecordFormValues] =
-    formToEither(performAdditionalValidation(editSetRecordForm.bindFromRequest())).left.map { badForm =>
+    formToEither(bindFormFromRequestForSubmission).left.map { badForm =>
       FormValidationFailed(badForm, record)
     }
 
+  private def bindFormFromRequestForDisplay(implicit request: Request[AnyContent]): Form[EditSetRecordFormValues] =
+    editSetRecordForm.bindFromRequest()
+
+  private def bindFormFromRequestForSubmission(implicit request: Request[AnyContent]): Form[EditSetRecordFormValues] =
+    validate(editSetRecordForm.bindFromRequest())
+
+  private def bindFormFromRecordForDisplay(editSetRecord: EditSetRecord): Form[EditSetRecordFormValues] =
+    editSetRecordForm.fill(populateForm(editSetRecord))
+
+  private def validate(form: Form[EditSetRecordFormValues]): Form[EditSetRecordFormValues] =
+    Seq[FormTransformer](validateStartAndEndDates, validatePlaceOfDeposit, validateCreators).foldLeft(form)(
+      (form, transformer) => transformer(form)
+    )
+
+  private def validateCreators(
+    form: Form[EditSetRecordFormValues]
+  ): Form[EditSetRecordFormValues] = {
+    val numberOfRecognisedSelectedCreatorIDs = form.data.count { case (key, value) =>
+      key.startsWith(s"${FieldNames.creatorIDs}[") && value.trim.nonEmpty
+    }
+    val errorsExceptForCreatorRelated = form.errors.filterNot(error => error.key.startsWith(FieldNames.creatorIDs))
+    val creatorRelatedErrors =
+      if (numberOfRecognisedSelectedCreatorIDs == 0) {
+        Seq(FormError("creator-id-0", resolvedMessage(MessageKeys.creatorMissing)))
+      } else Seq.empty
+    form.copy(errors = errorsExceptForCreatorRelated ++ creatorRelatedErrors)
+  }
+
   private def isPlaceOfDepositRecognised(placeOfDeposit: String): Boolean =
-    corporateBodies.all.map(_.id).contains(placeOfDeposit)
+    placesOfDeposit.map(_.id).contains(placeOfDeposit)
+
+  private def isCreatorRecognised(creatorID: String): Boolean =
+    creatorID.trim.nonEmpty && displayedCreators.exists(_.id == creatorID)
 
   private def resolvedMessage(key: String, args: String*): String = messagesApi(key, args: _*)(Lang("en"))
 
@@ -390,7 +428,7 @@ class EditSetController @Inject() (
       date  <- DateParser.parse(List(day, month, year).mkString("/"))
     } yield date
 
-  private def calculateDates(user: User, title: String, record: EditSetRecord)(implicit
+  private def calculateDates(user: User, record: EditSetRecord)(implicit
     request: Request[AnyContent]
   ): Result = {
     val originalForm: Form[EditSetRecordFormValues] = editSetRecordForm.bindFromRequest()
@@ -400,43 +438,83 @@ class EditSetController @Inject() (
       singleRange(originalForm.data.getOrElse(FieldNames.coveringDates, "")) match {
         case Right(singleDateRangeOpt) =>
           Ok(
-            editSetRecordEdit(
+            generateEditSetRecordEditView(
               user,
               editSetName,
-              title,
               record,
-              legalStatus.getLegalStatusReferenceData(),
-              corporateBodies.all,
               formWithUpdatedDateFields(originalForm, singleDateRangeOpt)
             )
           )
         case Left(_) =>
           BadRequest(
-            editSetRecordEdit(
+            generateEditSetRecordEditView(
               user,
               editSetName,
-              title,
               record,
-              legalStatus.getLegalStatusReferenceData(),
-              corporateBodies.all,
               formAfterCoveringDatesParseError(originalForm)
             )
           )
       }
     } else {
       BadRequest(
-        editSetRecordEdit(
+        generateEditSetRecordEditView(
           user,
           editSetName,
-          title,
           record,
-          legalStatus.getLegalStatusReferenceData(),
-          corporateBodies.all,
           originalForm.copy(errors = errorsForCoveringDatesOnly)
         )
       )
     }
   }
+
+  private def addAnotherCreator(user: User, editSetName: String, editSetRecord: EditSetRecord)(implicit
+    request: Request[AnyContent]
+  ): Result = {
+
+    val selectedNonEmptyCreatorsFromRequest = filterRequestData { case (key, value) =>
+      key.startsWith(FieldNames.creatorIDs) && value.trim.nonEmpty
+    }
+    val keyForNewCreator = s"${FieldNames.creatorIDs}[${selectedNonEmptyCreatorsFromRequest.size}]"
+    val updatedCreatorRelatedData = selectedNonEmptyCreatorsFromRequest ++ Map(keyForNewCreator -> "")
+    val formFromRecord = bindFormFromRecordForDisplay(editSetRecord)
+    val updatedForm = formFromRecord.copy(data = formFromRecord.data ++ updatedCreatorRelatedData, errors = Seq.empty)
+    Ok(generateEditSetRecordEditView(user, editSetName, editSetRecord, updatedForm))
+  }
+
+  private def removeLastCreator(user: User, editSetName: String, editSetRecord: EditSetRecord)(implicit
+    request: Request[AnyContent]
+  ): Result = {
+    val selectedCreatorsFromRequest = filterRequestData { case (key, _) =>
+      key.startsWith(FieldNames.creatorIDs)
+    }
+    val keyToRemove = s"${FieldNames.creatorIDs}[${selectedCreatorsFromRequest.size - 1}]"
+    val formFromRecord = bindFormFromRequestForDisplay
+    val updatedForm =
+      formFromRecord.copy(data = formFromRecord.data ++ selectedCreatorsFromRequest - keyToRemove, errors = Seq.empty)
+    Ok(generateEditSetRecordEditView(user, editSetName, editSetRecord, updatedForm))
+  }
+
+  private def generateEditSetRecordEditView(
+    user: User,
+    editSetName: String,
+    editSetRecord: EditSetRecord,
+    form: Form[EditSetRecordFormValues]
+  )(implicit request: Request[AnyContent]): HtmlFormat.Appendable = {
+    val title = resolvedMessage(MessageKeys.title)
+    editSetRecordEdit(
+      user,
+      editSetName,
+      title,
+      editSetRecord,
+      legalStatuses,
+      placesOfDeposit,
+      displayedCreators,
+      form
+    )
+  }
+
+  private def filterRequestData(f: (String, String) => Boolean)(implicit request: Request[AnyContent]) =
+    bindFormFromRequestForDisplay.data.filter { case (key, value) => f(key, value) }
 
   private def singleRange(rawCoveringDates: String): Either[CoveringDateError, Option[DateRange]] =
     getStartAndEndDates(rawCoveringDates).map(DateRange.single)
@@ -471,12 +549,6 @@ class EditSetController @Inject() (
       FieldNames.endDateYear    -> dateRange.end.get(YEAR).toString
     )
 
-  private def correctBeforePresenting(form: Form[EditSetRecordFormValues]): Form[EditSetRecordFormValues] = {
-    val correctedPlaceOfDeposit =
-      form.data.get(FieldNames.placeOfDeposit).filter(isPlaceOfDepositRecognised).getOrElse("")
-    form.copy(data = form.data ++ Map(FieldNames.placeOfDeposit -> correctedPlaceOfDeposit))
-  }
-
 }
 
 object EditSetController {
@@ -486,6 +558,8 @@ object EditSetController {
   case class Save(record: EditSetRecord, form: EditSetRecordFormValues) extends SubmitAction
   case class CalculateDates(record: EditSetRecord) extends SubmitAction
   case object Discard extends SubmitAction
+  case class AddAnotherCreator(editSetRecord: EditSetRecord) extends SubmitAction
+  case class RemoveLastCreator(editSetRecord: EditSetRecord) extends SubmitAction
 
   type Outcome[A] = Either[Error, A]
 
@@ -499,6 +573,7 @@ object EditSetController {
     val background = "background"
     val ccr = "ccr"
     val coveringDates = "covering-dates"
+    val creatorIDs = "creator-ids"
     val custodialHistory = "custodial-history"
     val orderDirection = "direction"
     val endDateDay = "end-date-day"

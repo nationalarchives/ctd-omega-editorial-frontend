@@ -22,16 +22,17 @@
 package views
 
 import org.jsoup.nodes.Document
-import play.api.data.Forms.{ mapping, text }
+import play.api.data.Forms.{ mapping, seq, text }
 import play.api.data.{ Form, FormError }
 import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import play.twirl.api.Html
 import support.BaseSpec
 import support.CustomMatchers._
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, LegalStatus, RelatedMaterial }
-import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
-import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.FieldNames
 import support.ExpectedValues.ExpectedSummaryErrorMessage
+import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.FieldNames
+import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, LegalStatus, RelatedMaterial }
+import uk.gov.nationalarchives.omega.editorial.support.DisplayedCreator
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEdit
 
 class EditRecordViewSpec extends BaseSpec {
@@ -51,7 +52,8 @@ class EditRecordViewSpec extends BaseSpec {
       FieldNames.placeOfDeposit            -> text,
       FieldNames.note                      -> text,
       FieldNames.background                -> text,
-      FieldNames.custodialHistory          -> text
+      FieldNames.custodialHistory          -> text,
+      FieldNames.creatorIDs                -> seq(text)
     )(EditSetRecordFormValues.apply)(EditSetRecordFormValues.unapply)
   )
 
@@ -62,6 +64,8 @@ class EditRecordViewSpec extends BaseSpec {
       LegalStatus("ref.3", "Public Records unless otherwise Stated"),
       LegalStatus("ref.4", "Welsh Public Record(s)")
     )
+
+  private val displayedCreators: Seq[DisplayedCreator] = allCreators.map(DisplayedCreator.fromCreator)
 
   val editSetRecord = EditSetRecord(
     ccr = "COAL 80/80/1",
@@ -107,7 +111,8 @@ class EditRecordViewSpec extends BaseSpec {
     legalStatus = "",
     note = "",
     background = "",
-    custodialHistory = ""
+    custodialHistory = "",
+    creatorIDs = List.empty
   )
 
   "Edit record Html" should {
@@ -172,7 +177,8 @@ class EditRecordViewSpec extends BaseSpec {
           title,
           editSetRecord,
           legalStatusReferenceData,
-          allCorporateBodies,
+          allPlacesOfDeposits,
+          displayedCreators,
           filledForm
         )(
           Helpers.stubMessages(),
@@ -208,7 +214,8 @@ class EditRecordViewSpec extends BaseSpec {
           title,
           editSetRecord,
           legalStatusReferenceData,
-          allCorporateBodies,
+          allPlacesOfDeposits,
+          displayedCreators,
           filledForm
         )(
           Helpers.stubMessages(),
@@ -256,7 +263,8 @@ class EditRecordViewSpec extends BaseSpec {
           title,
           editSetRecord,
           legalStatusReferenceData,
-          allCorporateBodies,
+          allPlacesOfDeposits,
+          displayedCreators,
           filledForm
         )(
           Helpers.stubMessages(),
@@ -295,7 +303,8 @@ class EditRecordViewSpec extends BaseSpec {
           title,
           editSetRecord,
           legalStatusReferenceData,
-          allCorporateBodies,
+          allPlacesOfDeposits,
+          displayedCreators,
           filledForm
         )(
           Helpers.stubMessages(),
@@ -328,7 +337,8 @@ class EditRecordViewSpec extends BaseSpec {
         placeOfDeposit = "2",
         note = "",
         background = "",
-        custodialHistory = ""
+        custodialHistory = "",
+        creatorIDs = List.empty
       )
 
       val editSetRecordForm = emptyForm
@@ -342,7 +352,8 @@ class EditRecordViewSpec extends BaseSpec {
           title,
           editSetRecord,
           legalStatusReferenceData,
-          allCorporateBodies,
+          allPlacesOfDeposits,
+          displayedCreators,
           editSetRecordForm
         )(
           Helpers.stubMessages(),
@@ -413,7 +424,8 @@ class EditRecordViewSpec extends BaseSpec {
         title = title,
         record = editSetRecord,
         legalStatusReferenceData,
-        corporateBodies = allCorporateBodies,
+        placesOfDeposit = allPlacesOfDeposits,
+        creators = displayedCreators,
         editSetRecordForm = form
       )(
         Helpers.stubMessages(),
