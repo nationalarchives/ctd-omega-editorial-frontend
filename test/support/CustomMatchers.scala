@@ -25,6 +25,7 @@ import org.jsoup.nodes.{ Document, Element }
 import org.scalatest.matchers.{ MatchResult, Matcher }
 import support.ExpectedValues.{ ExpectedSelectOption, ExpectedSummaryErrorMessage }
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError
+import controllers.EditSetControllerSpec._
 
 import scala.jdk.CollectionConverters._
 
@@ -175,6 +176,20 @@ object CustomMatchers {
       expectedValue = expectedValue,
       actualValue = document.select("#endDateYear").attr("value")
     )
+
+  def haveRelatedMaterial(relatedMaterials: ExpectedRelatedMaterial*): Matcher[Document] = (document: Document) =>
+    if (relatedMaterials.isEmpty)
+      singleValueMatcher(
+        label = "a single list item with the text None",
+        expectedValue = "None",
+        actualValue = document.select("#related-material > li").text()
+      )
+    else
+      singleValueMatcher(
+        label = "a list of related material",
+        expectedValue = relatedMaterials.toSeq,
+        actualValue = getActualRelatedMaterial(document).toSeq
+      )
 
   def haveSummaryErrorTitle(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
@@ -444,7 +459,7 @@ object CustomMatchers {
 
   private def singleValueMatcher[T](label: String, expectedValue: T, actualValue: T) = {
     val errorMessageIfExpected =
-      s"The page didn't have $label of '$expectedValue'. The actual value was '$actualValue'"
+      s"The page didn't have $label of:\n'$expectedValue'.\nThe actual value was\n'$actualValue'"
     val errorMessageIfNotExpected = s"The page did indeed have $label of '$expectedValue', which was not expected."
     MatchResult(
       actualValue == expectedValue,
@@ -452,6 +467,19 @@ object CustomMatchers {
       errorMessageIfNotExpected
     )
   }
+
+  private def getActualRelatedMaterial(document: Document): Seq[ExpectedRelatedMaterial] =
+    document
+      .select("#related-material > li")
+      .asScala
+      .toSeq
+      .map { listItem =>
+        ExpectedRelatedMaterial(
+          linkHref = noneIfEmpty(listItem.select("a").attr("href")),
+          linkText = noneIfEmpty(listItem.select("a").text()),
+          description = noneIfEmpty(listItem.select("span").text())
+        )
+      }
 
   private def removeInvisibleErrorMessagePrefix(original: String) = original.replace("login.hidden.error ", "")
 
@@ -465,5 +493,11 @@ object CustomMatchers {
       expectedValue,
       removeInvisibleErrorMessagePrefix(document.select(valueSelector).text().replace("Error: ", ""))
     )
+
+  private def noneIfEmpty(input: String): Option[String] =
+    if (input.trim.isEmpty)
+      None
+    else
+      Some(input)
 
 }
