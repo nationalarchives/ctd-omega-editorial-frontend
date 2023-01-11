@@ -57,6 +57,20 @@ package object editSetRecords {
         |      "description" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
         |    }
         |  ],
+        |  "separatedMaterial" : [
+        |    {
+        |      "linkHref" : "#;",
+        |      "linkText" : "COAL 80/80/5"
+        |    },
+        |    {
+        |      "linkHref" : "#;",
+        |      "linkText" : "COAL 80/80/6"
+        |    },
+        |    {
+        |      "linkHref" : "#;",
+        |      "linkText" : "COAL 80/80/7"
+        |    }
+        |  ],
         |  "background": "Photo was taken by a daughter of one of the coal miners who used them."
         |} """.stripMargin
     )
@@ -255,7 +269,12 @@ package object editSetRecords {
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
         |  "note": "",
-        |  "background": ""
+        |  "background": "",
+        |  "separatedMaterial" : [
+        |    {
+        |      "description" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+        |    }
+        |  ]
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -277,7 +296,16 @@ package object editSetRecords {
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
         |  "note": "",
-        |  "background": ""
+        |  "background": "",
+        |  "separatedMaterial" : [
+        |    {
+        |      "description" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+        |    },
+        |    {
+        |      "linkHref" : "#;",
+        |      "linkText" : "COAL 80/80/5"
+        |    }
+        |  ]
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -299,7 +327,21 @@ package object editSetRecords {
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
         |  "note": "",
-        |  "background": ""
+        |  "background": "",
+        |  "separatedMaterial" : [
+        |    {
+        |      "description" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+        |    },
+        |    {
+        |      "linkHref" : "#;",
+        |      "linkText" : "COAL 80/80/5"
+        |    },
+        |    {
+        |      "linkHref" : "#;",
+        |      "linkText" : "COAL 80/80/8",
+        |      "description" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+        |    }
+        |  ]
         |} """.stripMargin
     )
     .as[EditSetRecord]
