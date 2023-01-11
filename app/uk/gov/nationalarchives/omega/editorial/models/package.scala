@@ -269,7 +269,12 @@ package object editSetRecords {
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
         |  "note": "",
-        |  "background": ""
+        |  "background": "",
+        |  "separatedMaterial" : [
+        |    {
+        |      "description" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+        |    }
+        |  ]
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -291,7 +296,16 @@ package object editSetRecords {
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
         |  "note": "",
-        |  "background": ""
+        |  "background": "",
+        |  "separatedMaterial" : [
+        |    {
+        |      "description" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
+        |    },
+        |    {
+        |      "linkHref" : "#;",
+        |      "linkText" : "COAL 80/80/5"
+        |    }
+        |  ]
         |} """.stripMargin
     )
     .as[EditSetRecord]
