@@ -188,7 +188,7 @@ object CustomMatchers {
       singleValueMatcher(
         label = "a list of related material",
         expectedValue = relatedMaterials.toSeq,
-        actualValue = getRelatedMaterialItems(document).toSeq
+        actualValue = getRelatedMaterialItems(document)
       )
 
   def haveSeparatedMaterial(separatedMaterials: ExpectedSeparatedMaterial*): Matcher[Document] = (document: Document) =>
@@ -202,7 +202,7 @@ object CustomMatchers {
       singleValueMatcher(
         label = "a list of separated material",
         expectedValue = separatedMaterials.toSeq,
-        actualValue = getSeperatedMaterialItems(document).toSeq
+        actualValue = getSeperatedMaterialItems(document)
       )
 
   def haveSummaryErrorTitle(expectedValue: String): Matcher[Document] = (document: Document) =>
