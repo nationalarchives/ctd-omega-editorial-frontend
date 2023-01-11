@@ -209,10 +209,10 @@
     value = editSetRecordForm.data.get("custodial-history"),
     label = Label(forAttr = Some("custodialHistory"), classes = "govuk-label--s", content = Text(messages("edit-set.record.edit.custodial-history"))),
     errorMessage = editSetRecordForm.error("custodial-history").map { error =>
-    ErrorMessage(
-    content = Text(error.message),
-    attributes = Map("for" -> "custodial-history")
-    )
+        ErrorMessage(
+            content = Text(error.message),
+            attributes = Map("for" -> "custodial-history")
+        )
     },
     attributes = Map("rows" -> "5", "autofocus" -> "true")
 )
