@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  test-workflows:
+  test:
     name: Editorial Tests
     strategy:
       fail-fast: false
@@ -16,11 +16,39 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Setup JDK
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: zulu
           java-version: 8
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Run tests
         run: sbt -v +test
+  deploy:
+    name: Package and Deploy
+    needs: test
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          java-version: 8
+      - name: Package with sbt-native-packager
+        run: sbt dist
+      - name: Configure AWS credentials for GitHub OIDC
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          role-to-assume: arn:aws:iam::495195014394:role/IAMGitHubOIDCRole
+          aws-region: eu-west-2
+      - name: Copy package to S3 bucket
+        working-directory: target/universal
+        run: aws s3 cp *.zip s3://ctd-omega-frontend-deployment/
+      - name: Deploy package to EC2
+        run: aws deploy create-deployment --application-name CtdOmegaEditorialFrontend --deployment-group-name CtdOmegaEditorialFrontend-DepGrp --revision revision-type=S3 --s3-location bucket=ctd-omega-frontend-deployment,key=ctd-omega-editorial-frontend-0.1.0-SNAPSHOT.zip,bundleType=zip

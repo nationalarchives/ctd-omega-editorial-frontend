@@ -1,0 +1,35 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /opt/ctd-omega-editorial-frontend
+permissions:
+  - object: /opt/ctd-omega-editorial-frontend/bin
+    pattern: "**"
+    owner: ec2-user
+    mode: 774
+    type:
+      - file
+  - object: /opt/ctd-omega-editorial-frontend/scripts
+    pattern: "*.sh"
+    owner: ec2-user
+    mode: 774
+    type:
+      - file
+hooks:
+  BeforeInstall:
+    - location: scripts/install_dependencies.sh
+      timeout: 300
+      runas: root
+  AfterInstall:
+    - location: scripts/configure_application.sh
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: scripts/start_server.sh
+      timeout: 300
+      runas: root
+  ApplicationStop:
+    - location: scripts/stop_server.sh
+      timeout: 300
+      runas: root
