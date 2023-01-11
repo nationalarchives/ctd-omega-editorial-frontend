@@ -43,6 +43,8 @@ package object editSetRecords {
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
         |  "note": "A note about COAL.2022.V1RJW.P.",
+        |  "background": "Photo was taken by a daughter of one of the coal miners who used them.",
+        |  "custodialHistory" : "Files originally created by successor or predecessor departments for COAL",
         |  "relatedMaterial" : [
         |    {
         |      "description" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
@@ -56,8 +58,7 @@ package object editSetRecords {
         |      "linkText" : "COAL 80/80/2",
         |      "description" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
         |    }
-        |  ],
-        |  "background": "Photo was taken by a daughter of one of the coal miners who used them."
+        |  ]
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -79,7 +80,8 @@ package object editSetRecords {
         |  "legalStatus": "ref.2",
         |  "placeOfDeposit" : "",
         |  "note": "A note about COAL.2022.V2RJW.P.",
-        |  "background": ""
+        |  "background": "",
+        |  "custodialHistory" : ""
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -101,7 +103,8 @@ package object editSetRecords {
         |  "legalStatus": "",
         |  "placeOfDeposit" : "6",
         |  "note": "",
-        |  "background": "Photo was taken by a son of one of the coal miners who used them."
+        |  "background": "Photo was taken by a son of one of the coal miners who used them.",
+        |  "custodialHistory" : ""
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -123,7 +126,8 @@ package object editSetRecords {
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
         |  "note": "",
-        |  "background": ""
+        |  "background": "",
+        |  "custodialHistory" : ""
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -145,7 +149,8 @@ package object editSetRecords {
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
         |  "note": "Need to check copyright info.",
-        |  "background": ""
+        |  "background": "",
+        |  "custodialHistory" : ""
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -167,7 +172,8 @@ package object editSetRecords {
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
         |  "note": "",
-        |  "background": ""
+        |  "background": "",
+        |  "custodialHistory" : ""
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -189,7 +195,8 @@ package object editSetRecords {
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
         |  "note": "",
-        |  "background": ""
+        |  "background": "",
+        |  "custodialHistory" : ""
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -211,7 +218,8 @@ package object editSetRecords {
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
         |  "note": "",
-        |  "background": ""
+        |  "background": "",
+        |  "custodialHistory" : ""
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -233,7 +241,8 @@ package object editSetRecords {
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
         |  "note": "",
-        |  "background": ""
+        |  "background": "",
+        |  "custodialHistory" : ""
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -255,7 +264,8 @@ package object editSetRecords {
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
         |  "note": "",
-        |  "background": ""
+        |  "background": "",
+        |  "custodialHistory" : ""
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -277,7 +287,8 @@ package object editSetRecords {
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
         |  "note": "",
-        |  "background": ""
+        |  "background": "",
+        |  "custodialHistory" : ""
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -299,7 +310,8 @@ package object editSetRecords {
         |  "legalStatus": "ref.1",
         |  "placeOfDeposit" : "1",
         |  "note": "",
-        |  "background": ""
+        |  "background": "",
+        |  "custodialHistory" : ""
         |} """.stripMargin
     )
     .as[EditSetRecord]
