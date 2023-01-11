@@ -1050,7 +1050,7 @@ class EditSetControllerSpec extends BaseSpec {
         "placeOfDeposit"            -> "2",
         "note"                      -> "Need to check copyright info.",
         "background"                -> "Photo was taken by a daughter of one of the coal miners who used them.",
-        "custodialHistory"          -> "Files originally created by successor or predecessor departments for COAL"
+        "custodial-history"         -> "Files originally created by successor or predecessor departments for COAL"
       )
 
     "when the action is to save the record" when {
@@ -2136,9 +2136,7 @@ class EditSetControllerSpec extends BaseSpec {
             val custodialHistoryTooLong =
               "Files originally created by successor or predecessor departments for COAL" * 100
             val values = validValuesForSaving ++ Map(
-              "ccr"              -> "COAL 80/80/1",
-              "oci"              -> "COAL.2022.V1RJW.P",
-              "custodialHistory" -> custodialHistoryTooLong
+              "custodial-history" -> custodialHistoryTooLong
             )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -2187,7 +2185,7 @@ class EditSetControllerSpec extends BaseSpec {
                 summaryErrorMessages = Seq(
                   ExpectedSummaryErrorMessage(
                     "Custodial history too long, maximum length 1000 characters",
-                    "#custodialHistory"
+                    "#custodial-history"
                   )
                 ),
                 errorMessageForCustodialHistory = Some("Custodial history too long, maximum length 1000 characters")
@@ -2374,9 +2372,7 @@ class EditSetControllerSpec extends BaseSpec {
           "the 'custodial history' field is blank" in {
 
             val values = validValuesForSaving ++ Map(
-              "ccr"              -> "COAL 80/80/1",
-              "oci"              -> "COAL.2022.V1RJW.P",
-              "custodialHistory" -> ""
+              "custodial-history" -> ""
             )
 
             val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)

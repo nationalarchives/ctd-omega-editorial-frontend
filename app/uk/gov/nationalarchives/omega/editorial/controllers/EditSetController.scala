@@ -58,6 +58,7 @@ class EditSetController @Inject() (
     val background = "background"
     val ccr = "ccr"
     val coveringDates = "coveringDates"
+    val custodialHistory = "custodial-history"
     val orderDirection = "direction"
     val endDateDay = "endDateDay"
     val endDateMonth = "endDateMonth"
@@ -72,7 +73,6 @@ class EditSetController @Inject() (
     val startDateDay = "startDateDay"
     val startDateMonth = "startDateMonth"
     val startDateYear = "startDateYear"
-    val custodialHistory = "custodialHistory"
   }
 
   object MessageKeys {
@@ -82,6 +82,7 @@ class EditSetController @Inject() (
     val coveringDatesMissing = "edit-set.record.missing.covering-dates"
     val coveringDatesTooLong = "edit-set.record.error.covering-dates-too-long"
     val coveringDatesUnparseable = "edit-set.record.error.covering-dates"
+    val custodialHistoryTooLong = "edit-set.record.error.custodial-history-long"
     val endDateBeforeStartDate = "edit-set.record.error.end-date-before-start-date"
     val endDateInvalid = "edit-set.record.error.end-date"
     val formerReferenceDepartmentInvalid = "edit-set.record.error.former-reference-department"
@@ -93,7 +94,6 @@ class EditSetController @Inject() (
     val scopeAndContentMissing = "edit-set.record.missing.scope-and-content"
     val startDateInvalid = "edit-set.record.error.start-date"
     val title = "edit-set.record.edit.title"
-    val custodialHistoryTooLong = "edit-set.record.error.custodial-history-long"
   }
 
   private val noSelectionForPlaceOfDeposit = ""

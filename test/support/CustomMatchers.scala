@@ -410,11 +410,11 @@ object CustomMatchers {
     singleValueMatcher(
       label = "custodial history",
       expectedValue = expectedValue,
-      actualValue = document.select("#custodialHistory").text()
+      actualValue = document.select("#custodial-history").text()
     )
 
   def haveErrorMessageForCustodialHistory(expectedValue: String): Matcher[Document] =
-    haveErrorMessageForField("custodialHistory", "#custodialHistory-error", expectedValue)
+    haveErrorMessageForField("custodial-history", "#custodial-history-error", expectedValue)
 
   def haveNoErrorMessageForCustodialHistory: Matcher[Document] = haveErrorMessageForCustodialHistory("")
 
