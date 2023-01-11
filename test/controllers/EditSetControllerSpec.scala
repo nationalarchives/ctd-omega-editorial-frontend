@@ -2366,7 +2366,6 @@ class EditSetControllerSpec extends BaseSpec {
                       Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                   )
                 )
-                
               )
             )
 

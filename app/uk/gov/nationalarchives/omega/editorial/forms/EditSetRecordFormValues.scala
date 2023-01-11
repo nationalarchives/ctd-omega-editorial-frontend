@@ -37,7 +37,7 @@ case class EditSetRecordFormValues(
   placeOfDeposit: String,
   note: String,
   background: String,
-  custodialHistory : String
+  custodialHistory: String
 )
 
 object EditSetRecordFormValues {
