@@ -432,6 +432,20 @@ object CustomMatchers {
 
   def haveNoErrorMessageForCustodialHistory: Matcher[Document] = haveErrorMessageForCustodialHistory("")
 
+  def haveAllLowerCaseIds: Matcher[Document] = (document: Document) =>
+    singleValueMatcher(
+      label = "an empty list of invalid ids",
+      expectedValue = Seq.empty,
+      actualValue = getAllIds(document).filterNot(validW3CIdentifier.matches)
+    )
+
+  def haveAllLowerCaseClassNames: Matcher[Document] = (document: Document) =>
+    singleValueMatcher(
+      label = "an empty list of invalid class names",
+      expectedValue = Seq.empty,
+      actualValue = getAllClassNames(document).filterNot(validW3CIdentifier.matches)
+    )
+
   private def haveSelectionOptions(
     id: String,
     label: String,
@@ -526,5 +540,13 @@ object CustomMatchers {
       None
     else
       Some(input)
+
+  private val validW3CIdentifier = """^[a-z][a-z0-9_!:\.-]*""".r
+
+  private def getAllClassNames(document: Document): Seq[String] =
+    document.select("*").asScala.toSeq.flatMap(_.classNames.asScala.toSeq).filter(_.nonEmpty)
+
+  private def getAllIds(document: Document): Seq[String] =
+    document.select("*").asScala.toSeq.map(_.id).filter(_.nonEmpty)
 
 }

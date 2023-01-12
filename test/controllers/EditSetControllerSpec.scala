@@ -914,6 +914,38 @@ class EditSetControllerSpec extends BaseSpec {
     }
 
     "render the edit set record page from the router" when {
+      "all ids in the document conform to w3c reccomendations" in {
+        val request =
+          CSRFTokenHelper.addCSRFToken(
+            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit").withSession(
+              SessionKeys.token -> validSessionToken
+            )
+          )
+
+        val editRecordPage = route(app, request).get
+
+        status(editRecordPage) mustBe OK
+        val document = asDocument(editRecordPage)
+
+        document must haveAllLowerCaseIds
+      }
+
+      "all class names in the document conform to w3c reccomendations" in {
+        val request =
+          CSRFTokenHelper.addCSRFToken(
+            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit").withSession(
+              SessionKeys.token -> validSessionToken
+            )
+          )
+
+        val editRecordPage = route(app, request).get
+
+        status(editRecordPage) mustBe OK
+        val document = asDocument(editRecordPage)
+
+        document must haveAllLowerCaseClassNames
+      }
+
       "all data is valid" in {
         val request =
           CSRFTokenHelper.addCSRFToken(
