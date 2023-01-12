@@ -2610,22 +2610,22 @@ class EditSetControllerSpec extends BaseSpec {
           "the 'note' field is blank" in {
 
             val values =
-              validValuesForSaving ++ Map("ccr" -> "COAL 80/80/1", "oci" -> "COAL.2022.V1RJW.P", "note" -> "")
+              validValuesForSaving ++ Map("note" -> "")
 
-            val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
+            val editRecordPageResponse = submitWhileLoggedIn(12, "COAL.2022.V12RJW.P", values)
 
             status(editRecordPageResponse) mustBe SEE_OTHER
-            redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+            redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/12/record/COAL.2022.V12RJW.P/edit/save")
 
-            val getRecordResult = getRecordForEditingWhileLoggedIn(1, "COAL.2022.V1RJW.P")
+            val getRecordResult = getRecordForEditingWhileLoggedIn(12, "COAL.2022.V12RJW.P")
             assertPageAsExpected(
               asDocument(getRecordResult),
               ExpectedEditRecordPage(
                 title = "Edit record",
-                heading = "TNA reference: COAL 80/80/1",
+                heading = "TNA reference: COAL 80/80/12",
                 legend = "Intellectual properties",
-                classicCatalogueRef = "COAL 80/80/1",
-                omegaCatalogueId = "COAL.2022.V1RJW.P",
+                classicCatalogueRef = "COAL 80/80/12",
+                omegaCatalogueId = "COAL.2022.V12RJW.P",
                 scopeAndContent =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
                 coveringDates = "2020 Oct",
@@ -2641,33 +2641,19 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives", selected = true),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
+                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 separatedMaterial = Seq(
+                  ExpectedSeparatedMaterial(
+                    description =
+                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+                  ),
                   ExpectedSeparatedMaterial(
                     linkHref = Some("#;"),
                     linkText = Some("COAL 80/80/5")
                   ),
                   ExpectedSeparatedMaterial(
                     linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/6")
-                  ),
-                  ExpectedSeparatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/7")
-                  )
-                ),
-                custodialHistory = "Files originally created by successor or predecessor departments for COAL",
-                relatedMaterial = Seq(
-                  ExpectedRelatedMaterial(
-                    description =
-                      Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/3")
-                  ),
-                  ExpectedRelatedMaterial(
-                    linkHref = Some("#;"),
-                    linkText = Some("COAL 80/80/2"),
+                    linkText = Some("COAL 80/80/8"),
                     description =
                       Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
                   )
