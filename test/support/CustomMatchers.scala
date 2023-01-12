@@ -420,6 +420,18 @@ object CustomMatchers {
 
   def haveNoErrorMessageForBackground: Matcher[Document] = haveErrorMessageForBackground("")
 
+  def haveCustodialHistory(expectedValue: String): Matcher[Document] = (document: Document) =>
+    singleValueMatcher(
+      label = "custodial history",
+      expectedValue = expectedValue,
+      actualValue = document.select("#custodial-history").text()
+    )
+
+  def haveErrorMessageForCustodialHistory(expectedValue: String): Matcher[Document] =
+    haveErrorMessageForField("custodial-history", "#custodial-history-error", expectedValue)
+
+  def haveNoErrorMessageForCustodialHistory: Matcher[Document] = haveErrorMessageForCustodialHistory("")
+
   private def haveSelectionOptions(
     id: String,
     label: String,

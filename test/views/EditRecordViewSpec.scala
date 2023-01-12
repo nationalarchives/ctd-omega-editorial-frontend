@@ -49,7 +49,8 @@ class EditRecordViewSpec extends BaseSpec {
       "legalStatus"               -> text,
       "placeOfDeposit"            -> text,
       "note"                      -> text,
-      "background"                -> text
+      "background"                -> text,
+      "custodialHistory"          -> text
     )(EditSetRecordFormValues.apply)(EditSetRecordFormValues.unapply)
   )
 
@@ -77,6 +78,7 @@ class EditRecordViewSpec extends BaseSpec {
     placeOfDeposit = "",
     background = "",
     note = "",
+    custodialHistory = "",
     relatedMaterial = Seq(
       RelatedMaterial.DescriptionOnly(
         description = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
@@ -103,7 +105,8 @@ class EditRecordViewSpec extends BaseSpec {
     placeOfDeposit = "",
     legalStatus = "",
     note = "",
-    background = ""
+    background = "",
+    custodialHistory = ""
   )
 
   "Edit record Html" should {
@@ -318,7 +321,8 @@ class EditRecordViewSpec extends BaseSpec {
         legalStatus = "ref.1",
         placeOfDeposit = "2",
         note = "",
-        background = ""
+        background = "",
+        custodialHistory = ""
       )
 
       val editSetRecordForm = emptyForm
