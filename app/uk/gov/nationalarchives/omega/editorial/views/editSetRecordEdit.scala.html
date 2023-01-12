@@ -48,8 +48,8 @@
     ))
 }
 
-@noRelatedMaterial = {
-  <li>None</li>
+@noListItem = {
+  <li>@messages("edit-set.record.edit.no-list-items")</li>
 }
 
 @relatedMaterialLink(link: RelatedMaterial.LinkOnly) = {
@@ -61,6 +61,18 @@
 }
 
 @relatedMaterialLinkAndDescription(linkAndDescription: RelatedMaterial.LinkAndDescription) = {
+  <li><a href="@linkAndDescription.linkHref">@linkAndDescription.linkText</a> - <span>@linkAndDescription.description</span></li>
+}
+
+@separatedMaterialLink(link: SeparatedMaterial.LinkOnly) = {
+  <li><a href="@link.linkHref">@link.linkText</a></li>
+}
+
+@separatedMaterialDescription(description: SeparatedMaterial.DescriptionOnly) = {
+  <li><span>@description.description</span></li>
+}
+
+@separatedMaterialLinkAndDescription(linkAndDescription: SeparatedMaterial.LinkAndDescription) = {
   <li><a href="@linkAndDescription.linkHref">@linkAndDescription.linkText</a> - <span>@linkAndDescription.description</span></li>
 }
 
@@ -274,7 +286,7 @@
   <ul id="related-material" class="govuk-list govuk-list--bullet">
     @{
       if (record.relatedMaterial.isEmpty)
-        noRelatedMaterial
+        noListItem
       else
         record.relatedMaterial.map {
 
@@ -286,6 +298,27 @@
 
           case e: RelatedMaterial.DescriptionOnly =>
             relatedMaterialDescription(e)
+
+        }
+    }
+  </ul>
+
+  <h3 class="govuk-heading-s">@messages("edit-set.record.edit.separated-material")</h3>
+  <ul id="separated-material" class="govuk-list govuk-list--bullet">
+    @{
+      if (record.separatedMaterial.isEmpty)
+        noListItem
+      else
+        record.separatedMaterial.map {
+
+          case e: SeparatedMaterial.LinkAndDescription =>
+            separatedMaterialLinkAndDescription(e)
+
+          case e: SeparatedMaterial.LinkOnly =>
+            separatedMaterialLink(e)
+
+          case e: SeparatedMaterial.DescriptionOnly =>
+            separatedMaterialDescription(e)
 
         }
     }
