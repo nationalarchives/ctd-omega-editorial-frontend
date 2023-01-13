@@ -444,7 +444,7 @@ object CustomMatchers {
       actualValue = getAllIds(document).filterNot(validW3CIdentifier.matches)
     )
 
-  def haveAllLowerCaseClassNames: Matcher[Document] = (document: Document) =>
+  def haveAllLowerCssClassNames: Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "an empty list of invalid class names",
       expectedValue = Seq.empty,

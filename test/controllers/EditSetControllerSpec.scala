@@ -926,9 +926,7 @@ class EditSetControllerSpec extends BaseSpec {
         val editRecordPage = route(app, request).get
 
         status(editRecordPage) mustBe OK
-        val document = asDocument(editRecordPage)
-
-        document must haveAllLowerCaseIds
+        asDocument(editRecordPage) must haveAllLowerCaseIds
       }
 
       "all class names in the document conform to w3c reccomendations" in {
@@ -942,9 +940,7 @@ class EditSetControllerSpec extends BaseSpec {
         val editRecordPage = route(app, request).get
 
         status(editRecordPage) mustBe OK
-        val document = asDocument(editRecordPage)
-
-        document must haveAllLowerCaseClassNames
+        asDocument(editRecordPage) must haveAllLowerCssClassNames
       }
 
       "all data is valid" in {
