@@ -393,7 +393,7 @@ object CustomMatchers {
   }
 
   def haveSelectionForPlaceOfDeposit(expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
-    haveSelectionOptions("placeOfDeposit", "place of deposit", expectedSelectOptions)
+    haveSelectionOptions(FieldNames.placeOfDeposit, "place of deposit", expectedSelectOptions)
 
   def haveSelectionForOrderingField(expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
     haveSelectionOptions("field", "ordering field", expectedSelectOptions)

@@ -207,7 +207,7 @@
         )
     },
     label = Label(forAttr = Some(FieldNames.legalStatus), content = Text(messages("edit-set.record.edit.legal-status"))),
-    errorMessage = editSetRecordForm.error("legalStatus").map { error =>
+    errorMessage = editSetRecordForm.error(FieldNames.legalStatus).map { error =>
         ErrorMessage(
             content = Text(error.message),
             attributes = Map("for" -> FieldNames.legalStatus)
@@ -232,51 +232,51 @@
 )
 
 @govukSelect(Select(
-    id = "placeOfDeposit",
-    name = "placeOfDeposit",
+    id = FieldNames.placeOfDeposit,
+    name = FieldNames.placeOfDeposit,
     items = {
         val noSelectionAsMap = Map("" -> messages("edit-set.record.error.place-of-deposit"))
         val corporateBodiesAsMap = noSelectionAsMap ++ corporateBodies.map(corporateBody => (corporateBody.id, corporateBody.name)).toMap
         corporateBodiesAsMap
                 .map { case (id, label) =>
             SelectItem(
-                selected = editSetRecordForm.data.get("placeOfDeposit").contains(id),
+                selected = editSetRecordForm.data.get(FieldNames.placeOfDeposit).contains(id),
                 text = label,
                 value = Some(id).filter(_.nonEmpty),
                 disabled = id == ""
             )
         }.toSeq
     },
-    label = Label(forAttr = Some("placeOfDeposit"), content = Text(messages("edit-set.record.edit.place-of-deposit"))),
-    errorMessage = editSetRecordForm.error("placeOfDeposit").map { error =>
+    label = Label(forAttr = Some(FieldNames.placeOfDeposit), content = Text(messages("edit-set.record.edit.place-of-deposit"))),
+    errorMessage = editSetRecordForm.error(FieldNames.placeOfDeposit).map { error =>
         ErrorMessage(
             content = Text(error.message),
-            attributes = Map("for" -> "placeOfDeposit")
+            attributes = Map("for" -> FieldNames.placeOfDeposit)
         )
     },
 )
 )
 @govukTextarea(Textarea(
-    id = "note",
-    name = "note",
-    value = editSetRecordForm.data.get("note"),
-    label = Label(forAttr = Some("note"), content = Text(messages("edit-set.record.edit.note"))),
-    errorMessage = editSetRecordForm.error("note").map { error =>
+    id = FieldNames.note,
+    name = FieldNames.note,
+    value = editSetRecordForm.data.get(FieldNames.note),
+    label = Label(forAttr = Some(FieldNames.note), content = Text(messages("edit-set.record.edit.note"))),
+    errorMessage = editSetRecordForm.error(FieldNames.note).map { error =>
         ErrorMessage(
             content = Text(error.message),
-            attributes = Map("for" -> "note")
+            attributes = Map("for" -> FieldNames.note)
         )
     },
     attributes = Map("rows" -> "5", "autofocus" -> "true")))
 @govukTextarea(Textarea(
-    id = "background",
-    name = "background",
-    value = editSetRecordForm.data.get("background"),
-    label = Label(forAttr = Some("background"), classes = "govuk-label--s", content = Text(messages("edit-set.record.edit.background"))),
-    errorMessage = editSetRecordForm.error("background").map { error =>
+    id = FieldNames.background,
+    name = FieldNames.background,
+    value = editSetRecordForm.data.get(FieldNames.background),
+    label = Label(forAttr = Some(FieldNames.background), classes = "govuk-label--s", content = Text(messages("edit-set.record.edit.background"))),
+    errorMessage = editSetRecordForm.error(FieldNames.background).map { error =>
         ErrorMessage(
             content = Text(error.message),
-            attributes = Map("for" -> "background")
+            attributes = Map("for" -> FieldNames.background)
         )
     },
     attributes = Map("rows" -> "5", "autofocus" -> "true")))

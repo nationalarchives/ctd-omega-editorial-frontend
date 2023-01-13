@@ -44,7 +44,7 @@
             items = Seq(
                 SelectItem(text = messages("edit-set.ordering.field.ccr"), value = Some("ccr"), selected = editSetReorderForm.data.get("field").contains("ccr")),
                 SelectItem(text = messages("edit-set.ordering.field.scope-and-content"), value = Some(FieldNames.scopeAndContent), selected = editSetReorderForm.data.get("field").contains(FieldNames.scopeAndContent)),
-                SelectItem(text = messages("edit-set.ordering.field.covering-dates"), value = Some("coveringDates"), selected = editSetReorderForm.data.get("field").contains("coveringDates"))
+                SelectItem(text = messages("edit-set.ordering.field.covering-dates"), value = Some(FieldNames.coveringDates), selected = editSetReorderForm.data.get("field").contains(FieldNames.coveringDates))
             )))
         @govukSelect(Select(
             id = "direction",
