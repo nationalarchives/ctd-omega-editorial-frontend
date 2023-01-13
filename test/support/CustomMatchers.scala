@@ -21,11 +21,12 @@
 
 package support
 
+import controllers.EditSetControllerSpec._
 import org.jsoup.nodes.{ Document, Element }
 import org.scalatest.matchers.{ MatchResult, Matcher }
 import support.ExpectedValues.{ ExpectedSelectOption, ExpectedSummaryErrorMessage }
+import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.FieldNames
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError
-import controllers.EditSetControllerSpec._
 
 import scala.jdk.CollectionConverters._
 
@@ -118,63 +119,63 @@ object CustomMatchers {
     singleValueMatcher(
       label = "a scope & content",
       expectedValue = expectedValue,
-      actualValue = document.select("#scopeAndContent").text()
+      actualValue = document.select(s"#${FieldNames.scopeAndContent}").text()
     )
 
   def haveCoveringDates(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "covering dates",
       expectedValue = expectedValue,
-      actualValue = document.select("#coveringDates").attr("value")
+      actualValue = document.select(s"#${FieldNames.coveringDates}").attr("value")
     )
 
   def haveFormerReferenceDepartment(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "a former reference department",
       expectedValue = expectedValue,
-      actualValue = document.select("#formerReferenceDepartment").attr("value")
+      actualValue = document.select(s"#${FieldNames.formerReferenceDepartment}").attr("value")
     )
 
   def haveStartDateDay(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "a start date day",
       expectedValue = expectedValue,
-      actualValue = document.select("#startDateDay").attr("value")
+      actualValue = document.select(s"#${FieldNames.startDateDay}").attr("value")
     )
 
   def haveStartDateMonth(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "a start date month",
       expectedValue = expectedValue,
-      actualValue = document.select("#startDateMonth").attr("value")
+      actualValue = document.select(s"#${FieldNames.startDateMonth}").attr("value")
     )
 
   def haveStartDateYear(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "a start date year",
       expectedValue = expectedValue,
-      actualValue = document.select("#startDateYear").attr("value")
+      actualValue = document.select(s"#${FieldNames.startDateYear}").attr("value")
     )
 
   def haveEndDateDay(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "an end date day",
       expectedValue = expectedValue,
-      actualValue = document.select("#endDateDay").attr("value")
+      actualValue = document.select(s"#${FieldNames.endDateDay}").attr("value")
     )
 
   def haveEndDateMonth(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "an end date month",
       expectedValue = expectedValue,
-      actualValue = document.select("#endDateMonth").attr("value")
+      actualValue = document.select(s"#${FieldNames.endDateMonth}").attr("value")
     )
 
   def haveEndDateYear(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "an end date year",
       expectedValue = expectedValue,
-      actualValue = document.select("#endDateYear").attr("value")
+      actualValue = document.select(s"#${FieldNames.endDateYear}").attr("value")
     )
 
   def haveRelatedMaterial(relatedMaterials: ExpectedRelatedMaterial*): Matcher[Document] = (document: Document) =>
@@ -241,17 +242,17 @@ object CustomMatchers {
   def haveNoSummaryErrorMessages: Matcher[Document] = haveSummaryErrorMessages()
 
   def haveErrorMessageForStartDate(expectedValue: String): Matcher[Document] =
-    haveErrorMessageForField("start date", "#startDateFieldError", expectedValue)
+    haveErrorMessageForField("start date", s"#${FieldNames.startDateFieldError}", expectedValue)
 
   def haveNoErrorMessageForStartDate: Matcher[Document] = haveErrorMessageForStartDate("")
 
   def haveErrorMessageForEndDate(expectedValue: String): Matcher[Document] =
-    haveErrorMessageForField("end date", "#endDateFieldError", expectedValue)
+    haveErrorMessageForField("end date", s"#${FieldNames.endDateFieldError}", expectedValue)
 
   def haveNoErrorMessageForEndDate: Matcher[Document] = haveErrorMessageForEndDate("")
 
   def haveErrorMessageForCoveringDates(expectedValue: String): Matcher[Document] =
-    haveErrorMessageForField("covering dates", "#coveringDates-error", expectedValue)
+    haveErrorMessageForField("covering dates", s"#${FieldNames.coveringDates}-error", expectedValue)
 
   def haveNoErrorMessageForCoveringDates: Matcher[Document] = haveErrorMessageForCoveringDates("")
 
@@ -259,7 +260,7 @@ object CustomMatchers {
     singleValueMatcher(
       "an error message for legal status",
       expectedValue,
-      document.select("#legalStatus-error").text()
+      document.select(s"#${FieldNames.legalStatus}-error").text()
     )
 
   def haveNoErrorMessageForLegalStatus: Matcher[Document] = haveErrorMessageForLegalStatus("")
@@ -268,7 +269,7 @@ object CustomMatchers {
     singleValueMatcher(
       "a legal status",
       expectedValue,
-      document.select("#legalStatus option[selected]").attr("value")
+      document.select(s"#${FieldNames.legalStatus} option[selected]").attr("value")
     )
 
   def parseSuccessfullyAs[A](expected: A): Matcher[CoveringDateError.Result[A]] = {
@@ -320,13 +321,17 @@ object CustomMatchers {
     )
 
   def haveErrorMessageForScopeAndContent(expectedValue: String): Matcher[Document] =
-    haveErrorMessageForField("scope and content", "#scopeAndContent-error", expectedValue)
+    haveErrorMessageForField("scope and content", s"#${FieldNames.scopeAndContent}-error", expectedValue)
 
   def haveErrorMessageForFormerReferenceDepartment(expectedValue: String): Matcher[Document] =
-    haveErrorMessageForField("former reference department", "#formerReferenceDepartment-error", expectedValue)
+    haveErrorMessageForField(
+      "former reference department",
+      s"#${FieldNames.formerReferenceDepartment}-error",
+      expectedValue
+    )
 
   def haveErrorMessageForPlaceOfDeposit(expectedValue: String): Matcher[Document] =
-    haveErrorMessageForField("place of deposit", "#placeOfDeposit-error", expectedValue)
+    haveErrorMessageForField("place of deposit", s"#${FieldNames.placeOfDeposit}-error", expectedValue)
 
   def haveNoErrorMessageForPlaceOfDeposit: Matcher[Document] = haveErrorMessageForPlaceOfDeposit("")
 

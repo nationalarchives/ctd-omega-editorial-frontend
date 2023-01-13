@@ -54,27 +54,6 @@ class EditSetController @Inject() (
 
   private val logger: Logger = Logger(this.getClass)
 
-  object FieldNames {
-    val background = "background"
-    val ccr = "ccr"
-    val coveringDates = "coveringDates"
-    val custodialHistory = "custodial-history"
-    val orderDirection = "direction"
-    val endDateDay = "endDateDay"
-    val endDateMonth = "endDateMonth"
-    val endDateYear = "endDateYear"
-    val orderField = "field"
-    val formerReferenceDepartment = "formerReferenceDepartment"
-    val legalStatus = "legalStatus"
-    val note = "note"
-    val oci = "oci"
-    val placeOfDeposit = "placeOfDeposit"
-    val scopeAndContent = "scopeAndContent"
-    val startDateDay = "startDateDay"
-    val startDateMonth = "startDateMonth"
-    val startDateYear = "startDateYear"
-  }
-
   object MessageKeys {
     val backgroundTooLong = "edit-set.record.error.background-too-long"
     val buttonDiscard = "edit-set.record.discard.text"
@@ -519,5 +498,28 @@ object EditSetController {
   case object MissingAction extends Error
   case class RecordNotFound(oci: String) extends Error
   case class FormValidationFailed(forWithErrors: Form[EditSetRecordFormValues], record: EditSetRecord) extends Error
+
+  object FieldNames {
+    val background = "background"
+    val ccr = "ccr"
+    val coveringDates = "covering-dates"
+    val custodialHistory = "custodial-history"
+    val orderDirection = "direction"
+    val endDateDay = "end-date-day"
+    val endDateMonth = "end-date-month"
+    val endDateYear = "end-date-year"
+    val endDateFieldError = "end-date-field-error"
+    val orderField = "field"
+    val formerReferenceDepartment = "former-reference-department"
+    val legalStatus = "legal-status"
+    val note = "note"
+    val oci = "oci"
+    val placeOfDeposit = "place-of-deposit"
+    val scopeAndContent = "scope-and-content"
+    val startDateDay = "start-date-day"
+    val startDateFieldError = "start-date-field-error"
+    val startDateMonth = "start-date-month"
+    val startDateYear = "start-date-year"
+  }
 
 }

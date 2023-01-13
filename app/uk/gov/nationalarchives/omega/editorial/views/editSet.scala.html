@@ -23,7 +23,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.helper.CSRF
-@import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.EditSetReorder
+@import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.{ EditSetReorder, FieldNames }
 
 @this(govukTable: GovukTable, govukSelect: GovukSelect, govukButton: GovukButton, govukFieldset: GovukFieldset, govukLabel: GovukLabel)
 
@@ -43,7 +43,7 @@
             name = "field",
             items = Seq(
                 SelectItem(text = messages("edit-set.ordering.field.ccr"), value = Some("ccr"), selected = editSetReorderForm.data.get("field").contains("ccr")),
-                SelectItem(text = messages("edit-set.ordering.field.scope-and-content"), value = Some("scopeAndContent"), selected = editSetReorderForm.data.get("field").contains("scopeAndContent")),
+                SelectItem(text = messages("edit-set.ordering.field.scope-and-content"), value = Some(FieldNames.scopeAndContent), selected = editSetReorderForm.data.get("field").contains(FieldNames.scopeAndContent)),
                 SelectItem(text = messages("edit-set.ordering.field.covering-dates"), value = Some("coveringDates"), selected = editSetReorderForm.data.get("field").contains("coveringDates"))
             )))
         @govukSelect(Select(

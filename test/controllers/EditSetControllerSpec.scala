@@ -30,6 +30,7 @@ import support.BaseSpec
 import support.CustomMatchers._
 import support.ExpectedValues._
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
+import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.FieldNames
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
