@@ -152,7 +152,7 @@ class EditSetControllerSpec extends BaseSpec {
 
       "CCR, ascending" in {
 
-        val values = Map("field" -> "ccr", "direction" -> "ascending")
+        val values = Map("field" -> FieldNames.ccr, "direction" -> "ascending")
 
         val page = requestPage(values)
 
@@ -164,7 +164,7 @@ class EditSetControllerSpec extends BaseSpec {
             caption = "Edit set: COAL 80 Sample",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
-              ExpectedSelectOption("ccr", "CCR", selected = true),
+              ExpectedSelectOption(FieldNames.ccr, "CCR", selected = true),
               ExpectedSelectOption(FieldNames.scopeAndContent, "Scope and Content"),
               ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates")
             ),
@@ -252,7 +252,7 @@ class EditSetControllerSpec extends BaseSpec {
       }
       "CCR, descending" in {
 
-        val values = Map("field" -> "ccr", "direction" -> "descending")
+        val values = Map("field" -> FieldNames.ccr, "direction" -> "descending")
 
         val page = requestPage(values)
 
@@ -264,7 +264,7 @@ class EditSetControllerSpec extends BaseSpec {
             caption = "Edit set: COAL 80 Sample",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
-              ExpectedSelectOption("ccr", "CCR", selected = true),
+              ExpectedSelectOption(FieldNames.ccr, "CCR", selected = true),
               ExpectedSelectOption(FieldNames.scopeAndContent, "Scope and Content"),
               ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates")
             ),
