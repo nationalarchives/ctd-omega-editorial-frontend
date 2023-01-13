@@ -114,6 +114,22 @@ class EditSetControllerSpec extends BaseSpec {
       val document = asDocument(editSet)
       document must haveCaption("Edit set: COAL 80 Sample")
     }
+    
+    "all ids in the document conform to w3c reccomendations" in {
+      val request = FakeRequest(GET, "/edit-set/1").withSession(SessionKeys.token -> validSessionToken)
+      val editRecordPage = route(app, request).get
+
+      status(editRecordPage) mustBe OK
+      asDocument(editRecordPage) must haveAllLowerCaseIds
+    }
+
+    "all class names in the document conform to w3c reccomendations" in {
+      val request = FakeRequest(GET, "/edit-set/1").withSession(SessionKeys.token -> validSessionToken)
+      val editRecordPage = route(app, request).get
+
+      status(editRecordPage) mustBe OK
+      asDocument(editRecordPage) must haveAllLowerCssClassNames
+    }
 
     "redirect to the login page from the application when requested with invalid session token" in {
       val controller = inject[EditSetController]
