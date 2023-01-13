@@ -914,6 +914,20 @@ class EditSetControllerSpec extends BaseSpec {
     }
 
     "render the edit set record page from the router" when {
+      "all labels have correct classes" in {
+        val request =
+          CSRFTokenHelper.addCSRFToken(
+            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit").withSession(
+              SessionKeys.token -> validSessionToken
+            )
+          )
+
+        val editRecordPage = route(app, request).get
+
+        status(editRecordPage) mustBe OK
+        asDocument(editRecordPage) must haveCorrectClassesOnAllLabels
+      }
+
       "all data is valid" in {
         val request =
           CSRFTokenHelper.addCSRFToken(
