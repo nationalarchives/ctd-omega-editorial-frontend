@@ -97,7 +97,7 @@
 }
 
 @dateSelector(prefix: String, labelKey: String) = {
-    <label class="govuk-label govuk-label--s">
+    <label class="govuk-label">
     @messages(labelKey)
     </label>
 @editSetRecordForm.error(prefix + "DateDay").map { error =>
@@ -143,11 +143,7 @@
     id = "scopeAndContent",
     name = "scopeAndContent",
     value = editSetRecordForm.data.get("scopeAndContent"),
-    label = Label(
-      forAttr = Some("scopeAndContent"),
-      content = Text(messages("edit-set.record.edit.scope-and-content")),
-      classes = "govuk-label--s"
-    ),
+    label = Label(forAttr = Some("scopeAndContent"), content = Text(messages("edit-set.record.edit.scope-and-content"))),
     errorMessage = editSetRecordForm.error("scopeAndContent").map { error =>
         ErrorMessage(
             content = Text(error.message),
@@ -159,11 +155,7 @@
     id = "formerReferenceDepartment",
     name = "formerReferenceDepartment",
     value = editSetRecordForm.data.get("formerReferenceDepartment"),
-    label = Label(
-      forAttr = Some("formerReferenceDepartment"),
-      content = Text(messages("edit-set.record.edit.former-reference")),
-      classes = "govuk-label--s"
-    ),
+    label = Label(forAttr = Some("formerReferenceDepartment"), content = Text(messages("edit-set.record.edit.former-reference"))),
     errorMessage = editSetRecordForm.error("formerReferenceDepartment").map { error =>
         ErrorMessage(
             content = Text(error.message),
@@ -176,11 +168,7 @@
     name = "coveringDates",
     attributes = Map(),
     value = editSetRecordForm.data.get("coveringDates"),
-    label = Label(
-      forAttr = Some("coveringDates"),
-      content = Text(messages("edit-set.record.edit.covering-dates")),
-      classes = "govuk-label--s"
-    ),
+    label = Label(forAttr = Some("coveringDates"), content = Text(messages("edit-set.record.edit.covering-dates"))),
     errorMessage = editSetRecordForm.error("coveringDates").map { error =>
         ErrorMessage(
             content = Text(error.message),
@@ -217,11 +205,7 @@
             value = Some(status.uri)
         )
     },
-    label = Label(
-      forAttr = Some("legalStatus"),
-      content = Text(messages("edit-set.record.edit.legal-status")),
-      classes = "govuk-label--s"
-    ),
+    label = Label(forAttr = Some("legalStatus"), content = Text(messages("edit-set.record.edit.legal-status"))),
     errorMessage = editSetRecordForm.error("legalStatus").map { error =>
         ErrorMessage(
             content = Text(error.message),
@@ -262,11 +246,7 @@
             )
         }.toSeq
     },
-    label = Label(
-      forAttr = Some("placeOfDeposit"),
-      content = Text(messages("edit-set.record.edit.place-of-deposit")),
-      classes = "govuk-label--s"
-    ),
+    label = Label(forAttr = Some("placeOfDeposit"), content = Text(messages("edit-set.record.edit.place-of-deposit"))),
     errorMessage = editSetRecordForm.error("placeOfDeposit").map { error =>
         ErrorMessage(
             content = Text(error.message),
@@ -279,11 +259,7 @@
     id = "note",
     name = "note",
     value = editSetRecordForm.data.get("note"),
-    label = Label(
-      forAttr = Some("note"),
-      content = Text(messages("edit-set.record.edit.note")),
-      classes = "govuk-label--s"
-    ),
+    label = Label(forAttr = Some("note"), content = Text(messages("edit-set.record.edit.note"))),
     errorMessage = editSetRecordForm.error("note").map { error =>
         ErrorMessage(
             content = Text(error.message),
