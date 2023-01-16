@@ -15,6 +15,8 @@ POST        /edit-set/:id/record/:recordId/edit                uk.gov.nationalar
 GET         /edit-set/:id/record/:recordId/edit/save           uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.save(id: String, recordId: String)
 GET         /edit-set/:id/record/:recordId/edit/discard        uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.discard(id: String, recordId: String)
 
+GET         /table                                             uk.gov.nationalarchives.omega.editorial.controllers.TableDemoController.table()
+POST        /table                                             uk.gov.nationalarchives.omega.editorial.controllers.TableDemoController.sortedTable()
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                                      controllers.Assets.versioned(path="/public", file: Asset)
