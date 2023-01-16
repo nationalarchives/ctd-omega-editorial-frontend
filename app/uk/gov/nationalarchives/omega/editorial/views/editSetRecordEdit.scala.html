@@ -217,14 +217,14 @@
 )
 
 @govukTextarea(Textarea(
-    id = "custodial-history",
-    name = "custodial-history",
-    value = editSetRecordForm.data.get("custodial-history"),
-    label = Label(forAttr = Some("custodialHistory"), classes = "govuk-label--s", content = Text(messages("edit-set.record.edit.custodial-history"))),
-    errorMessage = editSetRecordForm.error("custodial-history").map { error =>
+    id = FieldNames.custodialHistory,
+    name = FieldNames.custodialHistory,
+    value = editSetRecordForm.data.get(FieldNames.custodialHistory),
+    label = Label(forAttr = Some(FieldNames.custodialHistory), classes = "govuk-label--s", content = Text(messages("edit-set.record.edit.custodial-history"))),
+    errorMessage = editSetRecordForm.error(FieldNames.custodialHistory).map { error =>
         ErrorMessage(
             content = Text(error.message),
-            attributes = Map("for" -> "custodial-history")
+            attributes = Map("for" -> FieldNames.custodialHistory)
         )
     },
     attributes = Map("rows" -> "5", "autofocus" -> "true")
@@ -326,8 +326,8 @@
   </ul>
 
     <div class="govuk-form-group">
-        <input id="ccr" name="ccr" type="text" readonly="readonly" hidden="true" value="@record.ccr"/>
-        <input id="ocr" name="oci" type="text" readonly="readonly" hidden="true" value="@record.oci"/>
+        <input id="@FieldNames.ccr" name="ccr" type="text" readonly="readonly" hidden="true" value="@record.ccr"/>
+        <input id="@FieldNames.oci" name="oci" type="text" readonly="readonly" hidden="true" value="@record.oci"/>
     </div>
 @actionButtonGroup
 }

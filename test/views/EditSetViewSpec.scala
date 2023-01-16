@@ -28,7 +28,7 @@ import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import play.twirl.api.Html
 import support.BaseSpec
 import support.CustomMatchers._
-import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.EditSetReorder
+import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
 
@@ -36,8 +36,8 @@ class EditSetViewSpec extends BaseSpec {
 
   private val reorderForm: Form[EditSetReorder] = Form(
     mapping(
-      "field"     -> text,
-      "direction" -> text
+      fieldKey          -> text,
+      orderDirectionKey -> text
     )(EditSetReorder.apply)(EditSetReorder.unapply)
   )
 

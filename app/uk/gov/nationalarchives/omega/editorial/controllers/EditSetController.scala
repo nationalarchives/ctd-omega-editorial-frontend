@@ -75,10 +75,6 @@ class EditSetController @Inject() (
     val title = "edit-set.record.edit.title"
   }
 
-  private val noSelectionForPlaceOfDeposit = ""
-  private val orderDirectionAscending = "ascending"
-  private val orderDirectionDescending = "descending"
-
   type FormTransformer = Form[EditSetRecordFormValues] => Form[EditSetRecordFormValues]
 
   private val editSetRecordForm: Form[EditSetRecordFormValues] = Form(
@@ -521,5 +517,11 @@ object EditSetController {
     val startDateMonth = "start-date-month"
     val startDateYear = "start-date-year"
   }
+
+  val noSelectionForPlaceOfDeposit = ""
+  val fieldKey = "field"
+  val orderDirectionKey = "direction"
+  val orderDirectionAscending = "ascending"
+  val orderDirectionDescending = "descending"
 
 }

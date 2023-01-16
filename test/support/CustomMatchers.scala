@@ -25,7 +25,7 @@ import controllers.EditSetControllerSpec._
 import org.jsoup.nodes.{ Document, Element }
 import org.scalatest.matchers.{ MatchResult, Matcher }
 import support.ExpectedValues.{ ExpectedSelectOption, ExpectedSummaryErrorMessage }
-import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.FieldNames
+import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError
 
 import scala.jdk.CollectionConverters._
@@ -105,14 +105,14 @@ object CustomMatchers {
     singleValueMatcher(
       label = "a classic catalogue ref",
       expectedValue = expectedValue,
-      actualValue = document.select("#ccr").attr("value")
+      actualValue = document.select(s"#${FieldNames.ccr}").attr("value")
     )
 
   def haveOmegaCatalogueId(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "an omega catalogue ref",
       expectedValue = expectedValue,
-      actualValue = document.select("#ocr").attr("value")
+      actualValue = document.select(s"#${FieldNames.oci}").attr("value")
     )
 
   def haveScopeAndContent(expectedValue: String): Matcher[Document] = (document: Document) =>
@@ -396,10 +396,10 @@ object CustomMatchers {
     haveSelectionOptions(FieldNames.placeOfDeposit, "place of deposit", expectedSelectOptions)
 
   def haveSelectionForOrderingField(expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
-    haveSelectionOptions("field", "ordering field", expectedSelectOptions)
+    haveSelectionOptions(fieldKey, "ordering field", expectedSelectOptions)
 
   def haveSelectionForOrderingDirection(expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
-    haveSelectionOptions("direction", "ordering direction", expectedSelectOptions)
+    haveSelectionOptions(orderDirectionKey, "ordering direction", expectedSelectOptions)
 
   def haveNote(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
@@ -429,11 +429,11 @@ object CustomMatchers {
     singleValueMatcher(
       label = "custodial history",
       expectedValue = expectedValue,
-      actualValue = document.select("#custodial-history").text()
+      actualValue = document.select(s"#${FieldNames.custodialHistory}").text()
     )
 
   def haveErrorMessageForCustodialHistory(expectedValue: String): Matcher[Document] =
-    haveErrorMessageForField("custodial-history", "#custodial-history-error", expectedValue)
+    haveErrorMessageForField(FieldNames.custodialHistory, s"#${FieldNames.custodialHistory}-error", expectedValue)
 
   def haveNoErrorMessageForCustodialHistory: Matcher[Document] = haveErrorMessageForCustodialHistory("")
 

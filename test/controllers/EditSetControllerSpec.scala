@@ -30,7 +30,7 @@ import support.BaseSpec
 import support.CustomMatchers._
 import support.ExpectedValues._
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
-import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.FieldNames
+import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
@@ -114,7 +114,7 @@ class EditSetControllerSpec extends BaseSpec {
       val document = asDocument(editSet)
       document must haveCaption("Edit set: COAL 80 Sample")
     }
-    
+
     "all ids in the document conform to w3c reccomendations" in {
       val request = FakeRequest(GET, "/edit-set/1").withSession(SessionKeys.token -> validSessionToken)
       val editRecordPage = route(app, request).get
@@ -168,7 +168,7 @@ class EditSetControllerSpec extends BaseSpec {
 
       "CCR, ascending" in {
 
-        val values = Map("field" -> FieldNames.ccr, "direction" -> "ascending")
+        val values = Map(fieldKey -> FieldNames.ccr, orderDirectionKey -> orderDirectionAscending)
 
         val page = requestPage(values)
 
@@ -185,8 +185,8 @@ class EditSetControllerSpec extends BaseSpec {
               ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates")
             ),
             expectedOptionsForDirection = Seq(
-              ExpectedSelectOption("ascending", "Ascending", selected = true),
-              ExpectedSelectOption("descending", "Descending")
+              ExpectedSelectOption(orderDirectionAscending, "Ascending", selected = true),
+              ExpectedSelectOption(orderDirectionDescending, "Descending")
             ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -285,8 +285,8 @@ class EditSetControllerSpec extends BaseSpec {
               ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates")
             ),
             expectedOptionsForDirection = Seq(
-              ExpectedSelectOption("ascending", "Ascending"),
-              ExpectedSelectOption("descending", "Descending", selected = true)
+              ExpectedSelectOption(orderDirectionAscending, "Ascending"),
+              ExpectedSelectOption(orderDirectionDescending, "Descending", selected = true)
             ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -368,7 +368,7 @@ class EditSetControllerSpec extends BaseSpec {
       }
       "Scope and Content, ascending" in {
 
-        val values = Map("field" -> FieldNames.scopeAndContent, "direction" -> "ascending")
+        val values = Map(fieldKey -> FieldNames.scopeAndContent, orderDirectionKey -> orderDirectionAscending)
 
         val page = requestPage(values)
 
@@ -385,8 +385,8 @@ class EditSetControllerSpec extends BaseSpec {
               ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates")
             ),
             expectedOptionsForDirection = Seq(
-              ExpectedSelectOption("ascending", "Ascending", selected = true),
-              ExpectedSelectOption("descending", "Descending")
+              ExpectedSelectOption(orderDirectionAscending, "Ascending", selected = true),
+              ExpectedSelectOption(orderDirectionDescending, "Descending")
             ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -468,7 +468,7 @@ class EditSetControllerSpec extends BaseSpec {
       }
       "Scope and Content, descending" in {
 
-        val values = Map("field" -> FieldNames.scopeAndContent, "direction" -> "descending")
+        val values = Map(fieldKey -> FieldNames.scopeAndContent, orderDirectionKey -> orderDirectionDescending)
 
         val page = requestPage(values)
 
@@ -485,8 +485,8 @@ class EditSetControllerSpec extends BaseSpec {
               ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates")
             ),
             expectedOptionsForDirection = Seq(
-              ExpectedSelectOption("ascending", "Ascending"),
-              ExpectedSelectOption("descending", "Descending", selected = true)
+              ExpectedSelectOption(orderDirectionAscending, "Ascending"),
+              ExpectedSelectOption(orderDirectionDescending, "Descending", selected = true)
             ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -568,7 +568,7 @@ class EditSetControllerSpec extends BaseSpec {
       }
       "Covering dates, ascending" in {
 
-        val values = Map("field" -> FieldNames.coveringDates, "direction" -> "ascending")
+        val values = Map(fieldKey -> FieldNames.coveringDates, orderDirectionKey -> orderDirectionAscending)
 
         val page = requestPage(values)
 
@@ -585,8 +585,8 @@ class EditSetControllerSpec extends BaseSpec {
               ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates", selected = true)
             ),
             expectedOptionsForDirection = Seq(
-              ExpectedSelectOption("ascending", "Ascending", selected = true),
-              ExpectedSelectOption("descending", "Descending")
+              ExpectedSelectOption(orderDirectionAscending, "Ascending", selected = true),
+              ExpectedSelectOption(orderDirectionDescending, "Descending")
             ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -668,7 +668,7 @@ class EditSetControllerSpec extends BaseSpec {
       }
       "Covering dates, descending" in {
 
-        val values = Map("field" -> FieldNames.coveringDates, "direction" -> "descending")
+        val values = Map(fieldKey -> FieldNames.coveringDates, orderDirectionKey -> orderDirectionDescending)
 
         val page = requestPage(values)
 
@@ -685,8 +685,8 @@ class EditSetControllerSpec extends BaseSpec {
               ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates", selected = true)
             ),
             expectedOptionsForDirection = Seq(
-              ExpectedSelectOption("ascending", "Ascending"),
-              ExpectedSelectOption("descending", "Descending", selected = true)
+              ExpectedSelectOption(orderDirectionAscending, "Ascending"),
+              ExpectedSelectOption(orderDirectionDescending, "Descending", selected = true)
             ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -768,7 +768,7 @@ class EditSetControllerSpec extends BaseSpec {
       }
       "Unknown field and direction" in {
 
-        val values = Map("field" -> "height", "direction" -> "upwards")
+        val values = Map(fieldKey -> "height", orderDirectionKey -> "upwards")
 
         val page = requestPage(values)
 
@@ -785,8 +785,8 @@ class EditSetControllerSpec extends BaseSpec {
               ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates")
             ),
             expectedOptionsForDirection = Seq(
-              ExpectedSelectOption("ascending", "Ascending", selected = true),
-              ExpectedSelectOption("descending", "Descending")
+              ExpectedSelectOption(orderDirectionAscending, "Ascending", selected = true),
+              ExpectedSelectOption(orderDirectionDescending, "Descending")
             ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
