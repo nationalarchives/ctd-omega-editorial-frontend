@@ -23,19 +23,18 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.helper.CSRF
-@import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.EditSetReorder
 
-@this(govukTable: GovukTable, govukButton: GovukButton, govukFieldset: GovukFieldset, govukLabel: GovukLabel)
+@this(govukTable: GovukTable)
 
-@(values: TableValues, lastSort: Option[String] = None)(implicit messages: Messages, request: Request[AnyContent])
+@(values: TableValues )(implicit messages: Messages, request: Request[AnyContent])
 
 @headerSubmitButton(value: String) = {
   <button name="action" value="@value">@value</button>
 }
 
-@template(None, "title here") {
+@template(None, "Table Demo") {
 
-<form method="POST" action="/sortedTable">
+<form method="POST" action="@uk.gov.nationalarchives.omega.editorial.controllers.routes.TableDemoController.sortedTable()">
   @CSRF.formField
   @govukTable(Table(
       head = Some(
@@ -56,7 +55,6 @@
       caption = Some("Table Demo"),
       captionClasses = "govuk-table__caption--m"
   ))
-
 </form>
 
 }

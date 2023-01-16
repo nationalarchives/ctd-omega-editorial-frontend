@@ -55,11 +55,18 @@ class TableDemoController @Inject() (
   }
 
   def sortedTable(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
-    println(request.body.asFormUrlEncoded)
-    val headerName = request.body.asFormUrlEncoded.get("action").head
-    val sortedTableValues = tableValues.changeOrdering(headerName).get
-    tableValues = sortedTableValues
-    Ok(tableDemo(sortedTableValues))
+    val action = for {
+      headerName <- request.body.asFormUrlEncoded.get("action").headOption
+      sortedTableValues <- tableValues.changeOrdering(headerName)
+    } yield sortedTableValues
+
+    action match {
+      case Some(sortedTableValues) =>
+        tableValues = sortedTableValues
+        Ok(tableDemo(sortedTableValues))
+      case None =>
+        BadRequest("missing or unrecognised action or bad table header to sort")
+    }
   }
 
 }
