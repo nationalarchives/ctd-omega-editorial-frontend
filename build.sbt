@@ -15,10 +15,14 @@ headerMappings := headerMappings.value + (FileType("html") -> HeaderCommentStyle
 
 Compile / headerSources ++= (Compile / TwirlKeys.compileTemplates / sources).value
 
+lazy val IntegrationTestConfig = config("it") extend Test
+IntegrationTestConfig / scalaSource := baseDirectory.value / "/it"
+
 lazy val root = Project("ctd-omega-editorial-frontend", file("."))
   .enablePlugins(PlayScala)
   .enablePlugins(BuildInfoPlugin)
   .enablePlugins(AutomateHeaderPlugin)
+  .configs(IntegrationTest extend(Test))
   .settings(
     Defaults.itSettings,
     organization := "uk.gov.nationalarchives",

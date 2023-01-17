@@ -213,12 +213,14 @@ object CustomMatchers {
       actualValue = document.select("#error-summary-title").text()
     )
 
+  def haveNoSummaryErrorTitle: Matcher[Document] = haveSummaryErrorTitle("")
+
   def haveSummaryErrorMessages(expectedSummaryErrorMessages: ExpectedSummaryErrorMessage*): Matcher[Document] =
     (document: Document) => {
 
       def display(summaryErrorMessages: Seq[ExpectedSummaryErrorMessage]) =
         summaryErrorMessages
-          .map(summaryErrorMessage => s"[${summaryErrorMessage.message}] / [${summaryErrorMessage.link}]")
+          .map(summaryErrorMessage => s"[${summaryErrorMessage.message}] / [${summaryErrorMessage.fieldName}]")
           .mkString(",")
 
       val actualAnchors = document.select("ul.govuk-error-summary__list > li > a").asScala.toSeq
@@ -235,9 +237,6 @@ object CustomMatchers {
         errorMessageIfNotExpected
       )
     }
-
-  private def asExpectedSummaryErrorMessage(element: Element): ExpectedSummaryErrorMessage =
-    ExpectedSummaryErrorMessage(element.text(), element.attr("href"))
 
   def haveNoSummaryErrorMessages: Matcher[Document] = haveSummaryErrorMessages()
 
@@ -256,12 +255,8 @@ object CustomMatchers {
 
   def haveNoErrorMessageForCoveringDates: Matcher[Document] = haveErrorMessageForCoveringDates("")
 
-  def haveErrorMessageForLegalStatus(expectedValue: String): Matcher[Document] = (document: Document) =>
-    singleValueMatcher(
-      "an error message for legal status",
-      expectedValue,
-      document.select(s"#${FieldNames.legalStatusID}-error").text()
-    )
+  def haveErrorMessageForLegalStatus(expectedValue: String): Matcher[Document] =
+    haveErrorMessageForField("legal status", s"#${FieldNames.legalStatusID}-error", expectedValue)
 
   def haveNoErrorMessageForLegalStatus: Matcher[Document] = haveErrorMessageForLegalStatus("")
 
@@ -317,19 +312,15 @@ object CustomMatchers {
         .filterNot(_.classNames.contains("govuk-label--s"))
     )
 
-  def haveErrorMessageForUsername(expectedValue: String): Matcher[Document] = (document: Document) =>
-    singleValueMatcher(
-      "a username",
-      expectedValue,
-      removeInvisibleErrorMessagePrefix(document.select("#username-error").text())
-    )
+  def haveErrorMessageForUsername(expectedValue: String): Matcher[Document] =
+    haveErrorMessageForField("a username", "#username-error", expectedValue)
 
-  def haveErrorMessageForPassword(expectedValue: String): Matcher[Document] = (document: Document) =>
-    singleValueMatcher(
-      "a password",
-      expectedValue,
-      removeInvisibleErrorMessagePrefix(document.select("#password-error").text())
-    )
+  def haveNoErrorMessageForUsername: Matcher[Document] = haveErrorMessageForUsername("")
+
+  def haveErrorMessageForPassword(expectedValue: String): Matcher[Document] =
+    haveErrorMessageForField("a password", "#password-error", expectedValue)
+
+  def haveNoErrorMessageForPassword: Matcher[Document] = haveErrorMessageForPassword("")
 
   def haveErrorMessageForScopeAndContent(expectedValue: String): Matcher[Document] =
     haveErrorMessageForField("scope and content", s"#${FieldNames.scopeAndContent}-error", expectedValue)
@@ -493,6 +484,9 @@ object CustomMatchers {
     )
   }
 
+  private def asExpectedSummaryErrorMessage(element: Element): ExpectedSummaryErrorMessage =
+    ExpectedSummaryErrorMessage(element.text(), element.attr("href").replace("#", ""))
+
   private def haveSelectionOptions(
     id: String,
     label: String,
@@ -569,7 +563,10 @@ object CustomMatchers {
       .asScala
       .toSeq
 
-  private def removeInvisibleErrorMessagePrefix(original: String) = original.replace("login.hidden.error ", "")
+  private def removeInvisibleErrorMessagePrefix(original: String) =
+    original
+      .replace("Error: ", "")
+      .replace("login.hidden.error ", "") // TODO: Remove if LoginViewSpec is removed.
 
   private def haveErrorMessageForField(
     fieldName: String,

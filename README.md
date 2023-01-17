@@ -125,3 +125,31 @@ sudo strings /proc/<PID>/environ
 ```
 sudo systemctl stop ctd-omega-editorial-frontend
 ```
+
+## Dev
+
+### Running Tests
+
+To run the unit tests only:
+
+```
+sbt test
+```
+
+To run just the integration tests:
+
+```
+sbt IntegrationTest/test
+```
+
+And to run all:
+
+```
+sbt test IntegrationTest/test
+```
+
+### Before Pushing
+
+Remember to run `sbt scalafmtAll`.
+
+For convenience, you can run [runBeforePushing.sh](./runBeforePushing.sh), which runs it after all of the tests.
