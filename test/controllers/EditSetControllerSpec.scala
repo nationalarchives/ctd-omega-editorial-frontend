@@ -982,8 +982,8 @@ class EditSetControllerSpec extends BaseSpec {
           "Note (optional)",
           "Administrative / biographical background (optional)",
           "Related material",
-          "Separated material",
-          )
+          "Separated material"
+        )
       }
 
       "all data is valid" in {
