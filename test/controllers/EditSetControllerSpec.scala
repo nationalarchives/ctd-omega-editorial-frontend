@@ -30,6 +30,7 @@ import support.BaseSpec
 import support.CustomMatchers._
 import support.ExpectedValues._
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
+import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
@@ -114,6 +115,22 @@ class EditSetControllerSpec extends BaseSpec {
       document must haveCaption("Edit set: COAL 80 Sample")
     }
 
+    "all ids in the document conform to w3c reccomendations" in {
+      val request = FakeRequest(GET, "/edit-set/1").withSession(SessionKeys.token -> validSessionToken)
+      val editRecordPage = route(app, request).get
+
+      status(editRecordPage) mustBe OK
+      asDocument(editRecordPage) must haveAllLowerCaseIds
+    }
+
+    "all class names in the document conform to w3c reccomendations" in {
+      val request = FakeRequest(GET, "/edit-set/1").withSession(SessionKeys.token -> validSessionToken)
+      val editRecordPage = route(app, request).get
+
+      status(editRecordPage) mustBe OK
+      asDocument(editRecordPage) must haveAllLowerCssClassNames
+    }
+
     "redirect to the login page from the application when requested with invalid session token" in {
       val controller = inject[EditSetController]
       val editSet = controller
@@ -151,7 +168,7 @@ class EditSetControllerSpec extends BaseSpec {
 
       "CCR, ascending" in {
 
-        val values = Map("field" -> "ccr", "direction" -> "ascending")
+        val values = Map(fieldKey -> FieldNames.ccr, orderDirectionKey -> orderDirectionAscending)
 
         val page = requestPage(values)
 
@@ -163,13 +180,13 @@ class EditSetControllerSpec extends BaseSpec {
             caption = "Edit set: COAL 80 Sample",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
-              ExpectedSelectOption("ccr", "CCR", selected = true),
-              ExpectedSelectOption("scopeAndContent", "Scope and Content"),
-              ExpectedSelectOption("coveringDates", "Covering Dates")
+              ExpectedSelectOption(FieldNames.ccr, "CCR", selected = true),
+              ExpectedSelectOption(FieldNames.scopeAndContent, "Scope and Content"),
+              ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates")
             ),
             expectedOptionsForDirection = Seq(
-              ExpectedSelectOption("ascending", "Ascending", selected = true),
-              ExpectedSelectOption("descending", "Descending")
+              ExpectedSelectOption(orderDirectionAscending, "Ascending", selected = true),
+              ExpectedSelectOption(orderDirectionDescending, "Descending")
             ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -251,7 +268,7 @@ class EditSetControllerSpec extends BaseSpec {
       }
       "CCR, descending" in {
 
-        val values = Map("field" -> "ccr", "direction" -> "descending")
+        val values = Map("field" -> FieldNames.ccr, "direction" -> "descending")
 
         val page = requestPage(values)
 
@@ -263,13 +280,13 @@ class EditSetControllerSpec extends BaseSpec {
             caption = "Edit set: COAL 80 Sample",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
-              ExpectedSelectOption("ccr", "CCR", selected = true),
-              ExpectedSelectOption("scopeAndContent", "Scope and Content"),
-              ExpectedSelectOption("coveringDates", "Covering Dates")
+              ExpectedSelectOption(FieldNames.ccr, "CCR", selected = true),
+              ExpectedSelectOption(FieldNames.scopeAndContent, "Scope and Content"),
+              ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates")
             ),
             expectedOptionsForDirection = Seq(
-              ExpectedSelectOption("ascending", "Ascending"),
-              ExpectedSelectOption("descending", "Descending", selected = true)
+              ExpectedSelectOption(orderDirectionAscending, "Ascending"),
+              ExpectedSelectOption(orderDirectionDescending, "Descending", selected = true)
             ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -351,7 +368,7 @@ class EditSetControllerSpec extends BaseSpec {
       }
       "Scope and Content, ascending" in {
 
-        val values = Map("field" -> "scopeAndContent", "direction" -> "ascending")
+        val values = Map(fieldKey -> FieldNames.scopeAndContent, orderDirectionKey -> orderDirectionAscending)
 
         val page = requestPage(values)
 
@@ -363,13 +380,13 @@ class EditSetControllerSpec extends BaseSpec {
             caption = "Edit set: COAL 80 Sample",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
-              ExpectedSelectOption("ccr", "CCR"),
-              ExpectedSelectOption("scopeAndContent", "Scope and Content", selected = true),
-              ExpectedSelectOption("coveringDates", "Covering Dates")
+              ExpectedSelectOption(FieldNames.ccr, "CCR"),
+              ExpectedSelectOption(FieldNames.scopeAndContent, "Scope and Content", selected = true),
+              ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates")
             ),
             expectedOptionsForDirection = Seq(
-              ExpectedSelectOption("ascending", "Ascending", selected = true),
-              ExpectedSelectOption("descending", "Descending")
+              ExpectedSelectOption(orderDirectionAscending, "Ascending", selected = true),
+              ExpectedSelectOption(orderDirectionDescending, "Descending")
             ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -451,7 +468,7 @@ class EditSetControllerSpec extends BaseSpec {
       }
       "Scope and Content, descending" in {
 
-        val values = Map("field" -> "scopeAndContent", "direction" -> "descending")
+        val values = Map(fieldKey -> FieldNames.scopeAndContent, orderDirectionKey -> orderDirectionDescending)
 
         val page = requestPage(values)
 
@@ -463,13 +480,13 @@ class EditSetControllerSpec extends BaseSpec {
             caption = "Edit set: COAL 80 Sample",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
-              ExpectedSelectOption("ccr", "CCR"),
-              ExpectedSelectOption("scopeAndContent", "Scope and Content", selected = true),
-              ExpectedSelectOption("coveringDates", "Covering Dates")
+              ExpectedSelectOption(FieldNames.ccr, "CCR"),
+              ExpectedSelectOption(FieldNames.scopeAndContent, "Scope and Content", selected = true),
+              ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates")
             ),
             expectedOptionsForDirection = Seq(
-              ExpectedSelectOption("ascending", "Ascending"),
-              ExpectedSelectOption("descending", "Descending", selected = true)
+              ExpectedSelectOption(orderDirectionAscending, "Ascending"),
+              ExpectedSelectOption(orderDirectionDescending, "Descending", selected = true)
             ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -551,7 +568,7 @@ class EditSetControllerSpec extends BaseSpec {
       }
       "Covering dates, ascending" in {
 
-        val values = Map("field" -> "coveringDates", "direction" -> "ascending")
+        val values = Map(fieldKey -> FieldNames.coveringDates, orderDirectionKey -> orderDirectionAscending)
 
         val page = requestPage(values)
 
@@ -563,13 +580,13 @@ class EditSetControllerSpec extends BaseSpec {
             caption = "Edit set: COAL 80 Sample",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
-              ExpectedSelectOption("ccr", "CCR"),
-              ExpectedSelectOption("scopeAndContent", "Scope and Content"),
-              ExpectedSelectOption("coveringDates", "Covering Dates", selected = true)
+              ExpectedSelectOption(FieldNames.ccr, "CCR"),
+              ExpectedSelectOption(FieldNames.scopeAndContent, "Scope and Content"),
+              ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates", selected = true)
             ),
             expectedOptionsForDirection = Seq(
-              ExpectedSelectOption("ascending", "Ascending", selected = true),
-              ExpectedSelectOption("descending", "Descending")
+              ExpectedSelectOption(orderDirectionAscending, "Ascending", selected = true),
+              ExpectedSelectOption(orderDirectionDescending, "Descending")
             ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -651,7 +668,7 @@ class EditSetControllerSpec extends BaseSpec {
       }
       "Covering dates, descending" in {
 
-        val values = Map("field" -> "coveringDates", "direction" -> "descending")
+        val values = Map(fieldKey -> FieldNames.coveringDates, orderDirectionKey -> orderDirectionDescending)
 
         val page = requestPage(values)
 
@@ -663,13 +680,13 @@ class EditSetControllerSpec extends BaseSpec {
             caption = "Edit set: COAL 80 Sample",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
-              ExpectedSelectOption("ccr", "CCR"),
-              ExpectedSelectOption("scopeAndContent", "Scope and Content"),
-              ExpectedSelectOption("coveringDates", "Covering Dates", selected = true)
+              ExpectedSelectOption(FieldNames.ccr, "CCR"),
+              ExpectedSelectOption(FieldNames.scopeAndContent, "Scope and Content"),
+              ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates", selected = true)
             ),
             expectedOptionsForDirection = Seq(
-              ExpectedSelectOption("ascending", "Ascending"),
-              ExpectedSelectOption("descending", "Descending", selected = true)
+              ExpectedSelectOption(orderDirectionAscending, "Ascending"),
+              ExpectedSelectOption(orderDirectionDescending, "Descending", selected = true)
             ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -751,7 +768,7 @@ class EditSetControllerSpec extends BaseSpec {
       }
       "Unknown field and direction" in {
 
-        val values = Map("field" -> "height", "direction" -> "upwards")
+        val values = Map(fieldKey -> "height", orderDirectionKey -> "upwards")
 
         val page = requestPage(values)
 
@@ -763,13 +780,13 @@ class EditSetControllerSpec extends BaseSpec {
             caption = "Edit set: COAL 80 Sample",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
-              ExpectedSelectOption("ccr", "CCR", selected = true),
-              ExpectedSelectOption("scopeAndContent", "Scope and Content"),
-              ExpectedSelectOption("coveringDates", "Covering Dates")
+              ExpectedSelectOption(FieldNames.ccr, "CCR", selected = true),
+              ExpectedSelectOption(FieldNames.scopeAndContent, "Scope and Content"),
+              ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates")
             ),
             expectedOptionsForDirection = Seq(
-              ExpectedSelectOption("ascending", "Ascending", selected = true),
-              ExpectedSelectOption("descending", "Descending")
+              ExpectedSelectOption(orderDirectionAscending, "Ascending", selected = true),
+              ExpectedSelectOption(orderDirectionDescending, "Descending")
             ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -914,7 +931,7 @@ class EditSetControllerSpec extends BaseSpec {
     }
 
     "render the edit set record page from the router" when {
-      "all labels have correct classes" in {
+      "all ids in the document conform to w3c reccomendations" in {
         val request =
           CSRFTokenHelper.addCSRFToken(
             FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit").withSession(
@@ -925,7 +942,21 @@ class EditSetControllerSpec extends BaseSpec {
         val editRecordPage = route(app, request).get
 
         status(editRecordPage) mustBe OK
-        asDocument(editRecordPage) must haveCorrectClassesOnAllLabels
+        asDocument(editRecordPage) must haveAllLowerCaseIds
+      }
+
+      "all class names in the document conform to w3c reccomendations" in {
+        val request =
+          CSRFTokenHelper.addCSRFToken(
+            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit").withSession(
+              SessionKeys.token -> validSessionToken
+            )
+          )
+
+        val editRecordPage = route(app, request).get
+
+        status(editRecordPage) mustBe OK
+        asDocument(editRecordPage) must haveAllLowerCssClassNames
       }
 
       "all data is valid" in {
@@ -1065,20 +1096,20 @@ class EditSetControllerSpec extends BaseSpec {
 
     val validValues: Map[String, String] =
       Map(
-        "scopeAndContent" -> "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-        "formerReferenceDepartment" -> "1234",
-        "coveringDates"             -> "2020 Oct",
-        "startDateDay"              -> "1",
-        "startDateMonth"            -> "10",
-        "startDateYear"             -> "2020",
-        "endDateDay"                -> "31",
-        "endDateMonth"              -> "10",
-        "endDateYear"               -> "2020",
-        "legalStatus"               -> "ref.1",
-        "placeOfDeposit"            -> "2",
-        "note"                      -> "Need to check copyright info.",
-        "background"                -> "Photo was taken by a daughter of one of the coal miners who used them.",
-        "custodial-history"         -> "Files originally created by successor or predecessor departments for COAL"
+        FieldNames.scopeAndContent -> "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+        FieldNames.formerReferenceDepartment -> "1234",
+        FieldNames.coveringDates             -> "2020 Oct",
+        FieldNames.startDateDay              -> "1",
+        FieldNames.startDateMonth            -> "10",
+        FieldNames.startDateYear             -> "2020",
+        FieldNames.endDateDay                -> "31",
+        FieldNames.endDateMonth              -> "10",
+        FieldNames.endDateYear               -> "2020",
+        FieldNames.legalStatus               -> "ref.1",
+        FieldNames.placeOfDeposit            -> "2",
+        FieldNames.note                      -> "Need to check copyright info.",
+        FieldNames.background       -> "Photo was taken by a daughter of one of the coal miners who used them.",
+        FieldNames.custodialHistory -> "Files originally created by successor or predecessor departments for COAL"
       )
 
     "when the action is to save the record" when {
@@ -1090,9 +1121,7 @@ class EditSetControllerSpec extends BaseSpec {
           "there are errors" in {
             val blankScopeAndContentToFailValidation = ""
             val values = validValuesForSaving ++ Map(
-              "ccr"             -> "COAL 80/80/1",
-              "oci"             -> "COAL.2022.V1RJW.P",
-              "scopeAndContent" -> blankScopeAndContentToFailValidation
+              FieldNames.scopeAndContent -> blankScopeAndContentToFailValidation
             )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -1160,11 +1189,9 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values =
               validValuesForSaving ++ Map(
-                "ccr"            -> "COAL 80/80/1",
-                "oci"            -> "COAL.2022.V1RJW.P",
-                "startDateDay"   -> "",
-                "startDateMonth" -> "",
-                "startDateYear"  -> ""
+                FieldNames.startDateDay   -> "",
+                FieldNames.startDateMonth -> "",
+                FieldNames.startDateYear  -> ""
               )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -1225,7 +1252,7 @@ class EditSetControllerSpec extends BaseSpec {
                 ),
                 custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", "#startDateDay")),
+                  Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", s"#${FieldNames.startDateDay}")),
                 errorMessageForStartDate = Some("Start date is not a valid date")
               )
             )
@@ -1235,11 +1262,9 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values =
               validValuesForSaving ++ Map(
-                "ccr"            -> "COAL 80/80/1",
-                "oci"            -> "COAL.2022.V1RJW.P",
-                "startDateDay"   -> "XX",
-                "startDateMonth" -> "11",
-                "startDateYear"  -> "1960"
+                FieldNames.startDateDay   -> "XX",
+                FieldNames.startDateMonth -> "11",
+                FieldNames.startDateYear  -> "1960"
               )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -1300,7 +1325,7 @@ class EditSetControllerSpec extends BaseSpec {
                 ),
                 custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", "#startDateDay")),
+                  Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", s"#${FieldNames.startDateDay}")),
                 errorMessageForStartDate = Some("Start date is not a valid date")
               )
             )
@@ -1309,12 +1334,12 @@ class EditSetControllerSpec extends BaseSpec {
         }
         "doesn't exist" in {
           val values = validValuesForSaving ++ Map(
-            "startDateDay"   -> "29",
-            "startDateMonth" -> "2",
-            "startDateYear"  -> "2022",
-            "endDateDay"     -> "31",
-            "endDateMonth"   -> "10",
-            "endDateYear"    -> "2022"
+            FieldNames.startDateDay   -> "29",
+            FieldNames.startDateMonth -> "2",
+            FieldNames.startDateYear  -> "2022",
+            FieldNames.endDateDay     -> "31",
+            FieldNames.endDateMonth   -> "10",
+            FieldNames.endDateYear    -> "2022"
           )
 
           val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -1341,7 +1366,8 @@ class EditSetControllerSpec extends BaseSpec {
               ExpectedSelectOption("3", "British Library, National Sound Archive")
             ),
             custodialHistory = "Files originally created by successor or predecessor departments for COAL",
-            summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", "#startDateDay")),
+            summaryErrorMessages =
+              Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", s"#${FieldNames.startDateDay}")),
             errorMessageForStartDate = Some("Start date is not a valid date"),
             separatedMaterial = Seq(
               ExpectedSeparatedMaterial(
@@ -1380,11 +1406,9 @@ class EditSetControllerSpec extends BaseSpec {
           "is empty" in {
 
             val values = validValuesForSaving ++ Map(
-              "ccr"          -> "COAL 80/80/1",
-              "oci"          -> "COAL.2022.V1RJW.P",
-              "endDateDay"   -> "",
-              "endDateMonth" -> "",
-              "endDateYear"  -> ""
+              FieldNames.endDateDay   -> "",
+              FieldNames.endDateMonth -> "",
+              FieldNames.endDateYear  -> ""
             )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -1445,7 +1469,8 @@ class EditSetControllerSpec extends BaseSpec {
                   )
                 ),
                 custodialHistory = "Files originally created by successor or predecessor departments for COAL",
-                summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("End date is not a valid date", "#endDateDay")),
+                summaryErrorMessages =
+                  Seq(ExpectedSummaryErrorMessage("End date is not a valid date", s"#${FieldNames.endDateDay}")),
                 errorMessageForEndDate = Some("End date is not a valid date")
               )
             )
@@ -1455,11 +1480,9 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values =
               validValuesForSaving ++ Map(
-                "ccr"          -> "COAL 80/80/1",
-                "oci"          -> "COAL.2022.V1RJW.P",
-                "endDateDay"   -> "XX",
-                "endDateMonth" -> "12",
-                "endDateYear"  -> "2000"
+                FieldNames.endDateDay   -> "XX",
+                FieldNames.endDateMonth -> "12",
+                FieldNames.endDateYear  -> "2000"
               )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -1519,7 +1542,8 @@ class EditSetControllerSpec extends BaseSpec {
                   )
                 ),
                 custodialHistory = "Files originally created by successor or predecessor departments for COAL",
-                summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("End date is not a valid date", "#endDateDay")),
+                summaryErrorMessages =
+                  Seq(ExpectedSummaryErrorMessage("End date is not a valid date", s"#${FieldNames.endDateDay}")),
                 errorMessageForEndDate = Some("End date is not a valid date")
               )
             )
@@ -1529,12 +1553,12 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values = validValuesForSaving ++
               Map(
-                "startDateDay"   -> "1",
-                "startDateMonth" -> "2",
-                "startDateYear"  -> "2022",
-                "endDateDay"     -> "29",
-                "endDateMonth"   -> "2",
-                "endDateYear"    -> "2022"
+                FieldNames.startDateDay   -> "1",
+                FieldNames.startDateMonth -> "2",
+                FieldNames.startDateYear  -> "2022",
+                FieldNames.endDateDay     -> "29",
+                FieldNames.endDateMonth   -> "2",
+                FieldNames.endDateYear    -> "2022"
               )
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -1593,7 +1617,8 @@ class EditSetControllerSpec extends BaseSpec {
                   )
                 ),
                 custodialHistory = "Files originally created by successor or predecessor departments for COAL",
-                summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("End date is not a valid date", "#endDateDay")),
+                summaryErrorMessages =
+                  Seq(ExpectedSummaryErrorMessage("End date is not a valid date", s"#${FieldNames.endDateDay}")),
                 errorMessageForEndDate = Some("End date is not a valid date")
               )
             )
@@ -1602,12 +1627,12 @@ class EditSetControllerSpec extends BaseSpec {
           "is before start date" in {
 
             val values = validValuesForSaving ++ Map(
-              "startDateDay"   -> "12",
-              "startDateMonth" -> "10",
-              "startDateYear"  -> "2020",
-              "endDateDay"     -> "11",
-              "endDateMonth"   -> "10",
-              "endDateYear"    -> "2020"
+              FieldNames.startDateDay   -> "12",
+              FieldNames.startDateMonth -> "10",
+              FieldNames.startDateYear  -> "2020",
+              FieldNames.endDateDay     -> "11",
+              FieldNames.endDateMonth   -> "10",
+              FieldNames.endDateYear    -> "2020"
             )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -1668,7 +1693,7 @@ class EditSetControllerSpec extends BaseSpec {
                 ),
                 custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("End date cannot precede start date", "#endDateDay")),
+                  Seq(ExpectedSummaryErrorMessage("End date cannot precede start date", s"#${FieldNames.endDateDay}")),
                 errorMessageForEndDate = Some("End date cannot precede start date")
               )
             )
@@ -1678,12 +1703,12 @@ class EditSetControllerSpec extends BaseSpec {
         "neither start date nor end date is valid" in {
 
           val values = validValuesForSaving ++ Map(
-            "startDateDay"   -> "12",
-            "startDateMonth" -> "14",
-            "startDateYear"  -> "2020",
-            "endDateDay"     -> "42",
-            "endDateMonth"   -> "12",
-            "endDateYear"    -> "2020"
+            FieldNames.startDateDay   -> "12",
+            FieldNames.startDateMonth -> "14",
+            FieldNames.startDateYear  -> "2020",
+            FieldNames.endDateDay     -> "42",
+            FieldNames.endDateMonth   -> "12",
+            FieldNames.endDateYear    -> "2020"
           )
 
           val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -1714,8 +1739,8 @@ class EditSetControllerSpec extends BaseSpec {
               ),
               custodialHistory = "Files originally created by successor or predecessor departments for COAL",
               summaryErrorMessages = Seq(
-                ExpectedSummaryErrorMessage("Start date is not a valid date", "#startDateDay"),
-                ExpectedSummaryErrorMessage("End date is not a valid date", "#endDateDay")
+                ExpectedSummaryErrorMessage("Start date is not a valid date", s"#${FieldNames.startDateDay}"),
+                ExpectedSummaryErrorMessage("End date is not a valid date", s"#${FieldNames.endDateDay}")
               ),
               errorMessageForStartDate = Some("Start date is not a valid date"),
               errorMessageForEndDate = Some("End date is not a valid date"),
@@ -1757,7 +1782,7 @@ class EditSetControllerSpec extends BaseSpec {
           "is invalid" in {
 
             val values = validValuesForSaving ++ Map(
-              "coveringDates" -> "Oct 1 2004"
+              FieldNames.coveringDates -> "Oct 1 2004"
             )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -1817,8 +1842,9 @@ class EditSetControllerSpec extends BaseSpec {
                   )
                 ),
                 custodialHistory = "Files originally created by successor or predecessor departments for COAL",
-                summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("Covering date format is not valid", "#coveringDates")),
+                summaryErrorMessages = Seq(
+                  ExpectedSummaryErrorMessage("Covering date format is not valid", s"#${FieldNames.coveringDates}")
+                ),
                 errorMessageForCoveringsDates = Some("Covering date format is not valid")
               )
             )
@@ -1827,7 +1853,7 @@ class EditSetControllerSpec extends BaseSpec {
           "is too long" in {
             val gapDateTooLong = (1 to 100).map(_ => "2004 Oct 1").mkString(";")
             val values = validValuesForSaving ++ Map(
-              "coveringDates" -> gapDateTooLong
+              FieldNames.coveringDates -> gapDateTooLong
             )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -1888,7 +1914,10 @@ class EditSetControllerSpec extends BaseSpec {
                 ),
                 custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages = Seq(
-                  ExpectedSummaryErrorMessage("Covering date too long, maximum length 255 characters", "#coveringDates")
+                  ExpectedSummaryErrorMessage(
+                    "Covering date too long, maximum length 255 characters",
+                    s"#${FieldNames.coveringDates}"
+                  )
                 ),
                 errorMessageForCoveringsDates = Some("Covering date too long, maximum length 255 characters")
               )
@@ -1898,7 +1927,7 @@ class EditSetControllerSpec extends BaseSpec {
           "is empty; showing error correctly" in {
 
             val values = validValuesForSaving ++ Map(
-              "coveringDates" -> "  "
+              FieldNames.coveringDates -> "  "
             )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -1959,8 +1988,8 @@ class EditSetControllerSpec extends BaseSpec {
                 ),
                 custodialHistory = "Files originally created by successor or predecessor departments for COAL",
                 summaryErrorMessages = Seq(
-                  ExpectedSummaryErrorMessage("Enter the covering dates", "#coveringDates"),
-                  ExpectedSummaryErrorMessage("Covering date format is not valid", "#coveringDates")
+                  ExpectedSummaryErrorMessage("Enter the covering dates", s"#${FieldNames.coveringDates}"),
+                  ExpectedSummaryErrorMessage("Covering date format is not valid", s"#${FieldNames.coveringDates}")
                 ),
                 errorMessageForCoveringsDates = Some("Enter the covering dates")
               )
@@ -1973,7 +2002,7 @@ class EditSetControllerSpec extends BaseSpec {
           "isn't selected" in {
 
             val values =
-              validValuesForSaving ++ Map("placeOfDeposit" -> "")
+              validValuesForSaving ++ Map(FieldNames.placeOfDeposit -> "")
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -2032,7 +2061,8 @@ class EditSetControllerSpec extends BaseSpec {
                   )
                 ),
                 custodialHistory = "Files originally created by successor or predecessor departments for COAL",
-                summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("You must choose an option", "#placeOfDeposit")),
+                summaryErrorMessages =
+                  Seq(ExpectedSummaryErrorMessage("You must choose an option", s"#${FieldNames.placeOfDeposit}")),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
             )
@@ -2040,7 +2070,7 @@ class EditSetControllerSpec extends BaseSpec {
           }
           "is absent" in {
 
-            val values = validValuesForSaving.removed("placeOfDeposit")
+            val values = validValuesForSaving.removed(FieldNames.placeOfDeposit)
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -2099,7 +2129,8 @@ class EditSetControllerSpec extends BaseSpec {
                   )
                 ),
                 custodialHistory = "Files originally created by successor or predecessor departments for COAL",
-                summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("You must choose an option", "#placeOfDeposit")),
+                summaryErrorMessages =
+                  Seq(ExpectedSummaryErrorMessage("You must choose an option", s"#${FieldNames.placeOfDeposit}")),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
             )
@@ -2108,7 +2139,7 @@ class EditSetControllerSpec extends BaseSpec {
           "isn't recognised" in {
 
             val values = validValuesForSaving ++ Map(
-              "placeOfDeposit" -> "6"
+              FieldNames.placeOfDeposit -> "6"
             )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -2168,7 +2199,8 @@ class EditSetControllerSpec extends BaseSpec {
                   )
                 ),
                 custodialHistory = "Files originally created by successor or predecessor departments for COAL",
-                summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("You must choose an option", "#placeOfDeposit")),
+                summaryErrorMessages =
+                  Seq(ExpectedSummaryErrorMessage("You must choose an option", s"#${FieldNames.placeOfDeposit}")),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
             )
@@ -2179,7 +2211,7 @@ class EditSetControllerSpec extends BaseSpec {
           "is not selected" in {
 
             val values =
-              validValuesForSaving ++ Map("legalStatus" -> "")
+              validValuesForSaving ++ Map(FieldNames.legalStatus -> "")
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -2238,7 +2270,8 @@ class EditSetControllerSpec extends BaseSpec {
                   )
                 ),
                 custodialHistory = "Files originally created by successor or predecessor departments for COAL",
-                summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("You must choose an option", "#legalStatus")),
+                summaryErrorMessages =
+                  Seq(ExpectedSummaryErrorMessage("You must choose an option", s"#${FieldNames.legalStatus}")),
                 errorMessageForLegalStatus = Some("Error: You must choose an option")
               )
             )
@@ -2249,7 +2282,7 @@ class EditSetControllerSpec extends BaseSpec {
 
             val values =
               validValuesForSaving ++ Map(
-                "legalStatus" -> "ref.10"
+                FieldNames.legalStatus -> "ref.10"
               )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -2265,7 +2298,7 @@ class EditSetControllerSpec extends BaseSpec {
 
             val excessivelyLongNote = "Something about something else." * 100
             val values = validValuesForSaving ++ Map(
-              "note" -> excessivelyLongNote
+              FieldNames.note -> excessivelyLongNote
             )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -2325,8 +2358,9 @@ class EditSetControllerSpec extends BaseSpec {
                   )
                 ),
                 custodialHistory = "Files originally created by successor or predecessor departments for COAL",
-                summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("Note too long, maximum length 1000 characters", "#note")),
+                summaryErrorMessages = Seq(
+                  ExpectedSummaryErrorMessage("Note too long, maximum length 1000 characters", s"#${FieldNames.note}")
+                ),
                 errorMessageForNote = Some("Note too long, maximum length 1000 characters")
               )
             )
@@ -2338,7 +2372,7 @@ class EditSetControllerSpec extends BaseSpec {
 
             val excessivelyLongBackground = "Something about one of the people." * 400
             val values = validValuesForSaving ++ Map(
-              "background" -> excessivelyLongBackground
+              FieldNames.background -> excessivelyLongBackground
             )
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
 
@@ -2400,7 +2434,7 @@ class EditSetControllerSpec extends BaseSpec {
                 summaryErrorMessages = Seq(
                   ExpectedSummaryErrorMessage(
                     "Administrative / biographical background too long, maximum length 8000 characters",
-                    "#background"
+                    s"#${FieldNames.background}"
                   )
                 ),
                 errorMessageForBackground =
@@ -2416,7 +2450,7 @@ class EditSetControllerSpec extends BaseSpec {
             val custodialHistoryTooLong =
               "Files originally created by successor or predecessor departments for COAL" * 100
             val values = validValuesForSaving ++ Map(
-              "custodial-history" -> custodialHistoryTooLong
+              FieldNames.custodialHistory -> custodialHistoryTooLong
             )
 
             val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -2479,7 +2513,7 @@ class EditSetControllerSpec extends BaseSpec {
                 summaryErrorMessages = Seq(
                   ExpectedSummaryErrorMessage(
                     "Custodial history too long, maximum length 1000 characters",
-                    "#custodial-history"
+                    s"#${FieldNames.custodialHistory}"
                   )
                 ),
                 errorMessageForCustodialHistory = Some("Custodial history too long, maximum length 1000 characters")
@@ -2624,7 +2658,7 @@ class EditSetControllerSpec extends BaseSpec {
           "the 'note' field is blank" in {
 
             val values =
-              validValuesForSaving ++ Map("note" -> "")
+              validValuesForSaving ++ Map(FieldNames.note -> "")
 
             val editRecordPageResponse = submitWhileLoggedIn(12, "COAL.2022.V12RJW.P", values)
 
@@ -2680,7 +2714,7 @@ class EditSetControllerSpec extends BaseSpec {
           "the 'custodial history' field is blank" in {
 
             val values = validValuesForSaving ++ Map(
-              "custodial-history" -> ""
+              FieldNames.custodialHistory -> ""
             )
 
             val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -2750,7 +2784,7 @@ class EditSetControllerSpec extends BaseSpec {
           "the 'background' field is blank" in {
 
             val values =
-              validValuesForSaving ++ Map("ccr" -> "COAL 80/80/5", "oci" -> "COAL.2022.V5RJW.P", "background" -> "")
+              validValuesForSaving ++ Map(FieldNames.background -> "")
 
             val editRecordPageResponse = submitWhileLoggedIn(1, "COAL.2022.V5RJW.P", values)
 
@@ -2818,13 +2852,13 @@ class EditSetControllerSpec extends BaseSpec {
         "blank" in {
 
           val values = validValuesForCalculatingDates ++ Map(
-            "coveringDates"  -> "   ",
-            "startDateDay"   -> "1",
-            "startDateMonth" -> "10",
-            "startDateYear"  -> "2020",
-            "endDateDay"     -> "31",
-            "endDateMonth"   -> "10",
-            "endDateYear"    -> "2020"
+            FieldNames.coveringDates  -> "   ",
+            FieldNames.startDateDay   -> "1",
+            FieldNames.startDateMonth -> "10",
+            FieldNames.startDateYear  -> "2020",
+            FieldNames.endDateDay     -> "31",
+            FieldNames.endDateMonth   -> "10",
+            FieldNames.endDateYear    -> "2020"
           )
 
           val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -2885,8 +2919,8 @@ class EditSetControllerSpec extends BaseSpec {
               ),
               custodialHistory = "Files originally created by successor or predecessor departments for COAL",
               summaryErrorMessages = Seq(
-                ExpectedSummaryErrorMessage("Enter the covering dates", "#coveringDates"),
-                ExpectedSummaryErrorMessage("Covering date format is not valid", "#coveringDates")
+                ExpectedSummaryErrorMessage("Enter the covering dates", s"#${FieldNames.coveringDates}"),
+                ExpectedSummaryErrorMessage("Covering date format is not valid", s"#${FieldNames.coveringDates}")
               ),
               errorMessageForCoveringsDates = Some("Enter the covering dates")
             )
@@ -2896,13 +2930,13 @@ class EditSetControllerSpec extends BaseSpec {
         "invalid format" in {
 
           val values = validValuesForCalculatingDates ++ Map(
-            "coveringDates"  -> "1270s",
-            "startDateDay"   -> "1",
-            "startDateMonth" -> "10",
-            "startDateYear"  -> "2020",
-            "endDateDay"     -> "31",
-            "endDateMonth"   -> "10",
-            "endDateYear"    -> "2020"
+            FieldNames.coveringDates  -> "1270s",
+            FieldNames.startDateDay   -> "1",
+            FieldNames.startDateMonth -> "10",
+            FieldNames.startDateYear  -> "2020",
+            FieldNames.endDateDay     -> "31",
+            FieldNames.endDateMonth   -> "10",
+            FieldNames.endDateYear    -> "2020"
           )
 
           val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -2963,7 +2997,7 @@ class EditSetControllerSpec extends BaseSpec {
               ),
               custodialHistory = "Files originally created by successor or predecessor departments for COAL",
               summaryErrorMessages =
-                Seq(ExpectedSummaryErrorMessage("Covering date format is not valid", "#coveringDates")),
+                Seq(ExpectedSummaryErrorMessage("Covering date format is not valid", s"#${FieldNames.coveringDates}")),
               errorMessageForCoveringsDates = Some("Covering date format is not valid")
             )
           )
@@ -2972,13 +3006,13 @@ class EditSetControllerSpec extends BaseSpec {
         "contains a non-existent date" in {
 
           val values = validValuesForCalculatingDates ++ Map(
-            "coveringDates"  -> "2022 Feb 1-2022 Feb 29",
-            "startDateDay"   -> "1",
-            "startDateMonth" -> "10",
-            "startDateYear"  -> "2020",
-            "endDateDay"     -> "31",
-            "endDateMonth"   -> "10",
-            "endDateYear"    -> "2020"
+            FieldNames.coveringDates  -> "2022 Feb 1-2022 Feb 29",
+            FieldNames.startDateDay   -> "1",
+            FieldNames.startDateMonth -> "10",
+            FieldNames.startDateYear  -> "2020",
+            FieldNames.endDateDay     -> "31",
+            FieldNames.endDateMonth   -> "10",
+            FieldNames.endDateYear    -> "2020"
           )
 
           val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -3039,7 +3073,7 @@ class EditSetControllerSpec extends BaseSpec {
               ),
               custodialHistory = "Files originally created by successor or predecessor departments for COAL",
               summaryErrorMessages =
-                Seq(ExpectedSummaryErrorMessage("Covering date format is not valid", "#coveringDates")),
+                Seq(ExpectedSummaryErrorMessage("Covering date format is not valid", s"#${FieldNames.coveringDates}")),
               errorMessageForCoveringsDates = Some("Covering date format is not valid")
             )
           )
@@ -3050,9 +3084,7 @@ class EditSetControllerSpec extends BaseSpec {
         "covers period of the switchover" in {
 
           val values = validValuesForCalculatingDates ++ Map(
-            "ccr"           -> "COAL 80/80/1",
-            "oci"           -> "COAL.2022.V1RJW.P",
-            "coveringDates" -> "1752 Aug 1-1752 Sept 12"
+            FieldNames.coveringDates -> "1752 Aug 1-1752 Sept 12"
           )
 
           val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -3119,7 +3151,7 @@ class EditSetControllerSpec extends BaseSpec {
         "covers period after the switchover" in {
 
           val values = validValuesForCalculatingDates ++ Map(
-            "coveringDates" -> "1984 Dec"
+            FieldNames.coveringDates -> "1984 Dec"
           )
 
           val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)
@@ -3186,7 +3218,7 @@ class EditSetControllerSpec extends BaseSpec {
         "covers multiple ranges" in {
 
           val values = validValuesForCalculatingDates ++ Map(
-            "coveringDates" -> "1868; 1890-1902; 1933"
+            FieldNames.coveringDates -> "1868; 1890-1902; 1933"
           )
 
           val result = submitWhileLoggedIn(1, "COAL.2022.V1RJW.P", values)

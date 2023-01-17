@@ -23,7 +23,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.helper.CSRF
-@import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.EditSetReorder
+@import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 
 @this(govukTable: GovukTable, govukSelect: GovukSelect, govukButton: GovukButton, govukFieldset: GovukFieldset, govukLabel: GovukLabel)
 
@@ -39,19 +39,19 @@
 @orderingFormContents = {
         @govukLabel(Label(content = Text(messages("edit-set.ordering.header"))))
         @govukSelect(Select(
-            id = "field",
-            name = "field",
+            id = fieldKey,
+            name = fieldKey,
             items = Seq(
-                SelectItem(text = messages("edit-set.ordering.field.ccr"), value = Some("ccr"), selected = editSetReorderForm.data.get("field").contains("ccr")),
-                SelectItem(text = messages("edit-set.ordering.field.scope-and-content"), value = Some("scopeAndContent"), selected = editSetReorderForm.data.get("field").contains("scopeAndContent")),
-                SelectItem(text = messages("edit-set.ordering.field.covering-dates"), value = Some("coveringDates"), selected = editSetReorderForm.data.get("field").contains("coveringDates"))
+                SelectItem(text = messages("edit-set.ordering.field.ccr"), value = Some(FieldNames.ccr), selected = editSetReorderForm.data.get(fieldKey).contains(FieldNames.ccr)),
+                SelectItem(text = messages("edit-set.ordering.field.scope-and-content"), value = Some(FieldNames.scopeAndContent), selected = editSetReorderForm.data.get(fieldKey).contains(FieldNames.scopeAndContent)),
+                SelectItem(text = messages("edit-set.ordering.field.covering-dates"), value = Some(FieldNames.coveringDates), selected = editSetReorderForm.data.get(fieldKey).contains(FieldNames.coveringDates))
             )))
         @govukSelect(Select(
-            id = "direction",
-            name = "direction",
+            id = orderDirectionKey,
+            name = orderDirectionKey,
             items = Seq(
-                SelectItem(text = messages("edit-set.ordering.direction.ascending"), value = Some("ascending"), selected = editSetReorderForm.data.get("direction").contains("ascending")),
-                SelectItem(text = messages("edit-set.ordering.direction.descending"), value = Some("descending"),  selected = editSetReorderForm.data.get("direction").contains("descending"))
+                SelectItem(text = messages("edit-set.ordering.direction.ascending"), value = Some(orderDirectionAscending), selected = editSetReorderForm.data.get("direction").contains(orderDirectionAscending)),
+                SelectItem(text = messages("edit-set.ordering.direction.descending"), value = Some(orderDirectionDescending),  selected = editSetReorderForm.data.get("direction").contains(orderDirectionDescending))
             )))
         @govukButton(Button(
             element = Some("button"),

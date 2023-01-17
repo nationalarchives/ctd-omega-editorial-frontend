@@ -23,6 +23,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
 @import uk.gov.nationalarchives.omega.editorial.models._
+@import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.FieldNames
 @import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
 @import uk.gov.hmrc.hmrcfrontend.views.Implicits.RichErrorSummary
 
@@ -100,37 +101,37 @@
     <label class="govuk-label govuk-label--s">
     @messages(labelKey)
     </label>
-@editSetRecordForm.error(prefix + "DateDay").map { error =>
-    <p id="@{prefix}DateFieldError" class="govuk-error-message">@{error.message}</p>
+@editSetRecordForm.error(prefix + "-date-day").map { error =>
+    <p id="@{prefix}-date-field-error" class="govuk-error-message">@{error.message}</p>
 }
     <div class="govuk-date-input" id="@prefix">
         <div class="govuk-date-input__item">
             <div class="govuk-form-group">
             @govukInput(Input(
-                id = prefix + "DateDay",
-                name = prefix + "DateDay",
-                value = editSetRecordForm.data.get(prefix + "DateDay"),
-                label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("@{prefix}DateDay"), content = Text(messages("edit-set.record.edit.dates.day"))),
+                id = prefix + "-date-day",
+                name = prefix + "-date-day",
+                value = editSetRecordForm.data.get(prefix + "-date-day"),
+                label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("@{prefix}-date-day"), content = Text(messages("edit-set.record.edit.dates.day"))),
                 classes = "govuk-input govuk-date-input__input govuk-input--width-2"))
             </div>
         </div>
         <div class="govuk-date-input__item">
             <div class="govuk-form-group">
             @govukInput(Input(
-                id = prefix + "DateMonth",
-                name = prefix + "DateMonth",
-                value = editSetRecordForm.data.get(prefix + "DateMonth"),
-                label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("@{prefix}DateMonth"), content = Text(messages("edit-set.record.edit.dates.month"))),
+                id = prefix + "-date-month",
+                name = prefix + "-date-month",
+                value = editSetRecordForm.data.get(prefix + "-date-month"),
+                label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("@{prefix}-date-month"), content = Text(messages("edit-set.record.edit.dates.month"))),
                 classes = "govuk-input govuk-date-input__input govuk-input--width-2"))
             </div>
         </div>
         <div class="govuk-date-input__item">
             <div class="govuk-form-group">
             @govukInput(Input(
-                id = prefix + "DateYear",
-                name = prefix + "DateYear",
-                value = editSetRecordForm.data.get(prefix + "DateYear"),
-                label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("@{prefix}DateYear"), content = Text(messages("edit-set.record.edit.dates.year"))),
+                id = prefix + "-date-year",
+                name = prefix + "-date-year",
+                value = editSetRecordForm.data.get(prefix + "-date-year"),
+                label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("@{prefix}-date-year"), content = Text(messages("edit-set.record.edit.dates.year"))),
                 classes = "govuk-input govuk-date-input__input govuk-input--width-4"))
             </div>
         </div>
@@ -140,51 +141,51 @@
 @fieldsetContent = {
 @CSRF.formField
 @govukTextarea(Textarea(
-    id = "scopeAndContent",
-    name = "scopeAndContent",
-    value = editSetRecordForm.data.get("scopeAndContent"),
+    id = FieldNames.scopeAndContent,
+    name = FieldNames.scopeAndContent,
+    value = editSetRecordForm.data.get(FieldNames.scopeAndContent),
     label = Label(
-      forAttr = Some("scopeAndContent"),
+      forAttr = Some(FieldNames.scopeAndContent),
       content = Text(messages("edit-set.record.edit.scope-and-content")),
       classes = "govuk-label--s"
     ),
-    errorMessage = editSetRecordForm.error("scopeAndContent").map { error =>
+    errorMessage = editSetRecordForm.error(FieldNames.scopeAndContent).map { error =>
         ErrorMessage(
             content = Text(error.message),
-            attributes = Map("for" -> "scopeAndContent")
+            attributes = Map("for" -> FieldNames.scopeAndContent)
         )
     },
     attributes = Map("rows" -> "5", "autofocus" -> "true")))
 @govukInput(Input(
-    id = "formerReferenceDepartment",
-    name = "formerReferenceDepartment",
-    value = editSetRecordForm.data.get("formerReferenceDepartment"),
+    id = FieldNames.formerReferenceDepartment,
+    name = FieldNames.formerReferenceDepartment,
+    value = editSetRecordForm.data.get(FieldNames.formerReferenceDepartment),
     label = Label(
-      forAttr = Some("formerReferenceDepartment"),
+      forAttr = Some(FieldNames.formerReferenceDepartment),
       content = Text(messages("edit-set.record.edit.former-reference")),
       classes = "govuk-label--s"
     ),
-    errorMessage = editSetRecordForm.error("formerReferenceDepartment").map { error =>
+    errorMessage = editSetRecordForm.error(FieldNames.formerReferenceDepartment).map { error =>
         ErrorMessage(
             content = Text(error.message),
-            attributes = Map("for" -> "formerReferenceDepartment")
+            attributes = Map("for" -> FieldNames.formerReferenceDepartment)
         )
     },
     classes = "govuk-input--width-20"))
 @govukInput(Input(
-    id = "coveringDates",
-    name = "coveringDates",
+    id = FieldNames.coveringDates,
+    name = FieldNames.coveringDates,
     attributes = Map(),
-    value = editSetRecordForm.data.get("coveringDates"),
+    value = editSetRecordForm.data.get(FieldNames.coveringDates),
     label = Label(
-      forAttr = Some("coveringDates"),
+      forAttr = Some(FieldNames.coveringDates),
       content = Text(messages("edit-set.record.edit.covering-dates")),
       classes = "govuk-label--s"
     ),
-    errorMessage = editSetRecordForm.error("coveringDates").map { error =>
+    errorMessage = editSetRecordForm.error(FieldNames.coveringDates).map { error =>
         ErrorMessage(
             content = Text(error.message),
-            attributes = Map("for" -> "coveringDates")
+            attributes = Map("for" -> FieldNames.coveringDates)
         )
     },
     classes = "govuk-!-width-one-half"))
@@ -208,38 +209,38 @@
         role = Some("group")
     ))
 @govukSelect(Select(
-    id = "legalStatus",
-    name = "legalStatus",
+    id = FieldNames.legalStatus,
+    name = FieldNames.legalStatus,
     items = legalStatusItems ++ legalStatusReferenceData.map { status =>
         SelectItem(
-            selected = editSetRecordForm.data.get("legalStatus").contains(status.uri),
+            selected = editSetRecordForm.data.get(FieldNames.legalStatus).contains(status.uri),
             text = status.label,
             value = Some(status.uri)
         )
     },
     label = Label(
-      forAttr = Some("legalStatus"),
+      forAttr = Some(FieldNames.legalStatus),
       content = Text(messages("edit-set.record.edit.legal-status")),
       classes = "govuk-label--s"
     ),
-    errorMessage = editSetRecordForm.error("legalStatus").map { error =>
+    errorMessage = editSetRecordForm.error(FieldNames.legalStatus).map { error =>
         ErrorMessage(
             content = Text(error.message),
-            attributes = Map("for" -> "legalStatus")
+            attributes = Map("for" -> FieldNames.legalStatus)
         )
     },
 )
 )
 
 @govukTextarea(Textarea(
-    id = "custodial-history",
-    name = "custodial-history",
-    value = editSetRecordForm.data.get("custodial-history"),
-    label = Label(forAttr = Some("custodialHistory"), classes = "govuk-label--s", content = Text(messages("edit-set.record.edit.custodial-history"))),
-    errorMessage = editSetRecordForm.error("custodial-history").map { error =>
+    id = FieldNames.custodialHistory,
+    name = FieldNames.custodialHistory,
+    value = editSetRecordForm.data.get(FieldNames.custodialHistory),
+    label = Label(forAttr = Some(FieldNames.custodialHistory), classes = "govuk-label--s", content = Text(messages("edit-set.record.edit.custodial-history"))),
+    errorMessage = editSetRecordForm.error(FieldNames.custodialHistory).map { error =>
         ErrorMessage(
             content = Text(error.message),
-            attributes = Map("for" -> "custodial-history")
+            attributes = Map("for" -> FieldNames.custodialHistory)
         )
     },
     attributes = Map("rows" -> "5", "autofocus" -> "true")
@@ -247,15 +248,15 @@
 )
 
 @govukSelect(Select(
-    id = "placeOfDeposit",
-    name = "placeOfDeposit",
+    id = FieldNames.placeOfDeposit,
+    name = FieldNames.placeOfDeposit,
     items = {
         val noSelectionAsMap = Map("" -> messages("edit-set.record.error.place-of-deposit"))
         val corporateBodiesAsMap = noSelectionAsMap ++ corporateBodies.map(corporateBody => (corporateBody.id, corporateBody.name)).toMap
         corporateBodiesAsMap
                 .map { case (id, label) =>
             SelectItem(
-                selected = editSetRecordForm.data.get("placeOfDeposit").contains(id),
+                selected = editSetRecordForm.data.get(FieldNames.placeOfDeposit).contains(id),
                 text = label,
                 value = Some(id).filter(_.nonEmpty),
                 disabled = id == ""
@@ -263,43 +264,43 @@
         }.toSeq
     },
     label = Label(
-      forAttr = Some("placeOfDeposit"),
+      forAttr = Some(FieldNames.placeOfDeposit),
       content = Text(messages("edit-set.record.edit.place-of-deposit")),
       classes = "govuk-label--s"
     ),
-    errorMessage = editSetRecordForm.error("placeOfDeposit").map { error =>
+    errorMessage = editSetRecordForm.error(FieldNames.placeOfDeposit).map { error =>
         ErrorMessage(
             content = Text(error.message),
-            attributes = Map("for" -> "placeOfDeposit")
+            attributes = Map("for" -> FieldNames.placeOfDeposit)
         )
     },
 )
 )
 @govukTextarea(Textarea(
-    id = "note",
-    name = "note",
-    value = editSetRecordForm.data.get("note"),
+    id = FieldNames.note,
+    name = FieldNames.note,
+    value = editSetRecordForm.data.get(FieldNames.note),
     label = Label(
-      forAttr = Some("note"),
+      forAttr = Some(FieldNames.note),
       content = Text(messages("edit-set.record.edit.note")),
       classes = "govuk-label--s"
     ),
-    errorMessage = editSetRecordForm.error("note").map { error =>
+    errorMessage = editSetRecordForm.error(FieldNames.note).map { error =>
         ErrorMessage(
             content = Text(error.message),
-            attributes = Map("for" -> "note")
+            attributes = Map("for" -> FieldNames.note)
         )
     },
     attributes = Map("rows" -> "5", "autofocus" -> "true")))
 @govukTextarea(Textarea(
-    id = "background",
-    name = "background",
-    value = editSetRecordForm.data.get("background"),
-    label = Label(forAttr = Some("background"), classes = "govuk-label--s", content = Text(messages("edit-set.record.edit.background"))),
-    errorMessage = editSetRecordForm.error("background").map { error =>
+    id = FieldNames.background,
+    name = FieldNames.background,
+    value = editSetRecordForm.data.get(FieldNames.background),
+    label = Label(forAttr = Some(FieldNames.background), classes = "govuk-label--s", content = Text(messages("edit-set.record.edit.background"))),
+    errorMessage = editSetRecordForm.error(FieldNames.background).map { error =>
         ErrorMessage(
             content = Text(error.message),
-            attributes = Map("for" -> "background")
+            attributes = Map("for" -> FieldNames.background)
         )
     },
     attributes = Map("rows" -> "5", "autofocus" -> "true")))
@@ -349,8 +350,8 @@
   </ul>
 
     <div class="govuk-form-group">
-        <input id="ccr" name="ccr" type="text" readonly="readonly" hidden="true" value="@record.ccr"/>
-        <input id="ocr" name="oci" type="text" readonly="readonly" hidden="true" value="@record.oci"/>
+        <input id="@FieldNames.ccr" name="ccr" type="text" readonly="readonly" hidden="true" value="@record.ccr"/>
+        <input id="@FieldNames.oci" name="oci" type="text" readonly="readonly" hidden="true" value="@record.oci"/>
     </div>
 @actionButtonGroup
 }
