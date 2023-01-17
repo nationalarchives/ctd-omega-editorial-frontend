@@ -21,9 +21,24 @@
 
 package uk.gov.nationalarchives.omega.editorial.models
 
-import uk.gov.nationalarchives.omega.editorial.models.Creator.CreatorType
+import uk.gov.nationalarchives.omega.editorial.models.Creator.{ CreatorType, CreatorTypeCorporateBody, CreatorTypePerson }
 
-case class Creator(creatorType: CreatorType, id: String, name: String, startYear: Option[Int], endYear: Option[Int])
+case class Creator(creatorType: CreatorType, id: String, name: String, startYear: Option[Int], endYear: Option[Int]) {
+
+  val displayedName = {
+    val dateDisplay = (creatorType, startYear, endYear) match {
+      case (CreatorTypeCorporateBody, Some(startYear), Some(endYear)) => s" ($startYear - $endYear)"
+      case (CreatorTypeCorporateBody, Some(startYear), None)          => s" ($startYear - )"
+      case (CreatorTypeCorporateBody, None, Some(endYear))            => s" ( - $endYear)"
+      case (CreatorTypePerson, Some(startYear), Some(endYear))        => s" (b.$startYear - d.$endYear)"
+      case (CreatorTypePerson, Some(startYear), None)                 => s" (b.$startYear - )"
+      case (CreatorTypePerson, None, Some(endYear))                   => s" ( - d.$endYear)"
+      case (_, None, None)                                            => ""
+    }
+    s"$name$dateDisplay"
+  }
+
+}
 
 object Creator {
 

@@ -34,7 +34,7 @@ import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues._
 import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateCalculator.getStartAndEndDates
 import uk.gov.nationalarchives.omega.editorial.services.{ CoveringDateError, ReferenceDataService }
-import uk.gov.nationalarchives.omega.editorial.support.{ DateParser, DisplayedCreator }
+import uk.gov.nationalarchives.omega.editorial.support.DateParser
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
 import java.time.LocalDate
@@ -56,8 +56,7 @@ class EditSetController @Inject() (
 
   private val logger: Logger = Logger(this.getClass)
 
-  private lazy val displayedCreators: Seq[DisplayedCreator] =
-    referenceDataService.getCreators.map(DisplayedCreator.fromCreator)
+  private lazy val creators: Seq[Creator] = referenceDataService.getCreators
 
   private lazy val placesOfDeposit: Seq[PlaceOfDeposit] = referenceDataService.getPlacesOfDeposit
 
@@ -405,7 +404,7 @@ class EditSetController @Inject() (
     placesOfDeposit.map(_.id).contains(placeOfDeposit)
 
   private def isCreatorRecognised(creatorID: String): Boolean =
-    creatorID.trim.nonEmpty && displayedCreators.exists(_.id == creatorID)
+    creatorID.trim.nonEmpty && creators.exists(_.id == creatorID)
 
   private def resolvedMessage(key: String, args: String*): String = messagesApi(key, args: _*)(Lang("en"))
 
@@ -508,7 +507,7 @@ class EditSetController @Inject() (
       editSetRecord,
       legalStatuses,
       placesOfDeposit,
-      displayedCreators,
+      creators,
       form
     )
   }

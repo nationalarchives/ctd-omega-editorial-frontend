@@ -32,7 +32,6 @@ import support.ExpectedValues.ExpectedSummaryErrorMessage
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.FieldNames
 import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, LegalStatus, RelatedMaterial }
-import uk.gov.nationalarchives.omega.editorial.support.DisplayedCreator
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEdit
 
 class EditRecordViewSpec extends BaseSpec {
@@ -64,8 +63,6 @@ class EditRecordViewSpec extends BaseSpec {
       LegalStatus("ref.3", "Public Records unless otherwise Stated"),
       LegalStatus("ref.4", "Welsh Public Record(s)")
     )
-
-  private val displayedCreators: Seq[DisplayedCreator] = allCreators.map(DisplayedCreator.fromCreator)
 
   val editSetRecord = EditSetRecord(
     ccr = "COAL 80/80/1",
@@ -178,7 +175,7 @@ class EditRecordViewSpec extends BaseSpec {
           editSetRecord,
           legalStatusReferenceData,
           allPlacesOfDeposits,
-          displayedCreators,
+          allCreators,
           filledForm
         )(
           Helpers.stubMessages(),
@@ -215,7 +212,7 @@ class EditRecordViewSpec extends BaseSpec {
           editSetRecord,
           legalStatusReferenceData,
           allPlacesOfDeposits,
-          displayedCreators,
+          allCreators,
           filledForm
         )(
           Helpers.stubMessages(),
@@ -264,7 +261,7 @@ class EditRecordViewSpec extends BaseSpec {
           editSetRecord,
           legalStatusReferenceData,
           allPlacesOfDeposits,
-          displayedCreators,
+          allCreators,
           filledForm
         )(
           Helpers.stubMessages(),
@@ -304,7 +301,7 @@ class EditRecordViewSpec extends BaseSpec {
           editSetRecord,
           legalStatusReferenceData,
           allPlacesOfDeposits,
-          displayedCreators,
+          allCreators,
           filledForm
         )(
           Helpers.stubMessages(),
@@ -353,7 +350,7 @@ class EditRecordViewSpec extends BaseSpec {
           editSetRecord,
           legalStatusReferenceData,
           allPlacesOfDeposits,
-          displayedCreators,
+          allCreators,
           editSetRecordForm
         )(
           Helpers.stubMessages(),
@@ -425,7 +422,7 @@ class EditRecordViewSpec extends BaseSpec {
         record = editSetRecord,
         legalStatusReferenceData,
         placesOfDeposit = allPlacesOfDeposits,
-        creators = displayedCreators,
+        creators = allCreators,
         editSetRecordForm = form
       )(
         Helpers.stubMessages(),
