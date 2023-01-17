@@ -975,7 +975,7 @@ class EditSetControllerSpec extends BaseSpec {
           "Covering dates",
           "Start date",
           "End date",
-          "Former reference - Department (optional)",
+          "Former reference (Department) (optional)",
           "Legal Status",
           "Custodial History (optional)",
           "Held by",
