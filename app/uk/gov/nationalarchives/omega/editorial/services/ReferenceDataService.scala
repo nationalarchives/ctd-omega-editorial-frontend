@@ -21,26 +21,9 @@
 
 package uk.gov.nationalarchives.omega.editorial.services
 
-import com.google.inject.ImplementedBy
 import uk.gov.nationalarchives.omega.editorial.models._
 
-@ImplementedBy(classOf[StubReferenceDataService])
-trait ReferenceDataService {
-
-  def getCreators: Seq[Creator] =
-    (getCorporateBodies.flatMap(Creator.from) ++ getPersons.flatMap(Creator.from)).sortBy(_.name)
-
-  def getCorporateBodies: Seq[CorporateBody]
-
-  def getPersons: Seq[Person]
-
-  def getPlacesOfDeposit: Seq[PlaceOfDeposit]
-
-  def getLegalStatuses: Seq[LegalStatus]
-
-}
-
-class StubReferenceDataService extends ReferenceDataService {
+class ReferenceDataService {
 
   def getCorporateBodies: Seq[CorporateBody] = Seq(
     CorporateBody("RR6", "100th (Gordon Highlanders) Regiment of Foot", Some(1794), Some(1794)),
@@ -278,13 +261,16 @@ class StubReferenceDataService extends ReferenceDataService {
     Person("3GY", "Victoria, ", Some("Queen of Great Britain and Ireland"), Some(1819), Some(1901))
   )
 
+  def getCreators: Seq[Creator] =
+    (getCorporateBodies.flatMap(Creator.from) ++ getPersons.flatMap(Creator.from)).sortBy(_.name)
+
   def getPlacesOfDeposit: Seq[PlaceOfDeposit] = Seq(
     PlaceOfDeposit("1", "The National Archives, Kew"),
     PlaceOfDeposit("2", "British Museum, Department of Libraries and Archives"),
     PlaceOfDeposit("3", "British Library, National Sound Archive")
   )
 
-  override def getLegalStatuses: Seq[LegalStatus] = Seq(
+  def getLegalStatuses: Seq[LegalStatus] = Seq(
     LegalStatus("ref.1", "Public Record(s)"),
     LegalStatus("ref.2", "Not Public Records"),
     LegalStatus("ref.3", "Public Records unless otherwise Stated"),
