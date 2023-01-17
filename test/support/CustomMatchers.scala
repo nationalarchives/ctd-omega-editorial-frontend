@@ -210,7 +210,7 @@ object CustomMatchers {
     singleValueMatcher(
       label = "an error summary title",
       expectedValue = expectedValue,
-      actualValue = document.select("#error-summary-title").text()
+      actualValue = document.select(".govuk-error-summary__title").text()
     )
 
   def haveSummaryErrorMessages(expectedSummaryErrorMessages: ExpectedSummaryErrorMessage*): Matcher[Document] =
