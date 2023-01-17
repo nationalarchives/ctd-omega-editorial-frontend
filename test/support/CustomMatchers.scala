@@ -451,6 +451,13 @@ object CustomMatchers {
       actualValue = getAllClassNames(document).filterNot(validW3CIdentifier.matches)
     )
 
+  def haveSectionsInCorrectOrder(sectionTitles: String*): Matcher[Document] = (document: Document) =>
+    singleValueMatcher(
+      label = "a list of input sections in the correct order",
+      expectedValue = sectionTitles.toSeq,
+      actualValue = (document.select(".govuk-fieldset > * > label").asScala.toSeq ++ document.select(".govuk-fieldset > h3").asScala.toSeq).map(_.text)
+    )
+
   private def haveSelectionOptions(
     id: String,
     label: String,

@@ -153,18 +153,6 @@
     },
     attributes = Map("rows" -> "5", "autofocus" -> "true")))
 @govukInput(Input(
-    id = FieldNames.formerReferenceDepartment,
-    name = FieldNames.formerReferenceDepartment,
-    value = editSetRecordForm.data.get(FieldNames.formerReferenceDepartment),
-    label = Label(forAttr = Some(FieldNames.formerReferenceDepartment), content = Text(messages("edit-set.record.edit.former-reference"))),
-    errorMessage = editSetRecordForm.error(FieldNames.formerReferenceDepartment).map { error =>
-        ErrorMessage(
-            content = Text(error.message),
-            attributes = Map("for" -> FieldNames.formerReferenceDepartment)
-        )
-    },
-    classes = "govuk-input--width-20"))
-@govukInput(Input(
     id = FieldNames.coveringDates,
     name = FieldNames.coveringDates,
     attributes = Map(),
@@ -196,6 +184,18 @@
         html = dateSelector("end", "edit-set.record.edit.end-date"),
         role = Some("group")
     ))
+@govukInput(Input(
+    id = FieldNames.formerReferenceDepartment,
+    name = FieldNames.formerReferenceDepartment,
+    value = editSetRecordForm.data.get(FieldNames.formerReferenceDepartment),
+    label = Label(forAttr = Some(FieldNames.formerReferenceDepartment), content = Text(messages("edit-set.record.edit.former-reference"))),
+    errorMessage = editSetRecordForm.error(FieldNames.formerReferenceDepartment).map { error =>
+        ErrorMessage(
+            content = Text(error.message),
+            attributes = Map("for" -> FieldNames.formerReferenceDepartment)
+        )
+    },
+    classes = "govuk-input--width-20"))
 @govukSelect(Select(
     id = FieldNames.legalStatus,
     name = FieldNames.legalStatus,
