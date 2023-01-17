@@ -276,7 +276,7 @@ class EditSetController @Inject() (
 
   private def prepareCreatorIDs(editSetRecord: EditSetRecord): EditSetRecord = {
     val recognisedCreatorIds = editSetRecord.creatorIDs.filter(isCreatorRecognised)
-    val updatedCreatorIds = if (recognisedCreatorIds.nonEmpty) recognisedCreatorIds else List("")
+    val updatedCreatorIds = if (recognisedCreatorIds.nonEmpty) recognisedCreatorIds else List.empty
     editSetRecord.copy(creatorIDs = updatedCreatorIds)
   }
 
