@@ -405,11 +405,11 @@ object CustomMatchers {
     singleValueMatcher(
       label = "a note",
       expectedValue = expectedValue,
-      actualValue = document.select("#note").text()
+      actualValue = document.select(s"#${FieldNames.note}").text()
     )
 
   def haveErrorMessageForNote(expectedValue: String): Matcher[Document] =
-    haveErrorMessageForField("note", "#note-error", expectedValue)
+    haveErrorMessageForField(s"${FieldNames.note}", s"#${FieldNames.note}-error", expectedValue)
 
   def haveNoErrorMessageForNote: Matcher[Document] = haveErrorMessageForNote("")
 
@@ -417,11 +417,11 @@ object CustomMatchers {
     singleValueMatcher(
       label = "a background",
       expectedValue = expectedValue,
-      actualValue = document.select("#background").text()
+      actualValue = document.select(s"#${FieldNames.background}").text()
     )
 
   def haveErrorMessageForBackground(expectedValue: String): Matcher[Document] =
-    haveErrorMessageForField("background", "#background-error", expectedValue)
+    haveErrorMessageForField(FieldNames.background, s"#${FieldNames.background}-error", expectedValue)
 
   def haveNoErrorMessageForBackground: Matcher[Document] = haveErrorMessageForBackground("")
 
