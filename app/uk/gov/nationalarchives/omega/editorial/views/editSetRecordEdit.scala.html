@@ -98,7 +98,7 @@
 }
 
 @dateSelector(prefix: String, labelKey: String) = {
-    <label class="govuk-label">
+    <label class="govuk-label govuk-label--s">
     @messages(labelKey)
     </label>
 @editSetRecordForm.error(prefix + "-date-day").map { error =>
@@ -144,7 +144,11 @@
     id = FieldNames.scopeAndContent,
     name = FieldNames.scopeAndContent,
     value = editSetRecordForm.data.get(FieldNames.scopeAndContent),
-    label = Label(forAttr = Some(FieldNames.scopeAndContent), content = Text(messages("edit-set.record.edit.scope-and-content"))),
+    label = Label(
+      forAttr = Some(FieldNames.scopeAndContent),
+      content = Text(messages("edit-set.record.edit.scope-and-content")),
+      classes = "govuk-label--s"
+    ),
     errorMessage = editSetRecordForm.error(FieldNames.scopeAndContent).map { error =>
         ErrorMessage(
             content = Text(error.message),
@@ -156,7 +160,11 @@
     id = FieldNames.formerReferenceDepartment,
     name = FieldNames.formerReferenceDepartment,
     value = editSetRecordForm.data.get(FieldNames.formerReferenceDepartment),
-    label = Label(forAttr = Some(FieldNames.formerReferenceDepartment), content = Text(messages("edit-set.record.edit.former-reference"))),
+    label = Label(
+      forAttr = Some(FieldNames.formerReferenceDepartment),
+      content = Text(messages("edit-set.record.edit.former-reference")),
+      classes = "govuk-label--s"
+    ),
     errorMessage = editSetRecordForm.error(FieldNames.formerReferenceDepartment).map { error =>
         ErrorMessage(
             content = Text(error.message),
@@ -169,7 +177,11 @@
     name = FieldNames.coveringDates,
     attributes = Map(),
     value = editSetRecordForm.data.get(FieldNames.coveringDates),
-    label = Label(forAttr = Some(FieldNames.coveringDates), content = Text(messages("edit-set.record.edit.covering-dates"))),
+    label = Label(
+      forAttr = Some(FieldNames.coveringDates),
+      content = Text(messages("edit-set.record.edit.covering-dates")),
+      classes = "govuk-label--s"
+    ),
     errorMessage = editSetRecordForm.error(FieldNames.coveringDates).map { error =>
         ErrorMessage(
             content = Text(error.message),
@@ -206,7 +218,11 @@
             value = Some(status.uri)
         )
     },
-    label = Label(forAttr = Some(FieldNames.legalStatus), content = Text(messages("edit-set.record.edit.legal-status"))),
+    label = Label(
+      forAttr = Some(FieldNames.legalStatus),
+      content = Text(messages("edit-set.record.edit.legal-status")),
+      classes = "govuk-label--s"
+    ),
     errorMessage = editSetRecordForm.error(FieldNames.legalStatus).map { error =>
         ErrorMessage(
             content = Text(error.message),
@@ -247,7 +263,11 @@
             )
         }.toSeq
     },
-    label = Label(forAttr = Some(FieldNames.placeOfDeposit), content = Text(messages("edit-set.record.edit.place-of-deposit"))),
+    label = Label(
+      forAttr = Some(FieldNames.placeOfDeposit),
+      content = Text(messages("edit-set.record.edit.place-of-deposit")),
+      classes = "govuk-label--s"
+    ),
     errorMessage = editSetRecordForm.error(FieldNames.placeOfDeposit).map { error =>
         ErrorMessage(
             content = Text(error.message),
@@ -260,7 +280,11 @@
     id = FieldNames.note,
     name = FieldNames.note,
     value = editSetRecordForm.data.get(FieldNames.note),
-    label = Label(forAttr = Some(FieldNames.note), content = Text(messages("edit-set.record.edit.note"))),
+    label = Label(
+      forAttr = Some(FieldNames.note),
+      content = Text(messages("edit-set.record.edit.note")),
+      classes = "govuk-label--s"
+    ),
     errorMessage = editSetRecordForm.error(FieldNames.note).map { error =>
         ErrorMessage(
             content = Text(error.message),
