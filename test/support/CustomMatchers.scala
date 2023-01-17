@@ -305,6 +305,17 @@ object CustomMatchers {
       )
   }
 
+  def haveCorrectClassesOnAllLabels: Matcher[Document] = (document: Document) =>
+    singleValueMatcher(
+      "no labels without the 'govuk-label--s' class",
+      expectedValue = Seq.empty,
+      actualValue = document
+        .select(".govuk-fieldset > div > label")
+        .asScala
+        .toSeq
+        .filterNot(_.classNames.contains("govuk-label--s"))
+    )
+
   def haveErrorMessageForUsername(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       "a username",
