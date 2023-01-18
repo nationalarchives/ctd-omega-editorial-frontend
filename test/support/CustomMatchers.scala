@@ -260,7 +260,7 @@ object CustomMatchers {
     singleValueMatcher(
       "an error message for legal status",
       expectedValue,
-      document.select(s"#${FieldNames.legalStatus}-error").text()
+      document.select(s"#${FieldNames.legalStatusID}-error").text()
     )
 
   def haveNoErrorMessageForLegalStatus: Matcher[Document] = haveErrorMessageForLegalStatus("")
@@ -269,7 +269,7 @@ object CustomMatchers {
     singleValueMatcher(
       "a legal status",
       expectedValue,
-      document.select(s"#${FieldNames.legalStatus} option[selected]").attr("value")
+      document.select(s"#${FieldNames.legalStatusID} option[selected]").attr("value")
     )
 
   def parseSuccessfullyAs[A](expected: A): Matcher[CoveringDateError.Result[A]] = {
@@ -342,7 +342,7 @@ object CustomMatchers {
     )
 
   def haveErrorMessageForPlaceOfDeposit(expectedValue: String): Matcher[Document] =
-    haveErrorMessageForField("place of deposit", s"#${FieldNames.placeOfDeposit}-error", expectedValue)
+    haveErrorMessageForField("place of deposit", s"#${FieldNames.placeOfDepositID}-error", expectedValue)
 
   def haveNoErrorMessageForPlaceOfDeposit: Matcher[Document] = haveErrorMessageForPlaceOfDeposit("")
 
@@ -404,7 +404,7 @@ object CustomMatchers {
   }
 
   def haveSelectionForPlaceOfDeposit(expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
-    haveSelectionOptions(FieldNames.placeOfDeposit, "place of deposit", expectedSelectOptions)
+    haveSelectionOptions(FieldNames.placeOfDepositID, "place of deposit", expectedSelectOptions)
 
   def haveSelectionForOrderingField(expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
     haveSelectionOptions(fieldKey, "ordering field", expectedSelectOptions)

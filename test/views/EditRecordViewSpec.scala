@@ -47,8 +47,8 @@ class EditRecordViewSpec extends BaseSpec {
       FieldNames.endDateDay                -> text,
       FieldNames.endDateMonth              -> text,
       FieldNames.endDateYear               -> text,
-      FieldNames.legalStatus               -> text,
-      FieldNames.placeOfDeposit            -> text,
+      FieldNames.legalStatusID             -> text,
+      FieldNames.placeOfDepositID          -> text,
       FieldNames.note                      -> text,
       FieldNames.background                -> text,
       FieldNames.custodialHistory          -> text,
@@ -76,8 +76,8 @@ class EditRecordViewSpec extends BaseSpec {
     endDateDay = "",
     endDateMonth = "",
     endDateYear = "",
-    legalStatus = "",
-    placeOfDeposit = "",
+    legalStatusID = "",
+    placeOfDepositID = "",
     background = "",
     note = "",
     custodialHistory = "",
@@ -104,8 +104,8 @@ class EditRecordViewSpec extends BaseSpec {
     endDateDay = "",
     endDateMonth = "",
     endDateYear = "",
-    placeOfDeposit = "",
-    legalStatus = "",
+    placeOfDepositID = "",
+    legalStatusID = "",
     note = "",
     background = "",
     custodialHistory = "",
@@ -128,8 +128,8 @@ class EditRecordViewSpec extends BaseSpec {
             endDateDay = "31",
             endDateMonth = "12",
             endDateYear = "1960",
-            legalStatus = "ref.1",
-            placeOfDeposit = "3"
+            legalStatusID = "ref.1",
+            placeOfDepositID = "3"
           )
         )
       )
@@ -291,7 +291,7 @@ class EditRecordViewSpec extends BaseSpec {
       val editSetName = "COAL 80 Sample"
       val filledForm = emptyForm
         .fill(emptyRecordValues)
-        .withError(FormError(FieldNames.legalStatus, "Select a valid legal status"))
+        .withError(FormError(FieldNames.legalStatusID, "Select a valid legal status"))
 
       val editRecordHtml: Html =
         editSetRecordEditInstance(
@@ -311,7 +311,7 @@ class EditRecordViewSpec extends BaseSpec {
       val document = asDocument(editRecordHtml)
       document must haveSummaryErrorTitle("error.summary.title")
       document must haveSummaryErrorMessages(
-        ExpectedSummaryErrorMessage("Select a valid legal status", s"#${FieldNames.legalStatus}")
+        ExpectedSummaryErrorMessage("Select a valid legal status", s"#${FieldNames.legalStatusID}")
       )
     }
 
@@ -330,8 +330,8 @@ class EditRecordViewSpec extends BaseSpec {
         endDateDay = "31",
         endDateMonth = "12",
         endDateYear = "1960",
-        legalStatus = "ref.1",
-        placeOfDeposit = "2",
+        legalStatusID = "ref.1",
+        placeOfDepositID = "2",
         note = "",
         background = "",
         custodialHistory = "",

@@ -118,12 +118,12 @@ class EditSetController @Inject() (
       FieldNames.endDateDay     -> text,
       FieldNames.endDateMonth   -> text,
       FieldNames.endDateYear    -> text,
-      FieldNames.legalStatus -> text
+      FieldNames.legalStatusID -> text
         .verifying(
           resolvedMessage(MessageKeys.legalStatusMissing),
           _.trim.nonEmpty
         ),
-      FieldNames.placeOfDeposit -> text
+      FieldNames.placeOfDepositID -> text
         .verifying(
           resolvedMessage(MessageKeys.placeOfDepositMissingOrInvalid),
           _.trim.nonEmpty
@@ -279,8 +279,8 @@ class EditSetController @Inject() (
 
   private def preparePlaceOfDeposit(editSetRecord: EditSetRecord): EditSetRecord = {
     val correctedValue =
-      if (isPlaceOfDepositRecognised(editSetRecord.placeOfDeposit)) editSetRecord.placeOfDeposit else ""
-    editSetRecord.copy(placeOfDeposit = correctedValue)
+      if (isPlaceOfDepositRecognised(editSetRecord.placeOfDepositID)) editSetRecord.placeOfDepositID else ""
+    editSetRecord.copy(placeOfDepositID = correctedValue)
   }
 
   private def generateEditSetView(id: String, user: User, editSetReorder: EditSetReorder)(implicit
@@ -332,12 +332,12 @@ class EditSetController @Inject() (
   private def validatePlaceOfDeposit(form: Form[EditSetRecordFormValues]): Form[EditSetRecordFormValues] = {
     val formWhenValueAbsentOrUnrecognised =
       form.copy(
-        data = form.data ++ Map(FieldNames.placeOfDeposit -> noSelectionForPlaceOfDeposit),
-        errors = form.errors.filter(_.key != FieldNames.placeOfDeposit) ++ Seq(
-          FormError(FieldNames.placeOfDeposit, resolvedMessage(MessageKeys.placeOfDepositMissingOrInvalid))
+        data = form.data ++ Map(FieldNames.placeOfDepositID -> noSelectionForPlaceOfDeposit),
+        errors = form.errors.filter(_.key != FieldNames.placeOfDepositID) ++ Seq(
+          FormError(FieldNames.placeOfDepositID, resolvedMessage(MessageKeys.placeOfDepositMissingOrInvalid))
         )
       )
-    form.data.get(FieldNames.placeOfDeposit) match {
+    form.data.get(FieldNames.placeOfDepositID) match {
       case Some(`noSelectionForPlaceOfDeposit`)                                => form
       case Some(placeOfDeposit) if !isPlaceOfDepositRecognised(placeOfDeposit) => formWhenValueAbsentOrUnrecognised
       case None                                                                => formWhenValueAbsentOrUnrecognised
@@ -578,10 +578,10 @@ object EditSetController {
     val endDateFieldError = "end-date-field-error"
     val orderField = "field"
     val formerReferenceDepartment = "former-reference-department"
-    val legalStatus = "legal-status"
+    val legalStatusID = "legal-status-id"
     val note = "note"
     val oci = "oci"
-    val placeOfDeposit = "place-of-deposit"
+    val placeOfDepositID = "place-of-deposit-id"
     val scopeAndContent = "scope-and-content"
     val startDateDay = "start-date-day"
     val startDateFieldError = "start-date-field-error"

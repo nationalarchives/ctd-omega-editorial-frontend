@@ -268,24 +268,24 @@
         role = Some("group")
     ))
 @govukSelect(Select(
-    id = FieldNames.legalStatus,
-    name = FieldNames.legalStatus,
+    id = FieldNames.legalStatusID,
+    name = FieldNames.legalStatusID,
     items = legalStatusItems ++ legalStatusReferenceData.map { status =>
         SelectItem(
-            selected = editSetRecordForm.data.get(FieldNames.legalStatus).contains(status.uri),
+            selected = editSetRecordForm.data.get(FieldNames.legalStatusID).contains(status.uri),
             text = status.label,
             value = Some(status.uri)
         )
     },
     label = Label(
-        forAttr = Some(FieldNames.legalStatus),
-        content = Text(messages("edit-set.record.edit.legal-status")),
+        forAttr = Some(FieldNames.legalStatusID),
+        content = Text(messages("edit-set.record.edit.legal-status-id")),
         classes = "govuk-label--s"
     ),
-    errorMessage = editSetRecordForm.error(FieldNames.legalStatus).map { error =>
+    errorMessage = editSetRecordForm.error(FieldNames.legalStatusID).map { error =>
         ErrorMessage(
             content = Text(error.message),
-            attributes = Map("for" -> FieldNames.legalStatus)
+            attributes = Map("for" -> FieldNames.legalStatusID)
         )
     },
 )
@@ -307,15 +307,15 @@
 )
 
 @govukSelect(Select(
-    id = FieldNames.placeOfDeposit,
-    name = FieldNames.placeOfDeposit,
+    id = FieldNames.placeOfDepositID,
+    name = FieldNames.placeOfDepositID,
     items = {
-        val noSelectionAsMap = Map("" -> messages("edit-set.record.error.place-of-deposit"))
+        val noSelectionAsMap = Map("" -> messages("edit-set.record.error.place-of-deposit-id"))
         val placesOfDepositAsMap = noSelectionAsMap ++ placesOfDeposit.map(placeOfDeposit => (placeOfDeposit.id, placeOfDeposit.name)).toMap
         placesOfDepositAsMap
                 .map { case (id, label) =>
             SelectItem(
-                selected = editSetRecordForm.data.get(FieldNames.placeOfDeposit).contains(id),
+                selected = editSetRecordForm.data.get(FieldNames.placeOfDepositID).contains(id),
                 text = label,
                 value = Some(id).filter(_.nonEmpty),
                 disabled = id == ""
@@ -323,14 +323,14 @@
         }.toSeq
     },
     label = Label(
-        forAttr = Some(FieldNames.placeOfDeposit),
-        content = Text(messages("edit-set.record.edit.place-of-deposit")),
+        forAttr = Some(FieldNames.placeOfDepositID),
+        content = Text(messages("edit-set.record.edit.place-of-deposit-id")),
         classes = "govuk-label--s"
     ),
-    errorMessage = editSetRecordForm.error(FieldNames.placeOfDeposit).map { error =>
+    errorMessage = editSetRecordForm.error(FieldNames.placeOfDepositID).map { error =>
         ErrorMessage(
             content = Text(error.message),
-            attributes = Map("for" -> FieldNames.placeOfDeposit)
+            attributes = Map("for" -> FieldNames.placeOfDepositID)
         )
     },
 )

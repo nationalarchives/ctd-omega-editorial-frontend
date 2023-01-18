@@ -993,10 +993,10 @@ class EditSetControllerSpec extends BaseSpec {
             formerReferenceDepartment = "",
             startDate = ExpectedDate("1", "1", "1962"),
             endDate = ExpectedDate("31", "12", "1962"),
-            legalStatus = "ref.1",
+            legalStatusID = "ref.1",
             note = "A note about COAL.2022.V1RJW.P.",
             background = "Photo was taken by a daughter of one of the coal miners who used them.",
-            optionsForPlaceOfDeposit = Seq(
+            optionsForPlaceOfDepositID = Seq(
               ExpectedSelectOption("", "Select where this record is held", disabled = true),
               ExpectedSelectOption("1", "The National Archives, Kew", selected = true),
               ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
@@ -1075,10 +1075,10 @@ class EditSetControllerSpec extends BaseSpec {
             formerReferenceDepartment = "",
             startDate = ExpectedDate("1", "1", "1964"),
             endDate = ExpectedDate("31", "12", "1964"),
-            legalStatus = "",
+            legalStatusID = "",
             note = "",
             background = "Photo was taken by a son of one of the coal miners who used them.",
-            optionsForPlaceOfDeposit = Seq(
+            optionsForPlaceOfDepositID = Seq(
               ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
               ExpectedSelectOption("1", "The National Archives, Kew"),
               ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
@@ -1134,10 +1134,10 @@ class EditSetControllerSpec extends BaseSpec {
             formerReferenceDepartment = "",
             startDate = ExpectedDate("1", "1", "1960"),
             endDate = ExpectedDate("31", "12", "1960"),
-            legalStatus = "ref.1",
+            legalStatusID = "ref.1",
             note = "",
             background = "",
-            optionsForPlaceOfDeposit = Seq(
+            optionsForPlaceOfDepositID = Seq(
               ExpectedSelectOption("", "Select where this record is held", disabled = true),
               ExpectedSelectOption("1", "The National Archives, Kew", selected = true),
               ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
@@ -1185,10 +1185,10 @@ class EditSetControllerSpec extends BaseSpec {
             formerReferenceDepartment = "",
             startDate = ExpectedDate("1", "1", "1960"),
             endDate = ExpectedDate("31", "12", "1960"),
-            legalStatus = "ref.1",
+            legalStatusID = "ref.1",
             note = "",
             background = "",
-            optionsForPlaceOfDeposit = Seq(
+            optionsForPlaceOfDepositID = Seq(
               ExpectedSelectOption("", "Select where this record is held", disabled = true),
               ExpectedSelectOption("1", "The National Archives, Kew", selected = true),
               ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
@@ -1559,7 +1559,7 @@ class EditSetControllerSpec extends BaseSpec {
             val oci = "COAL.2022.V1RJW.P"
             val values =
               valuesFromRecord(oci) ++ Map(
-                FieldNames.placeOfDeposit -> ""
+                FieldNames.placeOfDepositID -> ""
               )
 
             val result = submitWhileLoggedIn("save", 1, oci, values)
@@ -1568,14 +1568,14 @@ class EditSetControllerSpec extends BaseSpec {
             assertPageAsExpected(
               asDocument(result),
               generateExpectedEditRecordPageFromRecord(oci).copy(
-                optionsForPlaceOfDeposit = Seq(
+                optionsForPlaceOfDepositID = Seq(
                   ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("You must choose an option", s"#${FieldNames.placeOfDeposit}")),
+                  Seq(ExpectedSummaryErrorMessage("You must choose an option", s"#${FieldNames.placeOfDepositID}")),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
             )
@@ -1584,7 +1584,7 @@ class EditSetControllerSpec extends BaseSpec {
           "is absent" in {
 
             val oci = "COAL.2022.V1RJW.P"
-            val values = valuesFromRecord(oci) - FieldNames.placeOfDeposit
+            val values = valuesFromRecord(oci) - FieldNames.placeOfDepositID
 
             val result = submitWhileLoggedIn("save", 1, oci, values)
 
@@ -1592,14 +1592,14 @@ class EditSetControllerSpec extends BaseSpec {
             assertPageAsExpected(
               asDocument(result),
               generateExpectedEditRecordPageFromRecord(oci).copy(
-                optionsForPlaceOfDeposit = Seq(
+                optionsForPlaceOfDepositID = Seq(
                   ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("You must choose an option", s"#${FieldNames.placeOfDeposit}")),
+                  Seq(ExpectedSummaryErrorMessage("You must choose an option", s"#${FieldNames.placeOfDepositID}")),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
             )
@@ -1609,21 +1609,21 @@ class EditSetControllerSpec extends BaseSpec {
 
             val oci = "COAL.2022.V1RJW.P"
             val values =
-              valuesFromRecord(oci) ++ Map(FieldNames.placeOfDeposit -> "6")
+              valuesFromRecord(oci) ++ Map(FieldNames.placeOfDepositID -> "6")
             val result = submitWhileLoggedIn("save", 1, oci, values)
 
             status(result) mustBe BAD_REQUEST
             assertPageAsExpected(
               asDocument(result),
               generateExpectedEditRecordPageFromRecord(oci).copy(
-                optionsForPlaceOfDeposit = Seq(
+                optionsForPlaceOfDepositID = Seq(
                   ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
                   ExpectedSelectOption("1", "The National Archives, Kew"),
                   ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("You must choose an option", s"#${FieldNames.placeOfDeposit}")),
+                  Seq(ExpectedSummaryErrorMessage("You must choose an option", s"#${FieldNames.placeOfDepositID}")),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
             )
@@ -1636,7 +1636,7 @@ class EditSetControllerSpec extends BaseSpec {
             val oci = "COAL.2022.V1RJW.P"
             val values =
               valuesFromRecord(oci) ++ Map(
-                FieldNames.legalStatus -> ""
+                FieldNames.legalStatusID -> ""
               )
 
             val result = submitWhileLoggedIn("save", 1, oci, values)
@@ -1645,9 +1645,9 @@ class EditSetControllerSpec extends BaseSpec {
             assertPageAsExpected(
               asDocument(result),
               generateExpectedEditRecordPageFromRecord(oci).copy(
-                legalStatus = "",
+                legalStatusID = "",
                 summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("You must choose an option", s"#${FieldNames.legalStatus}")),
+                  Seq(ExpectedSummaryErrorMessage("You must choose an option", s"#${FieldNames.legalStatusID}")),
                 errorMessageForLegalStatus = Some("Error: You must choose an option")
               )
             )
@@ -1659,7 +1659,7 @@ class EditSetControllerSpec extends BaseSpec {
             val oci = "COAL.2022.V1RJW.P"
             val values =
               valuesFromRecord(oci) ++ Map(
-                FieldNames.legalStatus -> "ref.10"
+                FieldNames.legalStatusID -> "ref.10"
               )
 
             val result = submitWhileLoggedIn("save", 1, oci, values)
@@ -3178,8 +3178,8 @@ class EditSetControllerSpec extends BaseSpec {
     document must haveEndDateDay(expectedEditRecordPage.endDate.day)
     document must haveEndDateMonth(expectedEditRecordPage.endDate.month)
     document must haveEndDateYear(expectedEditRecordPage.endDate.year)
-    document must haveLegalStatus(expectedEditRecordPage.legalStatus)
-    document must haveSelectionForPlaceOfDeposit(expectedEditRecordPage.optionsForPlaceOfDeposit)
+    document must haveLegalStatus(expectedEditRecordPage.legalStatusID)
+    document must haveSelectionForPlaceOfDeposit(expectedEditRecordPage.optionsForPlaceOfDepositID)
 
     document must haveNumberOfSelectionsForCreator(expectedEditRecordPage.optionsForCreators.size)
     expectedEditRecordPage.optionsForCreators.zipWithIndex.foreach { case (expectedSelectOptions, index) =>
@@ -3282,10 +3282,10 @@ class EditSetControllerSpec extends BaseSpec {
       FieldNames.endDateMonth              -> editSetRecord.endDateMonth,
       FieldNames.endDateYear               -> editSetRecord.endDateYear,
       FieldNames.formerReferenceDepartment -> editSetRecord.formerReferenceDepartment,
-      FieldNames.legalStatus               -> editSetRecord.legalStatus,
+      FieldNames.legalStatusID             -> editSetRecord.legalStatusID,
       FieldNames.note                      -> editSetRecord.note,
       FieldNames.oci                       -> editSetRecord.oci,
-      FieldNames.placeOfDeposit            -> editSetRecord.placeOfDeposit,
+      FieldNames.placeOfDepositID          -> editSetRecord.placeOfDepositID,
       FieldNames.scopeAndContent           -> editSetRecord.scopeAndContent,
       FieldNames.startDateDay              -> editSetRecord.startDateDay,
       FieldNames.startDateMonth            -> editSetRecord.startDateMonth,
@@ -3307,16 +3307,16 @@ class EditSetControllerSpec extends BaseSpec {
       formerReferenceDepartment = editSetRecord.formerReferenceDepartment,
       startDate = ExpectedDate(editSetRecord.startDateDay, editSetRecord.startDateMonth, editSetRecord.startDateYear),
       endDate = ExpectedDate(editSetRecord.endDateDay, editSetRecord.endDateMonth, editSetRecord.endDateYear),
-      legalStatus = editSetRecord.legalStatus,
+      legalStatusID = editSetRecord.legalStatusID,
       note = editSetRecord.note,
       background = editSetRecord.background,
-      optionsForPlaceOfDeposit = Seq(
+      optionsForPlaceOfDepositID = Seq(
         ExpectedSelectOption("", "Select where this record is held", disabled = true),
         ExpectedSelectOption("1", "The National Archives, Kew", selected = true),
         ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
         ExpectedSelectOption("3", "British Library, National Sound Archive")
       ).map(expectedSelectedOption =>
-        expectedSelectedOption.copy(selected = expectedSelectedOption.value == editSetRecord.placeOfDeposit)
+        expectedSelectedOption.copy(selected = expectedSelectedOption.value == editSetRecord.placeOfDepositID)
       ),
       optionsForCreators = editSetRecord.creatorIDs
         .filter(creatorId => allCreators.exists(_.id == creatorId))
@@ -3373,11 +3373,11 @@ object EditSetControllerSpec {
     formerReferenceDepartment: String,
     startDate: ExpectedDate,
     endDate: ExpectedDate,
-    legalStatus: String,
+    legalStatusID: String,
     note: String,
     background: String,
     custodialHistory: String,
-    optionsForPlaceOfDeposit: Seq[ExpectedSelectOption],
+    optionsForPlaceOfDepositID: Seq[ExpectedSelectOption],
     optionsForCreators: Seq[Seq[ExpectedSelectOption]],
     relatedMaterial: Seq[ExpectedRelatedMaterial] = Seq.empty,
     separatedMaterial: Seq[ExpectedSeparatedMaterial] = Seq.empty,
