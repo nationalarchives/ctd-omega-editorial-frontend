@@ -274,11 +274,8 @@ class EditSetController @Inject() (
       (editSetRecord, transformer) => transformer(editSetRecord)
     )
 
-  private def prepareCreatorIDs(editSetRecord: EditSetRecord): EditSetRecord = {
-    val recognisedCreatorIds = editSetRecord.creatorIDs.filter(isCreatorRecognised)
-    val updatedCreatorIds = if (recognisedCreatorIds.nonEmpty) recognisedCreatorIds else List.empty
-    editSetRecord.copy(creatorIDs = updatedCreatorIds)
-  }
+  private def prepareCreatorIDs(editSetRecord: EditSetRecord): EditSetRecord =
+    editSetRecord.copy(creatorIDs = editSetRecord.creatorIDs.filter(isCreatorRecognised))
 
   private def preparePlaceOfDeposit(editSetRecord: EditSetRecord): EditSetRecord = {
     val correctedValue =
