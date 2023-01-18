@@ -26,6 +26,7 @@ import play.api.data.Forms.{ mapping, text }
 import play.api.data.{ Form, FormError }
 import play.api.i18n.{ I18nSupport, Lang }
 import play.api.mvc._
+import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination._
 import uk.gov.nationalarchives.omega.editorial._
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
 import uk.gov.nationalarchives.omega.editorial.models.{ DateRange, EditSetEntry, EditSetRecord, User }
@@ -174,7 +175,15 @@ class EditSetController @Inject() (
     val title = resolvedMessage("edit-set.title")
     val heading: String = resolvedMessage("edit-set.heading", currentEditSet.name)
     val editSetEntries = currentEditSet.entries.sorted(getSorter(editSetReorder))
-    Ok(editSet(user, title, heading, editSetEntries, reorderForm.fill(editSetReorder)))
+
+    println(editSetEntries.length)
+    println(editSetEntries.length.toFloat / 10)
+    val page = request.queryString.get("offset").flatMap(_.headOption).map(_.toInt).getOrElse(1)
+    val pagination = new EditSetPagination(id)
+    val editSetEntriesForPage = pagination.getEditSetsForPage(editSetEntries, page)
+    val paginationItems = pagination.makePaginationItems(math.ceil(editSetEntries.length.toFloat / 10).toInt, page)
+    println(request.queryString.get("offset"))
+    Ok(editSet(user, title, heading, editSetEntriesForPage, reorderForm.fill(editSetReorder), paginationItems))
   }
 
   private def getSorter(editSetReorder: EditSetReorder): Ordering[EditSetEntry] = {

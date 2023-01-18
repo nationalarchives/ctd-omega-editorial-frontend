@@ -25,9 +25,16 @@
 @import views.html.helper.CSRF
 @import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 
-@this(govukTable: GovukTable, govukSelect: GovukSelect, govukButton: GovukButton, govukFieldset: GovukFieldset, govukLabel: GovukLabel)
+@this(
+  govukButton: GovukButton,
+  govukFieldset: GovukFieldset,
+  govukLabel: GovukLabel,
+  govukPagination: GovukPagination,
+  govukSelect: GovukSelect,
+  govukTable: GovukTable,
+)
 
-@(user: User, title: String, heading: String, editSetEntries:  Seq[EditSetEntry], editSetReorderForm: Form[EditSetReorder])(implicit messages: Messages, request: Request[AnyContent])
+@(user: User, title: String, heading: String, editSetEntries:  Seq[EditSetEntry], editSetReorderForm: Form[EditSetReorder], pagination: Pagination)(implicit messages: Messages, request: Request[AnyContent])
 
 @recordLink(ccr: String, oci: String) = {
     @defining("/edit-set/1/record/"+oci+"/edit") { hrefLink =>
@@ -101,4 +108,6 @@
       captionClasses = "govuk-table__caption--m",
       firstCellIsHeader = true
   ))
+
+  @govukPagination(pagination)
 }
