@@ -23,25 +23,35 @@ package support
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Application
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Result
 import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
 import play.api.test.Injecting
 import play.twirl.api.Content
-import uk.gov.nationalarchives.omega.editorial.models.{ CorporateBody, User }
+import uk.gov.nationalarchives.omega.editorial.models.{ Creator, PlaceOfDeposit, User }
+import uk.gov.nationalarchives.omega.editorial.services.ReferenceDataService
 
 import scala.concurrent.Future
 
-class BaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
+class BaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with BeforeAndAfterEach {
 
   val user: User = User("dummy user")
 
-  val allCorporateBodies: Seq[CorporateBody] = Seq(
-    CorporateBody("1", "The National Archives, Kew"),
-    CorporateBody("2", "British Museum, Department of Libraries and Archives"),
-    CorporateBody("3", "British Library, National Sound Archive")
-  )
+  val testReferenceDataService: TestReferenceDataService = new TestReferenceDataService()
+
+  val allPlacesOfDeposits: Seq[PlaceOfDeposit] = testReferenceDataService.getPlacesOfDeposit
+
+  val allCreators: Seq[Creator] = testReferenceDataService.getCreators
+
+  override def fakeApplication(): Application =
+    GuiceApplicationBuilder()
+      .bindings(bind[ReferenceDataService].to[TestReferenceDataService])
+      .build()
 
   def asDocument(content: Content): Document = asDocument(contentAsString(content))
 
