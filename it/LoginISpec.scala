@@ -302,12 +302,14 @@ class LoginISpec extends BaseISpec {
   }
 
   private def submitFromLoginPage(values: Map[String, String]): WSResponse = {
-    val securityInfo = getSecurityInfoFromLoginPage()
+    val getLoginPageResponse = getLoginPage()
+    val sessionCookie = getSessionCookie(getLoginPageResponse)
+    val csrfTokenFromLoginPage = getCsrfToken(getLoginPageResponse)
     await(
       wsUrl("/login")
         .withFollowRedirects(false)
-        .addCookies(securityInfo.sessionCookie)
-        .post(values ++ Map("csrfToken" -> securityInfo.csrfToken))
+        .addCookies(sessionCookie)
+        .post(values ++ Map(csrfTokenName -> csrfTokenFromLoginPage))
     )
   }
 
@@ -316,13 +318,6 @@ class LoginISpec extends BaseISpec {
       wsUrl("/edit-set/1")
         .withFollowRedirects(false)
         .addCookies(sessionCookie)
-        .get()
-    )
-
-  private def getLoginPage(): WSResponse =
-    await(
-      wsUrl("/login")
-        .withFollowRedirects(false)
         .get()
     )
 
@@ -379,8 +374,6 @@ class LoginISpec extends BaseISpec {
       document must not(haveVisibleLogoutLink)
     }
   }
-
-  private def getSecurityInfoFromLoginPage(): SecurityInfo = getSecurityInfoFromForm(getLoginPage())
 
   case class ExpectedLoginPage(
     title: String,

@@ -461,12 +461,6 @@ object CommonMatchers {
   def haveSelectionForPlaceOfDeposit(expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
     haveSelectionOptions(EditSetRecordController.FieldNames.placeOfDepositID, "place of deposit", expectedSelectOptions)
 
-  def haveSelectionForOrderingField(expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
-    haveSelectionOptions(fieldKey, "ordering field", expectedSelectOptions)
-
-  def haveSelectionForOrderingDirection(expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
-    haveSelectionOptions(orderDirectionKey, "ordering direction", expectedSelectOptions)
-
   def haveSelectionForCreator(index: Int, expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
     haveSelectionOptions(s"creator-id-$index", s"creator (at index [$index])", expectedSelectOptions)
 

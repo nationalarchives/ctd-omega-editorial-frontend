@@ -92,13 +92,13 @@ class CoveringDateCalculatorSpec extends BaseSpec with TableDrivenPropertyChecks
 
     // TODO: Right now we don't check parse errors
     val invalidScenarioTestTable = Tables.Table(
-      "date input"                            -> "parse error",
-      "1270s"                                 -> ParseError,
-      "1305 Sept - Oct"                       -> ParseError,
-      "Temp Edw I"                            -> ParseError,
-      "01 Oct 1305"                           -> ParseError,
-      "Mon 1 Oct 1330"                        -> ParseError,
-      "0 - 2023"                              -> DateTooFarInPast(LocalDate.of(0, 1, 1)),
+      "date input"                          -> "parse error",
+      "1270s"                               -> ParseError,
+      "1305 Sept - Oct"                     -> ParseError,
+      "Temp Edw I"                          -> ParseError,
+      "01 Oct 1305"                         -> ParseError,
+      "Mon 1 Oct 1330"                      -> ParseError,
+      "0 - 2023"                            -> DateTooFarInPast(LocalDate.of(0, 1, 1)),
       s"1 - ${LocalDate.now().getYear + 1}" -> DateTooFarInFuture(LocalDate.of(LocalDate.now().getYear + 1, 12, 31)),
       "1999 - 1305" -> InvalidRange(DateRange(LocalDate.of(1999, 1, 1), LocalDate.of(1305, 12, 31))),
       "1999 - 1305; 2000 Feb 3 - 1306 Nov 30" -> MultipleErrors(
