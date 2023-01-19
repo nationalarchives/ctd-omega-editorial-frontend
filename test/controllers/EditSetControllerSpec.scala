@@ -968,6 +968,34 @@ class EditSetControllerSpec extends BaseSpec {
         asDocument(editRecordPage) must haveAllLowerCssClassNames
       }
 
+      "All form sections appear in the correct order" in {
+        val request =
+          CSRFTokenHelper.addCSRFToken(
+            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit").withSession(
+              SessionKeys.token -> validSessionToken
+            )
+          )
+
+        val editRecordPage = route(app, request).get
+
+        status(editRecordPage) mustBe OK
+        asDocument(editRecordPage) must haveSectionsInCorrectOrder(
+          "Scope and content",
+          "Creator",
+          "Covering dates",
+          "Start date",
+          "End date",
+          "Former reference (Department) (optional)",
+          "Legal Status",
+          "Custodial History (optional)",
+          "Held by",
+          "Note (optional)",
+          "Administrative / biographical background (optional)",
+          "Related material",
+          "Separated material"
+        )
+      }
+
       "all data is valid" in {
         val request =
           CSRFTokenHelper.addCSRFToken(
