@@ -102,16 +102,14 @@
 @dateFieldSet(datePrefix: String, dateLabel: String) = {
 
     @editSetRecordForm.error(datePrefix+"-date-day") match {
-        case Some(_) => {
-                <div class="govuk-form-group  govuk-form-group--error">}
-        case None => {
-        <div class="govuk-form-group">}
-            }
+        case Some (_) => { <div class="govuk-form-group  govuk-form-group--error">}
+        case None     => {<div class="govuk-form-group">}
+        }
             @govukFieldset(
                 Fieldset(
-                classes = "govuk-fieldset",
-                html = dateSelector(datePrefix, dateLabel),
-                role = Some("group")
+                    classes = "govuk-fieldset",
+                    html = dateSelector(datePrefix, dateLabel),
+                    role = Some("group")
                 )
             )
         </div>
@@ -135,11 +133,7 @@
                 name = prefix + "-date-day",
                 value = editSetRecordForm.data.get(prefix + "-date-day"),
                 label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("@{prefix}-date-day"), content = Text(messages("edit-set.record.edit.dates.day"))),
-                classes = editSetRecordForm.error(prefix+"-date-day") match {
-                                case Some(_) => {
-                                     "govuk-input govuk-date-input__input govuk-input--width-2 govuk-input--error"}
-                                case None => { "govuk-input govuk-date-input__input govuk-input--width-2"}
-                            }
+                classes = "govuk-input govuk-date-input__input govuk-input--width-2" + editSetRecordForm.error(prefix+"-date-day").map(_ => " govuk-input--error").getOrElse("")
             ))
             </div>
         <div class="govuk-date-input__item">
@@ -148,11 +142,7 @@
                 name = prefix + "-date-month",
                 value = editSetRecordForm.data.get(prefix + "-date-month"),
                 label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("@{prefix}-date-month"), content = Text(messages("edit-set.record.edit.dates.month"))),
-                classes = editSetRecordForm.error(prefix+"-date-day") match {
-                                case Some(_) => {
-                                    "govuk-input govuk-date-input__input govuk-input--width-2 govuk-input--error"}
-                                case None => { "govuk-input govuk-date-input__input govuk-input--width-2"}
-                        }
+                classes = "govuk-input govuk-date-input__input govuk-input--width-2" + editSetRecordForm.error(prefix+"-date-day").map(_ => " govuk-input--error").getOrElse("")
             ))
         </div>
         <div class="govuk-date-input__item">
@@ -161,11 +151,7 @@
                 name = prefix + "-date-year",
                 value = editSetRecordForm.data.get(prefix + "-date-year"),
                 label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("@{prefix}-date-year"), content = Text(messages("edit-set.record.edit.dates.year"))),
-                classes = editSetRecordForm.error(prefix+"-date-day") match {
-                                case Some(_) => {
-                                    "govuk-input govuk-date-input__input govuk-input--width-4 govuk-input--error"}
-                                case None => { "govuk-input govuk-date-input__input govuk-input--width-4"}
-                            }
+                classes = "govuk-input govuk-date-input__input govuk-input--width-4" + editSetRecordForm.error(prefix+"-date-day").map(_ => " govuk-input--error").getOrElse("")
             ))
         </div>
     </div>
