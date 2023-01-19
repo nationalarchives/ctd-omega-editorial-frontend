@@ -22,7 +22,6 @@
 package uk.gov.nationalarchives.omega.editorial.controllers
 
 import play.api.Logger
-import play.api.libs.json._
 import play.api.data.Forms.{ mapping, text }
 import play.api.data.{ Form, FormError }
 import play.api.i18n.{ I18nSupport, Lang }
@@ -496,8 +495,6 @@ class EditSetController @Inject() (
 
 object EditSetController {
   case class EditSetReorder(field: String, direction: String)
-
-  implicit val editSetReorderFormats: Format[EditSetReorder] = Json.format[EditSetReorder]
 
   sealed abstract class SubmitAction
   case class Save(record: EditSetRecord, form: EditSetRecordFormValues) extends SubmitAction

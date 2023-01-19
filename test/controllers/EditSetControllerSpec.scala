@@ -156,11 +156,11 @@ class EditSetControllerSpec extends BaseSpec {
   "EditSetController POST /edit-set/{id}" should {
     "render the records in the expected order, when ordering by" when {
 
-      def requestPage(values: Map[String, String]): Future[Result] =
+      def requestPage(values: Map[String, String], pageNumber: Int = 1): Future[Result] =
         route(
           app,
           CSRFTokenHelper.addCSRFToken(
-            FakeRequest(POST, "/edit-set/1")
+            FakeRequest(POST, s"/edit-set/1?offset=${pageNumber}")
               .withFormUrlEncodedBody(values.toSeq: _*)
               .withSession(SessionKeys.token -> validSessionToken)
           )
@@ -863,6 +863,108 @@ class EditSetControllerSpec extends BaseSpec {
               )
             )
           )
+        )
+
+      }
+
+      "Page 2 sorted by CCR, ascending" in {
+
+        val values = Map(fieldKey -> FieldNames.ccr, orderDirectionKey -> orderDirectionAscending)
+
+        val page = requestPage(values, pageNumber = 2)
+
+        status(page) mustBe OK
+        assertPageAsExpected(
+          asDocument(page),
+          ExpectedEditSetPage(
+            title = "Edit set",
+            caption = "Edit set: COAL 80 Sample",
+            button = ExpectedActionButton("reorder", "Sort edit set"),
+            expectedOptionsForField = Seq(
+              ExpectedSelectOption(FieldNames.ccr, "CCR", selected = true),
+              ExpectedSelectOption(FieldNames.scopeAndContent, "Scope and Content"),
+              ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates")
+            ),
+            expectedOptionsForDirection = Seq(
+              ExpectedSelectOption(orderDirectionAscending, "Ascending", selected = true),
+              ExpectedSelectOption(orderDirectionDescending, "Descending")
+            ),
+            expectedSummaryRows = Seq(
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/1",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
+                coveringDates = "1962"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/10",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
+                coveringDates = "1973"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/11",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (K)",
+                coveringDates = "1975"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/12",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (L)",
+                coveringDates = "1977"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/2",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
+                coveringDates = "1966"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/3",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (C)",
+                coveringDates = "1964"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/4",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (D)",
+                coveringDates = "1961"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/5",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (E)",
+                coveringDates = "1963"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/6",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (F)",
+                coveringDates = "1965"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/7",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (G)",
+                coveringDates = "1967"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/8",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (H)",
+                coveringDates = "1969"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/9",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (I)",
+                coveringDates = "1971"
+              )
+            )
+          ),
+          pageNumber = 2
         )
 
       }
@@ -3392,8 +3494,9 @@ class EditSetControllerSpec extends BaseSpec {
     document must haveActionButtons(expectedEditRecordPage.button.value, expectedEditRecordPage.button.label)
     document must haveSelectionForOrderingField(expectedEditRecordPage.expectedOptionsForField)
     document must haveSelectionForOrderingDirection(expectedEditRecordPage.expectedOptionsForDirection)
-    document must haveSummaryRows(expectedEditRecordPage.expectedSummaryRows.size)
+
     val summaryRowsForPage = expectedEditRecordPage.summaryRowsForPage(pageNumber)
+    document must haveSummaryRows(summaryRowsForPage.size)
     summaryRowsForPage.zipWithIndex.foreach { case (expectedEditSetSummaryRow, index) =>
       document must haveSummaryRowContents(
         index + 1,

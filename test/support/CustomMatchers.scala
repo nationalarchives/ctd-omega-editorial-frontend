@@ -349,13 +349,13 @@ object CustomMatchers {
   def haveCaption(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher("a caption", expectedValue, document.select("caption").text())
 
-  def haveSummaryRows(expectedCount: Int, rowsPerPage: Int = 10): Matcher[Document] = (document: Document) => {
+  def haveSummaryRows(expectedCount: Int): Matcher[Document] = (document: Document) => {
     val actualCount = document.select(s"tbody > tr.govuk-table__row").size()
     val errorMessageIfExpected =
       s"We expected $expectedCount summary rows but there were actually '$actualCount'."
     val errorMessageIfNotExpected = s"We didn't expect $expectedCount summary rows, but there were."
     MatchResult(
-      actualCount == math.min(expectedCount, rowsPerPage),
+      actualCount == expectedCount,
       errorMessageIfExpected,
       errorMessageIfNotExpected
     )
