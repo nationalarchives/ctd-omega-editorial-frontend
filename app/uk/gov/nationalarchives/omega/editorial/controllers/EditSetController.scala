@@ -41,9 +41,6 @@ import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetReco
 import java.time.LocalDate
 import java.time.temporal.ChronoField.{ DAY_OF_MONTH, MONTH_OF_YEAR, YEAR }
 import javax.inject._
-import java.util.Base64
-import java.nio.charset.StandardCharsets
-import scala.util.Try
 
 /** This controller creates an `Action` to handle HTTP requests to the application's home page.
   */
@@ -161,33 +158,21 @@ class EditSetController @Inject() (
     */
   def view(id: String): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     withUser { user =>
-      val ordering = request.cookies.get("ordering").headOption.map(_.value).flatMap(decodeReorder)
-        .getOrElse(fallbackEditSetReorder)
-      generateEditSetView(id, user, ordering)
+      val ordering = for {
+        field     <- request.queryString.get("field").flatMap(_.headOption)
+        direction <- request.queryString.get("direction").flatMap(_.headOption)
+      } yield EditSetReorder(field, direction)
+
+      generateEditSetView(id, user, ordering.getOrElse(fallbackEditSetReorder))
     }
   }
 
   def viewAfterReordering(id: String): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     withUser { user =>
       val ordering = formToEither(reorderForm.bindFromRequest()).getOrElse(fallbackEditSetReorder)
-      val result = generateEditSetView(id, user, ordering)
-      val reorderCookie = Cookie(name = "ordering", value = encodeReorder(ordering))
-      result.withCookies(reorderCookie)
+      generateEditSetView(id, user, ordering)
     }
   }
-
-  private def encodeReorder(reorder: EditSetReorder): String =
-    Base64.getEncoder()
-      .encodeToString(
-        Json.toJson(reorder)
-          .toString
-          .getBytes(StandardCharsets.UTF_8)
-        )
-
-  private def decodeReorder(input: String): Option[EditSetReorder] =
-    Try(Base64.getDecoder().decode(input)).toOption.flatMap { decoded =>
-      Json.parse(decoded).validate[EditSetReorder].asOpt
-    }
 
   private def generateEditSetView(id: String, user: User, editSetReorder: EditSetReorder)(implicit
     request: Request[AnyContent]
@@ -198,11 +183,12 @@ class EditSetController @Inject() (
     val heading: String = resolvedMessage("edit-set.heading", currentEditSet.name)
     val editSetEntries = currentEditSet.entries.sorted(getSorter(editSetReorder))
 
-    val page = request.queryString.get("offset").flatMap(_.headOption).map(_.toInt).getOrElse(1)
-    val pagination = new EditSetPagination(id)
-    val editSetEntriesForPage = pagination.getEditSetsForPage(editSetEntries, page)
-    val paginationItems = pagination.makePaginationItems(math.ceil(editSetEntries.length.toFloat / 10.0).toInt, page)
-    println(request.queryString.get("offset"))
+    val pageNumber = request.queryString.get("offset").flatMap(_.headOption).map(_.toInt).getOrElse(1)
+
+    val pagination = new EditSetPagination(id, editSetReorder)
+    val editSetEntriesForPage = pagination.getEditSetsForPage(editSetEntries, pageNumber)
+    val paginationItems =
+      pagination.makePaginationItems(math.ceil(editSetEntries.length.toFloat / 10.0).toInt, pageNumber)
     Ok(editSet(user, title, heading, editSetEntriesForPage, reorderForm.fill(editSetReorder), paginationItems))
   }
 
@@ -510,7 +496,7 @@ class EditSetController @Inject() (
 
 object EditSetController {
   case class EditSetReorder(field: String, direction: String)
-  
+
   implicit val editSetReorderFormats: Format[EditSetReorder] = Json.format[EditSetReorder]
 
   sealed abstract class SubmitAction

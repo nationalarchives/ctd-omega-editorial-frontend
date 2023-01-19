@@ -21,10 +21,11 @@
 
 package uk.gov.nationalarchives.omega.editorial.controllers
 
-import uk.gov.nationalarchives.omega.editorial.models.EditSetEntry
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination._
+import uk.gov.nationalarchives.omega.editorial.models.EditSetEntry
+import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.EditSetReorder
 
-class EditSetPagination(oci: String, itemsPerPage: Int = 10) {
+class EditSetPagination(oci: String, ordering: EditSetReorder, itemsPerPage: Int = 10) {
 
   def getEditSetsForPage(editSets: Seq[EditSetEntry], page: Int): Seq[EditSetEntry] = {
     val index = (page - 1) * itemsPerPage
@@ -33,7 +34,7 @@ class EditSetPagination(oci: String, itemsPerPage: Int = 10) {
 
   def makePaginationItems(numberOfPages: Int, currentPage: Int = 1): Pagination = {
     val (previous, next) = currentPage match {
-      case 1 if numberOfPages == 1 => 
+      case 1 if numberOfPages == 1 =>
         (None, None)
 
       case 1 =>
@@ -47,14 +48,16 @@ class EditSetPagination(oci: String, itemsPerPage: Int = 10) {
     }
 
     val beforeItems = (1 until currentPage) match {
-      case items if items.length >= 3 => List(editSetPaginationItem(1), ellipsisItem, editSetPaginationItem(currentPage - 1))
+      case items if items.length >= 3 =>
+        List(editSetPaginationItem(1), ellipsisItem, editSetPaginationItem(currentPage - 1))
       case items => items.map(editSetPaginationItem).toList
     }
 
     val currentItem = editSetPaginationItem(currentPage).copy(current = Some(true))
 
     val afterItems = (currentPage until numberOfPages) match {
-      case items if items.length >= 3 => List(editSetPaginationItem(currentPage + 1), ellipsisItem, editSetPaginationItem(items.length))
+      case items if items.length >= 3 =>
+        List(editSetPaginationItem(currentPage + 1), ellipsisItem, editSetPaginationItem(items.length))
       case items => items.map(index => editSetPaginationItem(currentPage + index)).toList
     }
 
@@ -75,6 +78,6 @@ class EditSetPagination(oci: String, itemsPerPage: Int = 10) {
     PaginationItem(ellipsis = Some(true))
 
   private def formatViewUrl(page: Int): String =
-    s"${routes.EditSetController.view(oci).url}?offset=${page}"
+    s"${routes.EditSetController.view(oci).url}?offset=$page&field=${ordering.field}&direction=${ordering.direction}"
 
 }

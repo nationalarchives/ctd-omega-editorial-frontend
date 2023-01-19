@@ -349,13 +349,13 @@ object CustomMatchers {
   def haveCaption(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher("a caption", expectedValue, document.select("caption").text())
 
-  def haveSummaryRows(expectedCount: Int): Matcher[Document] = (document: Document) => {
+  def haveSummaryRows(expectedCount: Int, rowsPerPage: Int = 10): Matcher[Document] = (document: Document) => {
     val actualCount = document.select(s"tbody > tr.govuk-table__row").size()
     val errorMessageIfExpected =
       s"We expected $expectedCount summary rows but there were actually '$actualCount'."
     val errorMessageIfNotExpected = s"We didn't expect $expectedCount summary rows, but there were."
     MatchResult(
-      actualCount == expectedCount,
+      actualCount == math.min(expectedCount, rowsPerPage),
       errorMessageIfExpected,
       errorMessageIfNotExpected
     )
@@ -374,6 +374,17 @@ object CustomMatchers {
         actualColumnContents == expectedColumnContents,
         errorMessageIfExpected,
         errorMessageIfNotExpected
+      )
+    }
+
+  def haveNumberOfPages(numberOfPages: Int): Matcher[Document] =
+    (document: Document) => {
+      val numberOfLinks = document.select("li > .govuk-pagination__link").asScala.toSeq.size
+      val expectedNumberOfPageLinks = math.min(numberOfPages, 5)
+      singleValueMatcher(
+        "the number of page links",
+        expectedValue = expectedNumberOfPageLinks,
+        actualValue = numberOfLinks
       )
     }
 

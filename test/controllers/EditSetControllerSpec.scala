@@ -3382,14 +3382,19 @@ class EditSetControllerSpec extends BaseSpec {
 
   }
 
-  private def assertPageAsExpected(document: Document, expectedEditRecordPage: ExpectedEditSetPage): Unit = {
+  private def assertPageAsExpected(
+    document: Document,
+    expectedEditRecordPage: ExpectedEditSetPage,
+    pageNumber: Int = 1
+  ): Assertion = {
     document must haveTitle(expectedEditRecordPage.title)
     document must haveCaption(expectedEditRecordPage.caption)
     document must haveActionButtons(expectedEditRecordPage.button.value, expectedEditRecordPage.button.label)
     document must haveSelectionForOrderingField(expectedEditRecordPage.expectedOptionsForField)
     document must haveSelectionForOrderingDirection(expectedEditRecordPage.expectedOptionsForDirection)
     document must haveSummaryRows(expectedEditRecordPage.expectedSummaryRows.size)
-    expectedEditRecordPage.expectedSummaryRows.zipWithIndex.foreach { case (expectedEditSetSummaryRow, index) =>
+    val summaryRowsForPage = expectedEditRecordPage.summaryRowsForPage(pageNumber)
+    summaryRowsForPage.zipWithIndex.foreach { case (expectedEditSetSummaryRow, index) =>
       document must haveSummaryRowContents(
         index + 1,
         Seq(
@@ -3399,6 +3404,7 @@ class EditSetControllerSpec extends BaseSpec {
         )
       )
     }
+    document must haveNumberOfPages(expectedEditRecordPage.numberOfPages)
 
   }
 
@@ -3455,7 +3461,20 @@ object EditSetControllerSpec {
     expectedOptionsForField: Seq[ExpectedSelectOption],
     expectedOptionsForDirection: Seq[ExpectedSelectOption],
     expectedSummaryRows: Seq[ExpectedEditSetSummaryRow]
-  )
+  ) {
+
+    lazy val summaryRowsForPage: Map[Int, Seq[ExpectedEditSetSummaryRow]] =
+      expectedSummaryRows
+        .sliding(10, 10)
+        .zipWithIndex
+        .map { case (rowsForPage, i) =>
+          i + 1 -> rowsForPage
+        }
+        .toMap
+
+    lazy val numberOfPages = summaryRowsForPage.size
+
+  }
 
   case class ExpectedEditSetSummaryRow(
     ccr: String,

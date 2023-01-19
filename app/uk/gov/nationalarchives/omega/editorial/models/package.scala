@@ -462,24 +462,6 @@ package object editSets {
         |      "oci" : "COAL.2022.V12RJW.P",
         |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (L)",
         |      "coveringDates" : "1977"
-        |    },
-        |    {
-        |      "ccr" : "COAL 80/80/10",
-        |      "oci" : "COAL.2022.V10RJW.P",
-        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
-        |      "coveringDates" : "1973"
-        |    },
-        |    {
-        |      "ccr" : "COAL 80/80/11",
-        |      "oci" : "COAL.2022.V11RJW.P",
-        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (K)",
-        |      "coveringDates" : "1975"
-        |    },
-        |    {
-        |      "ccr" : "COAL 80/80/12",
-        |      "oci" : "COAL.2022.V12RJW.P",
-        |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (L)",
-        |      "coveringDates" : "1977"
         |    }
         |  ]
         |}""".stripMargin
