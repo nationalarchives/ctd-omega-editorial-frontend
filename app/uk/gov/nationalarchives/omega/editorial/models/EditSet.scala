@@ -39,24 +39,25 @@ case class EditSetRecord(
   endDateDay: String,
   endDateMonth: String,
   endDateYear: String,
-  legalStatus: String,
-  placeOfDeposit: String,
+  legalStatusID: String,
+  placeOfDepositID: String,
   note: String,
   background: String,
   custodialHistory: String,
   relatedMaterial: Seq[RelatedMaterial] = Seq.empty,
-  separatedMaterial: Seq[SeparatedMaterial] = Seq.empty
+  separatedMaterial: Seq[SeparatedMaterial] = Seq.empty,
+  creatorIDs: Seq[String] = Seq.empty
 )
 
 object EditSetRecord {
-  implicit val editSetRecordReads = Json.using[Json.WithDefaultValues].reads[EditSetRecord]
+  implicit val editSetRecordReads: Reads[EditSetRecord] = Json.using[Json.WithDefaultValues].reads[EditSetRecord]
 }
 
 object EditSetEntry {
-  implicit val editSetEntryReads = Json.reads[EditSetEntry]
+  implicit val editSetEntryReads: Reads[EditSetEntry] = Json.reads[EditSetEntry]
 }
 
 object EditSet {
-  implicit val editSetReads = Json.reads[EditSet]
+  implicit val editSetReads: Reads[EditSet] = Json.reads[EditSet]
 
 }
