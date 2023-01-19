@@ -24,28 +24,14 @@ package uk.gov.nationalarchives.omega.editorial.controllers
 import uk.gov.nationalarchives.omega.editorial.models.EditSetEntry
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination._
 
-class EditSetPagination(oci: String) {
-
-  private def formatViewUrl(page: Int): String =
-    s"${routes.EditSetController.view(oci).url}?offset=${page}"
-
-  private def editSetPaginationLink(page: Int): Option[PaginationLink] =
-    Some(PaginationLink(href = formatViewUrl(page)))
-
-  private def editSetPaginationItem(page: Int): PaginationItem =
-    PaginationItem(href = formatViewUrl(page), number = Some(page.toString))
-
-  private def ellipsisItem: PaginationItem =
-    PaginationItem(ellipsis = Some(true))
+class EditSetPagination(oci: String, itemsPerPage: Int = 10) {
 
   def getEditSetsForPage(editSets: Seq[EditSetEntry], page: Int): Seq[EditSetEntry] = {
-    val index = (page - 1) * 10
-    editSets.slice(index, index + 10)
+    val index = (page - 1) * itemsPerPage
+    editSets.slice(index, index + itemsPerPage)
   }
 
   def makePaginationItems(numberOfPages: Int, currentPage: Int = 1): Pagination = {
-    println(numberOfPages)
-    println(currentPage)
     val (previous, next) = currentPage match {
       case 1 if numberOfPages == 1 => 
         (None, None)
@@ -78,5 +64,17 @@ class EditSetPagination(oci: String) {
       previous = previous
     )
   }
+
+  private def editSetPaginationLink(page: Int): Option[PaginationLink] =
+    Some(PaginationLink(href = formatViewUrl(page)))
+
+  private def editSetPaginationItem(page: Int): PaginationItem =
+    PaginationItem(href = formatViewUrl(page), number = Some(page.toString))
+
+  private lazy val ellipsisItem: PaginationItem =
+    PaginationItem(ellipsis = Some(true))
+
+  private def formatViewUrl(page: Int): String =
+    s"${routes.EditSetController.view(oci).url}?offset=${page}"
 
 }

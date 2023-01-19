@@ -28,6 +28,7 @@ import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import play.twirl.api.Html
 import support.BaseSpec
 import support.CustomMatchers._
+import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.Pagination
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
@@ -41,6 +42,8 @@ class EditSetViewSpec extends BaseSpec {
     )(EditSetReorder.apply)(EditSetReorder.unapply)
   )
 
+  private val pagination = Pagination()
+
   "Edit set Html" should {
     "render the given title and heading" in {
 
@@ -49,7 +52,7 @@ class EditSetViewSpec extends BaseSpec {
       val title = "EditSetTitleTest"
       val heading = editSet.name
 
-      val editSetHtml: Html = editSetInstance(user, title, heading, editSet.entries, reorderForm)(
+      val editSetHtml: Html = editSetInstance(user, title, heading, editSet.entries, reorderForm, pagination)(
         Helpers.stubMessages(),
         CSRFTokenHelper.addCSRFToken(FakeRequest())
       )
@@ -133,7 +136,8 @@ class EditSetViewSpec extends BaseSpec {
         title = "EditSetTitleTest",
         heading = editSet.name,
         editSetEntries = editSet.entries,
-        editSetReorderForm = reorderForm
+        editSetReorderForm = reorderForm,
+        pagination = pagination
       )(
         Helpers.stubMessages(),
         CSRFTokenHelper.addCSRFToken(FakeRequest())
