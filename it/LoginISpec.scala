@@ -10,7 +10,7 @@ class LoginISpec extends BaseISpec {
   "when viewed" should {
     "have the expected contents" in {
 
-      val response = getLoginPage
+      val response = getLoginPage()
 
       assertPage(
         response,
@@ -169,7 +169,7 @@ class LoginISpec extends BaseISpec {
   }
 
   private def submitFromLoginPage(values: Map[String, String]): WSResponse = {
-    val securityInfo = getSecurityInfoFromLoginPage
+    val securityInfo = getSecurityInfoFromLoginPage()
     await(
       wsUrl("/login")
         .withFollowRedirects(false)
@@ -186,7 +186,7 @@ class LoginISpec extends BaseISpec {
         .get()
     )
 
-  private def getLoginPage: WSResponse =
+  private def getLoginPage(): WSResponse =
     await(
       wsUrl("/login")
         .withFollowRedirects(false)
@@ -243,7 +243,7 @@ class LoginISpec extends BaseISpec {
     }
   }
 
-  private def getSecurityInfoFromLoginPage: SecurityInfo = getSecurityInfoFromForm(getLoginPage)
+  private def getSecurityInfoFromLoginPage(): SecurityInfo = getSecurityInfoFromForm(getLoginPage())
 
   case class ExpectedLoginPage(
     title: String,
