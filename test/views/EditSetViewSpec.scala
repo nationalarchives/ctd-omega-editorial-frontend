@@ -31,6 +31,7 @@ import support.CustomMatchers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.Pagination
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry }
+import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination.EditSetPage
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
 
 class EditSetViewSpec extends BaseSpec {
@@ -42,8 +43,6 @@ class EditSetViewSpec extends BaseSpec {
     )(EditSetReorder.apply)(EditSetReorder.unapply)
   )
 
-  private val pagination = Pagination()
-
   "Edit set Html" should {
     "render the given title and heading" in {
 
@@ -52,7 +51,12 @@ class EditSetViewSpec extends BaseSpec {
       val title = "EditSetTitleTest"
       val heading = editSet.name
 
-      val editSetHtml: Html = editSetInstance(user, title, heading, editSet.entries, reorderForm, pagination)(
+      val editSetPage = EditSetPage(
+        editSet.entries,
+        Pagination(),
+        1
+      )
+      val editSetHtml: Html = editSetInstance(user, title, heading, editSetPage, reorderForm)(
         Helpers.stubMessages(),
         CSRFTokenHelper.addCSRFToken(FakeRequest())
       )
@@ -85,7 +89,6 @@ class EditSetViewSpec extends BaseSpec {
           "1964"
         )
       )
-
     }
 
     "render the header" in {
@@ -130,14 +133,18 @@ class EditSetViewSpec extends BaseSpec {
   private def generateDocument(): Document = {
     val editSetInstance = inject[editSet]
     val editSet: EditSet = getEditSetTest("1")
+    val editSetPage = EditSetPage(
+      editSet.entries,
+      Pagination(),
+      1
+    )
     asDocument(
       editSetInstance(
         user = user,
         title = "EditSetTitleTest",
         heading = editSet.name,
-        editSetEntries = editSet.entries,
-        editSetReorderForm = reorderForm,
-        pagination = pagination
+        page = editSetPage,
+        editSetReorderForm = reorderForm
       )(
         Helpers.stubMessages(),
         CSRFTokenHelper.addCSRFToken(FakeRequest())

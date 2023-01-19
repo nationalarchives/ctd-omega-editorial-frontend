@@ -160,7 +160,7 @@ class EditSetControllerSpec extends BaseSpec {
         route(
           app,
           CSRFTokenHelper.addCSRFToken(
-            FakeRequest(POST, s"/edit-set/1?offset=${pageNumber}")
+            FakeRequest(POST, s"/edit-set/1?offset=$pageNumber")
               .withFormUrlEncodedBody(values.toSeq: _*)
               .withSession(SessionKeys.token -> validSessionToken)
           )

@@ -19,20 +19,29 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.controllers
+package uk.gov.nationalarchives.omega.editorial.services
 
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination._
-import uk.gov.nationalarchives.omega.editorial.models.EditSetEntry
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.EditSetReorder
+import uk.gov.nationalarchives.omega.editorial.controllers.routes
+import uk.gov.nationalarchives.omega.editorial.models.EditSetEntry
 
-class EditSetPagination(oci: String, ordering: EditSetReorder, itemsPerPage: Int = 10) {
+class EditSetPagination(id: String, ordering: EditSetReorder, itemsPerPage: Int = 10) {
+  import EditSetPagination._
 
-  def getEditSetsForPage(editSets: Seq[EditSetEntry], page: Int): Seq[EditSetEntry] = {
-    val index = (page - 1) * itemsPerPage
+  def makeEditSetPage(editSets: Seq[EditSetEntry], pageNumber: Int = 1): EditSetPage =
+    EditSetPage(
+      entries = getEditSetsForPage(editSets, pageNumber),
+      pagination = makePaginationItems(calculateNumberOfPages(editSets.size), pageNumber),
+      pageNumber
+    )
+
+  def getEditSetsForPage(editSets: Seq[EditSetEntry], pageNumber: Int): Seq[EditSetEntry] = {
+    val index = (pageNumber - 1) * itemsPerPage
     editSets.slice(index, index + itemsPerPage)
   }
 
-  def makePaginationItems(numberOfPages: Int, currentPage: Int = 1): Pagination = {
+  def makePaginationItems(numberOfPages: Int, currentPage: Int): Pagination = {
     val (previous, next) = currentPage match {
       case 1 if numberOfPages == 1 =>
         (None, None)
@@ -68,6 +77,9 @@ class EditSetPagination(oci: String, ordering: EditSetReorder, itemsPerPage: Int
     )
   }
 
+  private def calculateNumberOfPages(numberOfRows: Int): Int =
+    math.ceil(numberOfRows.toDouble / 10.0).toInt
+
   private def editSetPaginationLink(page: Int): Option[PaginationLink] =
     Some(PaginationLink(href = formatViewUrl(page)))
 
@@ -78,6 +90,12 @@ class EditSetPagination(oci: String, ordering: EditSetReorder, itemsPerPage: Int
     PaginationItem(ellipsis = Some(true))
 
   private def formatViewUrl(page: Int): String =
-    s"${routes.EditSetController.view(oci).url}?offset=$page&field=${ordering.field}&direction=${ordering.direction}"
+    s"${routes.EditSetController.view(id).url}?offset=$page&field=${ordering.field}&direction=${ordering.direction}"
+
+}
+
+object EditSetPagination {
+
+  case class EditSetPage(entries: Seq[EditSetEntry], pagination: Pagination, pageNumber: Int)
 
 }

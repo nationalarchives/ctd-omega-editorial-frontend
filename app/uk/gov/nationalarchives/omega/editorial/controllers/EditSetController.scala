@@ -31,7 +31,7 @@ import uk.gov.nationalarchives.omega.editorial._
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
 import uk.gov.nationalarchives.omega.editorial.models.{ DateRange, EditSetEntry, EditSetRecord, User }
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateCalculator.getStartAndEndDates
-import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError
+import uk.gov.nationalarchives.omega.editorial.services.{ CoveringDateError, EditSetPagination }
 import uk.gov.nationalarchives.omega.editorial.support.DateParser
 import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
 import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues._
@@ -180,15 +180,12 @@ class EditSetController @Inject() (
     val currentEditSet = editSets.getEditSet()
     val title = resolvedMessage("edit-set.title")
     val heading: String = resolvedMessage("edit-set.heading", currentEditSet.name)
-    val editSetEntries = currentEditSet.entries.sorted(getSorter(editSetReorder))
 
+    val editSetEntries = currentEditSet.entries.sorted(getSorter(editSetReorder))
     val pageNumber = request.queryString.get("offset").flatMap(_.headOption).map(_.toInt).getOrElse(1)
 
-    val pagination = new EditSetPagination(id, editSetReorder)
-    val editSetEntriesForPage = pagination.getEditSetsForPage(editSetEntries, pageNumber)
-    val paginationItems =
-      pagination.makePaginationItems(math.ceil(editSetEntries.length.toFloat / 10.0).toInt, pageNumber)
-    Ok(editSet(user, title, heading, editSetEntriesForPage, reorderForm.fill(editSetReorder), paginationItems))
+    val editSetPage = new EditSetPagination(id, editSetReorder).makeEditSetPage(editSetEntries, pageNumber)
+    Ok(editSet(user, title, heading, editSetPage, reorderForm.fill(editSetReorder)))
   }
 
   private def getSorter(editSetReorder: EditSetReorder): Ordering[EditSetEntry] = {

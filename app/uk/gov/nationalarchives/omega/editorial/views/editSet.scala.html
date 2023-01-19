@@ -24,6 +24,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.helper.CSRF
 @import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
+@import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination.EditSetPage
 
 @this(
   govukButton: GovukButton,
@@ -34,7 +35,13 @@
   govukTable: GovukTable,
 )
 
-@(user: User, title: String, heading: String, editSetEntries:  Seq[EditSetEntry], editSetReorderForm: Form[EditSetReorder], pagination: Pagination)(implicit messages: Messages, request: Request[AnyContent])
+@(
+  user: User,
+  title: String,
+  heading: String,
+  page: EditSetPage,
+  editSetReorderForm: Form[EditSetReorder],
+)(implicit messages: Messages, request: Request[AnyContent])
 
 @recordLink(ccr: String, oci: String) = {
     @defining("/edit-set/1/record/"+oci+"/edit") { hrefLink =>
@@ -77,7 +84,7 @@
     }
 
   @govukTable(Table(
-      rows = editSetEntries.map{
+      rows = page.entries.map {
         entry =>
             Seq(
                 TableRow (
@@ -109,5 +116,5 @@
       firstCellIsHeader = true
   ))
 
-  @govukPagination(pagination)
+  @govukPagination(page.pagination)
 }
