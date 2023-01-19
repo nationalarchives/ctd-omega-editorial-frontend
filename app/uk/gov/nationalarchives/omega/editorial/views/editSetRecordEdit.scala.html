@@ -193,7 +193,7 @@
             attributes = Map("for" -> FieldNames.scopeAndContent)
         )
     },
-    attributes = Map("rows" -> "5", "autofocus" -> "true")))
+    attributes = Map("autofocus" -> "true")))
 
 @govukLabel(Label(forAttr = Some("creator"), classes = "govuk-label--s", content = Text(messages("edit-set.record.edit.creator"))))
 @helper.repeatWithIndex(editSetRecordForm("creator-ids"), min = 1) { (creatorIDField, index) =>
@@ -302,7 +302,7 @@
             attributes = Map("for" -> FieldNames.custodialHistory)
         )
     },
-    attributes = Map("rows" -> "5", "autofocus" -> "true")
+    attributes = Map("autofocus" -> "true")
 )
 )
 
@@ -350,7 +350,7 @@
             attributes = Map("for" -> FieldNames.note)
         )
     },
-    attributes = Map("rows" -> "5", "autofocus" -> "true")))
+    attributes = Map("autofocus" -> "true")))
 @govukTextarea(Textarea(
     id = FieldNames.background,
     name = FieldNames.background,
@@ -362,7 +362,7 @@
             attributes = Map("for" -> FieldNames.background)
         )
     },
-    attributes = Map("rows" -> "5", "autofocus" -> "true")))
+    attributes = Map("autofocus" -> "true")))
 
 
 
