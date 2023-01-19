@@ -267,6 +267,22 @@
         )
     },
     classes = "govuk-input--width-20"))
+@govukInput(Input(
+id = FieldNames.formerReferencePro,
+name = FieldNames.formerReferencePro,
+value = editSetRecordForm.data.get(FieldNames.formerReferencePro),
+label = Label(
+forAttr = Some(FieldNames.formerReferencePro),
+content = Text(messages("edit-set.record.edit.former-reference-pro")),
+classes = "govuk-label--s"
+),
+errorMessage = editSetRecordForm.error(FieldNames.formerReferencePro).map { error =>
+ErrorMessage(
+content = Text(error.message),
+attributes = Map("for" -> FieldNames.formerReferencePro)
+)
+},
+classes = "govuk-input--width-20"))
 @govukSelect(Select(
     id = FieldNames.legalStatusID,
     name = FieldNames.legalStatusID,

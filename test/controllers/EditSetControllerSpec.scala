@@ -986,6 +986,7 @@ class EditSetControllerSpec extends BaseSpec {
           "Start date",
           "End date",
           "Former reference (Department) (optional)",
+          "Former reference (PRO) (optional)",
           "Legal Status",
           "Custodial History (optional)",
           "Held by",
@@ -1019,6 +1020,7 @@ class EditSetControllerSpec extends BaseSpec {
               "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
             coveringDates = "1962",
             formerReferenceDepartment = "",
+            formerReferencePro = "",
             startDate = ExpectedDate("1", "1", "1962"),
             endDate = ExpectedDate("31", "12", "1962"),
             legalStatusID = "ref.1",
@@ -1101,6 +1103,7 @@ class EditSetControllerSpec extends BaseSpec {
               "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (C)",
             coveringDates = "1964",
             formerReferenceDepartment = "",
+            formerReferencePro = "",
             startDate = ExpectedDate("1", "1", "1964"),
             endDate = ExpectedDate("31", "12", "1964"),
             legalStatusID = "",
@@ -1160,6 +1163,7 @@ class EditSetControllerSpec extends BaseSpec {
             scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
             coveringDates = "1960",
             formerReferenceDepartment = "",
+            formerReferencePro = "",
             startDate = ExpectedDate("1", "1", "1960"),
             endDate = ExpectedDate("31", "12", "1960"),
             legalStatusID = "ref.1",
@@ -1211,6 +1215,7 @@ class EditSetControllerSpec extends BaseSpec {
             scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
             coveringDates = "1960",
             formerReferenceDepartment = "",
+            formerReferencePro = "",
             startDate = ExpectedDate("1", "1", "1960"),
             endDate = ExpectedDate("31", "12", "1960"),
             legalStatusID = "ref.1",
@@ -3200,6 +3205,7 @@ class EditSetControllerSpec extends BaseSpec {
     document must haveScopeAndContent(expectedEditRecordPage.scopeAndContent)
     document must haveCoveringDates(expectedEditRecordPage.coveringDates)
     document must haveFormerReferenceDepartment(expectedEditRecordPage.formerReferenceDepartment)
+    document must haveFormerReferencePro(expectedEditRecordPage.formerReferencePro)
     document must haveStartDateDay(expectedEditRecordPage.startDate.day)
     document must haveStartDateMonth(expectedEditRecordPage.startDate.month)
     document must haveStartDateYear(expectedEditRecordPage.startDate.year)
@@ -3310,6 +3316,7 @@ class EditSetControllerSpec extends BaseSpec {
       FieldNames.endDateMonth              -> editSetRecord.endDateMonth,
       FieldNames.endDateYear               -> editSetRecord.endDateYear,
       FieldNames.formerReferenceDepartment -> editSetRecord.formerReferenceDepartment,
+      FieldNames.formerReferencePro        -> editSetRecord.formerReferencePro,
       FieldNames.legalStatusID             -> editSetRecord.legalStatusID,
       FieldNames.note                      -> editSetRecord.note,
       FieldNames.oci                       -> editSetRecord.oci,
@@ -3333,6 +3340,7 @@ class EditSetControllerSpec extends BaseSpec {
       scopeAndContent = editSetRecord.scopeAndContent,
       coveringDates = editSetRecord.coveringDates,
       formerReferenceDepartment = editSetRecord.formerReferenceDepartment,
+      formerReferencePro = editSetRecord.formerReferencePro,
       startDate = ExpectedDate(editSetRecord.startDateDay, editSetRecord.startDateMonth, editSetRecord.startDateYear),
       endDate = ExpectedDate(editSetRecord.endDateDay, editSetRecord.endDateMonth, editSetRecord.endDateYear),
       legalStatusID = editSetRecord.legalStatusID,
@@ -3399,6 +3407,7 @@ object EditSetControllerSpec {
     scopeAndContent: String,
     coveringDates: String,
     formerReferenceDepartment: String,
+    formerReferencePro: String,
     startDate: ExpectedDate,
     endDate: ExpectedDate,
     legalStatusID: String,

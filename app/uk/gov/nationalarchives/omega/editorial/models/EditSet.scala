@@ -33,6 +33,7 @@ case class EditSetRecord(
   scopeAndContent: String,
   coveringDates: String,
   formerReferenceDepartment: String,
+  formerReferencePro: String,
   startDateDay: String,
   startDateMonth: String,
   startDateYear: String,

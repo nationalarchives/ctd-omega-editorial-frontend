@@ -136,6 +136,13 @@ object CustomMatchers {
       actualValue = document.select(s"#${FieldNames.formerReferenceDepartment}").attr("value")
     )
 
+  def haveFormerReferencePro(expectedValue: String): Matcher[Document] = (document: Document) =>
+    singleValueMatcher(
+      label = "a former reference pro",
+      expectedValue = expectedValue,
+      actualValue = document.select(s"#${FieldNames.formerReferencePro}").attr("value")
+    )
+
   def haveStartDateDay(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "a start date day",
@@ -338,6 +345,13 @@ object CustomMatchers {
     haveErrorMessageForField(
       "former reference department",
       s"#${FieldNames.formerReferenceDepartment}-error",
+      expectedValue
+    )
+
+  def haveErrorMessageForFormerReferencePro(expectedValue: String): Matcher[Document] =
+    haveErrorMessageForField(
+      "former reference pro",
+      s"#${FieldNames.formerReferencePro}-error",
       expectedValue
     )
 
