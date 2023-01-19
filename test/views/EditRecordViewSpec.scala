@@ -22,16 +22,16 @@
 package views
 
 import org.jsoup.nodes.Document
-import play.api.data.Forms.{ mapping, text }
+import play.api.data.Forms.{ mapping, seq, text }
 import play.api.data.{ Form, FormError }
 import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import play.twirl.api.Html
 import support.BaseSpec
 import support.CustomMatchers._
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, LegalStatus, RelatedMaterial }
-import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
-import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.FieldNames
 import support.ExpectedValues.ExpectedSummaryErrorMessage
+import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.FieldNames
+import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, LegalStatus, RelatedMaterial }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEdit
 
 class EditRecordViewSpec extends BaseSpec {
@@ -47,11 +47,12 @@ class EditRecordViewSpec extends BaseSpec {
       FieldNames.endDateDay                -> text,
       FieldNames.endDateMonth              -> text,
       FieldNames.endDateYear               -> text,
-      FieldNames.legalStatus               -> text,
-      FieldNames.placeOfDeposit            -> text,
+      FieldNames.legalStatusID             -> text,
+      FieldNames.placeOfDepositID          -> text,
       FieldNames.note                      -> text,
       FieldNames.background                -> text,
-      FieldNames.custodialHistory          -> text
+      FieldNames.custodialHistory          -> text,
+      FieldNames.creatorIDs                -> seq(text)
     )(EditSetRecordFormValues.apply)(EditSetRecordFormValues.unapply)
   )
 
@@ -75,8 +76,8 @@ class EditRecordViewSpec extends BaseSpec {
     endDateDay = "",
     endDateMonth = "",
     endDateYear = "",
-    legalStatus = "",
-    placeOfDeposit = "",
+    legalStatusID = "",
+    placeOfDepositID = "",
     background = "",
     note = "",
     custodialHistory = "",
@@ -103,11 +104,12 @@ class EditRecordViewSpec extends BaseSpec {
     endDateDay = "",
     endDateMonth = "",
     endDateYear = "",
-    placeOfDeposit = "",
-    legalStatus = "",
+    placeOfDepositID = "",
+    legalStatusID = "",
     note = "",
     background = "",
-    custodialHistory = ""
+    custodialHistory = "",
+    creatorIDs = List.empty
   )
 
   "Edit record Html" should {
@@ -126,8 +128,8 @@ class EditRecordViewSpec extends BaseSpec {
             endDateDay = "31",
             endDateMonth = "12",
             endDateYear = "1960",
-            legalStatus = "ref.1",
-            placeOfDeposit = "3"
+            legalStatusID = "ref.1",
+            placeOfDepositID = "3"
           )
         )
       )
@@ -172,7 +174,8 @@ class EditRecordViewSpec extends BaseSpec {
           title,
           editSetRecord,
           legalStatusReferenceData,
-          allCorporateBodies,
+          allPlacesOfDeposits,
+          allCreators,
           filledForm
         )(
           Helpers.stubMessages(),
@@ -208,7 +211,8 @@ class EditRecordViewSpec extends BaseSpec {
           title,
           editSetRecord,
           legalStatusReferenceData,
-          allCorporateBodies,
+          allPlacesOfDeposits,
+          allCreators,
           filledForm
         )(
           Helpers.stubMessages(),
@@ -256,7 +260,8 @@ class EditRecordViewSpec extends BaseSpec {
           title,
           editSetRecord,
           legalStatusReferenceData,
-          allCorporateBodies,
+          allPlacesOfDeposits,
+          allCreators,
           filledForm
         )(
           Helpers.stubMessages(),
@@ -286,7 +291,7 @@ class EditRecordViewSpec extends BaseSpec {
       val editSetName = "COAL 80 Sample"
       val filledForm = emptyForm
         .fill(emptyRecordValues)
-        .withError(FormError(FieldNames.legalStatus, "Select a valid legal status"))
+        .withError(FormError(FieldNames.legalStatusID, "Select a valid legal status"))
 
       val editRecordHtml: Html =
         editSetRecordEditInstance(
@@ -295,7 +300,8 @@ class EditRecordViewSpec extends BaseSpec {
           title,
           editSetRecord,
           legalStatusReferenceData,
-          allCorporateBodies,
+          allPlacesOfDeposits,
+          allCreators,
           filledForm
         )(
           Helpers.stubMessages(),
@@ -305,7 +311,7 @@ class EditRecordViewSpec extends BaseSpec {
       val document = asDocument(editRecordHtml)
       document must haveSummaryErrorTitle("error.summary.title")
       document must haveSummaryErrorMessages(
-        ExpectedSummaryErrorMessage("Select a valid legal status", s"#${FieldNames.legalStatus}")
+        ExpectedSummaryErrorMessage("Select a valid legal status", s"#${FieldNames.legalStatusID}")
       )
     }
 
@@ -324,11 +330,12 @@ class EditRecordViewSpec extends BaseSpec {
         endDateDay = "31",
         endDateMonth = "12",
         endDateYear = "1960",
-        legalStatus = "ref.1",
-        placeOfDeposit = "2",
+        legalStatusID = "ref.1",
+        placeOfDepositID = "2",
         note = "",
         background = "",
-        custodialHistory = ""
+        custodialHistory = "",
+        creatorIDs = List.empty
       )
 
       val editSetRecordForm = emptyForm
@@ -342,7 +349,8 @@ class EditRecordViewSpec extends BaseSpec {
           title,
           editSetRecord,
           legalStatusReferenceData,
-          allCorporateBodies,
+          allPlacesOfDeposits,
+          allCreators,
           editSetRecordForm
         )(
           Helpers.stubMessages(),
@@ -413,7 +421,8 @@ class EditRecordViewSpec extends BaseSpec {
         title = title,
         record = editSetRecord,
         legalStatusReferenceData,
-        corporateBodies = allCorporateBodies,
+        placesOfDeposit = allPlacesOfDeposits,
+        creators = allCreators,
         editSetRecordForm = form
       )(
         Helpers.stubMessages(),

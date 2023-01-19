@@ -181,7 +181,7 @@ object CustomMatchers {
   def haveRelatedMaterial(relatedMaterials: ExpectedRelatedMaterial*): Matcher[Document] = (document: Document) =>
     if (relatedMaterials.isEmpty)
       singleValueMatcher(
-        label = "a single list item with the text None",
+        label = "a single list item for related material with the text None",
         expectedValue = "None",
         actualValue = document.select("#related-material > li").text()
       )
@@ -195,7 +195,7 @@ object CustomMatchers {
   def haveSeparatedMaterial(separatedMaterials: ExpectedSeparatedMaterial*): Matcher[Document] = (document: Document) =>
     if (separatedMaterials.isEmpty)
       singleValueMatcher(
-        label = "a single list item with the text None",
+        label = "a single list item for separate material with the text None",
         expectedValue = "None",
         actualValue = document.select("#separated-material > li").text()
       )
@@ -260,7 +260,7 @@ object CustomMatchers {
     singleValueMatcher(
       "an error message for legal status",
       expectedValue,
-      document.select(s"#${FieldNames.legalStatus}-error").text()
+      document.select(s"#${FieldNames.legalStatusID}-error").text()
     )
 
   def haveNoErrorMessageForLegalStatus: Matcher[Document] = haveErrorMessageForLegalStatus("")
@@ -269,7 +269,7 @@ object CustomMatchers {
     singleValueMatcher(
       "a legal status",
       expectedValue,
-      document.select(s"#${FieldNames.legalStatus} option[selected]").attr("value")
+      document.select(s"#${FieldNames.legalStatusID} option[selected]").attr("value")
     )
 
   def parseSuccessfullyAs[A](expected: A): Matcher[CoveringDateError.Result[A]] = {
@@ -342,7 +342,7 @@ object CustomMatchers {
     )
 
   def haveErrorMessageForPlaceOfDeposit(expectedValue: String): Matcher[Document] =
-    haveErrorMessageForField("place of deposit", s"#${FieldNames.placeOfDeposit}-error", expectedValue)
+    haveErrorMessageForField("place of deposit", s"#${FieldNames.placeOfDepositID}-error", expectedValue)
 
   def haveNoErrorMessageForPlaceOfDeposit: Matcher[Document] = haveErrorMessageForPlaceOfDeposit("")
 
@@ -404,13 +404,29 @@ object CustomMatchers {
   }
 
   def haveSelectionForPlaceOfDeposit(expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
-    haveSelectionOptions(FieldNames.placeOfDeposit, "place of deposit", expectedSelectOptions)
+    haveSelectionOptions(FieldNames.placeOfDepositID, "place of deposit", expectedSelectOptions)
 
   def haveSelectionForOrderingField(expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
     haveSelectionOptions(fieldKey, "ordering field", expectedSelectOptions)
 
   def haveSelectionForOrderingDirection(expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
     haveSelectionOptions(orderDirectionKey, "ordering direction", expectedSelectOptions)
+
+  def haveSelectionForCreator(index: Int, expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
+    haveSelectionOptions(s"creator-id-$index", s"creator (at index [$index])", expectedSelectOptions)
+
+  def haveNumberOfSelectionsForCreator(expectedNumber: Int): Matcher[Document] = (document: Document) => {
+    val actualNumber = document.select("select").asScala.count(_.attr("id").startsWith("creator-id-"))
+    val errorMessageIfExpected =
+      s"We expected $expectedNumber creator selections, but there were actually $actualNumber."
+    val errorMessageIfNotExpected =
+      s"We didn't expect $expectedNumber creator selections, but that's what we found"
+    MatchResult(
+      actualNumber == expectedNumber,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
 
   def haveNote(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
@@ -448,6 +464,11 @@ object CustomMatchers {
 
   def haveNoErrorMessageForCustodialHistory: Matcher[Document] = haveErrorMessageForCustodialHistory("")
 
+  def haveErrorMessageForCreator(expectedValue: String): Matcher[Document] =
+    haveErrorMessageForField(FieldNames.creatorIDs, "#creator-id-0-error", expectedValue)
+
+  def haveNoErrorMessageForCreator: Matcher[Document] = haveErrorMessageForCreator("")
+
   def haveAllLowerCaseIds: Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "an empty list of invalid ids",
@@ -463,7 +484,7 @@ object CustomMatchers {
     )
 
   def haveSectionsInCorrectOrder(sectionTitles: String*): Matcher[Document] = (document: Document) => {
-    val inputFields = document.select(".govuk-fieldset > * > label").asScala.toSeq
+    val inputFields = document.select(".govuk-fieldset > * > label, .govuk-fieldset > label").asScala.toSeq
     val displayFields = document.select(".govuk-fieldset > h3").asScala.toSeq
     singleValueMatcher(
       label = "a list of input sections in the correct order",

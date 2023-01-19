@@ -40,8 +40,8 @@ package object editSetRecords {
         |  "endDateDay" : "31",
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1962",
-        |  "legalStatus": "ref.1",
-        |  "placeOfDeposit" : "1",
+        |  "legalStatusID": "ref.1",
+        |  "placeOfDepositID" : "1",
         |  "note": "A note about COAL.2022.V1RJW.P.",
         |  "background": "Photo was taken by a daughter of one of the coal miners who used them.",
         |  "custodialHistory" : "Files originally created by successor or predecessor departments for COAL",
@@ -73,7 +73,8 @@ package object editSetRecords {
         |      "linkText" : "COAL 80/80/7"
         |    }
         |  ],
-        |  "background": "Photo was taken by a daughter of one of the coal miners who used them."
+        |  "background": "Photo was taken by a daughter of one of the coal miners who used them.",
+        |  "creatorIDs": ["48N", "92W"]
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -92,11 +93,12 @@ package object editSetRecords {
         |  "endDateDay" : "31",
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1966",
-        |  "legalStatus": "ref.2",
-        |  "placeOfDeposit" : "",
+        |  "legalStatusID": "ref.2",
+        |  "placeOfDepositID" : "",
         |  "note": "A note about COAL.2022.V2RJW.P.",
         |  "background": "",
-        |  "custodialHistory" : ""
+        |  "custodialHistory" : "",
+        |  "creatorIDs": ["515", "XXX"]
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -115,11 +117,12 @@ package object editSetRecords {
         |  "endDateDay" : "31",
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1964",
-        |  "legalStatus": "",
-        |  "placeOfDeposit" : "6",
+        |  "legalStatusID": "",
+        |  "placeOfDepositID" : "6",
         |  "note": "",
         |  "background": "Photo was taken by a son of one of the coal miners who used them.",
-        |  "custodialHistory" : ""
+        |  "custodialHistory" : "",
+        |  "creatorIDs": ["8R6", "92W", "8R6"]
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -138,11 +141,12 @@ package object editSetRecords {
         |  "endDateDay" : "31",
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
-        |  "legalStatus": "ref.1",
-        |  "placeOfDeposit" : "1",
+        |  "legalStatusID": "ref.1",
+        |  "placeOfDepositID" : "1",
         |  "note": "",
         |  "background": "",
-        |  "custodialHistory" : ""
+        |  "custodialHistory" : "",
+        |  "creatorIDs": []
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -161,11 +165,12 @@ package object editSetRecords {
         |  "endDateDay" : "31",
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
-        |  "legalStatus": "ref.1",
-        |  "placeOfDeposit" : "1",
+        |  "legalStatusID": "ref.1",
+        |  "placeOfDepositID" : "1",
         |  "note": "Need to check copyright info.",
         |  "background": "",
-        |  "custodialHistory" : ""
+        |  "custodialHistory" : "",
+        |  "creatorIDs": ["46F","48N","46F"]
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -184,11 +189,12 @@ package object editSetRecords {
         |  "endDateDay" : "31",
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
-        |  "legalStatus": "ref.1",
-        |  "placeOfDeposit" : "1",
+        |  "legalStatusID": "ref.1",
+        |  "placeOfDepositID" : "1",
         |  "note": "",
         |  "background": "",
-        |  "custodialHistory" : ""
+        |  "custodialHistory" : "",
+        |  "creatorIDs": ["4", "FKS"]
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -207,11 +213,12 @@ package object editSetRecords {
         |  "endDateDay" : "31",
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
-        |  "legalStatus": "ref.1",
-        |  "placeOfDeposit" : "1",
+        |  "legalStatusID": "ref.1",
+        |  "placeOfDepositID" : "1",
         |  "note": "",
         |  "background": "",
-        |  "custodialHistory" : ""
+        |  "custodialHistory" : "",
+        |  "creatorIDs": ["48N", "92W"]
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -230,11 +237,12 @@ package object editSetRecords {
         |  "endDateDay" : "31",
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
-        |  "legalStatus": "ref.1",
-        |  "placeOfDeposit" : "1",
+        |  "legalStatusID": "ref.1",
+        |  "placeOfDepositID" : "1",
         |  "note": "",
         |  "background": "",
-        |  "custodialHistory" : ""
+        |  "custodialHistory" : "",
+        |  "creatorIDs": ["48N", "46F", "8R6"]
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -253,11 +261,12 @@ package object editSetRecords {
         |  "endDateDay" : "31",
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
-        |  "legalStatus": "ref.1",
-        |  "placeOfDeposit" : "1",
+        |  "legalStatusID": "ref.1",
+        |  "placeOfDepositID" : "1",
         |  "note": "",
         |  "background": "",
-        |  "custodialHistory" : ""
+        |  "custodialHistory" : "",
+        |  "creatorIDs": ["2TK", "39T", "ST"]
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -276,8 +285,8 @@ package object editSetRecords {
         |  "endDateDay" : "31",
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
-        |  "legalStatus": "ref.1",
-        |  "placeOfDeposit" : "1",
+        |  "legalStatusID": "ref.1",
+        |  "placeOfDepositID" : "1",
         |  "note": "",
         |  "background": "",
         |  "separatedMaterial" : [
@@ -285,7 +294,8 @@ package object editSetRecords {
         |      "description" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
         |    }
         |  ],
-        |  "custodialHistory" : ""
+        |  "custodialHistory" : "",
+        |  "creatorIDs": ["XXX"]
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -304,8 +314,8 @@ package object editSetRecords {
         |  "endDateDay" : "31",
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
-        |  "legalStatus": "ref.1",
-        |  "placeOfDeposit" : "1",
+        |  "legalStatusID": "ref.1",
+        |  "placeOfDepositID" : "1",
         |  "note": "",
         |  "background": "",
         |  "separatedMaterial" : [
@@ -317,7 +327,8 @@ package object editSetRecords {
         |      "linkText" : "COAL 80/80/5"
         |    }
         |  ],
-        |  "custodialHistory" : ""
+        |  "custodialHistory" : "",
+        |  "creatorIDs": ["8R6"]
         |} """.stripMargin
     )
     .as[EditSetRecord]
@@ -336,8 +347,8 @@ package object editSetRecords {
         |  "endDateDay" : "31",
         |  "endDateMonth" : "12",
         |  "endDateYear" : "1960",
-        |  "legalStatus": "ref.1",
-        |  "placeOfDeposit" : "1",
+        |  "legalStatusID": "ref.1",
+        |  "placeOfDepositID" : "1",
         |  "note": "",
         |  "background": "",
         |  "separatedMaterial" : [
@@ -354,12 +365,13 @@ package object editSetRecords {
         |      "description" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
         |    }
         |  ],
-        |  "custodialHistory" : ""
+        |  "custodialHistory" : "",
+        |  "creatorIDs": ["8R6","92W", ""]
         |} """.stripMargin
     )
     .as[EditSetRecord]
 
-  private var editSetRecordMap = Map(
+  private val originalEditSetRecordMap: Map[String, EditSetRecord] = Map(
     "COAL.2022.V1RJW.P"  -> editSetRecord1,
     "COAL.2022.V2RJW.P"  -> editSetRecord2,
     "COAL.2022.V3RJW.P"  -> editSetRecord3,
@@ -373,6 +385,9 @@ package object editSetRecords {
     "COAL.2022.V11RJW.P" -> editSetRecord11,
     "COAL.2022.V12RJW.P" -> editSetRecord12
   )
+
+  var editSetRecordMap: Map[String, EditSetRecord] = originalEditSetRecordMap
+
   def getEditSetRecordByOCI(oci: String): Option[EditSetRecord] =
     editSetRecordMap.get(oci)
 
@@ -381,6 +396,8 @@ package object editSetRecords {
     editSetRecordMap -= editSetRecordOCI
     editSetRecordMap += (editSetRecordOCI -> editSetRecord)
   }
+
+  def restoreOriginalRecords(): Unit = editSetRecordMap = originalEditSetRecordMap
 
 }
 
@@ -470,24 +487,4 @@ package object editSets {
 
   def getEditSet(): EditSet =
     editSet1
-}
-package object legalStatus {
-  val legalStatusData =
-    Seq(
-      LegalStatus("ref.1", "Public Record(s)"),
-      LegalStatus("ref.2", "Not Public Records"),
-      LegalStatus("ref.3", "Public Records unless otherwise Stated"),
-      LegalStatus("ref.4", "Welsh Public Record(s)")
-    )
-  def getLegalStatusReferenceData(): Seq[LegalStatus] = legalStatus.legalStatusData
-}
-
-package object corporateBodies {
-
-  val all: Seq[CorporateBody] = Seq(
-    CorporateBody("1", "The National Archives, Kew"),
-    CorporateBody("2", "British Museum, Department of Libraries and Archives"),
-    CorporateBody("3", "British Library, National Sound Archive")
-  )
-
 }
