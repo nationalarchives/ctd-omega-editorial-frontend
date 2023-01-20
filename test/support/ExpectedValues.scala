@@ -29,5 +29,5 @@ object ExpectedValues {
 
   case class ExpectedDate(day: String, month: String, year: String)
 
-  case class ExpectedSummaryErrorMessage(message: String, link: String)
+  case class ExpectedSummaryErrorMessage(message: String, fieldName: String)
 }

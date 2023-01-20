@@ -1286,7 +1286,13 @@ class EditSetControllerSpec extends BaseSpec {
             assertPageAsExpected(
               asDocument(result),
               generateExpectedEditRecordPageFromRecord(oci)
-                .copy(omegaCatalogueId = oci, scopeAndContent = blankScopeAndContentToFailValidation)
+                .copy(
+                  omegaCatalogueId = oci,
+                  scopeAndContent = blankScopeAndContentToFailValidation,
+                  summaryErrorMessages = Seq(
+                    ExpectedSummaryErrorMessage("Enter the scope and content", FieldNames.scopeAndContent)
+                  )
+                )
             )
           }
         }
@@ -1309,7 +1315,7 @@ class EditSetControllerSpec extends BaseSpec {
               generateExpectedEditRecordPageFromRecord(oci).copy(
                 startDate = ExpectedDate("", "", ""),
                 summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", s"#${FieldNames.startDateDay}")),
+                  Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", FieldNames.startDateDay)),
                 errorMessageForStartDate = Some("Start date is not a valid date")
               )
             )
@@ -1333,7 +1339,7 @@ class EditSetControllerSpec extends BaseSpec {
               generateExpectedEditRecordPageFromRecord(oci).copy(
                 startDate = ExpectedDate("XX", "11", "1960"),
                 summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", s"#${FieldNames.startDateDay}")),
+                  Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", FieldNames.startDateDay)),
                 errorMessageForStartDate = Some("Start date is not a valid date")
               )
             )
@@ -1362,7 +1368,7 @@ class EditSetControllerSpec extends BaseSpec {
               startDate = ExpectedDate("29", "2", "2022"),
               endDate = ExpectedDate("31", "10", "2022"),
               summaryErrorMessages =
-                Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", s"#${FieldNames.startDateDay}")),
+                Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", FieldNames.startDateDay)),
               errorMessageForStartDate = Some("Start date is not a valid date")
             )
           )
@@ -1387,7 +1393,7 @@ class EditSetControllerSpec extends BaseSpec {
               generateExpectedEditRecordPageFromRecord(oci).copy(
                 endDate = ExpectedDate("", "", ""),
                 summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("End date is not a valid date", s"#${FieldNames.endDateDay}")),
+                  Seq(ExpectedSummaryErrorMessage("End date is not a valid date", FieldNames.endDateDay)),
                 errorMessageForEndDate = Some("End date is not a valid date")
               )
             )
@@ -1410,7 +1416,7 @@ class EditSetControllerSpec extends BaseSpec {
               generateExpectedEditRecordPageFromRecord(oci).copy(
                 endDate = ExpectedDate("XX", "12", "2000"),
                 summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("End date is not a valid date", s"#${FieldNames.endDateDay}")),
+                  Seq(ExpectedSummaryErrorMessage("End date is not a valid date", FieldNames.endDateDay)),
                 errorMessageForEndDate = Some("End date is not a valid date")
               )
             )
@@ -1438,7 +1444,7 @@ class EditSetControllerSpec extends BaseSpec {
                 startDate = ExpectedDate("1", "2", "2022"),
                 endDate = ExpectedDate("29", "2", "2022"),
                 summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("End date is not a valid date", s"#${FieldNames.endDateDay}")),
+                  Seq(ExpectedSummaryErrorMessage("End date is not a valid date", FieldNames.endDateDay)),
                 errorMessageForEndDate = Some("End date is not a valid date")
               )
             )
@@ -1466,7 +1472,7 @@ class EditSetControllerSpec extends BaseSpec {
                 startDate = ExpectedDate("12", "10", "2020"),
                 endDate = ExpectedDate("11", "10", "2020"),
                 summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("End date cannot precede start date", s"#${FieldNames.endDateDay}")),
+                  Seq(ExpectedSummaryErrorMessage("End date cannot precede start date", FieldNames.endDateDay)),
                 errorMessageForEndDate = Some("End date cannot precede start date")
               )
             )
@@ -1495,8 +1501,8 @@ class EditSetControllerSpec extends BaseSpec {
               startDate = ExpectedDate("12", "14", "2020"),
               endDate = ExpectedDate("42", "12", "2020"),
               summaryErrorMessages = Seq(
-                ExpectedSummaryErrorMessage("Start date is not a valid date", s"#${FieldNames.startDateDay}"),
-                ExpectedSummaryErrorMessage("End date is not a valid date", s"#${FieldNames.endDateDay}")
+                ExpectedSummaryErrorMessage("Start date is not a valid date", FieldNames.startDateDay),
+                ExpectedSummaryErrorMessage("End date is not a valid date", FieldNames.endDateDay)
               ),
               errorMessageForStartDate = Some("Start date is not a valid date"),
               errorMessageForEndDate = Some("End date is not a valid date")
@@ -1521,7 +1527,7 @@ class EditSetControllerSpec extends BaseSpec {
               generateExpectedEditRecordPageFromRecord(oci).copy(
                 coveringDates = "Oct 1 2004",
                 summaryErrorMessages = Seq(
-                  ExpectedSummaryErrorMessage("Covering date format is not valid", s"#${FieldNames.coveringDates}")
+                  ExpectedSummaryErrorMessage("Covering date format is not valid", FieldNames.coveringDates)
                 ),
                 errorMessageForCoveringsDates = Some("Covering date format is not valid")
               )
@@ -1547,7 +1553,7 @@ class EditSetControllerSpec extends BaseSpec {
                 summaryErrorMessages = Seq(
                   ExpectedSummaryErrorMessage(
                     "Covering date too long, maximum length 255 characters",
-                    s"#${FieldNames.coveringDates}"
+                    FieldNames.coveringDates
                   )
                 ),
                 errorMessageForCoveringsDates = Some("Covering date too long, maximum length 255 characters")
@@ -1571,8 +1577,8 @@ class EditSetControllerSpec extends BaseSpec {
               generateExpectedEditRecordPageFromRecord(oci).copy(
                 coveringDates = "  ",
                 summaryErrorMessages = Seq(
-                  ExpectedSummaryErrorMessage("Enter the covering dates", s"#${FieldNames.coveringDates}"),
-                  ExpectedSummaryErrorMessage("Covering date format is not valid", s"#${FieldNames.coveringDates}")
+                  ExpectedSummaryErrorMessage("Enter the covering dates", FieldNames.coveringDates),
+                  ExpectedSummaryErrorMessage("Covering date format is not valid", FieldNames.coveringDates)
                 ),
                 errorMessageForCoveringsDates = Some("Enter the covering dates")
               )
@@ -1603,7 +1609,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("You must choose an option", s"#${FieldNames.placeOfDepositID}")),
+                  Seq(ExpectedSummaryErrorMessage("You must choose an option", FieldNames.placeOfDepositID)),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
             )
@@ -1627,7 +1633,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("You must choose an option", s"#${FieldNames.placeOfDepositID}")),
+                  Seq(ExpectedSummaryErrorMessage("You must choose an option", FieldNames.placeOfDepositID)),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
             )
@@ -1651,7 +1657,7 @@ class EditSetControllerSpec extends BaseSpec {
                   ExpectedSelectOption("3", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("You must choose an option", s"#${FieldNames.placeOfDepositID}")),
+                  Seq(ExpectedSummaryErrorMessage("You must choose an option", FieldNames.placeOfDepositID)),
                 errorMessageForPlaceOfDeposit = Some("You must choose an option")
               )
             )
@@ -1675,8 +1681,8 @@ class EditSetControllerSpec extends BaseSpec {
               generateExpectedEditRecordPageFromRecord(oci).copy(
                 legalStatusID = "",
                 summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("You must choose an option", s"#${FieldNames.legalStatusID}")),
-                errorMessageForLegalStatus = Some("Error: You must choose an option")
+                  Seq(ExpectedSummaryErrorMessage("You must choose an option", FieldNames.legalStatusID)),
+                errorMessageForLegalStatus = Some("You must choose an option")
               )
             )
 
@@ -1715,7 +1721,7 @@ class EditSetControllerSpec extends BaseSpec {
               generateExpectedEditRecordPageFromRecord(oci).copy(
                 note = excessivelyLongNote,
                 summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("Note too long, maximum length 1000 characters", "#note")),
+                  Seq(ExpectedSummaryErrorMessage("Note too long, maximum length 1000 characters", FieldNames.note)),
                 errorMessageForNote = Some("Note too long, maximum length 1000 characters")
               )
             )
@@ -1742,7 +1748,7 @@ class EditSetControllerSpec extends BaseSpec {
                 summaryErrorMessages = Seq(
                   ExpectedSummaryErrorMessage(
                     "Administrative / biographical background too long, maximum length 8000 characters",
-                    s"#${FieldNames.background}"
+                    FieldNames.background
                   )
                 ),
                 errorMessageForBackground =
@@ -1774,7 +1780,7 @@ class EditSetControllerSpec extends BaseSpec {
                 summaryErrorMessages = Seq(
                   ExpectedSummaryErrorMessage(
                     "Custodial history too long, maximum length 1000 characters",
-                    s"#${FieldNames.custodialHistory}"
+                    FieldNames.custodialHistory
                   )
                 ),
                 errorMessageForCustodialHistory = Some("Custodial history too long, maximum length 1000 characters")
@@ -1817,7 +1823,7 @@ class EditSetControllerSpec extends BaseSpec {
               summaryErrorMessages = Seq(
                 ExpectedSummaryErrorMessage(
                   "You must select at least one creator",
-                  "#creator-id-0"
+                  "creator-id-0"
                 )
               ),
               errorMessageForCreator = Some("You must select at least one creator")
@@ -2138,8 +2144,8 @@ class EditSetControllerSpec extends BaseSpec {
             generateExpectedEditRecordPageFromRecord(oci).copy(
               coveringDates = "   ",
               summaryErrorMessages = Seq(
-                ExpectedSummaryErrorMessage("Enter the covering dates", s"#${FieldNames.coveringDates}"),
-                ExpectedSummaryErrorMessage("Covering date format is not valid", s"#${FieldNames.coveringDates}")
+                ExpectedSummaryErrorMessage("Enter the covering dates", FieldNames.coveringDates),
+                ExpectedSummaryErrorMessage("Covering date format is not valid", FieldNames.coveringDates)
               ),
               errorMessageForCoveringsDates = Some("Enter the covering dates")
             )
@@ -2162,7 +2168,7 @@ class EditSetControllerSpec extends BaseSpec {
             generateExpectedEditRecordPageFromRecord(oci).copy(
               coveringDates = "1270s",
               summaryErrorMessages = Seq(
-                ExpectedSummaryErrorMessage("Covering date format is not valid", s"#${FieldNames.coveringDates}")
+                ExpectedSummaryErrorMessage("Covering date format is not valid", FieldNames.coveringDates)
               ),
               errorMessageForCoveringsDates = Some("Covering date format is not valid")
             )
@@ -2185,7 +2191,7 @@ class EditSetControllerSpec extends BaseSpec {
             generateExpectedEditRecordPageFromRecord(oci).copy(
               coveringDates = "2022 Feb 1-2022 Feb 29",
               summaryErrorMessages = Seq(
-                ExpectedSummaryErrorMessage("Covering date format is not valid", s"#${FieldNames.coveringDates}")
+                ExpectedSummaryErrorMessage("Covering date format is not valid", FieldNames.coveringDates)
               ),
               errorMessageForCoveringsDates = Some("Covering date format is not valid")
             )
@@ -3228,6 +3234,8 @@ class EditSetControllerSpec extends BaseSpec {
 
     if (expectedEditRecordPage.summaryErrorMessages.nonEmpty) {
       document must haveSummaryErrorMessages(expectedEditRecordPage.summaryErrorMessages: _*)
+    } else {
+      document must haveNoSummaryErrorMessages
     }
 
     expectedEditRecordPage.errorMessageForStartDate match {
