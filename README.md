@@ -150,6 +150,6 @@ sbt test IntegrationTest/test
 
 ### Before Pushing
 
-Remember to run `sbt scalafmtAll`.
+Remember to run `sbt fmtCheck`.
 
 For convenience, you can run [runBeforePushing.sh](./runBeforePushing.sh), which runs it after all of the tests.

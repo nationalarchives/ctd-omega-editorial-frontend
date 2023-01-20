@@ -4,9 +4,9 @@ import org.scalatest.Assertion
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.{ OK, SEE_OTHER }
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.ws.{WSClient, WSCookie, WSResponse}
+import play.api.libs.ws.{ WSClient, WSCookie, WSResponse }
 
 abstract class BaseISpec extends PlaySpec with GuiceOneServerPerSuite {
 

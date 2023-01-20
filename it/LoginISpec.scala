@@ -1,7 +1,7 @@
 import org.scalatest.Assertion
-import play.api.http.Status.{BAD_REQUEST, OK}
-import play.api.libs.ws.{WSCookie, WSResponse}
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import play.api.http.Status.{ BAD_REQUEST, OK }
+import play.api.libs.ws.{ WSCookie, WSResponse }
+import play.api.test.Helpers.{ await, defaultAwaitTimeout }
 import support.CustomMatchers._
 import support.ExpectedValues.ExpectedSummaryErrorMessage
 
@@ -260,7 +260,5 @@ class LoginISpec extends BaseISpec {
     title: String,
     logoutLinkVisible: Boolean
   )
-
-
 
 }

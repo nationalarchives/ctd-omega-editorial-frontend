@@ -22,7 +22,7 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
   .enablePlugins(PlayScala)
   .enablePlugins(BuildInfoPlugin)
   .enablePlugins(AutomateHeaderPlugin)
-  .configs(IntegrationTest extend(Test))
+  .configs(IntegrationTest extend Test)
   .settings(
     Defaults.itSettings,
     organization := "uk.gov.nationalarchives",
@@ -120,7 +120,7 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
       "org.webjars.npm"         % "govuk-frontend"     % "4.3.1",
       "uk.gov.hmrc"            %% "play-frontend-hmrc" % "3.30.0-play-28",
       "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0"  % Test,
-      "org.jsoup"              % "jsoup"               % "1.15.3" % Test
+      "org.jsoup"               % "jsoup"              % "1.15.3" % Test
     ),
     publishMavenStyle := true,
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
