@@ -99,6 +99,22 @@
     </div>
 }
 
+@dateFieldSet(datePrefix: String, dateLabel: String) = {
+
+    @editSetRecordForm.error(datePrefix+"-date-day") match {
+        case Some (_) => { <div class="govuk-form-group  govuk-form-group--error">}
+        case None     => {<div class="govuk-form-group">}
+        }
+            @govukFieldset(
+                Fieldset(
+                    classes = "govuk-fieldset",
+                    html = dateSelector(datePrefix, dateLabel),
+                    role = Some("group")
+                )
+            )
+        </div>
+}
+
 @dateSelector(prefix: String, labelKey: String) = {
     <label class="govuk-label govuk-label--s">
     @messages(labelKey)
@@ -112,34 +128,31 @@
 }
     <div class="govuk-date-input" id="@prefix">
         <div class="govuk-date-input__item">
-            <div class="govuk-form-group">
             @govukInput(Input(
                 id = prefix + "-date-day",
                 name = prefix + "-date-day",
                 value = editSetRecordForm.data.get(prefix + "-date-day"),
                 label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("@{prefix}-date-day"), content = Text(messages("edit-set.record.edit.dates.day"))),
-                classes = "govuk-input govuk-date-input__input govuk-input--width-2"))
+                classes = "govuk-input govuk-date-input__input govuk-input--width-2" + editSetRecordForm.error(prefix+"-date-day").map(_ => " govuk-input--error").getOrElse("")
+            ))
             </div>
-        </div>
         <div class="govuk-date-input__item">
-            <div class="govuk-form-group">
             @govukInput(Input(
                 id = prefix + "-date-month",
                 name = prefix + "-date-month",
                 value = editSetRecordForm.data.get(prefix + "-date-month"),
                 label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("@{prefix}-date-month"), content = Text(messages("edit-set.record.edit.dates.month"))),
-                classes = "govuk-input govuk-date-input__input govuk-input--width-2"))
-            </div>
+                classes = "govuk-input govuk-date-input__input govuk-input--width-2" + editSetRecordForm.error(prefix+"-date-day").map(_ => " govuk-input--error").getOrElse("")
+            ))
         </div>
         <div class="govuk-date-input__item">
-            <div class="govuk-form-group">
             @govukInput(Input(
                 id = prefix + "-date-year",
                 name = prefix + "-date-year",
                 value = editSetRecordForm.data.get(prefix + "-date-year"),
                 label = Label(classes = "govuk-label govuk-date-input__label", forAttr = Some("@{prefix}-date-year"), content = Text(messages("edit-set.record.edit.dates.year"))),
-                classes = "govuk-input govuk-date-input__input govuk-input--width-4"))
-            </div>
+                classes = "govuk-input govuk-date-input__input govuk-input--width-4" + editSetRecordForm.error(prefix+"-date-day").map(_ => " govuk-input--error").getOrElse("")
+            ))
         </div>
     </div>
 }
@@ -193,7 +206,7 @@
             attributes = Map("for" -> FieldNames.scopeAndContent)
         )
     },
-    attributes = Map("rows" -> "5", "autofocus" -> "true")))
+    attributes = Map("autofocus" -> "true")))
 
 @govukLabel(Label(forAttr = Some("creator"), classes = "govuk-label--s", content = Text(messages("edit-set.record.edit.creator"))))
 @helper.repeatWithIndex(editSetRecordForm("creator-ids"), min = 1) { (creatorIDField, index) =>
@@ -239,18 +252,10 @@
     value = Some("calculateDates"),
     content = Text(messages("edit-set.record.calculate-dates.button"))))
 
-@govukFieldset(
-    Fieldset(
-        classes = "govuk-fieldset",
-        html = dateSelector("start", "edit-set.record.edit.start-date"),
-        role = Some("group")
-    ))
-@govukFieldset(
-    Fieldset(
-        classes = "govuk-fieldset",
-        html = dateSelector("end", "edit-set.record.edit.end-date"),
-        role = Some("group")
-    ))
+
+@dateFieldSet("start", "edit-set.record.edit.start-date")
+@dateFieldSet("end", "edit-set.record.edit.end-date")
+
 @govukInput(Input(
     id = FieldNames.formerReferenceDepartment,
     name = FieldNames.formerReferenceDepartment,
@@ -267,6 +272,7 @@
         )
     },
     classes = "govuk-input--width-20"))
+
 @govukInput(Input(
 id = FieldNames.formerReferencePro,
 name = FieldNames.formerReferencePro,
@@ -283,6 +289,7 @@ attributes = Map("for" -> FieldNames.formerReferencePro)
 )
 },
 classes = "govuk-input--width-20"))
+
 @govukSelect(Select(
     id = FieldNames.legalStatusID,
     name = FieldNames.legalStatusID,
@@ -318,7 +325,7 @@ classes = "govuk-input--width-20"))
             attributes = Map("for" -> FieldNames.custodialHistory)
         )
     },
-    attributes = Map("rows" -> "5", "autofocus" -> "true")
+    attributes = Map("autofocus" -> "true")
 )
 )
 
@@ -366,7 +373,7 @@ classes = "govuk-input--width-20"))
             attributes = Map("for" -> FieldNames.note)
         )
     },
-    attributes = Map("rows" -> "5", "autofocus" -> "true")))
+    attributes = Map("autofocus" -> "true")))
 @govukTextarea(Textarea(
     id = FieldNames.background,
     name = FieldNames.background,
@@ -378,7 +385,7 @@ classes = "govuk-input--width-20"))
             attributes = Map("for" -> FieldNames.background)
         )
     },
-    attributes = Map("rows" -> "5", "autofocus" -> "true")))
+    attributes = Map("autofocus" -> "true")))
 
 
 
