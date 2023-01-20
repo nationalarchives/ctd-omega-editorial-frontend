@@ -22,6 +22,7 @@
 package services
 
 import support.BaseSpec
+import support.CustomMatchers._
 import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination
 import uk.gov.nationalarchives.omega.editorial.models.EditSetEntry
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.{ EditSetReorder, FieldNames, orderDirectionAscending }
@@ -45,9 +46,22 @@ class EditSetPaginationSpec extends BaseSpec {
       val page = new EditSetPagination("1", sampleOrdering).makeEditSetPage(entries, pageNumber = 1)
 
       page.entries mustEqual entries.take(10)
-      pprint.pprintln(page.pagination)
       page.pagination.items.get.size mustBe 2
-      page.pagination.previous mustBe None
+
+      page must havePaginationNextLink
+      page mustNot havePaginationPreviousLink
+    }
+
+    "don't have a next link when on the last page" in {
+      val entries = Seq.fill(11)(sampleEntry)
+      val page = new EditSetPagination("1", sampleOrdering).makeEditSetPage(entries, pageNumber = 2)
+
+      page.entries.size mustEqual 1
+      page.pagination.items.get.size mustBe 2
+
+      page mustNot havePaginationNextLink
+      page must havePaginationPreviousLink
+      page must haveBothEllipsisItems
     }
 
   }

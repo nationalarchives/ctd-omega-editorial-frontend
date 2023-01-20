@@ -25,8 +25,10 @@ import controllers.EditSetControllerSpec._
 import org.jsoup.nodes.{ Document, Element }
 import org.scalatest.matchers.{ MatchResult, Matcher }
 import support.ExpectedValues.{ ExpectedSelectOption, ExpectedSummaryErrorMessage }
+import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination._
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError
+import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination.EditSetPage
 
 import scala.jdk.CollectionConverters._
 
@@ -304,6 +306,44 @@ object CustomMatchers {
            |expected: $expectedError""".stripMargin,
         s"Failed with $expectedError as expected"
       )
+  }
+
+  def havePaginationNextLink: Matcher[EditSetPage] = (page: EditSetPage) => {
+    val expectedPageNumber = page.pageNumber + 1
+    val errorMessageIfExpected =
+      s"The page didn't have a pagination next link to page $expectedPageNumber"
+    val errorMessageIfNotExpected =
+      "The page did indeed have a pagination next link, which was not expected"
+    MatchResult(
+      page.pagination.next.exists(_.href.contains(s"offset=$expectedPageNumber")),
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def havePaginationPreviousLink: Matcher[EditSetPage] = (page: EditSetPage) => {
+    val expectedPageNumber = page.pageNumber - 1
+    val errorMessageIfExpected =
+      s"The page didn't have a pagination previous link to page $expectedPageNumber"
+    val errorMessageIfNotExpected =
+      "The page did indeed have a pagination previous link, which was not expected"
+    MatchResult(
+      page.pagination.previous.exists(_.href.contains(s"offset=$expectedPageNumber")),
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveBothEllipsisItems: Matcher[EditSetPage] = (page: EditSetPage) => {
+    val errorMessageIfExpected =
+      s"The page didn't have both ellipsis items"
+    val errorMessageIfNotExpected =
+      "The page did have ellipsis items, which was not expected"
+    MatchResult(
+      page.pagination.items.exists(_.count(_.ellipsis == Some(true)) == 2),
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
   }
 
   def haveCorrectClassesOnAllLabels: Matcher[Document] = (document: Document) =>
