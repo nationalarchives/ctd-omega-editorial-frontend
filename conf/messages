@@ -1,6 +1,5 @@
 # https://www.playframework.com/documentation/latest/ScalaI18N
 edit-set.heading=Edit set: {0}
-edit-set.table-caption=Showing {0} - {1} of {2} records
 edit-set.ordering.button=Sort edit set
 edit-set.ordering.direction.ascending=Ascending
 edit-set.ordering.direction.descending=Descending
@@ -57,6 +56,7 @@ edit-set.record.save.back=Back to edit record
 edit-set.record.save.button=Save changes
 edit-set.record.save.subheader=Changes saved
 edit-set.record.save.text=Changes to the following record have been saved:
+edit-set.table-caption=Showing {0} - {1} of {2} records
 edit-set.title=Browse Edit Set (Page {0} of {1})
 error.summary.title=There is a problem
 header.logout=Sign out

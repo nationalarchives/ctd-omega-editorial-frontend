@@ -282,6 +282,11 @@ class EditSetController @Inject() (
     }
   }
 
+  private def prepareForDisplay(originalEditSetRecord: EditSetRecord): EditSetRecord =
+    Seq[RecordTransformer](prepareCreatorIDs, preparePlaceOfDeposit).foldLeft(originalEditSetRecord)(
+      (editSetRecord, transformer) => transformer(editSetRecord)
+    )
+
   private def generateEditSetView(id: String, user: User, editSetReorder: EditSetReorder)(implicit
     request: Request[AnyContent]
   ): Result = {
@@ -302,11 +307,6 @@ class EditSetController @Inject() (
     )
     Ok(editSet(user, title, heading, editSetPage, reorderForm.fill(editSetReorder)))
   }
-
-  private def prepareForDisplay(originalEditSetRecord: EditSetRecord): EditSetRecord =
-    Seq[RecordTransformer](prepareCreatorIDs, preparePlaceOfDeposit).foldLeft(originalEditSetRecord)(
-      (editSetRecord, transformer) => transformer(editSetRecord)
-    )
 
   private def prepareCreatorIDs(editSetRecord: EditSetRecord): EditSetRecord =
     editSetRecord.copy(creatorIDs = editSetRecord.creatorIDs.filter(isCreatorRecognised))
