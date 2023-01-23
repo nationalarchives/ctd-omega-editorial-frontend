@@ -74,6 +74,7 @@ class EditSetController @Inject() (
     val endDateBeforeStartDate = "edit-set.record.error.end-date-before-start-date"
     val endDateInvalid = "edit-set.record.error.end-date"
     val formerReferenceDepartmentInvalid = "edit-set.record.error.former-reference-department"
+    val formerReferenceProInvalid = "edit-set.record.error.former-reference-pro"
     val heading = "edit-set.record.edit.heading"
     val legalStatusMissing = "edit-set.record.error.choose-an-option"
     val noteTooLong = "edit-set.record.error.note-too-long"
@@ -110,6 +111,10 @@ class EditSetController @Inject() (
         ),
       FieldNames.formerReferenceDepartment -> text.verifying(
         resolvedMessage(MessageKeys.formerReferenceDepartmentInvalid),
+        value => value.length <= 255
+      ),
+      FieldNames.formerReferencePro -> text.verifying(
+        resolvedMessage(MessageKeys.formerReferenceProInvalid),
         value => value.length <= 255
       ),
       FieldNames.startDateDay   -> text,
@@ -578,6 +583,7 @@ object EditSetController {
     val endDateFieldError = "end-date-field-error"
     val orderField = "field"
     val formerReferenceDepartment = "former-reference-department"
+    val formerReferencePro = "former-reference-pro"
     val legalStatusID = "legal-status-id"
     val note = "note"
     val oci = "oci"

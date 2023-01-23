@@ -41,6 +41,7 @@ class EditRecordViewSpec extends BaseSpec {
       FieldNames.scopeAndContent           -> text,
       FieldNames.coveringDates             -> text,
       FieldNames.formerReferenceDepartment -> text,
+      FieldNames.formerReferencePro        -> text,
       FieldNames.startDateDay              -> text,
       FieldNames.startDateMonth            -> text,
       FieldNames.startDateYear             -> text,
@@ -70,6 +71,7 @@ class EditRecordViewSpec extends BaseSpec {
     scopeAndContent = "",
     coveringDates = "",
     formerReferenceDepartment = "",
+    formerReferencePro = "",
     startDateDay = "",
     startDateMonth = "",
     startDateYear = "",
@@ -98,6 +100,7 @@ class EditRecordViewSpec extends BaseSpec {
     scopeAndContent = "",
     coveringDates = "",
     formerReferenceDepartment = "",
+    formerReferencePro = "",
     startDateDay = "",
     startDateMonth = "",
     startDateYear = "",
@@ -122,6 +125,7 @@ class EditRecordViewSpec extends BaseSpec {
             scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
             coveringDates = "1960",
             formerReferenceDepartment = "TestFormerReferenceDepartment",
+            formerReferencePro = "TestFormerReferencePro",
             startDateDay = "1",
             startDateMonth = "2",
             startDateYear = "1960",
@@ -143,6 +147,7 @@ class EditRecordViewSpec extends BaseSpec {
       )
       document must haveCoveringDates("1960")
       document must haveFormerReferenceDepartment("TestFormerReferenceDepartment")
+      document must haveFormerReferencePro("TestFormerReferencePro")
       document must haveStartDateDay("1")
       document must haveStartDateMonth("2")
       document must haveStartDateYear("1960")
@@ -315,6 +320,57 @@ class EditRecordViewSpec extends BaseSpec {
       )
     }
 
+    "render an error when given former reference pro is more than 255 characters" in {
+      val editSetRecordEditInstance = inject[editSetRecordEdit]
+      val title = "EditRecordTitleTest"
+      val editSetName = "COAL 80 Sample"
+      val filledForm = emptyForm
+        .fill(
+          emptyRecordValues.copy(
+            scopeAndContent = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
+            formerReferencePro =
+              "Former reference PRO Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing"
+          )
+        )
+        .withError(
+          FormError(
+            FieldNames.formerReferencePro,
+            "Former reference (PRO) too long, maximum length 255 characters"
+          )
+        )
+
+      val editRecordHtml: Html =
+        editSetRecordEditInstance(
+          user,
+          editSetName,
+          title,
+          editSetRecord,
+          legalStatusReferenceData,
+          allPlacesOfDeposits,
+          allCreators,
+          filledForm
+        )(
+          Helpers.stubMessages(),
+          CSRFTokenHelper.addCSRFToken(FakeRequest())
+        )
+
+      val document = asDocument(editRecordHtml)
+      document must haveTitle("EditRecordTitleTest")
+      document must haveSummaryErrorTitle("error.summary.title")
+      document must haveSummaryErrorMessages(
+        ExpectedSummaryErrorMessage(
+          "Former reference (PRO) too long, maximum length 255 characters",
+          s"#${FieldNames.formerReferencePro}"
+        )
+      )
+      document must haveErrorMessageForFormerReferencePro(
+        "Former reference (PRO) too long, maximum length 255 characters"
+      )
+      document must haveFormerReferencePro(
+        "Former reference PRO Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing Testing"
+      )
+    }
+
     "render an error when given invalid covering dates" in {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
 
@@ -324,6 +380,7 @@ class EditRecordViewSpec extends BaseSpec {
         scopeAndContent = "",
         coveringDates = "Mon 1 Oct 1330",
         formerReferenceDepartment = "",
+        formerReferencePro = "",
         startDateDay = "1",
         startDateMonth = "2",
         startDateYear = "1960",
