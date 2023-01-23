@@ -54,6 +54,8 @@ class EditSetViewSpec extends BaseSpec {
       val editSetPage = EditSetPage(
         editSet.entries,
         Pagination(),
+        1,
+        editSet.entries.size,
         1
       )
       val editSetHtml: Html = editSetInstance(user, title, heading, editSetPage, reorderForm)(
@@ -63,7 +65,7 @@ class EditSetViewSpec extends BaseSpec {
 
       val document = asDocument(editSetHtml)
       document must haveTitle(title)
-      document must haveCaption(heading)
+      document must haveCaption("edit-set.table-caption")
       document must haveSummaryRows(3)
       document must haveSummaryRowContents(
         1,
@@ -136,6 +138,8 @@ class EditSetViewSpec extends BaseSpec {
     val editSetPage = EditSetPage(
       editSet.entries,
       Pagination(),
+      1,
+      editSet.entries.size,
       1
     )
     asDocument(

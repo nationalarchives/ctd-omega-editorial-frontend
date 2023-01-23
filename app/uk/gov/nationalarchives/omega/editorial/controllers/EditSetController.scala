@@ -178,13 +178,19 @@ class EditSetController @Inject() (
   ): Result = {
     logger.info(s"The edit set id is $id ")
     val currentEditSet = editSets.getEditSet()
-    val title = resolvedMessage("edit-set.title")
-    val heading: String = resolvedMessage("edit-set.heading", currentEditSet.name)
 
     val editSetEntries = currentEditSet.entries.sorted(getSorter(editSetReorder))
     val pageNumber = request.queryString.get("offset").flatMap(_.headOption).map(_.toInt).getOrElse(1)
 
     val editSetPage = new EditSetPagination(id, editSetReorder).makeEditSetPage(editSetEntries, pageNumber)
+    val title = resolvedMessage("edit-set.title", editSetPage.pageNumber.toString, editSetPage.totalPages.toString)
+    val heading: String = resolvedMessage(
+      "edit-set.heading",
+      currentEditSet.name,
+      editSetPage.numberOfFirstEntry.toString,
+      editSetPage.numberOfLastEntry.toString,
+      editSetPage.totalNumberOfEntries.toString
+    )
     Ok(editSet(user, title, heading, editSetPage, reorderForm.fill(editSetReorder)))
   }
 

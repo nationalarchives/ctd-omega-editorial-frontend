@@ -22,16 +22,17 @@
 package controllers
 
 import org.jsoup.nodes.Document
-import play.api.mvc._
-import play.api.test.Helpers._
-import play.api.test._
 import org.scalatest.compatible.Assertion
+import play.api.mvc._
+import play.api.test._
+import play.api.test.Helpers._
 import support.BaseSpec
 import support.CustomMatchers._
 import support.ExpectedValues._
-import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
+import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
+import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
 import scala.concurrent.Future
@@ -50,7 +51,12 @@ class EditSetControllerSpec extends BaseSpec {
 
     "render the edit set page from a new instance of controller" in {
       val messages: Map[String, Map[String, String]] =
-        Map("en" -> Map("edit-set.heading" -> "Edit set: COAL 80 Sample"))
+        Map(
+          "en" -> Map(
+            "edit-set.heading"       -> "Edit set: COAL 80 Sample",
+            "edit-set.table-caption" -> "Showing {0} - {1} of {2} records"
+          )
+        )
       val mockMessagesApi = stubMessagesApi(messages)
       val editSetInstance = inject[editSet]
       val editSetRecordEditInstance = inject[editSetRecordEdit]
@@ -85,7 +91,7 @@ class EditSetControllerSpec extends BaseSpec {
       status(editSet) mustBe OK
       contentType(editSet) mustBe Some("text/html")
       val document = asDocument(editSet)
-      document must haveCaption("Edit set: COAL 80 Sample")
+      document must haveCaption("Showing 1 - 10 of 12 records")
     }
 
     "render the edit set page from the application" in {
@@ -102,7 +108,7 @@ class EditSetControllerSpec extends BaseSpec {
       status(editSet) mustBe OK
       contentType(editSet) mustBe Some("text/html")
       val document = asDocument(editSet)
-      document must haveCaption("Edit set: COAL 80 Sample")
+      document must haveCaption("Showing 1 - 10 of 12 records")
     }
 
     "render the edit set page from the router" in {
@@ -112,7 +118,7 @@ class EditSetControllerSpec extends BaseSpec {
       status(editSet) mustBe OK
       contentType(editSet) mustBe Some("text/html")
       val document = asDocument(editSet)
-      document must haveCaption("Edit set: COAL 80 Sample")
+      document must haveCaption("Showing 1 - 10 of 12 records")
     }
 
     "all ids in the document conform to w3c reccomendations" in {
@@ -176,8 +182,8 @@ class EditSetControllerSpec extends BaseSpec {
         assertPageAsExpected(
           asDocument(page),
           ExpectedEditSetPage(
-            title = "Edit set",
-            caption = "Edit set: COAL 80 Sample",
+            title = "Browse Edit Set (Page 1 of 2)",
+            caption = "Showing 1 - 10 of 12 records",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption(FieldNames.ccr, "CCR", selected = true),
@@ -276,8 +282,8 @@ class EditSetControllerSpec extends BaseSpec {
         assertPageAsExpected(
           asDocument(page),
           ExpectedEditSetPage(
-            title = "Edit set",
-            caption = "Edit set: COAL 80 Sample",
+            title = "Browse Edit Set (Page 1 of 2)",
+            caption = "Showing 1 - 10 of 12 records",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption(FieldNames.ccr, "CCR", selected = true),
@@ -376,8 +382,8 @@ class EditSetControllerSpec extends BaseSpec {
         assertPageAsExpected(
           asDocument(page),
           ExpectedEditSetPage(
-            title = "Edit set",
-            caption = "Edit set: COAL 80 Sample",
+            title = "Browse Edit Set (Page 1 of 2)",
+            caption = "Showing 1 - 10 of 12 records",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption(FieldNames.ccr, "CCR"),
@@ -476,8 +482,8 @@ class EditSetControllerSpec extends BaseSpec {
         assertPageAsExpected(
           asDocument(page),
           ExpectedEditSetPage(
-            title = "Edit set",
-            caption = "Edit set: COAL 80 Sample",
+            title = "Browse Edit Set (Page 1 of 2)",
+            caption = "Showing 1 - 10 of 12 records",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption(FieldNames.ccr, "CCR"),
@@ -576,8 +582,8 @@ class EditSetControllerSpec extends BaseSpec {
         assertPageAsExpected(
           asDocument(page),
           ExpectedEditSetPage(
-            title = "Edit set",
-            caption = "Edit set: COAL 80 Sample",
+            title = "Browse Edit Set (Page 1 of 2)",
+            caption = "Showing 1 - 10 of 12 records",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption(FieldNames.ccr, "CCR"),
@@ -676,8 +682,8 @@ class EditSetControllerSpec extends BaseSpec {
         assertPageAsExpected(
           asDocument(page),
           ExpectedEditSetPage(
-            title = "Edit set",
-            caption = "Edit set: COAL 80 Sample",
+            title = "Browse Edit Set (Page 1 of 2)",
+            caption = "Showing 1 - 10 of 12 records",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption(FieldNames.ccr, "CCR"),
@@ -776,8 +782,8 @@ class EditSetControllerSpec extends BaseSpec {
         assertPageAsExpected(
           asDocument(page),
           ExpectedEditSetPage(
-            title = "Edit set",
-            caption = "Edit set: COAL 80 Sample",
+            title = "Browse Edit Set (Page 1 of 2)",
+            caption = "Showing 1 - 10 of 12 records",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption(FieldNames.ccr, "CCR", selected = true),
@@ -877,8 +883,8 @@ class EditSetControllerSpec extends BaseSpec {
         assertPageAsExpected(
           asDocument(page),
           ExpectedEditSetPage(
-            title = "Edit set",
-            caption = "Edit set: COAL 80 Sample",
+            title = "Browse Edit Set (Page 2 of 2)",
+            caption = "Showing 11 - 12 of 12 records",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption(FieldNames.ccr, "CCR", selected = true),
@@ -3568,7 +3574,7 @@ object EditSetControllerSpec {
 
     lazy val summaryRowsForPage: Map[Int, Seq[ExpectedEditSetSummaryRow]] =
       expectedSummaryRows
-        .sliding(10, 10)
+        .sliding(EditSetPagination.entriesPerPage, EditSetPagination.entriesPerPage)
         .zipWithIndex
         .map { case (rowsForPage, i) =>
           i + 1 -> rowsForPage

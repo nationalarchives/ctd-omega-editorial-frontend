@@ -76,6 +76,8 @@
 
 @template(Some(user), title) {
 
+  <h1 class="govuk-heading-l">@heading</h1>
+
     @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetController.viewAfterReordering("1")) {
             @CSRF.formField
 
@@ -111,7 +113,14 @@
               )
           )
       ),
-      caption = Some(heading) ,
+      caption = Some(
+        messages(
+          "edit-set.table-caption",
+          page.numberOfFirstEntry.toString,
+          page.numberOfLastEntry.toString,
+          page.totalNumberOfEntries.toString
+        )
+      ),
       captionClasses = "govuk-table__caption--m",
       firstCellIsHeader = true
   ))

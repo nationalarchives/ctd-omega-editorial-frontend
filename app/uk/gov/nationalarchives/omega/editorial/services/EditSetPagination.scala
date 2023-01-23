@@ -26,15 +26,23 @@ import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.Edi
 import uk.gov.nationalarchives.omega.editorial.controllers.routes
 import uk.gov.nationalarchives.omega.editorial.models.EditSetEntry
 
-class EditSetPagination(id: String, ordering: EditSetReorder, itemsPerPage: Int = 10) {
+class EditSetPagination(
+  id: String,
+  ordering: EditSetReorder,
+  itemsPerPage: Int = EditSetPagination.entriesPerPage
+) {
   import EditSetPagination._
 
-  def makeEditSetPage(editSets: Seq[EditSetEntry], pageNumber: Int = 1): EditSetPage =
+  def makeEditSetPage(editSets: Seq[EditSetEntry], pageNumber: Int = 1): EditSetPage = {
+    val totalPages = calculateNumberOfPages(editSets.size)
     EditSetPage(
       entries = getEditSetsForPage(editSets, pageNumber),
-      pagination = makePaginationItems(calculateNumberOfPages(editSets.size), pageNumber),
-      pageNumber
+      pagination = makePaginationItems(totalPages, pageNumber),
+      pageNumber = pageNumber,
+      totalPages = totalPages,
+      totalNumberOfEntries = editSets.size
     )
+  }
 
   def getEditSetsForPage(editSets: Seq[EditSetEntry], pageNumber: Int): Seq[EditSetEntry] = {
     val index = (pageNumber - 1) * itemsPerPage
@@ -78,7 +86,7 @@ class EditSetPagination(id: String, ordering: EditSetReorder, itemsPerPage: Int 
   }
 
   private def calculateNumberOfPages(numberOfRows: Int): Int =
-    math.ceil(numberOfRows.toDouble / 10.0).toInt
+    math.ceil(numberOfRows.toDouble / entriesPerPage.toDouble).toInt
 
   private def editSetPaginationLink(page: Int): Option[PaginationLink] =
     Some(PaginationLink(href = formatViewUrl(page)))
@@ -96,6 +104,19 @@ class EditSetPagination(id: String, ordering: EditSetReorder, itemsPerPage: Int 
 
 object EditSetPagination {
 
-  case class EditSetPage(entries: Seq[EditSetEntry], pagination: Pagination, pageNumber: Int)
+  val entriesPerPage: Int = 10
+
+  case class EditSetPage(
+    entries: Seq[EditSetEntry],
+    pagination: Pagination,
+    pageNumber: Int,
+    totalPages: Int,
+    totalNumberOfEntries: Int
+  ) {
+
+    lazy val numberOfFirstEntry = (entriesPerPage * (pageNumber - 1)) + 1
+    lazy val numberOfLastEntry = (entriesPerPage * (pageNumber - 1)) + entries.size
+
+  }
 
 }

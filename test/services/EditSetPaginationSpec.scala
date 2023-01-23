@@ -39,6 +39,7 @@ class EditSetPaginationSpec extends BaseSpec {
       page.pagination.items.size mustBe 1
       page.pagination.next mustBe None
       page.pagination.previous mustBe None
+      page mustNot haveBothEllipsisItems
     }
 
     "calculate the number of pagination items when there are 11 items" in {
@@ -50,6 +51,7 @@ class EditSetPaginationSpec extends BaseSpec {
 
       page must havePaginationNextLink
       page mustNot havePaginationPreviousLink
+      page mustNot haveBothEllipsisItems
     }
 
     "don't have a next link when on the last page" in {
@@ -61,7 +63,46 @@ class EditSetPaginationSpec extends BaseSpec {
 
       page mustNot havePaginationNextLink
       page must havePaginationPreviousLink
+      page mustNot haveBothEllipsisItems
+    }
+
+    "only show 5 items when there are 100 entries" in {
+      val entries = Seq.fill(100)(sampleEntry)
+      val page = new EditSetPagination("1", sampleOrdering).makeEditSetPage(entries, pageNumber = 5)
+
+      page.entries.size mustEqual 10
+      page.pagination.items.get.size mustBe 7
+
+      page must havePaginationNextLink
+      page must havePaginationPreviousLink
       page must haveBothEllipsisItems
+    }
+
+    "get the number for the first and last displayed entry on the first page" in {
+      val entries = Seq.fill(20)(sampleEntry)
+      val page = new EditSetPagination("1", sampleOrdering).makeEditSetPage(entries, pageNumber = 1)
+
+      page.numberOfFirstEntry mustBe 1
+      page.numberOfLastEntry mustBe 10
+      page.totalNumberOfEntries mustBe 20
+    }
+
+    "get the number for the first and last displayed entry on the last page" in {
+      val entries = Seq.fill(12)(sampleEntry)
+      val page = new EditSetPagination("1", sampleOrdering).makeEditSetPage(entries, pageNumber = 2)
+
+      page.numberOfFirstEntry mustBe 11
+      page.numberOfLastEntry mustBe 12
+      page.totalNumberOfEntries mustBe 12
+    }
+
+    "get the number for the first and last displayed entry on a page in the middle" in {
+      val entries = Seq.fill(22)(sampleEntry)
+      val page = new EditSetPagination("1", sampleOrdering).makeEditSetPage(entries, pageNumber = 2)
+
+      page.numberOfFirstEntry mustBe 11
+      page.numberOfLastEntry mustBe 20
+      page.totalNumberOfEntries mustBe 22
     }
 
   }
