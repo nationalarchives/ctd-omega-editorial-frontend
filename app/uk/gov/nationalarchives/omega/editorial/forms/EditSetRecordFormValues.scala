@@ -33,11 +33,12 @@ case class EditSetRecordFormValues(
   endDateDay: String,
   endDateMonth: String,
   endDateYear: String,
-  legalStatus: String,
-  placeOfDeposit: String,
+  legalStatusID: String,
+  placeOfDepositID: String,
   note: String,
   background: String,
-  custodialHistory: String
+  custodialHistory: String,
+  creatorIDs: Seq[String] = Seq.empty
 )
 
 object EditSetRecordFormValues {
@@ -56,11 +57,12 @@ object EditSetRecordFormValues {
       endDateDay = formValues.endDateDay,
       endDateMonth = formValues.endDateMonth,
       endDateYear = formValues.endDateYear,
-      legalStatus = formValues.legalStatus,
-      placeOfDeposit = formValues.placeOfDeposit,
+      legalStatusID = formValues.legalStatusID,
+      placeOfDepositID = formValues.placeOfDepositID,
       note = formValues.note,
       background = formValues.background,
-      custodialHistory = formValues.custodialHistory
+      custodialHistory = formValues.custodialHistory,
+      creatorIDs = formValues.creatorIDs
     )
 
   def populateForm(editSetRecord: EditSetRecord): EditSetRecordFormValues =
@@ -74,11 +76,12 @@ object EditSetRecordFormValues {
       endDateDay = editSetRecord.endDateDay,
       endDateMonth = editSetRecord.endDateMonth,
       endDateYear = editSetRecord.endDateYear,
-      legalStatus = editSetRecord.legalStatus,
-      placeOfDeposit = editSetRecord.placeOfDeposit,
+      legalStatusID = editSetRecord.legalStatusID,
+      placeOfDepositID = editSetRecord.placeOfDepositID,
       note = editSetRecord.note,
       background = editSetRecord.background,
-      custodialHistory = editSetRecord.custodialHistory
+      custodialHistory = editSetRecord.custodialHistory,
+      creatorIDs = editSetRecord.creatorIDs
     )
 
 }

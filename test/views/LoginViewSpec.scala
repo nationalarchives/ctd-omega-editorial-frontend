@@ -88,8 +88,8 @@ class LoginViewSpec extends BaseSpec {
 
       val document = asDocument(loginHtml)
       document must haveSummaryErrorMessages(
-        ExpectedSummaryErrorMessage("Enter a username", "#username"),
-        ExpectedSummaryErrorMessage("Enter a password", "#password")
+        ExpectedSummaryErrorMessage("Enter a username", "username"),
+        ExpectedSummaryErrorMessage("Enter a password", "password")
       )
       document must haveErrorMessageForUsername("Enter a username")
       document must haveErrorMessageForPassword("Enter a password")
@@ -111,7 +111,7 @@ class LoginViewSpec extends BaseSpec {
       val document = asDocument(loginHtml)
       document must haveSummaryErrorTitle(errorSummaryTitle)
       document must haveSummaryErrorMessages(
-        ExpectedSummaryErrorMessage("Username and/or password is incorrect.", "#username")
+        ExpectedSummaryErrorMessage("Username and/or password is incorrect.", "username")
       )
     }
 
@@ -130,7 +130,7 @@ class LoginViewSpec extends BaseSpec {
 
       val document = asDocument(loginHtml)
       document must haveSummaryErrorTitle(errorSummaryTitle)
-      document must haveSummaryErrorMessages(ExpectedSummaryErrorMessage("Enter a username", "#username"))
+      document must haveSummaryErrorMessages(ExpectedSummaryErrorMessage("Enter a username", "username"))
       document must haveErrorMessageForUsername("Enter a username")
     }
 
@@ -149,7 +149,7 @@ class LoginViewSpec extends BaseSpec {
 
       val document = asDocument(loginHtml)
       document must haveSummaryErrorTitle(errorSummaryTitle)
-      document must haveSummaryErrorMessages(ExpectedSummaryErrorMessage("Enter a password", "#password"))
+      document must haveSummaryErrorMessages(ExpectedSummaryErrorMessage("Enter a password", "password"))
       document must haveErrorMessageForPassword("Enter a password")
     }
   }

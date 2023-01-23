@@ -1,2 +1,2 @@
-alias fmt=;scalafmt;Test / scalafmt;scalafmtSbt
-alias fmtCheck=;scalafmtCheck;Test / scalafmtCheck;scalafmtSbtCheck
+alias fmt=;scalafmtAll;scalafmtSbt
+alias fmtCheck=;scalafmtCheckAll;scalafmtSbtCheck

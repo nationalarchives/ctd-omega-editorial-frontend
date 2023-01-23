@@ -24,3 +24,5 @@ jobs:
         uses: actions/checkout@v2
       - name: Run tests
         run: sbt -v +test
+      - name: Run integration tests
+        run: sbt -v IntegrationTest/test
