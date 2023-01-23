@@ -190,6 +190,7 @@ class EditSetController @Inject() (
       generateEditSetView(id, user, ordering)
     }
   }
+
   /** Create an Action for the edit set record edit page.
     *
     * The configuration in the `routes` file means that this method will be called when the application receives a `GET`
@@ -301,7 +302,6 @@ class EditSetController @Inject() (
     )
     Ok(editSet(user, title, heading, editSetPage, reorderForm.fill(editSetReorder)))
   }
-
 
   private def prepareForDisplay(originalEditSetRecord: EditSetRecord): EditSetRecord =
     Seq[RecordTransformer](prepareCreatorIDs, preparePlaceOfDeposit).foldLeft(originalEditSetRecord)(
