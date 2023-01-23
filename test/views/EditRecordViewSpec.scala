@@ -360,7 +360,7 @@ class EditRecordViewSpec extends BaseSpec {
       document must haveSummaryErrorMessages(
         ExpectedSummaryErrorMessage(
           "Former reference (PRO) too long, maximum length 255 characters",
-          s"#${FieldNames.formerReferencePro}"
+          FieldNames.formerReferencePro
         )
       )
       document must haveErrorMessageForFormerReferencePro(
