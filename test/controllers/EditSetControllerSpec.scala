@@ -31,7 +31,6 @@ import support.CustomMatchers._
 import support.ExpectedValues._
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
-import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination
 import uk.gov.nationalarchives.omega.editorial.editSetRecords.{ editSetRecordMap, restoreOriginalRecords }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, RelatedMaterial, SeparatedMaterial }

@@ -25,10 +25,8 @@ import controllers.EditSetControllerSpec._
 import org.jsoup.nodes.{ Document, Element }
 import org.scalatest.matchers.{ MatchResult, Matcher }
 import support.ExpectedValues.{ ExpectedSelectOption, ExpectedSummaryErrorMessage }
-import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination._
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError
-import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination.EditSetPage
 
 import scala.jdk.CollectionConverters._
 

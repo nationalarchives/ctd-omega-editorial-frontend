@@ -27,7 +27,6 @@ import play.api.i18n.{ I18nSupport, Lang }
 import play.api.Logger
 import play.api.mvc._
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination._
 import uk.gov.nationalarchives.omega.editorial._
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
 import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues

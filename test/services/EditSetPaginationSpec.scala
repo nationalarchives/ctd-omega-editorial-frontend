@@ -23,7 +23,6 @@ package services
 
 import org.scalatest.matchers.{ MatchResult, Matcher }
 import support.BaseSpec
-import support.CustomMatchers._
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.{ EditSetReorder, FieldNames, orderDirectionAscending }
 import uk.gov.nationalarchives.omega.editorial.models.EditSetEntry
 import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination
