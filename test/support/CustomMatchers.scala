@@ -303,44 +303,6 @@ object CustomMatchers {
       )
   }
 
-  def havePaginationNextLink: Matcher[EditSetPage] = (page: EditSetPage) => {
-    val expectedPageNumber = page.pageNumber + 1
-    val errorMessageIfExpected =
-      s"The page didn't have a pagination next link to page $expectedPageNumber"
-    val errorMessageIfNotExpected =
-      "The page did indeed have a pagination next link, which was not expected"
-    MatchResult(
-      page.pagination.next.exists(_.href.contains(s"offset=$expectedPageNumber")),
-      errorMessageIfExpected,
-      errorMessageIfNotExpected
-    )
-  }
-
-  def havePaginationPreviousLink: Matcher[EditSetPage] = (page: EditSetPage) => {
-    val expectedPageNumber = page.pageNumber - 1
-    val errorMessageIfExpected =
-      s"The page didn't have a pagination previous link to page $expectedPageNumber"
-    val errorMessageIfNotExpected =
-      "The page did indeed have a pagination previous link, which was not expected"
-    MatchResult(
-      page.pagination.previous.exists(_.href.contains(s"offset=$expectedPageNumber")),
-      errorMessageIfExpected,
-      errorMessageIfNotExpected
-    )
-  }
-
-  def haveBothEllipsisItems: Matcher[EditSetPage] = (page: EditSetPage) => {
-    val errorMessageIfExpected =
-      s"The page didn't have both ellipsis items"
-    val errorMessageIfNotExpected =
-      "The page did have ellipsis items, which was not expected"
-    MatchResult(
-      page.pagination.items.exists(_.count(_.ellipsis == Some(true)) == 2),
-      errorMessageIfExpected,
-      errorMessageIfNotExpected
-    )
-  }
-
   def haveCorrectClassesOnAllLabels: Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       "no labels without the 'govuk-label--s' class",
@@ -376,6 +338,9 @@ object CustomMatchers {
     haveErrorMessageForField("place of deposit", s"#${FieldNames.placeOfDepositID}-error", expectedValue)
 
   def haveNoErrorMessageForPlaceOfDeposit: Matcher[Document] = haveErrorMessageForPlaceOfDeposit("")
+
+  def haveHeader(expectedValue: String): Matcher[Document] = (document: Document) =>
+    singleValueMatcher("a top level header", expectedValue, document.select("h1").text())
 
   def haveCaption(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher("a caption", expectedValue, document.select("caption").text())

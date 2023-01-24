@@ -22,13 +22,15 @@
 package uk.gov.nationalarchives.omega.editorial.services
 
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination._
-import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.EditSetReorder
+import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController
 import uk.gov.nationalarchives.omega.editorial.controllers.routes
 import uk.gov.nationalarchives.omega.editorial.models.EditSetEntry
 
 class EditSetPagination(
   id: String,
-  ordering: EditSetReorder,
+  ordering: EditSetController.EditSetReorder,
+  nextText: String,
+  previousText: String,
   itemsPerPage: Int = EditSetPagination.entriesPerPage
 ) {
   import EditSetPagination._
@@ -44,24 +46,24 @@ class EditSetPagination(
     )
   }
 
-  def getEditSetsForPage(editSets: Seq[EditSetEntry], pageNumber: Int): Seq[EditSetEntry] = {
+  private def getEditSetsForPage(editSets: Seq[EditSetEntry], pageNumber: Int): Seq[EditSetEntry] = {
     val index = (pageNumber - 1) * itemsPerPage
     editSets.slice(index, index + itemsPerPage)
   }
 
-  def makePaginationItems(numberOfPages: Int, currentPage: Int): Pagination = {
+  private def makePaginationItems(numberOfPages: Int, currentPage: Int): Pagination = {
     val (previous, next) = currentPage match {
       case 1 if numberOfPages == 1 =>
         (None, None)
 
       case 1 =>
-        (None, editSetPaginationLink(numberOfPages))
+        (None, nextLink(numberOfPages))
 
       case `numberOfPages` =>
-        (editSetPaginationLink(1), None)
+        (previousLink(1), None)
 
       case _ =>
-        (editSetPaginationLink(currentPage - 1), editSetPaginationLink(currentPage + 1))
+        (previousLink(currentPage - 1), nextLink(currentPage + 1))
     }
 
     val beforeItems = (1 until currentPage) match {
@@ -88,8 +90,21 @@ class EditSetPagination(
   private def calculateNumberOfPages(numberOfRows: Int): Int =
     math.ceil(numberOfRows.toDouble / entriesPerPage.toDouble).toInt
 
-  private def editSetPaginationLink(page: Int): Option[PaginationLink] =
-    Some(PaginationLink(href = formatViewUrl(page)))
+  private def nextLink(page: Int) =
+    Some(
+      PaginationLink(
+        href = formatViewUrl(page),
+        text = Some(nextText)
+      )
+    )
+
+  private def previousLink(page: Int) =
+    Some(
+      PaginationLink(
+        href = formatViewUrl(page),
+        text = Some(previousText)
+      )
+    )
 
   private def editSetPaginationItem(page: Int): PaginationItem =
     PaginationItem(href = formatViewUrl(page), number = Some(page.toString))
@@ -98,7 +113,10 @@ class EditSetPagination(
     PaginationItem(ellipsis = Some(true))
 
   private def formatViewUrl(page: Int): String =
-    s"${routes.EditSetController.view(id).url}?offset=$page&field=${ordering.field}&direction=${ordering.direction}"
+    s"${routes.EditSetController.view(id).url}" +
+      s"?${EditSetController.offsetKey}=$page" +
+      s"&${EditSetController.fieldKey}=${ordering.field}" +
+      s"&${EditSetController.orderDirectionKey}=${ordering.direction}"
 
 }
 

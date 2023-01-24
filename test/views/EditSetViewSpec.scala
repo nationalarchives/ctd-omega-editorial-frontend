@@ -65,6 +65,7 @@ class EditSetViewSpec extends BaseSpec {
 
       val document = asDocument(editSetHtml)
       document must haveTitle(title)
+      document must haveHeader("COAL 80 Sample")
       document must haveCaption("edit-set.table-caption")
       document must haveSummaryRows(3)
       document must haveSummaryRowContents(
