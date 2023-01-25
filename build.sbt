@@ -119,6 +119,8 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
       guice,
       "org.webjars.npm"         % "govuk-frontend"     % "4.3.1",
       "uk.gov.hmrc"            %% "play-frontend-hmrc" % "3.30.0-play-28",
+      "org.typelevel" %% "cats-effect" % "3.3.14",
+      "jms4s-request-response" %% "jms4s-request-response" % "0.1.0-SNAPSHOT",
       "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0"  % Test,
       "org.jsoup"               % "jsoup"              % "1.15.3" % Test
     ),

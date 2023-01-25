@@ -21,10 +21,12 @@
 
 package uk.gov.nationalarchives.omega.editorial.controllers
 
+import cats.effect.IO
+import cats.effect.unsafe.implicits.global
 import play.api.Logger
-import play.api.data.Forms.{ mapping, seq, text }
-import play.api.data.{ Form, FormError }
-import play.api.i18n.{ I18nSupport, Lang }
+import play.api.data.Forms.{mapping, seq, text}
+import play.api.data.{Form, FormError}
+import play.api.i18n.{I18nSupport, Lang}
 import play.api.mvc._
 import play.twirl.api.HtmlFormat
 import uk.gov.nationalarchives.omega.editorial._
@@ -33,13 +35,17 @@ import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
 import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues._
 import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateCalculator.getStartAndEndDates
-import uk.gov.nationalarchives.omega.editorial.services.{ CoveringDateError, ReferenceDataService }
+import uk.gov.nationalarchives.omega.editorial.services.{CoveringDateError, MessageService, ReferenceDataService}
 import uk.gov.nationalarchives.omega.editorial.support.DateParser
-import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
+import uk.gov.nationalarchives.omega.editorial.views.html.{editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave}
+import uk.gov.nationalarchives.omega.jms.JmsRRClient.ReplyMessageHandler
+import uk.gov.nationalarchives.omega.jms.RequestMessage
 
 import java.time.LocalDate
-import java.time.temporal.ChronoField.{ DAY_OF_MONTH, MONTH_OF_YEAR, YEAR }
+import java.time.temporal.ChronoField.{DAY_OF_MONTH, MONTH_OF_YEAR, YEAR}
 import javax.inject._
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 /** This controller creates an `Action` to handle HTTP requests to the application's home page.
   */
@@ -50,7 +56,8 @@ class EditSetController @Inject() (
   editSet: editSet,
   editSetRecordEdit: editSetRecordEdit,
   editSetRecordEditDiscard: editSetRecordEditDiscard,
-  editSetRecordEditSave: editSetRecordEditSave
+  editSetRecordEditSave: editSetRecordEditSave,
+  messageService: MessageService
 ) extends MessagesAbstractController(messagesControllerComponents) with I18nSupport with Secured {
   import EditSetController._
 
@@ -201,6 +208,10 @@ class EditSetController @Inject() (
           case None => NotFound
         }
       }
+  }
+
+  def getEditSet(id: String) = Action.async { request =>
+    messageService.getEditSet(id).unsafeToFuture().flatMap(editSet => Future.successful(BadRequest(editSet)) )
   }
 
   def submit(id: String, oci: String): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
