@@ -27,7 +27,7 @@ import play.api.mvc._
 import play.api.test._
 import play.api.test.Helpers._
 import support.BaseSpec
-import support.CustomMatchers._
+import support.CommonMatchers._
 import support.ExpectedValues._
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }

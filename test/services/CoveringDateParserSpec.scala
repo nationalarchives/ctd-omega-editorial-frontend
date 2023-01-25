@@ -24,7 +24,7 @@ package services
 import java.time._
 import org.scalatest.prop.{ TableDrivenPropertyChecks, Tables }
 import support.BaseSpec
-import support.CustomMatchers.{ failToParseAs, parseSuccessfullyAs }
+import support.CommonMatchers.{ failToParseAs, parseSuccessfullyAs }
 import uk.gov.nationalarchives.omega.editorial.services.{ CoveringDateNode => Node, CoveringDateParser }
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError.ParseError
 

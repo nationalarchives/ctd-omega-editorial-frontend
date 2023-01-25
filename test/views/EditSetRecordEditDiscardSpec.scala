@@ -26,7 +26,7 @@ import play.api.i18n.Messages
 import play.api.test.Helpers
 import play.twirl.api.Html
 import support.BaseSpec
-import support.CustomMatchers._
+import support.CommonMatchers._
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEditDiscard
 
 class EditSetRecordEditDiscardSpec extends BaseSpec {

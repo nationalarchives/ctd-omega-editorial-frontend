@@ -19,39 +19,14 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.forms
+package uk.gov.nationalarchives.omega.editorial.support
 
-import play.api.data.Form
-import play.api.data.Forms.{ mapping, text }
 import play.api.i18n.MessagesApi
 import play.api.mvc.{ AnyContent, Request }
-import uk.gov.nationalarchives.omega.editorial.models.Credentials
-import uk.gov.nationalarchives.omega.editorial.support.MessageSupport
 
-object CredentialsFormProvider extends MessageSupport {
+trait MessageSupport {
 
-  import FieldNames._
-  import MessageKeys._
+  def resolveMessage(key: String)(implicit request: Request[AnyContent], messagesApi: MessagesApi): String =
+    messagesApi.preferred(request)(key)
 
-  def apply()(implicit request: Request[AnyContent], messagesApi: MessagesApi): Form[Credentials] = Form(
-    mapping(
-      username -> text.verifying(resolveMessage(usernameMissing), _.nonEmpty),
-      password -> text.verifying(resolveMessage(passwordMissing), _.nonEmpty)
-    )(Credentials.apply)(Credentials.unapply)
-      verifying (resolveMessage(authenticationError), isValidLogin _)
-  )
-
-  private def isValidLogin(credentials: Credentials): Boolean =
-    Credentials.getUser(credentials.username).exists(_.password == credentials.password)
-
-  object FieldNames {
-    val password = "password"
-    val username = "username"
-  }
-
-  object MessageKeys {
-    val authenticationError = "login.authentication.error"
-    val passwordMissing = "login.missing.password"
-    val usernameMissing = "login.missing.username"
-  }
 }

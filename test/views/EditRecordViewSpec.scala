@@ -27,7 +27,7 @@ import play.api.data.{ Form, FormError }
 import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import play.twirl.api.Html
 import support.BaseSpec
-import support.CustomMatchers._
+import support.CommonMatchers._
 import support.ExpectedValues.ExpectedSummaryErrorMessage
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.FieldNames
 import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
