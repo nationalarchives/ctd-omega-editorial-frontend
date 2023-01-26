@@ -26,7 +26,7 @@ import play.api.mvc.{ AnyContent, Request }
 
 trait MessageSupport {
 
-  def resolveMessage(key: String)(implicit request: Request[AnyContent], messagesApi: MessagesApi): String =
-    messagesApi.preferred(request)(key)
+  def resolveMessage(key: String, args: Any*)(implicit request: Request[AnyContent], messagesApi: MessagesApi): String =
+    messagesApi.preferred(request)(key, args: _*)
 
 }

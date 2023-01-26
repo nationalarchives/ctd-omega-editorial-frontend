@@ -19,28 +19,33 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package support
+package uk.gov.nationalarchives.omega.editorial.models
 
-object ExpectedValues {
+import play.api.libs.json.{ Json, Reads }
 
-  case class ExpectedSelectOption(value: String, label: String, selected: Boolean = false, disabled: Boolean = false)
+case class EditSetRecord(
+  ccr: String,
+  oci: String,
+  scopeAndContent: String,
+  coveringDates: String,
+  formerReferenceDepartment: String,
+  formerReferencePro: String,
+  startDateDay: String,
+  startDateMonth: String,
+  startDateYear: String,
+  endDateDay: String,
+  endDateMonth: String,
+  endDateYear: String,
+  legalStatusID: String,
+  placeOfDepositID: String,
+  note: String,
+  background: String,
+  custodialHistory: String,
+  relatedMaterial: Seq[RelatedMaterial] = Seq.empty,
+  separatedMaterial: Seq[SeparatedMaterial] = Seq.empty,
+  creatorIDs: Seq[String] = Seq.empty
+)
 
-  case class ExpectedActionButton(value: String, label: String)
-
-  case class ExpectedDate(day: String, month: String, year: String)
-
-  case class ExpectedSummaryErrorMessage(message: String, fieldName: String)
-
-  case class ExpectedRelatedMaterial(
-    linkHref: Option[String] = None,
-    linkText: Option[String] = None,
-    description: Option[String] = None
-  )
-
-  case class ExpectedSeparatedMaterial(
-    linkHref: Option[String] = None,
-    linkText: Option[String] = None,
-    description: Option[String] = None
-  )
-
+object EditSetRecord {
+  implicit val editSetRecordReads: Reads[EditSetRecord] = Json.using[Json.WithDefaultValues].reads[EditSetRecord]
 }

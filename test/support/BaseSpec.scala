@@ -33,20 +33,22 @@ import play.api.mvc.Result
 import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
 import play.api.test.Injecting
 import play.twirl.api.Content
+import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.models.{ Creator, PlaceOfDeposit, User }
-import uk.gov.nationalarchives.omega.editorial.services.ReferenceDataService
+import uk.gov.nationalarchives.omega.editorial.services.{ EditSetRecordService, EditSetService, ReferenceDataService }
 
 import scala.concurrent.Future
 
 class BaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with BeforeAndAfterEach {
 
   val user: User = User("dummy user")
-
   val testReferenceDataService: TestReferenceDataService = new TestReferenceDataService()
-
+  lazy val editSetRecordService: EditSetRecordService = new EditSetRecordService(testReferenceDataService)
+  val editSetService: EditSetService = new EditSetService()
   val allPlacesOfDeposits: Seq[PlaceOfDeposit] = testReferenceDataService.getPlacesOfDeposit
-
   val allCreators: Seq[Creator] = testReferenceDataService.getCreators
+  val validSessionToken: String = Session.generateToken("1234")
+  val invalidSessionToken: String = Session.generateToken("invalid-user")
 
   override def fakeApplication(): Application =
     GuiceApplicationBuilder()

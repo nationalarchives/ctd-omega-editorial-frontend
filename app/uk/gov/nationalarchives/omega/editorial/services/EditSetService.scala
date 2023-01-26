@@ -19,28 +19,22 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package support
+package uk.gov.nationalarchives.omega.editorial.services
 
-object ExpectedValues {
+import play.api.Logger
+import uk.gov.nationalarchives.omega.editorial.editSets
+import uk.gov.nationalarchives.omega.editorial.models.EditSet
 
-  case class ExpectedSelectOption(value: String, label: String, selected: Boolean = false, disabled: Boolean = false)
+import javax.inject.Singleton
 
-  case class ExpectedActionButton(value: String, label: String)
+@Singleton
+class EditSetService {
 
-  case class ExpectedDate(day: String, month: String, year: String)
+  private val logger: Logger = Logger(this.getClass)
 
-  case class ExpectedSummaryErrorMessage(message: String, fieldName: String)
-
-  case class ExpectedRelatedMaterial(
-    linkHref: Option[String] = None,
-    linkText: Option[String] = None,
-    description: Option[String] = None
-  )
-
-  case class ExpectedSeparatedMaterial(
-    linkHref: Option[String] = None,
-    linkText: Option[String] = None,
-    description: Option[String] = None
-  )
+  def getEditSet(id: String): EditSet = {
+    logger.info(s"The edit set id is $id ")
+    editSets.getEditSet()
+  }
 
 }

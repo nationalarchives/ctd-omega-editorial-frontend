@@ -29,7 +29,7 @@ import play.twirl.api.Html
 import support.BaseSpec
 import support.CommonMatchers._
 import support.ExpectedValues.ExpectedSummaryErrorMessage
-import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.FieldNames
+import uk.gov.nationalarchives.omega.editorial.controllers.EditSetRecordController.FieldNames
 import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, LegalStatus, RelatedMaterial }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEdit

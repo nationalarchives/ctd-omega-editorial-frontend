@@ -19,28 +19,24 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package support
+package uk.gov.nationalarchives.omega.editorial.services
 
-object ExpectedValues {
+import uk.gov.nationalarchives.omega.editorial.models.EditSetRecord
 
-  case class ExpectedSelectOption(value: String, label: String, selected: Boolean = false, disabled: Boolean = false)
+import javax.inject.{ Inject, Singleton }
 
-  case class ExpectedActionButton(value: String, label: String)
+@Singleton
+class EditSetRecordService @Inject() (referenceDataService: ReferenceDataService) {
 
-  case class ExpectedDate(day: String, month: String, year: String)
+  def preparePlaceOfDeposit(editSetRecord: EditSetRecord): EditSetRecord = {
+    val correctedValue =
+      if (referenceDataService.isPlaceOfDepositRecognised(editSetRecord.placeOfDepositID))
+        editSetRecord.placeOfDepositID
+      else ""
+    editSetRecord.copy(placeOfDepositID = correctedValue)
+  }
 
-  case class ExpectedSummaryErrorMessage(message: String, fieldName: String)
-
-  case class ExpectedRelatedMaterial(
-    linkHref: Option[String] = None,
-    linkText: Option[String] = None,
-    description: Option[String] = None
-  )
-
-  case class ExpectedSeparatedMaterial(
-    linkHref: Option[String] = None,
-    linkText: Option[String] = None,
-    description: Option[String] = None
-  )
+  def prepareCreatorIDs(editSetRecord: EditSetRecord): EditSetRecord =
+    editSetRecord.copy(creatorIDs = editSetRecord.creatorIDs.filter(referenceDataService.isCreatorRecognised))
 
 }

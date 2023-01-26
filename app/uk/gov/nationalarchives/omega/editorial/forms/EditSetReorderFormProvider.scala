@@ -19,28 +19,23 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package support
+package uk.gov.nationalarchives.omega.editorial.forms
 
-object ExpectedValues {
+import play.api.data.Form
+import play.api.data.Forms.{ mapping, text }
+import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.{ EditSetReorder, FieldNames, orderDirectionAscending, orderDirectionDescending }
 
-  case class ExpectedSelectOption(value: String, label: String, selected: Boolean = false, disabled: Boolean = false)
+object EditSetReorderFormProvider {
 
-  case class ExpectedActionButton(value: String, label: String)
-
-  case class ExpectedDate(day: String, month: String, year: String)
-
-  case class ExpectedSummaryErrorMessage(message: String, fieldName: String)
-
-  case class ExpectedRelatedMaterial(
-    linkHref: Option[String] = None,
-    linkText: Option[String] = None,
-    description: Option[String] = None
-  )
-
-  case class ExpectedSeparatedMaterial(
-    linkHref: Option[String] = None,
-    linkText: Option[String] = None,
-    description: Option[String] = None
+  def apply(): Form[EditSetReorder] = Form(
+    mapping(
+      FieldNames.orderField -> text
+        .verifying(proposed =>
+          Seq(FieldNames.ccr, FieldNames.scopeAndContent, FieldNames.coveringDates).contains(proposed)
+        ),
+      FieldNames.orderDirection -> text
+        .verifying(proposed => Seq(orderDirectionAscending, orderDirectionDescending).contains(proposed))
+    )(EditSetReorder.apply)(EditSetReorder.unapply)
   )
 
 }

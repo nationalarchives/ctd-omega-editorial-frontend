@@ -23,7 +23,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
 @import uk.gov.hmrc.hmrcfrontend.views.Implicits.RichErrorSummary
-@import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.FieldNames
+@import uk.gov.nationalarchives.omega.editorial.controllers.EditSetRecordController.FieldNames
 @import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
 @import uk.gov.nationalarchives.omega.editorial.models.{EditSetRecord, LegalStatus, PlaceOfDeposit, RelatedMaterial, SeparatedMaterial, User}
 @import uk.gov.nationalarchives.omega.editorial.models.Creator
@@ -446,7 +446,7 @@
     <h2 class="govuk-heading-m">@messages("edit-set.record.edit.id", record.oci)</h2>
     <p class="govuk-body">@messages("placeholder.series-national-coal-board")</p>
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
-    @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetController.submit("1", record.oci)) {
+    @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetRecordController.submit("1", record.oci)) {
         @actionButtonGroup
         @govukFieldset(Fieldset(
             html = fieldsetContent,

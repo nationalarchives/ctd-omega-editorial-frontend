@@ -19,28 +19,12 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package support
+package uk.gov.nationalarchives.omega.editorial.models
 
-object ExpectedValues {
+import play.api.libs.json.{ Json, Reads }
 
-  case class ExpectedSelectOption(value: String, label: String, selected: Boolean = false, disabled: Boolean = false)
+case class EditSetEntry(ccr: String, oci: String, scopeAndContent: String, coveringDates: String)
 
-  case class ExpectedActionButton(value: String, label: String)
-
-  case class ExpectedDate(day: String, month: String, year: String)
-
-  case class ExpectedSummaryErrorMessage(message: String, fieldName: String)
-
-  case class ExpectedRelatedMaterial(
-    linkHref: Option[String] = None,
-    linkText: Option[String] = None,
-    description: Option[String] = None
-  )
-
-  case class ExpectedSeparatedMaterial(
-    linkHref: Option[String] = None,
-    linkText: Option[String] = None,
-    description: Option[String] = None
-  )
-
+object EditSetEntry {
+  implicit val editSetEntryReads: Reads[EditSetEntry] = Json.reads[EditSetEntry]
 }

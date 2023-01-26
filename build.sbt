@@ -67,6 +67,18 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
         name = "Adam Retter",
         email = "adam@evolvedbinary.com",
         url = url("https://www.evolvedbinary.com")
+      ),
+      Developer(
+        id = "felixgb",
+        name = "Felix Bowman",
+        email = "fbowman.tna@gmail.com",
+        url = url("https://www.linkedin.com/in/felix-bowman-75b26913a/")
+      ),
+      Developer(
+        id = "tna-erasmos",
+        name = "Sean Rasmussen",
+        email = "tna@erasmos.com",
+        url = url("https://www.linkedin.com/in/erasmos//")
       )
     ),
     scalacOptions ++= Seq(
@@ -99,13 +111,14 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
       "-Ywarn-dead-code", // Warn when dead code is identified.
       "-Ywarn-extra-implicit", // Warn when more than one implicit parameter section is defined.
       "-Ywarn-numeric-widen", // Warn when numerics are widened.
-//      "-Ywarn-unused:implicits", // Warn if an implicit parameter is unused.
-//      "-Ywarn-unused:imports", // Warn if an import selector is not referenced.
+      "-Ywarn-unused:implicits", // Warn if an implicit parameter is unused.
+      "-Ywarn-unused:imports", // Warn if an import selector is not referenced.
       "-Ywarn-unused:locals", // Warn if a local definition is unused.
       "-Ywarn-unused:params", // Warn if a value parameter is unused.
       "-Ywarn-unused:patvars", // Warn if a variable bound in a pattern is unused.
       "-Ywarn-unused:privates", // Warn if a private member is unused.
-      "-Ywarn-value-discard", // Warn when non-Unit expression results are unused.  //
+      "-Ywarn-value-discard", // Warn when non-Unit expression results are unused.
+      "-Wconf:src=target/.*:s", // Exclude templates from any checks.
       "-release:8",
       "-encoding",
       "utf-8"
