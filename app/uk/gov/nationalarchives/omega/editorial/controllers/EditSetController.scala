@@ -33,7 +33,7 @@ import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
 import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues._
 import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateCalculator.getStartAndEndDates
-import uk.gov.nationalarchives.omega.editorial.services.{ CoveringDateError, EditSetPagination, ReferenceDataService }
+import uk.gov.nationalarchives.omega.editorial.services._
 import uk.gov.nationalarchives.omega.editorial.support.DateParser
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
@@ -153,19 +153,6 @@ class EditSetController @Inject() (
     )(EditSetRecordFormValues.apply)(EditSetRecordFormValues.unapply)
   )
 
-  private val reorderForm: Form[EditSetReorder] = Form(
-    mapping(
-      FieldNames.orderField -> text
-        .verifying(proposed =>
-          Seq(FieldNames.ccr, FieldNames.scopeAndContent, FieldNames.coveringDates).contains(proposed)
-        ),
-      FieldNames.orderDirection -> text
-        .verifying(proposed => Seq(orderDirectionAscending, orderDirectionDescending).contains(proposed))
-    )(EditSetReorder.apply)(EditSetReorder.unapply)
-  )
-
-  private val fallbackEditSetReorder = EditSetReorder(FieldNames.ccr, orderDirectionAscending)
-
   /** Create an Action for the edit set page.
     *
     * The configuration in the `routes` file means that this method will be called when the application receives a `GET`
@@ -176,20 +163,11 @@ class EditSetController @Inject() (
       val ordering = for {
         field     <- queryStringValue(request, fieldKey)
         direction <- queryStringValue(request, orderDirectionKey)
-      } yield EditSetReorder(field, direction)
+      } yield RowOrdering.fromNames(field, direction)
 
-      generateEditSetView(id, user, ordering.getOrElse(fallbackEditSetReorder))
-    }
-  }
+      pprint.pprintln(ordering)
 
-  def viewAfterReordering(id: String): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
-    withUser { user =>
-      generateEditSetView(
-        id = id,
-        user = user,
-        editSetReorder = formToEither(reorderForm.bindFromRequest())
-          .getOrElse(fallbackEditSetReorder)
-      )
+      generateEditSetView(id, user, ordering.getOrElse(RowOrdering.NoOrder))
     }
   }
 
@@ -292,18 +270,18 @@ class EditSetController @Inject() (
       (editSetRecord, transformer) => transformer(editSetRecord)
     )
 
-  private def generateEditSetView(id: String, user: User, editSetReorder: EditSetReorder)(implicit
+  private def generateEditSetView(id: String, user: User, ordering: RowOrdering)(implicit
     request: Request[AnyContent]
   ): Result = {
     logger.info(s"The edit set id is $id ")
     val currentEditSet = editSets.getEditSet()
 
-    val editSetEntries = currentEditSet.entries.sorted(getSorter(editSetReorder))
+    val editSetEntries = ordering.sort(currentEditSet.entries)
     val pageNumber = queryStringValue(request, offsetKey).map(_.toInt).getOrElse(1)
 
     val editSetPage = new EditSetPagination(
       id = id,
-      ordering = editSetReorder,
+      ordering = ordering,
       nextText = resolvedMessage("edit-set.pagination.next"),
       previousText = resolvedMessage("edit-set.pagination.previous")
     ).makeEditSetPage(editSetEntries, pageNumber)
@@ -315,7 +293,7 @@ class EditSetController @Inject() (
       editSetPage.numberOfLastEntry.toString,
       editSetPage.totalNumberOfEntries.toString
     )
-    Ok(editSet(user, title, heading, editSetPage, reorderForm.fill(editSetReorder)))
+    Ok(editSet(user, title, heading, editSetPage, ordering))
   }
 
   private def prepareCreatorIDs(editSetRecord: EditSetRecord): EditSetRecord =
@@ -325,16 +303,6 @@ class EditSetController @Inject() (
     val correctedValue =
       if (isPlaceOfDepositRecognised(editSetRecord.placeOfDepositID)) editSetRecord.placeOfDepositID else ""
     editSetRecord.copy(placeOfDepositID = correctedValue)
-  }
-
-  private def getSorter(editSetReorder: EditSetReorder): Ordering[EditSetEntry] = {
-    val fieldOrdering: Ordering[EditSetEntry] = editSetReorder.field match {
-      case FieldNames.ccr             => Ordering.by(_.ccr)
-      case FieldNames.scopeAndContent => Ordering.by(_.scopeAndContent)
-      case FieldNames.coveringDates   => Ordering.by(_.coveringDates)
-      case _                          => Ordering.by(_.ccr)
-    }
-    if (editSetReorder.direction == orderDirectionDescending) fieldOrdering.reverse else fieldOrdering
   }
 
   private def formToEither[A](form: Form[A]): Either[Form[A], A] =

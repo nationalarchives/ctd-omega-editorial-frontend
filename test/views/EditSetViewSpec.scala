@@ -22,26 +22,17 @@
 package views
 
 import org.jsoup.nodes.Document
-import play.api.data.Form
-import play.api.data.Forms.{ mapping, text }
 import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import play.twirl.api.Html
 import support.BaseSpec
 import support.CustomMatchers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.Pagination
-import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry }
 import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination.EditSetPage
+import uk.gov.nationalarchives.omega.editorial.services.RowOrdering
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
 
 class EditSetViewSpec extends BaseSpec {
-
-  private val reorderForm: Form[EditSetReorder] = Form(
-    mapping(
-      fieldKey          -> text,
-      orderDirectionKey -> text
-    )(EditSetReorder.apply)(EditSetReorder.unapply)
-  )
 
   "Edit set Html" should {
     "render the given title and heading" in {
@@ -58,7 +49,7 @@ class EditSetViewSpec extends BaseSpec {
         editSet.entries.size,
         1
       )
-      val editSetHtml: Html = editSetInstance(user, title, heading, editSetPage, reorderForm)(
+      val editSetHtml: Html = editSetInstance(user, title, heading, editSetPage, RowOrdering.NoOrder)(
         Helpers.stubMessages(),
         CSRFTokenHelper.addCSRFToken(FakeRequest())
       )
@@ -149,7 +140,7 @@ class EditSetViewSpec extends BaseSpec {
         title = "EditSetTitleTest",
         heading = editSet.name,
         page = editSetPage,
-        editSetReorderForm = reorderForm
+        ordering = RowOrdering.NoOrder
       )(
         Helpers.stubMessages(),
         CSRFTokenHelper.addCSRFToken(FakeRequest())

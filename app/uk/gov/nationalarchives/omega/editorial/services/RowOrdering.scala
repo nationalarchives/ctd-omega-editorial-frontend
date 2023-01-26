@@ -21,7 +21,7 @@
 
 package uk.gov.nationalarchives.omega.editorial.services
 
-sealed abstract class RowOrdering {
+sealed abstract class RowOrdering(val field: String, val direction: String) {
 
   def toOrdering[A](implicit orderFinder: KeyToOrdering[A]): Option[Ordering[A]] =
     this match {
@@ -37,13 +37,19 @@ sealed abstract class RowOrdering {
       case _                                => "none"
     }
 
+  def sort[A](items: Seq[A])(implicit orderFinder: KeyToOrdering[A]): Seq[A] =
+    toOrdering[A] match {
+      case Some(ordering) => items.sorted(ordering)
+      case None           => items
+    }
+
 }
 
 object RowOrdering {
 
-  case class Ascending(value: String) extends RowOrdering
-  case class Descending(value: String) extends RowOrdering
-  case object NoOrder extends RowOrdering
+  case class Ascending(value: String) extends RowOrdering(value, "ascending")
+  case class Descending(value: String) extends RowOrdering(value, "descending")
+  case object NoOrder extends RowOrdering("none", "none")
 
   def fromNames(field: String, direction: String): RowOrdering =
     direction.trim.toLowerCase match {

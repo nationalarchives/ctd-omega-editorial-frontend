@@ -25,13 +25,10 @@
 @import views.html.helper.CSRF
 @import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 @import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination.EditSetPage
+@import uk.gov.nationalarchives.omega.editorial.services.RowOrdering
 
 @this(
-  govukButton: GovukButton,
-  govukFieldset: GovukFieldset,
-  govukLabel: GovukLabel,
   govukPagination: GovukPagination,
-  govukSelect: GovukSelect,
   govukTable: GovukTable,
 )
 
@@ -40,7 +37,7 @@
   title: String,
   heading: String,
   page: EditSetPage,
-  editSetReorderForm: Form[EditSetReorder],
+  ordering: RowOrdering,
 )(implicit messages: Messages, request: Request[AnyContent])
 
 @recordLink(ccr: String, oci: String) = {
@@ -50,40 +47,9 @@
 }
 
 
-@orderingFormContents = {
-        @govukLabel(Label(content = Text(messages("edit-set.ordering.header"))))
-        @govukSelect(Select(
-            id = fieldKey,
-            name = fieldKey,
-            items = Seq(
-                SelectItem(text = messages("edit-set.ordering.field.ccr"), value = Some(FieldNames.ccr), selected = editSetReorderForm.data.get(fieldKey).contains(FieldNames.ccr)),
-                SelectItem(text = messages("edit-set.ordering.field.scope-and-content"), value = Some(FieldNames.scopeAndContent), selected = editSetReorderForm.data.get(fieldKey).contains(FieldNames.scopeAndContent)),
-                SelectItem(text = messages("edit-set.ordering.field.covering-dates"), value = Some(FieldNames.coveringDates), selected = editSetReorderForm.data.get(fieldKey).contains(FieldNames.coveringDates))
-            )))
-        @govukSelect(Select(
-            id = orderDirectionKey,
-            name = orderDirectionKey,
-            items = Seq(
-                SelectItem(text = messages("edit-set.ordering.direction.ascending"), value = Some(orderDirectionAscending), selected = editSetReorderForm.data.get("direction").contains(orderDirectionAscending)),
-                SelectItem(text = messages("edit-set.ordering.direction.descending"), value = Some(orderDirectionDescending),  selected = editSetReorderForm.data.get("direction").contains(orderDirectionDescending))
-            )))
-        @govukButton(Button(
-            element = Some("button"),
-            name = Some("action"),
-            value = Some("reorder"),
-            content = Text(messages("edit-set.ordering.button"))))
-}
-
 @template(Some(user), title) {
 
   <h1 class="govuk-heading-l">@heading</h1>
-
-    @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetController.viewAfterReordering("1")) {
-            @CSRF.formField
-
-        @govukFieldset(Fieldset( html = orderingFormContents))
-
-    }
 
   @govukTable(Table(
       rows = page.entries.map {

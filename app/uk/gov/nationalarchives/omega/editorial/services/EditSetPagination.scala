@@ -25,10 +25,11 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination._
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController
 import uk.gov.nationalarchives.omega.editorial.controllers.routes
 import uk.gov.nationalarchives.omega.editorial.models.EditSetEntry
+import uk.gov.nationalarchives.omega.editorial.services.RowOrdering
 
 class EditSetPagination(
   id: String,
-  ordering: EditSetController.EditSetReorder,
+  ordering: RowOrdering,
   nextText: String,
   previousText: String,
   itemsPerPage: Int = EditSetPagination.entriesPerPage

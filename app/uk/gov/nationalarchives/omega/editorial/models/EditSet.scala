@@ -60,10 +60,12 @@ object EditSetEntry {
   implicit val editSetEntryReads: Reads[EditSetEntry] = Json.reads[EditSetEntry]
 
   implicit val hasOrdering: KeyToOrdering[EditSetEntry] = KeyToOrdering.byFunction {
-    case "ccr"             => Ordering.by(_.ccr)
-    case "oci"             => Ordering.by(_.oci)
-    case "scopeAndContent" => Ordering.by(_.scopeAndContent)
-    case "coveringDates"   => Ordering.by(_.coveringDates)
+    case "ccr"               => Ordering.by(_.ccr)
+    case "oci"               => Ordering.by(_.oci)
+    case "scopeAndContent"   => Ordering.by(_.scopeAndContent)
+    case "scope-and-content" => Ordering.by(_.scopeAndContent)
+    case "coveringDates"     => Ordering.by(_.coveringDates)
+    case "covering-dates"    => Ordering.by(_.coveringDates)
   }
 
 }

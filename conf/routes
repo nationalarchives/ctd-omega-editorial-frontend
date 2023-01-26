@@ -9,7 +9,6 @@ GET         /login                                             uk.gov.nationalar
 POST        /login                                             uk.gov.nationalarchives.omega.editorial.controllers.LoginController.submit()
 GET         /logout                                            uk.gov.nationalarchives.omega.editorial.controllers.LogoutController.logout()
 GET         /edit-set/:id                                      uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.view(id: String)
-POST        /edit-set/:id                                      uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.viewAfterReordering(id: String)
 GET         /edit-set/:id/record/:recordId/edit                uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.viewEditRecordForm(id: String, recordId: String)
 POST        /edit-set/:id/record/:recordId/edit                uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.submit(id: String, recordId: String)
 GET         /edit-set/:id/record/:recordId/edit/save           uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.save(id: String, recordId: String)
