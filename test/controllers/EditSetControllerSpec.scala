@@ -667,6 +667,24 @@ class EditSetControllerSpec extends BaseSpec {
                 coveringDates = "1962"
               ),
               ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/10",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
+                coveringDates = "1973"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/11",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (K)",
+                coveringDates = "1975"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/12",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (L)",
+                coveringDates = "1977"
+              ),
+              ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/2",
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
@@ -701,24 +719,6 @@ class EditSetControllerSpec extends BaseSpec {
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (G)",
                 coveringDates = "1967"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/8",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (H)",
-                coveringDates = "1969"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/9",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (I)",
-                coveringDates = "1971"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/10",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
-                coveringDates = "1973"
               )
             ),
             numberOfPages = 2

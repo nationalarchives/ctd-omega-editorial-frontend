@@ -23,7 +23,7 @@ package services
 
 import org.scalatest.matchers.{ MatchResult, Matcher }
 import support.BaseSpec
-import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.{ FieldNames, orderDirectionAscending }
+import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.FieldNames
 import uk.gov.nationalarchives.omega.editorial.models.EditSetEntry
 import uk.gov.nationalarchives.omega.editorial.services.{ EditSetPagination, RowOrdering }
 
@@ -113,7 +113,7 @@ class EditSetPaginationSpec extends BaseSpec {
 object EditSetPaginationSpec {
   import EditSetPagination._
 
-  private lazy val sampleOrdering = RowOrdering.fromNames(FieldNames.ccr, orderDirectionAscending)
+  private lazy val sampleOrdering = RowOrdering.Ascending(FieldNames.ccr)
 
   private lazy val sampleEntry =
     EditSetEntry(

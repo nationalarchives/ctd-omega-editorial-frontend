@@ -51,7 +51,7 @@ class RowOrderingSpec extends BaseSpec with TableDrivenPropertyChecks with Optio
 
     forAll(validTestTable) { case ((field, direction), result) =>
       s"""sort by "$field", "$direction"""" in {
-        val ordering = RowOrdering.fromNames(field, direction).toOrdering[ExampleTableRow].value
+        val ordering = RowOrdering.fromNames(field, direction).flatMap(_.toOrdering[ExampleTableRow]).value
 
         exampleRows.sorted(ordering) mustBe result
       }
@@ -59,7 +59,7 @@ class RowOrderingSpec extends BaseSpec with TableDrivenPropertyChecks with Optio
 
     forAll(invalidTestTable) { case ((field, direction), result) =>
       s"""fail to sort by "$field", "$direction"""" in {
-        val failedOrdering = RowOrdering.fromNames(field, direction).toOrdering[ExampleTableRow]
+        val failedOrdering = RowOrdering.fromNames(field, direction).flatMap(_.toOrdering[ExampleTableRow])
 
         failedOrdering mustBe result
       }

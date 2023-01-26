@@ -49,7 +49,7 @@ class EditSetViewSpec extends BaseSpec {
         editSet.entries.size,
         1
       )
-      val editSetHtml: Html = editSetInstance(user, title, heading, editSetPage, RowOrdering.NoOrder)(
+      val editSetHtml: Html = editSetInstance(user, title, heading, editSetPage, RowOrdering.Ascending("ccr"))(
         Helpers.stubMessages(),
         CSRFTokenHelper.addCSRFToken(FakeRequest())
       )
@@ -140,7 +140,7 @@ class EditSetViewSpec extends BaseSpec {
         title = "EditSetTitleTest",
         heading = editSet.name,
         page = editSetPage,
-        ordering = RowOrdering.NoOrder
+        ordering = RowOrdering.Ascending("ccr")
       )(
         Helpers.stubMessages(),
         CSRFTokenHelper.addCSRFToken(FakeRequest())

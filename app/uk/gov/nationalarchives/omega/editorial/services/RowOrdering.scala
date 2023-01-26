@@ -27,7 +27,6 @@ sealed abstract class RowOrdering(val field: String, val direction: String) {
     this match {
       case RowOrdering.Ascending(value)  => orderFinder.orderingFor(value)
       case RowOrdering.Descending(value) => orderFinder.orderingFor(value).map(_.reverse)
-      case RowOrdering.NoOrder           => None
     }
 
   def headerOrderingName(header: String): String =
@@ -49,13 +48,12 @@ object RowOrdering {
 
   case class Ascending(value: String) extends RowOrdering(value, "ascending")
   case class Descending(value: String) extends RowOrdering(value, "descending")
-  case object NoOrder extends RowOrdering("none", "none")
 
-  def fromNames(field: String, direction: String): RowOrdering =
+  def fromNames(field: String, direction: String): Option[RowOrdering] =
     direction.trim.toLowerCase match {
-      case "ascending"  => Ascending(field)
-      case "descending" => Descending(field)
-      case _            => NoOrder
+      case "ascending"  => Some(Ascending(field))
+      case "descending" => Some(Descending(field))
+      case _            => None
     }
 
 }

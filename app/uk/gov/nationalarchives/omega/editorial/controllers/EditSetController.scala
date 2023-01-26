@@ -163,11 +163,10 @@ class EditSetController @Inject() (
       val ordering = for {
         field     <- queryStringValue(request, fieldKey)
         direction <- queryStringValue(request, orderDirectionKey)
-      } yield RowOrdering.fromNames(field, direction)
+        ordering  <- RowOrdering.fromNames(field, direction)
+      } yield ordering
 
-      pprint.pprintln(ordering)
-
-      generateEditSetView(id, user, ordering.getOrElse(RowOrdering.NoOrder))
+      generateEditSetView(id, user, ordering.getOrElse(RowOrdering.Ascending(FieldNames.ccr)))
     }
   }
 
