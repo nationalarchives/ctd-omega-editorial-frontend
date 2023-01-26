@@ -24,10 +24,24 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.helper.CSRF
 @import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
+@import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination.EditSetPage
 
-@this(govukTable: GovukTable, govukSelect: GovukSelect, govukButton: GovukButton, govukFieldset: GovukFieldset, govukLabel: GovukLabel)
+@this(
+  govukButton: GovukButton,
+  govukFieldset: GovukFieldset,
+  govukLabel: GovukLabel,
+  govukPagination: GovukPagination,
+  govukSelect: GovukSelect,
+  govukTable: GovukTable,
+)
 
-@(user: User, title: String, heading: String, editSetEntries:  Seq[EditSetEntry], editSetReorderForm: Form[EditSetReorder])(implicit messages: Messages, request: Request[AnyContent])
+@(
+  user: User,
+  title: String,
+  heading: String,
+  page: EditSetPage,
+  editSetReorderForm: Form[EditSetReorder],
+)(implicit messages: Messages, request: Request[AnyContent])
 
 @recordLink(ccr: String, oci: String) = {
     @defining("/edit-set/1/record/"+oci+"/edit") { hrefLink =>
@@ -62,6 +76,8 @@
 
 @template(Some(user), title) {
 
+  <h1 class="govuk-heading-l">@heading</h1>
+
     @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetController.viewAfterReordering("1")) {
             @CSRF.formField
 
@@ -70,7 +86,7 @@
     }
 
   @govukTable(Table(
-      rows = editSetEntries.map{
+      rows = page.entries.map {
         entry =>
             Seq(
                 TableRow (
@@ -97,8 +113,17 @@
               )
           )
       ),
-      caption = Some(heading) ,
+      caption = Some(
+        messages(
+          "edit-set.table-caption",
+          page.numberOfFirstEntry.toString,
+          page.numberOfLastEntry.toString,
+          page.totalNumberOfEntries.toString
+        )
+      ),
       captionClasses = "govuk-table__caption--m",
       firstCellIsHeader = true
   ))
+
+  @govukPagination(page.pagination)
 }
