@@ -24,8 +24,8 @@ package controllers
 import org.jsoup.nodes.Document
 import org.scalatest.compatible.Assertion
 import play.api.mvc._
-import play.api.test.Helpers._
 import play.api.test._
+import play.api.test.Helpers._
 import support.BaseSpec
 import support.CustomMatchers._
 import support.ExpectedValues._
@@ -57,7 +57,12 @@ class EditSetControllerSpec extends BaseSpec {
 
     "render the edit set page from a new instance of controller" in {
       val messages: Map[String, Map[String, String]] =
-        Map("en" -> Map("edit-set.heading" -> "Edit set: COAL 80 Sample"))
+        Map(
+          "en" -> Map(
+            "edit-set.heading"       -> "Edit set: COAL 80 Sample",
+            "edit-set.table-caption" -> "Showing {0} - {1} of {2} records"
+          )
+        )
       val mockMessagesApi = stubMessagesApi(messages)
       val editSetInstance = inject[editSet]
       val editSetRecordEditInstance = inject[editSetRecordEdit]
@@ -93,7 +98,8 @@ class EditSetControllerSpec extends BaseSpec {
       status(editSet) mustBe OK
       contentType(editSet) mustBe Some("text/html")
       val document = asDocument(editSet)
-      document must haveCaption("Edit set: COAL 80 Sample")
+      document must haveCaption("Showing 1 - 10 of 12 records")
+      document must haveHeader("Edit set: COAL 80 Sample")
     }
 
     "render the edit set page from the application" in {
@@ -110,7 +116,8 @@ class EditSetControllerSpec extends BaseSpec {
       status(editSet) mustBe OK
       contentType(editSet) mustBe Some("text/html")
       val document = asDocument(editSet)
-      document must haveCaption("Edit set: COAL 80 Sample")
+      document must haveCaption("Showing 1 - 10 of 12 records")
+      document must haveHeader("Edit set: COAL 80 Sample")
     }
 
     "render the edit set page from the router" in {
@@ -120,7 +127,8 @@ class EditSetControllerSpec extends BaseSpec {
       status(editSet) mustBe OK
       contentType(editSet) mustBe Some("text/html")
       val document = asDocument(editSet)
-      document must haveCaption("Edit set: COAL 80 Sample")
+      document must haveCaption("Showing 1 - 10 of 12 records")
+      document must haveHeader("Edit set: COAL 80 Sample")
     }
 
     "all ids in the document conform to w3c reccomendations" in {
@@ -164,11 +172,11 @@ class EditSetControllerSpec extends BaseSpec {
   "EditSetController POST /edit-set/{id}" should {
     "render the records in the expected order, when ordering by" when {
 
-      def requestPage(values: Map[String, String]): Future[Result] =
+      def requestPage(values: Map[String, String], pageNumber: Int = 1): Future[Result] =
         route(
           app,
           CSRFTokenHelper.addCSRFToken(
-            FakeRequest(POST, "/edit-set/1")
+            FakeRequest(POST, s"/edit-set/1?offset=$pageNumber")
               .withFormUrlEncodedBody(values.toSeq: _*)
               .withSession(SessionKeys.token -> validSessionToken)
           )
@@ -184,8 +192,9 @@ class EditSetControllerSpec extends BaseSpec {
         assertPageAsExpected(
           asDocument(page),
           ExpectedEditSetPage(
-            title = "Edit set",
-            caption = "Edit set: COAL 80 Sample",
+            title = "Browse Edit Set (Page 1 of 2)",
+            caption = "Showing 1 - 10 of 12 records",
+            header = "Edit set: COAL 80 Sample",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption(FieldNames.ccr, "CCR", selected = true),
@@ -256,20 +265,9 @@ class EditSetControllerSpec extends BaseSpec {
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (G)",
                 coveringDates = "1967"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/8",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (H)",
-                coveringDates = "1969"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/9",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (I)",
-                coveringDates = "1971"
               )
-            )
+            ),
+            numberOfPages = 2
           )
         )
 
@@ -284,8 +282,9 @@ class EditSetControllerSpec extends BaseSpec {
         assertPageAsExpected(
           asDocument(page),
           ExpectedEditSetPage(
-            title = "Edit set",
-            caption = "Edit set: COAL 80 Sample",
+            title = "Browse Edit Set (Page 1 of 2)",
+            caption = "Showing 1 - 10 of 12 records",
+            header = "Edit set: COAL 80 Sample",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption(FieldNames.ccr, "CCR", selected = true),
@@ -356,20 +355,9 @@ class EditSetControllerSpec extends BaseSpec {
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (K)",
                 coveringDates = "1975"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/10",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
-                coveringDates = "1973"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/1",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
-                coveringDates = "1962"
               )
-            )
+            ),
+            numberOfPages = 2
           )
         )
 
@@ -384,8 +372,9 @@ class EditSetControllerSpec extends BaseSpec {
         assertPageAsExpected(
           asDocument(page),
           ExpectedEditSetPage(
-            title = "Edit set",
-            caption = "Edit set: COAL 80 Sample",
+            title = "Browse Edit Set (Page 1 of 2)",
+            caption = "Showing 1 - 10 of 12 records",
+            header = "Edit set: COAL 80 Sample",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption(FieldNames.ccr, "CCR"),
@@ -456,20 +445,9 @@ class EditSetControllerSpec extends BaseSpec {
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
                 coveringDates = "1973"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/11",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (K)",
-                coveringDates = "1975"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/12",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (L)",
-                coveringDates = "1977"
               )
-            )
+            ),
+            numberOfPages = 2
           )
         )
 
@@ -484,8 +462,9 @@ class EditSetControllerSpec extends BaseSpec {
         assertPageAsExpected(
           asDocument(page),
           ExpectedEditSetPage(
-            title = "Edit set",
-            caption = "Edit set: COAL 80 Sample",
+            title = "Browse Edit Set (Page 1 of 2)",
+            caption = "Showing 1 - 10 of 12 records",
+            header = "Edit set: COAL 80 Sample",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption(FieldNames.ccr, "CCR"),
@@ -556,20 +535,9 @@ class EditSetControllerSpec extends BaseSpec {
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (C)",
                 coveringDates = "1964"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/1",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
-                coveringDates = "1962"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/2",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
-                coveringDates = "1966"
               )
-            )
+            ),
+            numberOfPages = 2
           )
         )
 
@@ -584,8 +552,9 @@ class EditSetControllerSpec extends BaseSpec {
         assertPageAsExpected(
           asDocument(page),
           ExpectedEditSetPage(
-            title = "Edit set",
-            caption = "Edit set: COAL 80 Sample",
+            title = "Browse Edit Set (Page 1 of 2)",
+            caption = "Showing 1 - 10 of 12 records",
+            header = "Edit set: COAL 80 Sample",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption(FieldNames.ccr, "CCR"),
@@ -656,20 +625,9 @@ class EditSetControllerSpec extends BaseSpec {
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
                 coveringDates = "1973"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/11",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (K)",
-                coveringDates = "1975"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/12",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (L)",
-                coveringDates = "1977"
               )
-            )
+            ),
+            numberOfPages = 2
           )
         )
 
@@ -684,8 +642,9 @@ class EditSetControllerSpec extends BaseSpec {
         assertPageAsExpected(
           asDocument(page),
           ExpectedEditSetPage(
-            title = "Edit set",
-            caption = "Edit set: COAL 80 Sample",
+            title = "Browse Edit Set (Page 1 of 2)",
+            caption = "Showing 1 - 10 of 12 records",
+            header = "Edit set: COAL 80 Sample",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption(FieldNames.ccr, "CCR"),
@@ -756,20 +715,9 @@ class EditSetControllerSpec extends BaseSpec {
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (E)",
                 coveringDates = "1963"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/1",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
-                coveringDates = "1962"
-              ),
-              ExpectedEditSetSummaryRow(
-                ccr = "COAL 80/80/4",
-                scopeAndContents =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (D)",
-                coveringDates = "1961"
               )
-            )
+            ),
+            numberOfPages = 2
           )
         )
 
@@ -784,8 +732,9 @@ class EditSetControllerSpec extends BaseSpec {
         assertPageAsExpected(
           asDocument(page),
           ExpectedEditSetPage(
-            title = "Edit set",
-            caption = "Edit set: COAL 80 Sample",
+            title = "Browse Edit Set (Page 1 of 2)",
+            caption = "Showing 1 - 10 of 12 records",
+            header = "Edit set: COAL 80 Sample",
             button = ExpectedActionButton("reorder", "Sort edit set"),
             expectedOptionsForField = Seq(
               ExpectedSelectOption(FieldNames.ccr, "CCR", selected = true),
@@ -856,7 +805,38 @@ class EditSetControllerSpec extends BaseSpec {
                 scopeAndContents =
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (G)",
                 coveringDates = "1967"
-              ),
+              )
+            ),
+            numberOfPages = 2
+          )
+        )
+
+      }
+
+      "Page 2 sorted by CCR, ascending" in {
+
+        val values = Map(fieldKey -> FieldNames.ccr, orderDirectionKey -> orderDirectionAscending)
+
+        val page = requestPage(values, pageNumber = 2)
+
+        status(page) mustBe OK
+        assertPageAsExpected(
+          asDocument(page),
+          ExpectedEditSetPage(
+            title = "Browse Edit Set (Page 2 of 2)",
+            caption = "Showing 11 - 12 of 12 records",
+            header = "Edit set: COAL 80 Sample",
+            button = ExpectedActionButton("reorder", "Sort edit set"),
+            expectedOptionsForField = Seq(
+              ExpectedSelectOption(FieldNames.ccr, "CCR", selected = true),
+              ExpectedSelectOption(FieldNames.scopeAndContent, "Scope and Content"),
+              ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates")
+            ),
+            expectedOptionsForDirection = Seq(
+              ExpectedSelectOption(orderDirectionAscending, "Ascending", selected = true),
+              ExpectedSelectOption(orderDirectionDescending, "Descending")
+            ),
+            expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/8",
                 scopeAndContents =
@@ -869,7 +849,8 @@ class EditSetControllerSpec extends BaseSpec {
                   "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (I)",
                 coveringDates = "1971"
               )
-            )
+            ),
+            numberOfPages = 2
           )
         )
 
@@ -3290,7 +3271,10 @@ class EditSetControllerSpec extends BaseSpec {
     }
   }
 
-  private def assertPageAsExpected(document: Document, expectedEditRecordPage: ExpectedEditSetPage): Unit = {
+  private def assertPageAsExpected(
+    document: Document,
+    expectedEditRecordPage: ExpectedEditSetPage
+  ): Assertion = {
     document must haveTitle(expectedEditRecordPage.title)
     document must haveCaption(expectedEditRecordPage.caption)
     document must haveActionButtons(expectedEditRecordPage.button.value, expectedEditRecordPage.button.label)
@@ -3307,7 +3291,7 @@ class EditSetControllerSpec extends BaseSpec {
         )
       )
     }
-
+    document must haveNumberOfPages(expectedEditRecordPage.numberOfPages)
   }
 
   private def valuesFromRecord(oci: String): Map[String, String] = {
@@ -3453,11 +3437,13 @@ object EditSetControllerSpec {
   case class ExpectedDate(day: String, month: String, year: String)
   case class ExpectedEditSetPage(
     title: String,
+    header: String,
     caption: String,
     button: ExpectedActionButton,
     expectedOptionsForField: Seq[ExpectedSelectOption],
     expectedOptionsForDirection: Seq[ExpectedSelectOption],
-    expectedSummaryRows: Seq[ExpectedEditSetSummaryRow]
+    expectedSummaryRows: Seq[ExpectedEditSetSummaryRow],
+    numberOfPages: Int
   )
 
   case class ExpectedEditSetSummaryRow(

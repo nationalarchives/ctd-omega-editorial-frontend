@@ -118,7 +118,7 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
     libraryDependencies ++= Seq(
       guice,
       "org.webjars.npm"         % "govuk-frontend"     % "4.3.1",
-      "uk.gov.hmrc"            %% "play-frontend-hmrc" % "3.30.0-play-28",
+      "uk.gov.hmrc"            %% "play-frontend-hmrc" % "6.2.0-play-28",
       "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0"  % Test,
       "org.jsoup"               % "jsoup"              % "1.15.3" % Test
     ),

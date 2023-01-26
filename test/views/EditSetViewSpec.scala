@@ -28,8 +28,10 @@ import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import play.twirl.api.Html
 import support.BaseSpec
 import support.CustomMatchers._
+import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.Pagination
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry }
+import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination.EditSetPage
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
 
 class EditSetViewSpec extends BaseSpec {
@@ -49,14 +51,22 @@ class EditSetViewSpec extends BaseSpec {
       val title = "EditSetTitleTest"
       val heading = editSet.name
 
-      val editSetHtml: Html = editSetInstance(user, title, heading, editSet.entries, reorderForm)(
+      val editSetPage = EditSetPage(
+        editSet.entries,
+        Pagination(),
+        1,
+        editSet.entries.size,
+        1
+      )
+      val editSetHtml: Html = editSetInstance(user, title, heading, editSetPage, reorderForm)(
         Helpers.stubMessages(),
         CSRFTokenHelper.addCSRFToken(FakeRequest())
       )
 
       val document = asDocument(editSetHtml)
       document must haveTitle(title)
-      document must haveCaption(heading)
+      document must haveHeader("COAL 80 Sample")
+      document must haveCaption("edit-set.table-caption")
       document must haveSummaryRows(3)
       document must haveSummaryRowContents(
         1,
@@ -82,7 +92,6 @@ class EditSetViewSpec extends BaseSpec {
           "1964"
         )
       )
-
     }
 
     "render the header" in {
@@ -127,12 +136,19 @@ class EditSetViewSpec extends BaseSpec {
   private def generateDocument(): Document = {
     val editSetInstance = inject[editSet]
     val editSet: EditSet = getEditSetTest("1")
+    val editSetPage = EditSetPage(
+      editSet.entries,
+      Pagination(),
+      1,
+      editSet.entries.size,
+      1
+    )
     asDocument(
       editSetInstance(
         user = user,
         title = "EditSetTitleTest",
         heading = editSet.name,
-        editSetEntries = editSet.entries,
+        page = editSetPage,
         editSetReorderForm = reorderForm
       )(
         Helpers.stubMessages(),

@@ -217,7 +217,7 @@ object CustomMatchers {
     singleValueMatcher(
       label = "an error summary title",
       expectedValue = expectedValue,
-      actualValue = document.select("#error-summary-title").text()
+      actualValue = document.select(".govuk-error-summary__title").text()
     )
 
   def haveNoSummaryErrorTitle: Matcher[Document] = haveSummaryErrorTitle("")
@@ -351,6 +351,9 @@ object CustomMatchers {
 
   def haveNoErrorMessageForPlaceOfDeposit: Matcher[Document] = haveErrorMessageForPlaceOfDeposit("")
 
+  def haveHeader(expectedValue: String): Matcher[Document] = (document: Document) =>
+    singleValueMatcher("a top level header", expectedValue, document.select("h1").text())
+
   def haveCaption(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher("a caption", expectedValue, document.select("caption").text())
 
@@ -379,6 +382,17 @@ object CustomMatchers {
         actualColumnContents == expectedColumnContents,
         errorMessageIfExpected,
         errorMessageIfNotExpected
+      )
+    }
+
+  def haveNumberOfPages(numberOfPages: Int): Matcher[Document] =
+    (document: Document) => {
+      val numberOfLinks = document.select("li > .govuk-pagination__link").asScala.toSeq.size
+      val expectedNumberOfPageLinks = math.min(numberOfPages, 5)
+      singleValueMatcher(
+        "the number of page links",
+        expectedValue = expectedNumberOfPageLinks,
+        actualValue = numberOfLinks
       )
     }
 

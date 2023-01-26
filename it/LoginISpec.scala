@@ -159,7 +159,7 @@ class LoginISpec extends BaseISpec {
           responseForEditSetPage,
           OK,
           ExpectedEditSetPage(
-            title = "Edit set",
+            title = "Browse Edit Set (Page 1 of 2)",
             logoutLinkVisible = true
           )
         )
