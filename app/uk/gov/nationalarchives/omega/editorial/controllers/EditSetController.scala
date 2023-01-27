@@ -22,9 +22,9 @@
 package uk.gov.nationalarchives.omega.editorial.controllers
 
 import play.api.Logger
-import play.api.data.Forms.{mapping, seq, text}
-import play.api.data.{Form, FormError}
-import play.api.i18n.{I18nSupport, Lang}
+import play.api.data.Forms.{ mapping, seq, text }
+import play.api.data.{ Form, FormError }
+import play.api.i18n.{ I18nSupport, Lang }
 import play.api.mvc._
 import play.twirl.api.HtmlFormat
 import uk.gov.nationalarchives.omega.editorial._
@@ -33,12 +33,12 @@ import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
 import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues._
 import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateCalculator.getStartAndEndDates
-import uk.gov.nationalarchives.omega.editorial.services.{CoveringDateError, EditSetPagination, ReferenceDataService}
-import uk.gov.nationalarchives.omega.editorial.support.{DateParser, FormSupport}
-import uk.gov.nationalarchives.omega.editorial.views.html.{editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave}
+import uk.gov.nationalarchives.omega.editorial.services.{ CoveringDateError, EditSetPagination, ReferenceDataService }
+import uk.gov.nationalarchives.omega.editorial.support.{ DateParser, FormSupport }
+import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
 import java.time.LocalDate
-import java.time.temporal.ChronoField.{DAY_OF_MONTH, MONTH_OF_YEAR, YEAR}
+import java.time.temporal.ChronoField.{ DAY_OF_MONTH, MONTH_OF_YEAR, YEAR }
 import javax.inject._
 
 /** This controller creates an `Action` to handle HTTP requests to the application's home page.
@@ -451,7 +451,7 @@ class EditSetController @Inject() (
       day   <- formValues.get(fieldNameForDay)
       month <- formValues.get(fieldNameForMonth)
       year  <- formValues.get(fieldNameForYear)
-      date  <- DateParser.parse(List(day, month, year).mkString("/"))
+      date  <- DateParser.parseDate(List(day, month, year).mkString("/"))
     } yield date
 
   private def calculateDates(user: User, record: EditSetRecord)(implicit
