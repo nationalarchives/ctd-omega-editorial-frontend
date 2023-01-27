@@ -21,8 +21,6 @@
 
 package uk.gov.nationalarchives.omega.editorial.models
 
-import uk.gov.nationalarchives.omega.editorial.services.KeyToOrdering
-
 import play.api.libs.json._
 
 case class EditSetEntry(ccr: String, oci: String, scopeAndContent: String, coveringDates: String)
@@ -58,15 +56,6 @@ object EditSetRecord {
 
 object EditSetEntry {
   implicit val editSetEntryReads: Reads[EditSetEntry] = Json.reads[EditSetEntry]
-
-  implicit val hasOrdering: KeyToOrdering[EditSetEntry] = KeyToOrdering.byFunction {
-    case "ccr"               => Ordering.by(_.ccr)
-    case "oci"               => Ordering.by(_.oci)
-    case "scopeAndContent"   => Ordering.by(_.scopeAndContent)
-    case "scope-and-content" => Ordering.by(_.scopeAndContent)
-    case "coveringDates"     => Ordering.by(_.coveringDates)
-    case "covering-dates"    => Ordering.by(_.coveringDates)
-  }
 
 }
 

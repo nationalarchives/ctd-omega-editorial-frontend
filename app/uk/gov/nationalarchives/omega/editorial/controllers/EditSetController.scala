@@ -33,6 +33,7 @@ import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
 import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues._
 import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateCalculator.getStartAndEndDates
+import uk.gov.nationalarchives.omega.editorial.services.RowOrdering
 import uk.gov.nationalarchives.omega.editorial.services._
 import uk.gov.nationalarchives.omega.editorial.support.DateParser
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
@@ -163,10 +164,9 @@ class EditSetController @Inject() (
       val ordering = for {
         field     <- queryStringValue(request, fieldKey)
         direction <- queryStringValue(request, orderDirectionKey)
-        ordering  <- RowOrdering.fromNames(field, direction)
-      } yield ordering
+      } yield RowOrdering(field, direction)
 
-      generateEditSetView(id, user, ordering.getOrElse(RowOrdering.Ascending(FieldNames.ccr)))
+      generateEditSetView(id, user, ordering.getOrElse(RowOrdering.defaultOrdering))
     }
   }
 
@@ -275,7 +275,7 @@ class EditSetController @Inject() (
     logger.info(s"The edit set id is $id ")
     val currentEditSet = editSets.getEditSet()
 
-    val editSetEntries = ordering.sort(currentEditSet.entries)
+    val editSetEntries = currentEditSet.entries.sorted(ordering.ordering)
     val pageNumber = queryStringValue(request, offsetKey).map(_.toInt).getOrElse(1)
 
     val editSetPage = new EditSetPagination(

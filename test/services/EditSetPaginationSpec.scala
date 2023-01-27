@@ -113,7 +113,7 @@ class EditSetPaginationSpec extends BaseSpec {
 object EditSetPaginationSpec {
   import EditSetPagination._
 
-  private lazy val sampleOrdering = RowOrdering.Ascending(FieldNames.ccr)
+  private lazy val sampleOrdering = RowOrdering(FieldNames.ccr, RowOrdering.orderDirectionAscending)
 
   private lazy val sampleEntry =
     EditSetEntry(

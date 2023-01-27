@@ -21,49 +21,38 @@
 
 package uk.gov.nationalarchives.omega.editorial.services
 
-sealed abstract class RowOrdering(val field: String, val direction: String) {
+import uk.gov.nationalarchives.omega.editorial.models.EditSetEntry
+import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.FieldNames
 
-  def toOrdering[A](implicit orderFinder: KeyToOrdering[A]): Option[Ordering[A]] =
-    this match {
-      case RowOrdering.Ascending(value)  => orderFinder.orderingFor(value)
-      case RowOrdering.Descending(value) => orderFinder.orderingFor(value).map(_.reverse)
+case class RowOrdering(field: String, direction: String) {
+  import RowOrdering._
+
+  lazy val ordering: Ordering[EditSetEntry] = {
+    val ordering: Ordering[EditSetEntry] = field match {
+      case FieldNames.ccr             => Ordering.by(_.ccr)
+      case FieldNames.oci             => Ordering.by(_.oci)
+      case FieldNames.scopeAndContent => Ordering.by(_.scopeAndContent)
+      case FieldNames.coveringDates   => Ordering.by(_.coveringDates)
+      case _                          => orderByCcr
     }
 
-  def headerOrderingName(header: String): String =
-    this match {
-      case RowOrdering.Ascending(`header`)  => "ascending"
-      case RowOrdering.Descending(`header`) => "descending"
-      case _                                => "none"
-    }
+    if (direction == orderDirectionDescending) ordering.reverse else ordering
+  }
 
-  def sort[A](items: Seq[A])(implicit orderFinder: KeyToOrdering[A]): Seq[A] =
-    toOrdering[A] match {
-      case Some(ordering) => items.sorted(ordering)
-      case None           => items
-    }
+  def ariaSortValue(headerValue: String): String =
+    if (field == headerValue) direction
+    else "none"
 
 }
 
 object RowOrdering {
 
-  case class Ascending(value: String) extends RowOrdering(value, "ascending")
-  case class Descending(value: String) extends RowOrdering(value, "descending")
+  lazy val orderByCcr: Ordering[EditSetEntry] = Ordering.by(_.ccr)
+  lazy val defaultOrdering = RowOrdering(FieldNames.ccr, orderDirectionAscending)
 
-  def fromNames(field: String, direction: String): Option[RowOrdering] =
-    direction.trim.toLowerCase match {
-      case "ascending"  => Some(Ascending(field))
-      case "descending" => Some(Descending(field))
-      case _            => None
-    }
-
-}
-
-trait KeyToOrdering[A] {
-  def orderingFor(key: String): Option[Ordering[A]]
-}
-
-object KeyToOrdering {
-  def byFunction[A](f: PartialFunction[String, Ordering[A]]): KeyToOrdering[A] =
-    (key: String) => f.lift(key)
+  val fieldKey = "field"
+  val directionKey = "direction"
+  val orderDirectionDescending = "descending"
+  val orderDirectionAscending = "ascending"
 
 }
