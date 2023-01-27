@@ -21,14 +21,18 @@
 
 package uk.gov.nationalarchives.omega.editorial.controllers
 
-import javax.inject._
+import play.api.data._
 import play.api.i18n._
 import play.api.mvc._
-import play.api.data._
 import uk.gov.nationalarchives.omega.editorial.forms.CredentialsFormProvider
+import uk.gov.nationalarchives.omega.editorial.forms.CredentialsFormProvider.FieldNames._
+import uk.gov.nationalarchives.omega.editorial.forms.CredentialsFormProvider.MessageKeys._
 import uk.gov.nationalarchives.omega.editorial.models.Credentials
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
+import uk.gov.nationalarchives.omega.editorial.support.{ FormSupport, MessageSupport }
 import uk.gov.nationalarchives.omega.editorial.views.html.login
+
+import javax.inject._
 
 /** This controller creates an `Action` to handle HTTP requests to the application's home page.
   */
@@ -36,9 +40,10 @@ import uk.gov.nationalarchives.omega.editorial.views.html.login
 class LoginController @Inject() (
   val messagesControllerComponents: MessagesControllerComponents,
   login: login
-) extends MessagesAbstractController(messagesControllerComponents) with I18nSupport {
+) extends MessagesAbstractController(messagesControllerComponents) with I18nSupport with MessageSupport
+    with FormSupport {
 
-  val credentialsForm: Form[Credentials] = CredentialsFormProvider()
+  private val fixedEditSetId: String = "1"
 
   /** Create an Action for the login page.
     *
@@ -46,25 +51,26 @@ class LoginController @Inject() (
     * request with a path of `/login`.
     */
   def view(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
-    val messages: Messages = messagesApi.preferred(request)
-    val title: String = messages("login.title")
-    val heading: String = messages("login.heading")
-    Ok(login(title, heading, credentialsForm))
+    Ok(login(CredentialsFormProvider()))
   }
 
   def submit(): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
-    val messages: Messages = messagesApi.preferred(request)
-    val title: String = messages("login.title")
-    val heading: String = messages("login.heading")
-
-    credentialsForm
-      .bindFromRequest()
-      .fold(
-        formWithErrors => BadRequest(login(title, heading, formWithErrors)),
-        credentials => {
-          val token = Session.generateToken(credentials.username)
-          Redirect(routes.EditSetController.view("1")).withSession(request.session + (SessionKeys.token -> token))
-        }
-      )
+    formToEither(CredentialsFormProvider().bindFromRequest()) match {
+      case Right(credentials) =>
+        Redirect(routes.EditSetController.view(fixedEditSetId))
+          .withSession(request.session + (SessionKeys.token -> Session.generateToken(credentials.username)))
+      case Left(formWithErrors) => BadRequest(login(correct(formWithErrors)))
+    }
   }
+
+  private def correct(form: Form[Credentials])(implicit request: Request[AnyContent]): Form[Credentials] = {
+    val hasAuthenticationError = form.hasGlobalErrors
+    if (hasAuthenticationError)
+      form.copy(
+        data = form.data.removedAll(Seq(username, password)),
+        errors = Seq(FormError(username, resolveMessage(authenticationError)))
+      )
+    else form.copy(data = form.data.removedAll(Seq(password)))
+  }
+
 }

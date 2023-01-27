@@ -2,7 +2,7 @@ import org.scalatest.Assertion
 import play.api.http.Status.{ BAD_REQUEST, OK }
 import play.api.libs.ws.{ WSCookie, WSResponse }
 import play.api.test.Helpers.{ await, defaultAwaitTimeout }
-import support.CustomMatchers._
+import support.CommonMatchers._
 import support.ExpectedValues.ExpectedSummaryErrorMessage
 
 class LoginISpec extends BaseISpec {
@@ -19,7 +19,9 @@ class LoginISpec extends BaseISpec {
           title = "Sign in",
           headerTitle = "Pan-Archival Catalogue",
           legend = "Sign in: Pan-Archival Catalogue",
-          logoutLinkVisible = false
+          logoutLinkVisible = false,
+          username = "",
+          password = ""
         )
       )
 
@@ -29,6 +31,16 @@ class LoginISpec extends BaseISpec {
 
     val correctUsername = "1234"
     val correctPassword = "1234"
+
+    val baseExpectedLoginPage =
+      ExpectedLoginPage(
+        title = "Sign in",
+        headerTitle = "Pan-Archival Catalogue",
+        legend = "Sign in: Pan-Archival Catalogue",
+        logoutLinkVisible = false,
+        username = "",
+        password = ""
+      )
 
     "fail" when {
       "only username is blank" in {
@@ -40,14 +52,31 @@ class LoginISpec extends BaseISpec {
         assertPage(
           response,
           BAD_REQUEST,
-          ExpectedLoginPage(
-            title = "Sign in",
-            headerTitle = "Pan-Archival Catalogue",
-            legend = "Sign in: Pan-Archival Catalogue",
-            logoutLinkVisible = false,
+          baseExpectedLoginPage.copy(
+            username = "",
+            password = "",
             summaryErrorTitle = Some("There is a problem"),
             summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("Enter a username", "username")),
             errorMessageForUsername = Some("Enter a username")
+          )
+        )
+
+      }
+      "only username is blank (padded spaces)" in {
+
+        val values = Map("username" -> "    ", "password" -> correctPassword)
+
+        val response = submitFromLoginPage(values)
+
+        assertPage(
+          response,
+          BAD_REQUEST,
+          baseExpectedLoginPage.copy(
+            username = "",
+            password = "",
+            summaryErrorTitle = Some("There is a problem"),
+            summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("Enter a valid username and password", "username")),
+            errorMessageForUsername = Some("Enter a valid username and password")
           )
         )
 
@@ -61,14 +90,31 @@ class LoginISpec extends BaseISpec {
         assertPage(
           response,
           BAD_REQUEST,
-          ExpectedLoginPage(
-            title = "Sign in",
-            headerTitle = "Pan-Archival Catalogue",
-            legend = "Sign in: Pan-Archival Catalogue",
-            logoutLinkVisible = false,
+          baseExpectedLoginPage.copy(
+            username = correctUsername,
+            password = "",
             summaryErrorTitle = Some("There is a problem"),
             summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("Enter a password", "password")),
             errorMessageForPassword = Some("Enter a password")
+          )
+        )
+
+      }
+      "only password is blank (padded spaces)" in {
+
+        val values = Map("username" -> correctUsername, "password" -> "     ")
+
+        val response = submitFromLoginPage(values)
+
+        assertPage(
+          response,
+          BAD_REQUEST,
+          baseExpectedLoginPage.copy(
+            username = "",
+            password = "",
+            summaryErrorTitle = Some("There is a problem"),
+            summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("Enter a valid username and password", "username")),
+            errorMessageForUsername = Some("Enter a valid username and password")
           )
         )
 
@@ -82,11 +128,9 @@ class LoginISpec extends BaseISpec {
         assertPage(
           response,
           BAD_REQUEST,
-          ExpectedLoginPage(
-            title = "Sign in",
-            headerTitle = "Pan-Archival Catalogue",
-            legend = "Sign in: Pan-Archival Catalogue",
-            logoutLinkVisible = false,
+          baseExpectedLoginPage.copy(
+            username = "",
+            password = "",
             summaryErrorTitle = Some("There is a problem"),
             summaryErrorMessages = Seq(
               ExpectedSummaryErrorMessage("Enter a username", "username"),
@@ -94,6 +138,25 @@ class LoginISpec extends BaseISpec {
             ),
             errorMessageForUsername = Some("Enter a username"),
             errorMessageForPassword = Some("Enter a password")
+          )
+        )
+
+      }
+      "both username and password are blank (padded spaces)" in {
+
+        val values = Map("username" -> "   ", "password" -> "   ")
+
+        val response = submitFromLoginPage(values)
+
+        assertPage(
+          response,
+          BAD_REQUEST,
+          baseExpectedLoginPage.copy(
+            username = "",
+            password = "",
+            summaryErrorTitle = Some("There is a problem"),
+            summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("Enter a valid username and password", "username")),
+            errorMessageForUsername = Some("Enter a valid username and password")
           )
         )
 
@@ -107,15 +170,50 @@ class LoginISpec extends BaseISpec {
         assertPage(
           response,
           BAD_REQUEST,
-          ExpectedLoginPage(
-            title = "Sign in",
-            headerTitle = "Pan-Archival Catalogue",
-            legend = "Sign in: Pan-Archival Catalogue",
-            logoutLinkVisible = false,
+          baseExpectedLoginPage.copy(
+            username = "",
+            password = "",
             summaryErrorTitle = Some("There is a problem"),
-            summaryErrorMessages = Seq(
-              ExpectedSummaryErrorMessage("Username and/or password is incorrect.", "")
-            )
+            summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("Enter a valid username and password", "username")),
+            errorMessageForUsername = Some("Enter a valid username and password")
+          )
+        )
+
+      }
+      "username is correct - except for a leading space" in {
+
+        val values = Map("username" -> s" $correctUsername", "password" -> correctPassword)
+
+        val response = submitFromLoginPage(values)
+
+        assertPage(
+          response,
+          BAD_REQUEST,
+          baseExpectedLoginPage.copy(
+            username = "",
+            password = "",
+            summaryErrorTitle = Some("There is a problem"),
+            summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("Enter a valid username and password", "username")),
+            errorMessageForUsername = Some("Enter a valid username and password")
+          )
+        )
+
+      }
+      "username is correct - except for a trailing space" in {
+
+        val values = Map("username" -> s"$correctUsername ", "password" -> correctPassword)
+
+        val response = submitFromLoginPage(values)
+
+        assertPage(
+          response,
+          BAD_REQUEST,
+          baseExpectedLoginPage.copy(
+            username = "",
+            password = "",
+            summaryErrorTitle = Some("There is a problem"),
+            summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("Enter a valid username and password", "username")),
+            errorMessageForUsername = Some("Enter a valid username and password")
           )
         )
 
@@ -129,15 +227,50 @@ class LoginISpec extends BaseISpec {
         assertPage(
           response,
           BAD_REQUEST,
-          ExpectedLoginPage(
-            title = "Sign in",
-            headerTitle = "Pan-Archival Catalogue",
-            legend = "Sign in: Pan-Archival Catalogue",
-            logoutLinkVisible = false,
+          baseExpectedLoginPage.copy(
+            username = "",
+            password = "",
             summaryErrorTitle = Some("There is a problem"),
-            summaryErrorMessages = Seq(
-              ExpectedSummaryErrorMessage("Username and/or password is incorrect.", "")
-            )
+            summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("Enter a valid username and password", "username")),
+            errorMessageForUsername = Some("Enter a valid username and password")
+          )
+        )
+
+      }
+      "password is correct - except for a leading space" in {
+
+        val values = Map("username" -> correctUsername, "password" -> s" $correctPassword")
+
+        val response = submitFromLoginPage(values)
+
+        assertPage(
+          response,
+          BAD_REQUEST,
+          baseExpectedLoginPage.copy(
+            username = "",
+            password = "",
+            summaryErrorTitle = Some("There is a problem"),
+            summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("Enter a valid username and password", "username")),
+            errorMessageForUsername = Some("Enter a valid username and password")
+          )
+        )
+
+      }
+      "password is correct - except for a trailing space" in {
+
+        val values = Map("username" -> correctUsername, "password" -> s"$correctPassword ")
+
+        val response = submitFromLoginPage(values)
+
+        assertPage(
+          response,
+          BAD_REQUEST,
+          baseExpectedLoginPage.copy(
+            username = "",
+            password = "",
+            summaryErrorTitle = Some("There is a problem"),
+            summaryErrorMessages = Seq(ExpectedSummaryErrorMessage("Enter a valid username and password", "username")),
+            errorMessageForUsername = Some("Enter a valid username and password")
           )
         )
 
@@ -207,6 +340,10 @@ class LoginISpec extends BaseISpec {
       document must not(haveVisibleLogoutLink)
     }
 
+    document must haveUsername(expectedPage.username)
+    document must haveAPasswordTypeField("password")
+    document must havePassword(expectedPage.password)
+
     expectedPage.summaryErrorTitle match {
       case Some(summaryErrorTitle) => document must haveSummaryErrorTitle(summaryErrorTitle)
       case None                    => document must haveNoSummaryErrorMessages
@@ -250,6 +387,8 @@ class LoginISpec extends BaseISpec {
     headerTitle: String,
     legend: String,
     logoutLinkVisible: Boolean,
+    username: String,
+    password: String,
     summaryErrorTitle: Option[String] = None,
     summaryErrorMessages: Seq[ExpectedSummaryErrorMessage] = Seq.empty,
     errorMessageForUsername: Option[String] = None,

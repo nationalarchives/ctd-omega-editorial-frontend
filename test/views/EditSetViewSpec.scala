@@ -27,8 +27,8 @@ import play.api.data.Forms.{ mapping, text }
 import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import play.twirl.api.Html
 import support.BaseSpec
-import support.CustomMatchers._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.Pagination
+import support.CommonMatchers._
+import uk.gov.hmrc.govukfrontend.views.Aliases.Pagination
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry }
 import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination.EditSetPage
