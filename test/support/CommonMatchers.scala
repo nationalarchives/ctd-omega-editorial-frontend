@@ -30,7 +30,7 @@ import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError
 
 import scala.jdk.CollectionConverters._
 
-object CustomMatchers {
+object CommonMatchers {
 
   def haveHeaderTitle(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
@@ -219,6 +219,34 @@ object CustomMatchers {
       expectedValue = expectedValue,
       actualValue = document.select(".govuk-error-summary__title").text()
     )
+
+  def haveUsername(expectedValue: String): Matcher[Document] = (document: Document) =>
+    singleValueMatcher(
+      label = "a username",
+      expectedValue = expectedValue,
+      actualValue = document.select("#username").attr("value")
+    )
+
+  def havePassword(expectedValue: String): Matcher[Document] = (document: Document) =>
+    singleValueMatcher(
+      label = "a password",
+      expectedValue = expectedValue,
+      actualValue = document.select("#password").attr("value")
+    )
+
+  def haveAPasswordTypeField(fieldName: String): Matcher[Document] = (document: Document) => {
+    val expectedInputType = "password"
+    val actualInputType = document.select(s"#$fieldName").attr("type")
+    val errorMessageIfExpected =
+      s"The page was expected have an input field '$fieldName' with a type of '$expectedInputType'. It was actually '$actualInputType'"
+    val errorMessageIfNotExpected =
+      s"The page actually had an input field '$fieldName' with a type of '$expectedInputType', which was not expected."
+    MatchResult(
+      expectedInputType == actualInputType,
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
 
   def haveNoSummaryErrorTitle: Matcher[Document] = haveSummaryErrorTitle("")
 

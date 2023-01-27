@@ -26,34 +26,27 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.implicits.RichErrorSummary
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+@import uk.gov.nationalarchives.omega.editorial.forms.CredentialsFormProvider.FieldNames
 
 
 @this(govukFieldset: GovukFieldset, govukButton: GovukButton, govukErrorSummary: GovukErrorSummary)
 
-@(title: String, heading: String, credentialsForm: Form[Credentials])(implicit messages: Messages, request: Request[AnyContent])
+@(credentialsForm: Form[Credentials])(implicit messages: Messages, request: Request[AnyContent])
+
 
 @fieldsetContent = {
-  @CSRF.formField
-  @credentialsForm.error("username") match {
-    case Some(_) => {
-      @inputText(credentialsForm("username"), Symbol("class") -> "govuk-input govuk-input--error", Symbol("autofocus") -> "autofocus")
-    }
-    case _ => {
-      @inputText(credentialsForm("username"), Symbol("class") -> "govuk-input", Symbol("autofocus") -> "autofocus")
-    }
-  }
-  @credentialsForm.error("password") match {
-    case Some(_) => {
-      @inputPassword(credentialsForm("password"), Symbol("class") -> "govuk-input govuk-input--error")
-    }
-    case _ => {
-      @inputPassword(credentialsForm("password"), Symbol("class") -> "govuk-input")
-    }
-  }
-  @govukButton(Button(element = Some("button"), content = Text(messages("login.button.text"))))
+    @CSRF.formField
+    @inputText(credentialsForm(FieldNames.username), Symbol("autofocus") -> "autofocus", Symbol("class") -> classesForInputText(FieldNames.username))
+    @inputPassword(credentialsForm(FieldNames.password), Symbol("class") -> classesForInputText(FieldNames.password))
+    @govukButton(Button(element = Some("button"), content = Text(messages("login.button.text"))))
 }
 
-@template(user = None, title) {
+@classesForInputText(fieldName: String) = @{
+    if(credentialsForm.error(fieldName).isDefined) {"govuk-input govuk-input--error"} else {"govuk-input"}
+}
+
+
+@template(user = None, messages("login.title")) {
 
   @if(credentialsForm.hasErrors) {
     @govukErrorSummary(ErrorSummary().withFormErrorsAsText(credentialsForm))
@@ -64,7 +57,7 @@
       <div class="govuk-grid-column-one-half">
         @govukFieldset(Fieldset(
           legend = Some(Legend(
-            content = Text(heading),
+            content = Text(messages("login.heading")),
             classes="govuk-fieldset__legend--m",
             isPageHeading = true
           )),
@@ -75,3 +68,5 @@
   }
 
 }
+
+

@@ -23,7 +23,7 @@ package services
 
 import org.scalatest.prop.{ TableDrivenPropertyChecks, Tables }
 import support.BaseSpec
-import support.CustomMatchers.{ failToParseAs, parseSuccessfullyAs }
+import support.CommonMatchers.{ failToParseAs, parseSuccessfullyAs }
 import uk.gov.nationalarchives.omega.editorial.models.DateRange
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateCalculator
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError._
