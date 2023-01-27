@@ -33,7 +33,7 @@ case class RowOrdering(field: String, direction: String) {
       case FieldNames.oci             => Ordering.by(_.oci)
       case FieldNames.scopeAndContent => Ordering.by(_.scopeAndContent)
       case FieldNames.coveringDates   => Ordering.by(_.coveringDates)
-      case _                          => orderByCcr
+      case _                          => Ordering.by(_.ccr)
     }
 
     if (direction == orderDirectionDescending) ordering.reverse else ordering
@@ -47,7 +47,6 @@ case class RowOrdering(field: String, direction: String) {
 
 object RowOrdering {
 
-  lazy val orderByCcr: Ordering[EditSetEntry] = Ordering.by(_.ccr)
   lazy val defaultOrdering = RowOrdering(FieldNames.ccr, orderDirectionAscending)
 
   val fieldKey = "field"
