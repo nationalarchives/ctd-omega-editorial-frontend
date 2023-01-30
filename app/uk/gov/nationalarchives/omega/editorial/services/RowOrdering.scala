@@ -44,7 +44,7 @@ case class RowOrdering(field: String, direction: String) {
     else orderDirectionNone
 
   def orderingKey(headerValue: String): String =
-    if (field == headerValue) orderDirectionDescending
+    if (field == headerValue && direction == orderDirectionAscending) orderDirectionDescending
     else orderDirectionAscending
 
 }

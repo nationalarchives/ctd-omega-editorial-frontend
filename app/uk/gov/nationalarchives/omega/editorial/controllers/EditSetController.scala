@@ -34,11 +34,8 @@ import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues._
 import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.services._
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateCalculator.getStartAndEndDates
-import uk.gov.nationalarchives.omega.editorial.services.RowOrdering
 import uk.gov.nationalarchives.omega.editorial.services.{ CoveringDateError, EditSetPagination, ReferenceDataService }
-import uk.gov.nationalarchives.omega.editorial.support.DateParser
 import uk.gov.nationalarchives.omega.editorial.support.{ DateParser, FormSupport }
-import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
 import java.time.LocalDate

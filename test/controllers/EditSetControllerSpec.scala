@@ -36,7 +36,10 @@ import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, RelatedMaterial, SeparatedMaterial }
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSet, editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
+import scala.jdk.CollectionConverters._
 import scala.concurrent.Future
+import java.net.URL
+import uk.gov.nationalarchives.omega.editorial.services.RowOrdering
 
 /** Add your spec here. You can mock out a whole application including requests, plugins etc.
   *
@@ -185,6 +188,11 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
+            tableHeaders = Seq(
+              ExpectedTableHeader("CCR", FieldNames.ccr, RowOrdering.orderDirectionDescending),
+              ExpectedTableHeader("Scope and content", FieldNames.scopeAndContent, RowOrdering.orderDirectionAscending),
+              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionAscending),
+            ),
             header = "Edit set: COAL 80 Sample",
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -264,6 +272,11 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
+            tableHeaders = Seq(
+              ExpectedTableHeader("CCR", FieldNames.ccr, RowOrdering.orderDirectionAscending),
+              ExpectedTableHeader("Scope and content", FieldNames.scopeAndContent, RowOrdering.orderDirectionAscending),
+              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionAscending),
+            ),
             header = "Edit set: COAL 80 Sample",
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -342,6 +355,11 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
+            tableHeaders = Seq(
+              ExpectedTableHeader("CCR", FieldNames.ccr, RowOrdering.orderDirectionAscending),
+              ExpectedTableHeader("Scope and content", FieldNames.scopeAndContent, RowOrdering.orderDirectionDescending),
+              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionAscending),
+            ),
             header = "Edit set: COAL 80 Sample",
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -421,6 +439,11 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
+            tableHeaders = Seq(
+              ExpectedTableHeader("CCR", FieldNames.ccr, RowOrdering.orderDirectionAscending),
+              ExpectedTableHeader("Scope and content", FieldNames.scopeAndContent, RowOrdering.orderDirectionAscending),
+              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionAscending),
+            ),
             header = "Edit set: COAL 80 Sample",
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -500,6 +523,11 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
+            tableHeaders = Seq(
+              ExpectedTableHeader("CCR", FieldNames.ccr, RowOrdering.orderDirectionAscending),
+              ExpectedTableHeader("Scope and content", FieldNames.scopeAndContent, RowOrdering.orderDirectionAscending),
+              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionDescending),
+            ),
             header = "Edit set: COAL 80 Sample",
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -579,6 +607,11 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
+            tableHeaders = Seq(
+              ExpectedTableHeader("CCR", FieldNames.ccr, RowOrdering.orderDirectionAscending),
+              ExpectedTableHeader("Scope and content", FieldNames.scopeAndContent, RowOrdering.orderDirectionAscending),
+              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionAscending),
+            ),
             header = "Edit set: COAL 80 Sample",
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -658,6 +691,11 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
+            tableHeaders = Seq(
+              ExpectedTableHeader("CCR", FieldNames.ccr, RowOrdering.orderDirectionAscending),
+              ExpectedTableHeader("Scope and content", FieldNames.scopeAndContent, RowOrdering.orderDirectionAscending),
+              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionAscending),
+            ),
             header = "Edit set: COAL 80 Sample",
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -739,6 +777,11 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Browse Edit Set (Page 2 of 2)",
             caption = "Showing 11 - 12 of 12 records",
+            tableHeaders = Seq(
+              ExpectedTableHeader("CCR", FieldNames.ccr, RowOrdering.orderDirectionDescending),
+              ExpectedTableHeader("Scope and content", FieldNames.scopeAndContent, RowOrdering.orderDirectionAscending),
+              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionAscending),
+            ),
             header = "Edit set: COAL 80 Sample",
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -3183,6 +3226,9 @@ class EditSetControllerSpec extends BaseSpec {
   ): Assertion = {
     document must haveTitle(expectedEditRecordPage.title)
     document must haveCaption(expectedEditRecordPage.caption)
+    expectedEditRecordPage.tableHeaders.foreach { header =>
+      document must haveTableHeaderFieldAndDirection(header.headerText, header.sortField -> header.sortOrder)
+    }
     document must haveSummaryRows(expectedEditRecordPage.expectedSummaryRows.size)
     expectedEditRecordPage.expectedSummaryRows.zipWithIndex.foreach { case (expectedEditSetSummaryRow, index) =>
       document must haveSummaryRowContents(
@@ -3342,9 +3388,12 @@ object EditSetControllerSpec {
     title: String,
     header: String,
     caption: String,
+    tableHeaders: Seq[ExpectedTableHeader],
     expectedSummaryRows: Seq[ExpectedEditSetSummaryRow],
     numberOfPages: Int
   )
+
+  case class ExpectedTableHeader(headerText: String, sortField: String, sortOrder: String)
 
   case class ExpectedEditSetSummaryRow(
     ccr: String,

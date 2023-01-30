@@ -27,6 +27,7 @@ import org.scalatest.matchers.{ MatchResult, Matcher }
 import support.ExpectedValues.{ ExpectedSelectOption, ExpectedSummaryErrorMessage }
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError
+import uk.gov.nationalarchives.omega.editorial.services.RowOrdering
 
 import scala.jdk.CollectionConverters._
 
@@ -540,6 +541,31 @@ object CommonMatchers {
     )
   }
 
+  def haveTableHeaderLink(headerText: String, queryStringKey: String, queryStringValue: String): Matcher[Document] = (document: Document) => {
+    val queryParameters = document.select("th > .govuk-link")
+      .asScala.toSeq
+      .find(_.text == headerText)
+      .map { elem =>
+        getQueryParameter(elem.attr("href"))
+      }.getOrElse(Map.empty)
+    singleValueMatcher(
+      label = s"a header cell for ${headerText} with a link with a query string ${queryStringKey} -> ${queryStringValue}",
+      expectedValue = Some(queryStringValue),
+      actualValue = queryParameters.get(queryStringKey)
+    )
+  }
+
+  def haveTableHeaderFieldAndDirection(headerText: String, fieldAndDirection: (String, String)): Matcher[Document] = {
+    val (field, direction) = fieldAndDirection
+    (document: Document) => {
+      haveTableHeaderLink(headerText, RowOrdering.fieldKey, field)(document)
+      haveTableHeaderLink(headerText, RowOrdering.directionKey, direction)(document)
+    }
+  }
+
+  def haveFieldQueryParameter(headerText: String, queryStringValue: String): Matcher[Document] =
+    haveTableHeaderLink(headerText, RowOrdering.fieldKey, queryStringValue)
+
   private def asExpectedSummaryErrorMessage(element: Element): ExpectedSummaryErrorMessage =
     ExpectedSummaryErrorMessage(element.text(), element.attr("href").replace("#", ""))
 
@@ -648,5 +674,15 @@ object CommonMatchers {
 
   private def getAllIds(document: Document): Seq[String] =
     document.select("*").asScala.toSeq.map(_.id).filter(_.nonEmpty)
+
+  private def getQueryParameter(url: String): Map[String, String] =
+    url.split('?') match {
+      case Array(_, queryPart) =>
+        queryPart.split('&')
+          .collect {
+            case s"$key=$value" => key -> value
+          }.toMap
+      case _ => Map.empty
+    }
 
 }
