@@ -549,7 +549,7 @@ object CommonMatchers {
         .toSeq
         .find(_.text == headerText)
         .map { elem =>
-          getQueryParameter(elem.attr("href"))
+          getQueryParameters(elem.attr("href"))
         }
         .getOrElse(Map.empty)
       singleValueMatcher(
@@ -679,7 +679,7 @@ object CommonMatchers {
   private def getAllIds(document: Document): Seq[String] =
     document.select("*").asScala.toSeq.map(_.id).filter(_.nonEmpty)
 
-  private def getQueryParameter(url: String): Map[String, String] =
+  private def getQueryParameters(url: String): Map[String, String] =
     url.split('?') match {
       case Array(_, queryPart) =>
         queryPart
