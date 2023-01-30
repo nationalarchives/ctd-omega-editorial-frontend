@@ -148,8 +148,18 @@ And to run all:
 sbt test IntegrationTest/test
 ```
 
+Note that we run [sbt-coverage](https://github.com/scoverage/sbt-scoverage) automatically for both unit and integration tests.
+
+However, in order to generate an html report, run:
+
+``` 
+sbt coverageReport
+```
+
+You'll find it in `/target/scala-2.13/scoverage-report/`.
+ 
 ### Before Pushing
 
 Remember to run `sbt fmtCheck`.
 
-For convenience, you can run [runBeforePushing.sh](./runBeforePushing.sh), which runs it after all of the tests.
+For convenience, you can run [runBeforePushing.sh](./runBeforePushing.sh), which runs it after all of the tests; note that a coverage report is also generated.
