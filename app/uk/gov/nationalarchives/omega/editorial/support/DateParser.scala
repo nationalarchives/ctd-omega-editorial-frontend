@@ -43,36 +43,28 @@ import scala.util.Try
   */
 object DateParser {
 
-  private val dateTimeFormatter =
-    DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(Locale.UK).withResolverStyle(ResolverStyle.SMART)
+  private val partDelimiter = "/"
 
-  private def parse(rawDateAsYearMonthDay: String): Option[LocalDate] =
+  private val dateTimeFormatter =
+    DateTimeFormatter
+      .ofPattern(s"d${partDelimiter}M${partDelimiter}y")
+      .withLocale(Locale.UK)
+      .withResolverStyle(ResolverStyle.SMART)
+
+  def parse(rawDateAsYearMonthDay: String): Option[LocalDate] =
     Try(LocalDate.parse(rawDateAsYearMonthDay, dateTimeFormatter)).toOption
       .filter(dateIsSameAsOriginal(_, rawDateAsYearMonthDay))
 
   private def dateIsSameAsOriginal(date: LocalDate, rawDateAsYearMonthDay: String): Boolean =
-    dateTimeFormatter.format(date) == rawDateAsYearMonthDay
+    dateTimeFormatter.format(date) == normaliseFormat(rawDateAsYearMonthDay)
 
-  def parseDate(rawDateAsYearMonthDay: String): Option[LocalDate] = {
-
-    val rawDate = rawDateAsYearMonthDay.split("/")
-
-    val formattedRawDate = Try(
-      LocalDate.of(rawDate(2).toInt, rawDate(1).toInt, rawDate(0).toInt).format(dateTimeFormatter)
-    ).getOrElse(rawDateAsYearMonthDay)
-    if (validYearRange(rawDate))
-      parse(formattedRawDate)
-    else
-      parse(rawDateAsYearMonthDay)
-
-  }
-
-  private def validYearRange(rawDate: Array[String]): Boolean = {
-    // is year between 1 and 9999
-    if (rawDate.length == 3 && rawDate(2).matches("^[0-9]{1,4}") && rawDate(2).toInt > 0) {
-      return true
-    }
-    false
+  private def normaliseFormat(originalRawDate: String): String = {
+    val partsOfOriginalRawDateWithoutLeadingZeros =
+      originalRawDate
+        .split(partDelimiter)
+        .map(part => String.valueOf(part.toInt))
+        .toSeq
+    partsOfOriginalRawDateWithoutLeadingZeros.mkString(partDelimiter)
   }
 
 }

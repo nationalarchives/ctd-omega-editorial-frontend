@@ -23,7 +23,7 @@ package uk.gov.nationalarchives.omega.editorial.support
 
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.{ MustMatchers, WordSpec }
-import uk.gov.nationalarchives.omega.editorial.support.DateParser.parseDate
+import uk.gov.nationalarchives.omega.editorial.support.DateParser.parse
 
 import java.time.LocalDate
 import java.time.Month.{ APRIL, DECEMBER, SEPTEMBER }
@@ -39,7 +39,7 @@ class DateParserSpec extends WordSpec with MustMatchers {
             ("1/9/1752", LocalDate.of(1752, SEPTEMBER, 1)),
             ("2/9/1752", LocalDate.of(1752, SEPTEMBER, 2))
           )
-        )((rawDate: String, expectedDate: LocalDate) => parseDate(rawDate) mustBe Some(expectedDate))
+        )((rawDate: String, expectedDate: LocalDate) => parse(rawDate) mustBe Some(expectedDate))
 
       }
       "during the switchover period" in {
@@ -59,7 +59,7 @@ class DateParserSpec extends WordSpec with MustMatchers {
             ("12/9/1752", LocalDate.of(1752, SEPTEMBER, 12)),
             ("13/9/1752", LocalDate.of(1752, SEPTEMBER, 13))
           )
-        )((rawDate: String, expectedDate: LocalDate) => parseDate(rawDate) mustBe Some(expectedDate))
+        )((rawDate: String, expectedDate: LocalDate) => parse(rawDate) mustBe Some(expectedDate))
 
       }
       "after the switchover period" in {
@@ -71,7 +71,7 @@ class DateParserSpec extends WordSpec with MustMatchers {
             ("20/4/1984", LocalDate.of(1984, APRIL, 20)),
             ("26/12/2022", LocalDate.of(2022, DECEMBER, 26))
           )
-        )((rawDate: String, expectedDate: LocalDate) => parseDate(rawDate) mustBe Some(expectedDate))
+        )((rawDate: String, expectedDate: LocalDate) => parse(rawDate) mustBe Some(expectedDate))
       }
       "day starting with a zero" in {
         forAll(
@@ -79,7 +79,7 @@ class DateParserSpec extends WordSpec with MustMatchers {
             ("Raw Date", "Expected Date"),
             ("09/4/2022", LocalDate.of(2022, APRIL, 9))
           )
-        )((rawDate: String, expectedDate: LocalDate) => parseDate(rawDate) mustBe Some(expectedDate))
+        )((rawDate: String, expectedDate: LocalDate) => parse(rawDate) mustBe Some(expectedDate))
       }
 
       "month starting with a zero" in {
@@ -88,7 +88,7 @@ class DateParserSpec extends WordSpec with MustMatchers {
             ("Raw Date", "Expected Date"),
             ("29/04/2022", LocalDate.of(2022, APRIL, 29))
           )
-        )((rawDate: String, expectedDate: LocalDate) => parseDate(rawDate) mustBe Some(expectedDate))
+        )((rawDate: String, expectedDate: LocalDate) => parse(rawDate) mustBe Some(expectedDate))
       }
 
       "year starting with a zero" in {
@@ -97,43 +97,18 @@ class DateParserSpec extends WordSpec with MustMatchers {
             ("Raw Date", "Expected Date"),
             ("5/9/022", LocalDate.of(22, SEPTEMBER, 5))
           )
-        )((rawDate: String, expectedDate: LocalDate) => parseDate(rawDate) mustBe Some(expectedDate))
+        )((rawDate: String, expectedDate: LocalDate) => parse(rawDate) mustBe Some(expectedDate))
       }
 
-      "year is 1 digit" in {
+      "year is 1, 2 or 3 digits" in {
         forAll(
           Table(
             ("Raw Date", "Expected Date"),
-            ("1/12/1", LocalDate.of(1, DECEMBER, 1))
-          )
-        )((rawDate: String, expectedDate: LocalDate) => parseDate(rawDate) mustBe Some(expectedDate))
-      }
-
-      "year is 2 digits" in {
-        forAll(
-          Table(
-            ("Raw Date", "Expected Date"),
-            ("5/9/10", LocalDate.of(10, SEPTEMBER, 5))
-          )
-        )((rawDate: String, expectedDate: LocalDate) => parseDate(rawDate) mustBe Some(expectedDate))
-      }
-
-      "year is 3 digits" in {
-        forAll(
-          Table(
-            ("Raw Date", "Expected Date"),
-            ("5/9/100", LocalDate.of(100, SEPTEMBER, 5))
-          )
-        )((rawDate: String, expectedDate: LocalDate) => parseDate(rawDate) mustBe Some(expectedDate))
-      }
-
-      "year is 4 digits" in {
-        forAll(
-          Table(
-            ("Raw Date", "Expected Date"),
+            ("1/12/1", LocalDate.of(1, DECEMBER, 1)),
+            ("5/9/10", LocalDate.of(10, SEPTEMBER, 5)),
             ("5/9/1000", LocalDate.of(1000, SEPTEMBER, 5))
           )
-        )((rawDate: String, expectedDate: LocalDate) => parseDate(rawDate) mustBe Some(expectedDate))
+        )((rawDate: String, expectedDate: LocalDate) => parse(rawDate) mustBe Some(expectedDate))
       }
     }
 
@@ -141,15 +116,11 @@ class DateParserSpec extends WordSpec with MustMatchers {
 
       "malformed" in {
         Seq("14-9-2020", "9/2020", "2020", "1/14/9/2020")
-          .foreach(rawDate => parseDate(rawDate) mustBe empty)
+          .foreach(rawDate => parse(rawDate) mustBe empty)
       }
       "non existent" in {
         Seq("29/2/2022", "30/2/2022", "31/2/2022", "42/10/2022", "10/14/2022")
-          .foreach(rawDate => parseDate(rawDate) mustBe empty)
-      }
-      "year is more than 4 digits" in {
-        Seq("1/2/12022", "1/2/222022")
-          .foreach(rawDate => parseDate(rawDate) mustBe empty)
+          .foreach(rawDate => parse(rawDate) mustBe empty)
       }
     }
   }

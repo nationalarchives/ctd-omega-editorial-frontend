@@ -451,7 +451,7 @@ class EditSetController @Inject() (
       day   <- formValues.get(fieldNameForDay)
       month <- formValues.get(fieldNameForMonth)
       year  <- formValues.get(fieldNameForYear)
-      date  <- DateParser.parseDate(List(day, month, year).mkString("/"))
+      date  <- DateParser.parse(List(day, month, year).mkString("/"))
     } yield date
 
   private def calculateDates(user: User, record: EditSetRecord)(implicit
