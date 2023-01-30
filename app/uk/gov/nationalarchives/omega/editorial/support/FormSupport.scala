@@ -22,9 +22,16 @@
 package uk.gov.nationalarchives.omega.editorial.support
 
 import play.api.data.Form
+import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
 
 trait FormSupport {
 
   def formToEither[A](form: Form[A]): Either[Form[A], A] = form.fold(Left.apply, Right.apply)
+
+}
+
+object FormSupport {
+
+  type EditSetRecordFormValuesTransformer = Form[EditSetRecordFormValues] => Form[EditSetRecordFormValues]
 
 }

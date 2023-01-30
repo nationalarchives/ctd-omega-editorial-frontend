@@ -47,5 +47,9 @@ case class EditSetRecord(
 )
 
 object EditSetRecord {
+
+  type Transformer = EditSetRecord => EditSetRecord
+
   implicit val editSetRecordReads: Reads[EditSetRecord] = Json.using[Json.WithDefaultValues].reads[EditSetRecord]
+
 }

@@ -56,9 +56,6 @@ class EditSetRecordController @Inject() (
   private lazy val creators: Seq[Creator] = referenceDataService.getCreators
   private lazy val placesOfDeposit: Seq[PlaceOfDeposit] = referenceDataService.getPlacesOfDeposit
 
-  private type RecordTransformer = EditSetRecord => EditSetRecord
-  private type FormTransformer = Form[EditSetRecordFormValues] => Form[EditSetRecordFormValues]
-
   def viewEditRecordForm(id: String, recordId: String): Action[AnyContent] = Action {
     implicit request: Request[AnyContent] =>
       withUser { user =>
@@ -278,14 +275,15 @@ class EditSetRecordController @Inject() (
     validate(EditSetRecordFormValuesFormProvider().bindFromRequest())
 
   private def validate(form: Form[EditSetRecordFormValues]): Form[EditSetRecordFormValues] =
-    Seq[FormTransformer](validateStartAndEndDates, validatePlaceOfDeposit, validateCreators).foldLeft(form)(
-      (form, transformer) => transformer(form)
-    )
+    Seq[FormSupport.EditSetRecordFormValuesTransformer](
+      validateStartAndEndDates,
+      validatePlaceOfDeposit,
+      validateCreators
+    ).foldLeft(form)((form, transformer) => transformer(form))
 
   private def prepareForDisplay(originalEditSetRecord: EditSetRecord): EditSetRecord =
-    Seq[RecordTransformer](editRecordSetService.prepareCreatorIDs, editRecordSetService.preparePlaceOfDeposit).foldLeft(
-      originalEditSetRecord
-    )((editSetRecord, transformer) => transformer(editSetRecord))
+    Seq[EditSetRecord.Transformer](editRecordSetService.prepareCreatorIDs, editRecordSetService.preparePlaceOfDeposit)
+      .foldLeft(originalEditSetRecord)((editSetRecord, transformer) => transformer(editSetRecord))
 
   private def bindFormFromRecordForDisplay(editSetRecord: EditSetRecord)(implicit
     request: Request[AnyContent]

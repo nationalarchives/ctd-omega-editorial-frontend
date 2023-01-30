@@ -71,7 +71,7 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
       Developer(
         id = "felixgb",
         name = "Felix Bowman",
-        email = "fbowman.tna@gmail.com",
+        email = "felix@enceladus.software",
         url = url("https://www.linkedin.com/in/felix-bowman-75b26913a/")
       ),
       Developer(

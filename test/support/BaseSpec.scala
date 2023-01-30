@@ -42,9 +42,9 @@ import scala.concurrent.Future
 class BaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with BeforeAndAfterEach {
 
   val user: User = User("dummy user")
-  val testReferenceDataService: TestReferenceDataService = new TestReferenceDataService()
-  lazy val editSetRecordService: EditSetRecordService = new EditSetRecordService(testReferenceDataService)
-  val editSetService: EditSetService = new EditSetService()
+  val testReferenceDataService: TestReferenceDataService = app.injector.instanceOf[TestReferenceDataService]
+  val editSetRecordService: EditSetRecordService = app.injector.instanceOf[EditSetRecordService]
+  val editSetService: EditSetService = app.injector.instanceOf[EditSetService]
   val allPlacesOfDeposits: Seq[PlaceOfDeposit] = testReferenceDataService.getPlacesOfDeposit
   val allCreators: Seq[Creator] = testReferenceDataService.getCreators
   val validSessionToken: String = Session.generateToken("1234")
