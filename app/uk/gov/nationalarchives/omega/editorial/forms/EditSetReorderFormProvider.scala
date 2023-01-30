@@ -19,19 +19,23 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.support
+package uk.gov.nationalarchives.omega.editorial.forms
 
 import play.api.data.Form
-import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
+import play.api.data.Forms.{ mapping, text }
+import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.{ EditSetReorder, FieldNames, orderDirectionAscending, orderDirectionDescending }
 
-trait FormSupport {
+object EditSetReorderFormProvider {
 
-  def formToEither[A](form: Form[A]): Either[Form[A], A] = form.fold(Left.apply, Right.apply)
-
-}
-
-object FormSupport {
-
-  type EditSetRecordFormValuesTransformer = Form[EditSetRecordFormValues] => Form[EditSetRecordFormValues]
+  def apply(): Form[EditSetReorder] = Form(
+    mapping(
+      FieldNames.orderField -> text
+        .verifying(proposed =>
+          Seq(FieldNames.ccr, FieldNames.scopeAndContent, FieldNames.coveringDates).contains(proposed)
+        ),
+      FieldNames.orderDirection -> text
+        .verifying(proposed => Seq(orderDirectionAscending, orderDirectionDescending).contains(proposed))
+    )(EditSetReorder.apply)(EditSetReorder.unapply)
+  )
 
 }

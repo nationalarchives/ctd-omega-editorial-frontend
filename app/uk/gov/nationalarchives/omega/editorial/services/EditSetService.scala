@@ -19,19 +19,22 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.support
+package uk.gov.nationalarchives.omega.editorial.services
 
-import play.api.data.Form
-import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
+import play.api.Logger
+import uk.gov.nationalarchives.omega.editorial.editSets
+import uk.gov.nationalarchives.omega.editorial.models.EditSet
 
-trait FormSupport {
+import javax.inject.Singleton
 
-  def formToEither[A](form: Form[A]): Either[Form[A], A] = form.fold(Left.apply, Right.apply)
+@Singleton
+class EditSetService {
 
-}
+  private val logger: Logger = Logger(this.getClass)
 
-object FormSupport {
-
-  type EditSetRecordFormValuesTransformer = Form[EditSetRecordFormValues] => Form[EditSetRecordFormValues]
+  def getEditSet(id: String): EditSet = {
+    logger.info(s"The edit set id is $id ")
+    editSets.getEditSet()
+  }
 
 }

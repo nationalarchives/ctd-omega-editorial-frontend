@@ -21,11 +21,11 @@
 
 package support
 
-import controllers.EditSetControllerSpec._
 import org.jsoup.nodes.{ Document, Element }
 import org.scalatest.matchers.{ MatchResult, Matcher }
-import support.ExpectedValues.{ ExpectedSelectOption, ExpectedSummaryErrorMessage }
+import support.ExpectedValues.{ ExpectedRelatedMaterial, ExpectedSelectOption, ExpectedSeparatedMaterial, ExpectedSummaryErrorMessage }
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
+import uk.gov.nationalarchives.omega.editorial.controllers.EditSetRecordController
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError
 
 import scala.jdk.CollectionConverters._
@@ -112,7 +112,7 @@ object CommonMatchers {
     singleValueMatcher(
       label = "an omega catalogue ref",
       expectedValue = expectedValue,
-      actualValue = document.select(s"#${FieldNames.oci}").attr("value")
+      actualValue = document.select(s"#${EditSetRecordController.FieldNames.oci}").attr("value")
     )
 
   def haveScopeAndContent(expectedValue: String): Matcher[Document] = (document: Document) =>
@@ -133,56 +133,56 @@ object CommonMatchers {
     singleValueMatcher(
       label = "a former reference department",
       expectedValue = expectedValue,
-      actualValue = document.select(s"#${FieldNames.formerReferenceDepartment}").attr("value")
+      actualValue = document.select(s"#${EditSetRecordController.FieldNames.formerReferenceDepartment}").attr("value")
     )
 
   def haveFormerReferencePro(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "a former reference pro",
       expectedValue = expectedValue,
-      actualValue = document.select(s"#${FieldNames.formerReferencePro}").attr("value")
+      actualValue = document.select(s"#${EditSetRecordController.FieldNames.formerReferencePro}").attr("value")
     )
 
   def haveStartDateDay(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "a start date day",
       expectedValue = expectedValue,
-      actualValue = document.select(s"#${FieldNames.startDateDay}").attr("value")
+      actualValue = document.select(s"#${EditSetRecordController.FieldNames.startDateDay}").attr("value")
     )
 
   def haveStartDateMonth(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "a start date month",
       expectedValue = expectedValue,
-      actualValue = document.select(s"#${FieldNames.startDateMonth}").attr("value")
+      actualValue = document.select(s"#${EditSetRecordController.FieldNames.startDateMonth}").attr("value")
     )
 
   def haveStartDateYear(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "a start date year",
       expectedValue = expectedValue,
-      actualValue = document.select(s"#${FieldNames.startDateYear}").attr("value")
+      actualValue = document.select(s"#${EditSetRecordController.FieldNames.startDateYear}").attr("value")
     )
 
   def haveEndDateDay(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "an end date day",
       expectedValue = expectedValue,
-      actualValue = document.select(s"#${FieldNames.endDateDay}").attr("value")
+      actualValue = document.select(s"#${EditSetRecordController.FieldNames.endDateDay}").attr("value")
     )
 
   def haveEndDateMonth(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "an end date month",
       expectedValue = expectedValue,
-      actualValue = document.select(s"#${FieldNames.endDateMonth}").attr("value")
+      actualValue = document.select(s"#${EditSetRecordController.FieldNames.endDateMonth}").attr("value")
     )
 
   def haveEndDateYear(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "an end date year",
       expectedValue = expectedValue,
-      actualValue = document.select(s"#${FieldNames.endDateYear}").attr("value")
+      actualValue = document.select(s"#${EditSetRecordController.FieldNames.endDateYear}").attr("value")
     )
 
   def haveRelatedMaterial(relatedMaterials: ExpectedRelatedMaterial*): Matcher[Document] = (document: Document) =>
@@ -276,7 +276,7 @@ object CommonMatchers {
   def haveNoSummaryErrorMessages: Matcher[Document] = haveSummaryErrorMessages()
 
   def haveErrorMessageForStartDate(expectedValue: String): Matcher[Document] =
-    haveErrorMessageForField("start date", s"#${FieldNames.startDateFieldError}", expectedValue)
+    haveErrorMessageForField("start date", s"#${EditSetRecordController.FieldNames.startDateFieldError}", expectedValue)
 
   def haveNoErrorMessageForStartDate: Matcher[Document] = haveErrorMessageForStartDate("")
 
@@ -291,7 +291,11 @@ object CommonMatchers {
   def haveNoErrorMessageForCoveringDates: Matcher[Document] = haveErrorMessageForCoveringDates("")
 
   def haveErrorMessageForLegalStatus(expectedValue: String): Matcher[Document] =
-    haveErrorMessageForField("legal status", s"#${FieldNames.legalStatusID}-error", expectedValue)
+    haveErrorMessageForField(
+      "legal status",
+      s"#${EditSetRecordController.FieldNames.legalStatusID}-error",
+      expectedValue
+    )
 
   def haveNoErrorMessageForLegalStatus: Matcher[Document] = haveErrorMessageForLegalStatus("")
 
@@ -299,7 +303,7 @@ object CommonMatchers {
     singleValueMatcher(
       "a legal status",
       expectedValue,
-      document.select(s"#${FieldNames.legalStatusID} option[selected]").attr("value")
+      document.select(s"#${EditSetRecordController.FieldNames.legalStatusID} option[selected]").attr("value")
     )
 
   def parseSuccessfullyAs[A](expected: A): Matcher[CoveringDateError.Result[A]] = {
@@ -363,19 +367,23 @@ object CommonMatchers {
   def haveErrorMessageForFormerReferenceDepartment(expectedValue: String): Matcher[Document] =
     haveErrorMessageForField(
       "former reference department",
-      s"#${FieldNames.formerReferenceDepartment}-error",
+      s"#${EditSetRecordController.FieldNames.formerReferenceDepartment}-error",
       expectedValue
     )
 
   def haveErrorMessageForFormerReferencePro(expectedValue: String): Matcher[Document] =
     haveErrorMessageForField(
       "former reference pro",
-      s"#${FieldNames.formerReferencePro}-error",
+      s"#${EditSetRecordController.FieldNames.formerReferencePro}-error",
       expectedValue
     )
 
   def haveErrorMessageForPlaceOfDeposit(expectedValue: String): Matcher[Document] =
-    haveErrorMessageForField("place of deposit", s"#${FieldNames.placeOfDepositID}-error", expectedValue)
+    haveErrorMessageForField(
+      "place of deposit",
+      s"#${EditSetRecordController.FieldNames.placeOfDepositID}-error",
+      expectedValue
+    )
 
   def haveNoErrorMessageForPlaceOfDeposit: Matcher[Document] = haveErrorMessageForPlaceOfDeposit("")
 
@@ -451,7 +459,7 @@ object CommonMatchers {
   }
 
   def haveSelectionForPlaceOfDeposit(expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
-    haveSelectionOptions(FieldNames.placeOfDepositID, "place of deposit", expectedSelectOptions)
+    haveSelectionOptions(EditSetRecordController.FieldNames.placeOfDepositID, "place of deposit", expectedSelectOptions)
 
   def haveSelectionForOrderingField(expectedSelectOptions: Seq[ExpectedSelectOption]): Matcher[Document] =
     haveSelectionOptions(fieldKey, "ordering field", expectedSelectOptions)
@@ -479,11 +487,15 @@ object CommonMatchers {
     singleValueMatcher(
       label = "a note",
       expectedValue = expectedValue,
-      actualValue = document.select(s"#${FieldNames.note}").text()
+      actualValue = document.select(s"#${EditSetRecordController.FieldNames.note}").text()
     )
 
   def haveErrorMessageForNote(expectedValue: String): Matcher[Document] =
-    haveErrorMessageForField(s"${FieldNames.note}", s"#${FieldNames.note}-error", expectedValue)
+    haveErrorMessageForField(
+      s"${EditSetRecordController.FieldNames.note}",
+      s"#${EditSetRecordController.FieldNames.note}-error",
+      expectedValue
+    )
 
   def haveNoErrorMessageForNote: Matcher[Document] = haveErrorMessageForNote("")
 
@@ -491,11 +503,15 @@ object CommonMatchers {
     singleValueMatcher(
       label = "a background",
       expectedValue = expectedValue,
-      actualValue = document.select(s"#${FieldNames.background}").text()
+      actualValue = document.select(s"#${EditSetRecordController.FieldNames.background}").text()
     )
 
   def haveErrorMessageForBackground(expectedValue: String): Matcher[Document] =
-    haveErrorMessageForField(FieldNames.background, s"#${FieldNames.background}-error", expectedValue)
+    haveErrorMessageForField(
+      EditSetRecordController.FieldNames.background,
+      s"#${EditSetRecordController.FieldNames.background}-error",
+      expectedValue
+    )
 
   def haveNoErrorMessageForBackground: Matcher[Document] = haveErrorMessageForBackground("")
 
@@ -503,16 +519,20 @@ object CommonMatchers {
     singleValueMatcher(
       label = "custodial history",
       expectedValue = expectedValue,
-      actualValue = document.select(s"#${FieldNames.custodialHistory}").text()
+      actualValue = document.select(s"#${EditSetRecordController.FieldNames.custodialHistory}").text()
     )
 
   def haveErrorMessageForCustodialHistory(expectedValue: String): Matcher[Document] =
-    haveErrorMessageForField(FieldNames.custodialHistory, s"#${FieldNames.custodialHistory}-error", expectedValue)
+    haveErrorMessageForField(
+      EditSetRecordController.FieldNames.custodialHistory,
+      s"#${EditSetRecordController.FieldNames.custodialHistory}-error",
+      expectedValue
+    )
 
   def haveNoErrorMessageForCustodialHistory: Matcher[Document] = haveErrorMessageForCustodialHistory("")
 
   def haveErrorMessageForCreator(expectedValue: String): Matcher[Document] =
-    haveErrorMessageForField(FieldNames.creatorIDs, "#creator-id-0-error", expectedValue)
+    haveErrorMessageForField(EditSetRecordController.FieldNames.creatorIDs, "#creator-id-0-error", expectedValue)
 
   def haveNoErrorMessageForCreator: Matcher[Document] = haveErrorMessageForCreator("")
 
