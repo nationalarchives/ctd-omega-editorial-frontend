@@ -41,7 +41,11 @@ case class RowOrdering(field: String, direction: String) {
 
   def ariaSortValue(headerValue: String): String =
     if (field == headerValue) direction
-    else "none"
+    else orderDirectionNone
+
+  def orderingKey(headerValue: String): String =
+    if (field == headerValue) orderDirectionDescending
+    else orderDirectionAscending
 
 }
 
@@ -53,5 +57,6 @@ object RowOrdering {
   val directionKey = "direction"
   val orderDirectionDescending = "descending"
   val orderDirectionAscending = "ascending"
+  val orderDirectionNone = "none"
 
 }

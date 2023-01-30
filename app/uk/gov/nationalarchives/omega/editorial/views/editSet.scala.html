@@ -46,12 +46,33 @@
     }
 }
 
+@headerLink(headerValue: String, displayName: String) = {
+  @defining(s"/edit-set/1?field=${headerValue}&direction=${ordering.orderingKey(headerValue)}") { href =>
+    <a class="govuk-link" href="@href">@displayName</a>
+  }
+}
 
 @template(Some(user), title) {
 
   <h1 class="govuk-heading-l">@heading</h1>
 
   @govukTable(Table(
+      head = Some(
+          Seq(
+              HeadCell(
+                  content = HtmlContent(headerLink(FieldNames.ccr, messages("edit-set.record.edit.ccr"))),
+                  attributes = Map("aria-sort" -> ordering.ariaSortValue(FieldNames.ccr))
+              ),
+              HeadCell(
+                  content = HtmlContent(headerLink(FieldNames.scopeAndContent, messages("edit-set.record.edit.scope-and-content"))),
+                  attributes = Map("aria-sort" -> ordering.ariaSortValue(FieldNames.scopeAndContent))
+              ),
+              HeadCell(
+                  content = HtmlContent(headerLink(FieldNames.coveringDates, messages("edit-set.record.edit.covering-dates"))),
+                  attributes = Map("aria-sort" -> ordering.ariaSortValue(FieldNames.coveringDates))
+              )
+          )
+      ),
       rows = page.entries.map {
         entry =>
             Seq(
@@ -66,19 +87,6 @@
                 )
             )
       },
-      head = Some(
-          Seq(
-              HeadCell(
-                  content = Text(messages("edit-set.record.edit.ccr"))
-              ),
-              HeadCell(
-                  content = Text(messages("edit-set.record.edit.scope-and-content"))
-              ),
-              HeadCell(
-                  content = Text(messages("edit-set.record.edit.covering-dates"))
-              )
-          )
-      ),
       caption = Some(
         messages(
           "edit-set.table-caption",
