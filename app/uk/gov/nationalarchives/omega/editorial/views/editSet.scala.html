@@ -48,7 +48,7 @@
 
 @headerLink(headerValue: String, displayName: String) = {
   @defining(s"/edit-set/1?field=${headerValue}&direction=${ordering.orderingKey(headerValue)}") { href =>
-    <a class="govuk-link" href="@href">@displayName</a>
+    <a class="govuk-link govuk-link--no-visited-state" href="@href">@displayName</a>
   }
 }
 
