@@ -191,7 +191,7 @@ class EditSetControllerSpec extends BaseSpec {
             tableHeaders = Seq(
               ExpectedTableHeader("CCR", FieldNames.ccr, RowOrdering.orderDirectionDescending),
               ExpectedTableHeader("Scope and content", FieldNames.scopeAndContent, RowOrdering.orderDirectionAscending),
-              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionAscending),
+              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionAscending)
             ),
             header = "Edit set: COAL 80 Sample",
             expectedSummaryRows = Seq(
@@ -275,7 +275,7 @@ class EditSetControllerSpec extends BaseSpec {
             tableHeaders = Seq(
               ExpectedTableHeader("CCR", FieldNames.ccr, RowOrdering.orderDirectionAscending),
               ExpectedTableHeader("Scope and content", FieldNames.scopeAndContent, RowOrdering.orderDirectionAscending),
-              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionAscending),
+              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionAscending)
             ),
             header = "Edit set: COAL 80 Sample",
             expectedSummaryRows = Seq(
@@ -357,8 +357,12 @@ class EditSetControllerSpec extends BaseSpec {
             caption = "Showing 1 - 10 of 12 records",
             tableHeaders = Seq(
               ExpectedTableHeader("CCR", FieldNames.ccr, RowOrdering.orderDirectionAscending),
-              ExpectedTableHeader("Scope and content", FieldNames.scopeAndContent, RowOrdering.orderDirectionDescending),
-              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionAscending),
+              ExpectedTableHeader(
+                "Scope and content",
+                FieldNames.scopeAndContent,
+                RowOrdering.orderDirectionDescending
+              ),
+              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionAscending)
             ),
             header = "Edit set: COAL 80 Sample",
             expectedSummaryRows = Seq(
@@ -442,7 +446,7 @@ class EditSetControllerSpec extends BaseSpec {
             tableHeaders = Seq(
               ExpectedTableHeader("CCR", FieldNames.ccr, RowOrdering.orderDirectionAscending),
               ExpectedTableHeader("Scope and content", FieldNames.scopeAndContent, RowOrdering.orderDirectionAscending),
-              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionAscending),
+              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionAscending)
             ),
             header = "Edit set: COAL 80 Sample",
             expectedSummaryRows = Seq(
@@ -526,7 +530,7 @@ class EditSetControllerSpec extends BaseSpec {
             tableHeaders = Seq(
               ExpectedTableHeader("CCR", FieldNames.ccr, RowOrdering.orderDirectionAscending),
               ExpectedTableHeader("Scope and content", FieldNames.scopeAndContent, RowOrdering.orderDirectionAscending),
-              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionDescending),
+              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionDescending)
             ),
             header = "Edit set: COAL 80 Sample",
             expectedSummaryRows = Seq(
@@ -610,7 +614,7 @@ class EditSetControllerSpec extends BaseSpec {
             tableHeaders = Seq(
               ExpectedTableHeader("CCR", FieldNames.ccr, RowOrdering.orderDirectionAscending),
               ExpectedTableHeader("Scope and content", FieldNames.scopeAndContent, RowOrdering.orderDirectionAscending),
-              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionAscending),
+              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionAscending)
             ),
             header = "Edit set: COAL 80 Sample",
             expectedSummaryRows = Seq(
@@ -694,7 +698,7 @@ class EditSetControllerSpec extends BaseSpec {
             tableHeaders = Seq(
               ExpectedTableHeader("CCR", FieldNames.ccr, RowOrdering.orderDirectionAscending),
               ExpectedTableHeader("Scope and content", FieldNames.scopeAndContent, RowOrdering.orderDirectionAscending),
-              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionAscending),
+              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionAscending)
             ),
             header = "Edit set: COAL 80 Sample",
             expectedSummaryRows = Seq(
@@ -780,7 +784,7 @@ class EditSetControllerSpec extends BaseSpec {
             tableHeaders = Seq(
               ExpectedTableHeader("CCR", FieldNames.ccr, RowOrdering.orderDirectionDescending),
               ExpectedTableHeader("Scope and content", FieldNames.scopeAndContent, RowOrdering.orderDirectionAscending),
-              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionAscending),
+              ExpectedTableHeader("Covering dates", FieldNames.coveringDates, RowOrdering.orderDirectionAscending)
             ),
             header = "Edit set: COAL 80 Sample",
             expectedSummaryRows = Seq(

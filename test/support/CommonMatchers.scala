@@ -541,19 +541,23 @@ object CommonMatchers {
     )
   }
 
-  def haveTableHeaderLink(headerText: String, queryStringKey: String, queryStringValue: String): Matcher[Document] = (document: Document) => {
-    val queryParameters = document.select("th > .govuk-link")
-      .asScala.toSeq
-      .find(_.text == headerText)
-      .map { elem =>
-        getQueryParameter(elem.attr("href"))
-      }.getOrElse(Map.empty)
-    singleValueMatcher(
-      label = s"a header cell for ${headerText} with a link with a query string ${queryStringKey} -> ${queryStringValue}",
-      expectedValue = Some(queryStringValue),
-      actualValue = queryParameters.get(queryStringKey)
-    )
-  }
+  def haveTableHeaderLink(headerText: String, queryStringKey: String, queryStringValue: String): Matcher[Document] =
+    (document: Document) => {
+      val queryParameters = document
+        .select("th > .govuk-link")
+        .asScala
+        .toSeq
+        .find(_.text == headerText)
+        .map { elem =>
+          getQueryParameter(elem.attr("href"))
+        }
+        .getOrElse(Map.empty)
+      singleValueMatcher(
+        label = s"a header cell for $headerText with a link with a query string $queryStringKey -> $queryStringValue",
+        expectedValue = Some(queryStringValue),
+        actualValue = queryParameters.get(queryStringKey)
+      )
+    }
 
   def haveTableHeaderFieldAndDirection(headerText: String, fieldAndDirection: (String, String)): Matcher[Document] = {
     val (field, direction) = fieldAndDirection
@@ -678,10 +682,12 @@ object CommonMatchers {
   private def getQueryParameter(url: String): Map[String, String] =
     url.split('?') match {
       case Array(_, queryPart) =>
-        queryPart.split('&')
-          .collect {
-            case s"$key=$value" => key -> value
-          }.toMap
+        queryPart
+          .split('&')
+          .collect { case s"$key=$value" =>
+            key -> value
+          }
+          .toMap
       case _ => Map.empty
     }
 
