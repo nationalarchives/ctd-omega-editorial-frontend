@@ -157,8 +157,8 @@ class EditSetControllerSpec extends BaseSpec {
 
     "order Edit Sets" when {
 
-      def orderingRequest(field: String, direction: String) = {
-        val request = FakeRequest(GET, s"/edit-set/1?field=$field&direction=$direction")
+      def orderingRequest(field: String, direction: String, offset: Int = 1) = {
+        val request = FakeRequest(GET, s"/edit-set/1?field=$field&direction=$direction&offset=$offset")
           .withSession(SessionKeys.token -> validSessionToken)
         route(app, request).get
       }
@@ -750,13 +750,7 @@ class EditSetControllerSpec extends BaseSpec {
       }
 
       "Page 2 sorted by CCR, ascending" in {
-        val request =
-          FakeRequest(
-            GET,
-            s"/edit-set/1?field=${TableHeaderNames.ccr}&direction=${RowOrdering.orderDirectionAscending}&offset=2"
-          )
-            .withSession(SessionKeys.token -> validSessionToken)
-        val page = route(app, request).get
+        val page = orderingRequest(TableHeaderNames.ccr, RowOrdering.orderDirectionAscending, offset = 2)
 
         status(page) mustBe OK
         assertPageAsExpected(
