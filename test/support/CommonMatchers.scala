@@ -560,6 +560,30 @@ object CommonMatchers {
     )
   }
 
+  def haveTableHeaderLink(headerText: String, queryStringKey: String, queryStringValue: String): Matcher[Document] =
+    (document: Document) => {
+      val queryParameters = document
+        .select("th > .govuk-link")
+        .asScala
+        .toSeq
+        .find(_.text == headerText)
+        .map { elem =>
+          getQueryParameters(elem.attr("href"))
+        }
+        .getOrElse(Map.empty)
+      singleValueMatcher(
+        label = s"a header cell for $headerText with a link with a query string $queryStringKey -> $queryStringValue",
+        expectedValue = Some(queryStringValue),
+        actualValue = queryParameters.get(queryStringKey)
+      )
+    }
+
+  def haveDirectionInTableHeader(headerText: String, direction: String): Matcher[Document] =
+    haveTableHeaderLink(headerText, "direction", direction)
+
+  def haveFieldInTableHeader(headerText: String, field: String): Matcher[Document] =
+    haveTableHeaderLink(headerText, "field", field)
+
   private def asExpectedSummaryErrorMessage(element: Element): ExpectedSummaryErrorMessage =
     ExpectedSummaryErrorMessage(element.text(), element.attr("href").replace("#", ""))
 
@@ -668,5 +692,17 @@ object CommonMatchers {
 
   private def getAllIds(document: Document): Seq[String] =
     document.select("*").asScala.toSeq.map(_.id).filter(_.nonEmpty)
+
+  private def getQueryParameters(url: String): Map[String, String] =
+    url.split('?') match {
+      case Array(_, queryPart) =>
+        queryPart
+          .split('&')
+          .collect { case s"$key=$value" =>
+            key -> value
+          }
+          .toMap
+      case _ => Map.empty
+    }
 
 }

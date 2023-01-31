@@ -28,7 +28,7 @@ import uk.gov.nationalarchives.omega.editorial.models.EditSetEntry
 
 class EditSetPagination(
   id: String,
-  ordering: EditSetController.EditSetReorder,
+  rowOrder: EditSetEntryRowOrder,
   nextText: String,
   previousText: String,
   itemsPerPage: Int = EditSetPagination.entriesPerPage
@@ -115,8 +115,8 @@ class EditSetPagination(
   private def formatViewUrl(page: Int): String =
     s"${routes.EditSetController.view(id).url}" +
       s"?${EditSetController.offsetKey}=$page" +
-      s"&${EditSetController.fieldKey}=${ordering.field}" +
-      s"&${EditSetController.orderDirectionKey}=${ordering.direction}"
+      s"&${EditSetController.fieldKey}=${rowOrder.field}" +
+      s"&${EditSetController.orderDirectionKey}=${rowOrder.direction}"
 
 }
 

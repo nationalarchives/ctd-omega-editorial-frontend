@@ -24,17 +24,13 @@ package controllers
 import org.jsoup.nodes.Document
 import org.scalatest.compatible.Assertion
 import play.api.mvc._
-import play.api.test.Helpers._
 import play.api.test._
+import play.api.test.Helpers._
 import support.BaseSpec
 import support.CommonMatchers._
-import support.ExpectedValues._
-import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.editSetRecords.restoreOriginalRecords
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
-
-import scala.concurrent.Future
 
 /** Add your spec here. You can mock out a whole application including requests, plugins etc.
   *
@@ -156,26 +152,17 @@ class EditSetControllerSpec extends BaseSpec {
       status(editSet) mustBe SEE_OTHER
       redirectLocation(editSet) mustBe Some("/login")
     }
-  }
 
-  "EditSetController POST /edit-set/{id}" should {
-    "render the records in the expected order, when ordering by" when {
+    "order records" when {
 
-      def requestPage(values: Map[String, String], pageNumber: Int = 1): Future[Result] =
-        route(
-          app,
-          CSRFTokenHelper.addCSRFToken(
-            FakeRequest(POST, s"/edit-set/1?offset=$pageNumber")
-              .withFormUrlEncodedBody(values.toSeq: _*)
-              .withSession(SessionKeys.token -> validSessionToken)
-          )
-        ).get
+      def orderingRequest(field: String, direction: String, offset: Int = 1) = {
+        val request = FakeRequest(GET, s"/edit-set/1?field=$field&direction=$direction&offset=$offset")
+          .withSession(SessionKeys.token -> validSessionToken)
+        route(app, request).get
+      }
 
       "CCR, ascending" in {
-
-        val values = Map(fieldKey -> FieldNames.ccr, orderDirectionKey -> orderDirectionAscending)
-
-        val page = requestPage(values)
+        val page = orderingRequest("ccr", "ascending")
 
         status(page) mustBe OK
         assertPageAsExpected(
@@ -183,17 +170,10 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
+            ccrTableHeader = ExpectedTableHeader("ccr", "descending"),
+            scopeAndContentTableHeader = ExpectedTableHeader("scope-and-content", "ascending"),
+            coveringDateTableHeader = ExpectedTableHeader("covering-dates", "ascending"),
             header = "Edit set: COAL 80 Sample",
-            button = ExpectedActionButton("reorder", "Sort edit set"),
-            expectedOptionsForField = Seq(
-              ExpectedSelectOption(FieldNames.ccr, "CCR", selected = true),
-              ExpectedSelectOption(FieldNames.scopeAndContent, "Scope and Content"),
-              ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates")
-            ),
-            expectedOptionsForDirection = Seq(
-              ExpectedSelectOption(orderDirectionAscending, "Ascending", selected = true),
-              ExpectedSelectOption(orderDirectionDescending, "Descending")
-            ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/1",
@@ -261,11 +241,10 @@ class EditSetControllerSpec extends BaseSpec {
         )
 
       }
+
       "CCR, descending" in {
 
-        val values = Map("field" -> FieldNames.ccr, "direction" -> "descending")
-
-        val page = requestPage(values)
+        val page = orderingRequest("ccr", "descending")
 
         status(page) mustBe OK
         assertPageAsExpected(
@@ -273,17 +252,10 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
+            ccrTableHeader = ExpectedTableHeader("ccr", "ascending"),
+            scopeAndContentTableHeader = ExpectedTableHeader("scope-and-content", "ascending"),
+            coveringDateTableHeader = ExpectedTableHeader("covering-dates", "ascending"),
             header = "Edit set: COAL 80 Sample",
-            button = ExpectedActionButton("reorder", "Sort edit set"),
-            expectedOptionsForField = Seq(
-              ExpectedSelectOption(FieldNames.ccr, "CCR", selected = true),
-              ExpectedSelectOption(FieldNames.scopeAndContent, "Scope and Content"),
-              ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates")
-            ),
-            expectedOptionsForDirection = Seq(
-              ExpectedSelectOption(orderDirectionAscending, "Ascending"),
-              ExpectedSelectOption(orderDirectionDescending, "Descending", selected = true)
-            ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/9",
@@ -349,13 +321,11 @@ class EditSetControllerSpec extends BaseSpec {
             numberOfPages = 2
           )
         )
-
       }
+
       "Scope and Content, ascending" in {
 
-        val values = Map(fieldKey -> FieldNames.scopeAndContent, orderDirectionKey -> orderDirectionAscending)
-
-        val page = requestPage(values)
+        val page = orderingRequest("scope-and-content", "ascending")
 
         status(page) mustBe OK
         assertPageAsExpected(
@@ -363,17 +333,10 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
+            ccrTableHeader = ExpectedTableHeader("ccr", "ascending"),
+            scopeAndContentTableHeader = ExpectedTableHeader("scope-and-content", "descending"),
+            coveringDateTableHeader = ExpectedTableHeader("covering-dates", "ascending"),
             header = "Edit set: COAL 80 Sample",
-            button = ExpectedActionButton("reorder", "Sort edit set"),
-            expectedOptionsForField = Seq(
-              ExpectedSelectOption(FieldNames.ccr, "CCR"),
-              ExpectedSelectOption(FieldNames.scopeAndContent, "Scope and Content", selected = true),
-              ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates")
-            ),
-            expectedOptionsForDirection = Seq(
-              ExpectedSelectOption(orderDirectionAscending, "Ascending", selected = true),
-              ExpectedSelectOption(orderDirectionDescending, "Descending")
-            ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/2",
@@ -441,11 +404,10 @@ class EditSetControllerSpec extends BaseSpec {
         )
 
       }
+
       "Scope and Content, descending" in {
 
-        val values = Map(fieldKey -> FieldNames.scopeAndContent, orderDirectionKey -> orderDirectionDescending)
-
-        val page = requestPage(values)
+        val page = orderingRequest("scope-and-content", "descending")
 
         status(page) mustBe OK
         assertPageAsExpected(
@@ -454,16 +416,9 @@ class EditSetControllerSpec extends BaseSpec {
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
             header = "Edit set: COAL 80 Sample",
-            button = ExpectedActionButton("reorder", "Sort edit set"),
-            expectedOptionsForField = Seq(
-              ExpectedSelectOption(FieldNames.ccr, "CCR"),
-              ExpectedSelectOption(FieldNames.scopeAndContent, "Scope and Content", selected = true),
-              ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates")
-            ),
-            expectedOptionsForDirection = Seq(
-              ExpectedSelectOption(orderDirectionAscending, "Ascending"),
-              ExpectedSelectOption(orderDirectionDescending, "Descending", selected = true)
-            ),
+            ccrTableHeader = ExpectedTableHeader("ccr", "ascending"),
+            scopeAndContentTableHeader = ExpectedTableHeader("scope-and-content", "ascending"),
+            coveringDateTableHeader = ExpectedTableHeader("covering-dates", "ascending"),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/12",
@@ -531,11 +486,10 @@ class EditSetControllerSpec extends BaseSpec {
         )
 
       }
+
       "Covering dates, ascending" in {
 
-        val values = Map(fieldKey -> FieldNames.coveringDates, orderDirectionKey -> orderDirectionAscending)
-
-        val page = requestPage(values)
+        val page = orderingRequest("covering-dates", "ascending")
 
         status(page) mustBe OK
         assertPageAsExpected(
@@ -543,17 +497,10 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
+            ccrTableHeader = ExpectedTableHeader("ccr", "ascending"),
+            scopeAndContentTableHeader = ExpectedTableHeader("scope-and-content", "ascending"),
+            coveringDateTableHeader = ExpectedTableHeader("covering-dates", "descending"),
             header = "Edit set: COAL 80 Sample",
-            button = ExpectedActionButton("reorder", "Sort edit set"),
-            expectedOptionsForField = Seq(
-              ExpectedSelectOption(FieldNames.ccr, "CCR"),
-              ExpectedSelectOption(FieldNames.scopeAndContent, "Scope and Content"),
-              ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates", selected = true)
-            ),
-            expectedOptionsForDirection = Seq(
-              ExpectedSelectOption(orderDirectionAscending, "Ascending", selected = true),
-              ExpectedSelectOption(orderDirectionDescending, "Descending")
-            ),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/4",
@@ -621,11 +568,10 @@ class EditSetControllerSpec extends BaseSpec {
         )
 
       }
+
       "Covering dates, descending" in {
 
-        val values = Map(fieldKey -> FieldNames.coveringDates, orderDirectionKey -> orderDirectionDescending)
-
-        val page = requestPage(values)
+        val page = orderingRequest("covering-dates", "descending")
 
         status(page) mustBe OK
         assertPageAsExpected(
@@ -634,16 +580,9 @@ class EditSetControllerSpec extends BaseSpec {
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
             header = "Edit set: COAL 80 Sample",
-            button = ExpectedActionButton("reorder", "Sort edit set"),
-            expectedOptionsForField = Seq(
-              ExpectedSelectOption(FieldNames.ccr, "CCR"),
-              ExpectedSelectOption(FieldNames.scopeAndContent, "Scope and Content"),
-              ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates", selected = true)
-            ),
-            expectedOptionsForDirection = Seq(
-              ExpectedSelectOption(orderDirectionAscending, "Ascending"),
-              ExpectedSelectOption(orderDirectionDescending, "Descending", selected = true)
-            ),
+            ccrTableHeader = ExpectedTableHeader("ccr", "ascending"),
+            scopeAndContentTableHeader = ExpectedTableHeader("scope-and-content", "ascending"),
+            coveringDateTableHeader = ExpectedTableHeader("covering-dates", "ascending"),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/12",
@@ -711,11 +650,10 @@ class EditSetControllerSpec extends BaseSpec {
         )
 
       }
+
       "Unknown field and direction" in {
 
-        val values = Map(fieldKey -> "height", orderDirectionKey -> "upwards")
-
-        val page = requestPage(values)
+        val page = orderingRequest("height", "upwards")
 
         status(page) mustBe OK
         assertPageAsExpected(
@@ -724,16 +662,9 @@ class EditSetControllerSpec extends BaseSpec {
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
             header = "Edit set: COAL 80 Sample",
-            button = ExpectedActionButton("reorder", "Sort edit set"),
-            expectedOptionsForField = Seq(
-              ExpectedSelectOption(FieldNames.ccr, "CCR", selected = true),
-              ExpectedSelectOption(FieldNames.scopeAndContent, "Scope and Content"),
-              ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates")
-            ),
-            expectedOptionsForDirection = Seq(
-              ExpectedSelectOption(orderDirectionAscending, "Ascending", selected = true),
-              ExpectedSelectOption(orderDirectionDescending, "Descending")
-            ),
+            ccrTableHeader = ExpectedTableHeader("ccr", "descending"),
+            scopeAndContentTableHeader = ExpectedTableHeader("scope-and-content", "ascending"),
+            coveringDateTableHeader = ExpectedTableHeader("covering-dates", "ascending"),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/1",
@@ -803,10 +734,7 @@ class EditSetControllerSpec extends BaseSpec {
       }
 
       "Page 2 sorted by CCR, ascending" in {
-
-        val values = Map(fieldKey -> FieldNames.ccr, orderDirectionKey -> orderDirectionAscending)
-
-        val page = requestPage(values, pageNumber = 2)
+        val page = orderingRequest("ccr", "ascending", offset = 2)
 
         status(page) mustBe OK
         assertPageAsExpected(
@@ -815,16 +743,9 @@ class EditSetControllerSpec extends BaseSpec {
             title = "Browse Edit Set (Page 2 of 2)",
             caption = "Showing 11 - 12 of 12 records",
             header = "Edit set: COAL 80 Sample",
-            button = ExpectedActionButton("reorder", "Sort edit set"),
-            expectedOptionsForField = Seq(
-              ExpectedSelectOption(FieldNames.ccr, "CCR", selected = true),
-              ExpectedSelectOption(FieldNames.scopeAndContent, "Scope and Content"),
-              ExpectedSelectOption(FieldNames.coveringDates, "Covering Dates")
-            ),
-            expectedOptionsForDirection = Seq(
-              ExpectedSelectOption(orderDirectionAscending, "Ascending", selected = true),
-              ExpectedSelectOption(orderDirectionDescending, "Descending")
-            ),
+            ccrTableHeader = ExpectedTableHeader("ccr", "descending"),
+            scopeAndContentTableHeader = ExpectedTableHeader("scope-and-content", "ascending"),
+            coveringDateTableHeader = ExpectedTableHeader("covering-dates", "ascending"),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/8",
@@ -844,7 +765,9 @@ class EditSetControllerSpec extends BaseSpec {
         )
 
       }
+
     }
+
   }
 
   private def assertPageAsExpected(
@@ -853,9 +776,22 @@ class EditSetControllerSpec extends BaseSpec {
   ): Assertion = {
     document must haveTitle(expectedEditRecordPage.title)
     document must haveCaption(expectedEditRecordPage.caption)
-    document must haveActionButtons(expectedEditRecordPage.button.value, expectedEditRecordPage.button.label)
-    document must haveSelectionForOrderingField(expectedEditRecordPage.expectedOptionsForField)
-    document must haveSelectionForOrderingDirection(expectedEditRecordPage.expectedOptionsForDirection)
+
+    document must haveDirectionInTableHeader("CCR", expectedEditRecordPage.ccrTableHeader.sortOrder)
+    document must haveFieldInTableHeader("CCR", expectedEditRecordPage.ccrTableHeader.sortField)
+
+    document must haveDirectionInTableHeader(
+      "Scope and content",
+      expectedEditRecordPage.scopeAndContentTableHeader.sortOrder
+    )
+    document must haveFieldInTableHeader(
+      "Scope and content",
+      expectedEditRecordPage.scopeAndContentTableHeader.sortField
+    )
+
+    document must haveDirectionInTableHeader("Covering dates", expectedEditRecordPage.coveringDateTableHeader.sortOrder)
+    document must haveFieldInTableHeader("Covering dates", expectedEditRecordPage.coveringDateTableHeader.sortField)
+
     document must haveSummaryRows(expectedEditRecordPage.expectedSummaryRows.size)
     expectedEditRecordPage.expectedSummaryRows.zipWithIndex.foreach { case (expectedEditSetSummaryRow, index) =>
       document must haveSummaryRowContents(
@@ -878,12 +814,14 @@ object EditSetControllerSpec {
     title: String,
     header: String,
     caption: String,
-    button: ExpectedActionButton,
-    expectedOptionsForField: Seq[ExpectedSelectOption],
-    expectedOptionsForDirection: Seq[ExpectedSelectOption],
+    ccrTableHeader: ExpectedTableHeader,
+    scopeAndContentTableHeader: ExpectedTableHeader,
+    coveringDateTableHeader: ExpectedTableHeader,
     expectedSummaryRows: Seq[ExpectedEditSetSummaryRow],
     numberOfPages: Int
   )
+
+  case class ExpectedTableHeader(sortField: String, sortOrder: String)
 
   case class ExpectedEditSetSummaryRow(
     ccr: String,
