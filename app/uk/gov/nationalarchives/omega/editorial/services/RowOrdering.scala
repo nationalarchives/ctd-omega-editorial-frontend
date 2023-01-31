@@ -22,18 +22,16 @@
 package uk.gov.nationalarchives.omega.editorial.services
 
 import uk.gov.nationalarchives.omega.editorial.models.EditSetEntry
-import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController.FieldNames
 
 case class RowOrdering(field: String, direction: String) {
   import RowOrdering._
 
   lazy val ordering: Ordering[EditSetEntry] = {
     val ordering: Ordering[EditSetEntry] = field match {
-      case FieldNames.ccr             => Ordering.by(_.ccr)
-      case FieldNames.oci             => Ordering.by(_.oci)
-      case FieldNames.scopeAndContent => Ordering.by(_.scopeAndContent)
-      case FieldNames.coveringDates   => Ordering.by(_.coveringDates)
-      case _                          => Ordering.by(_.ccr)
+      case TableHeaderNames.ccr             => Ordering.by(_.ccr)
+      case TableHeaderNames.scopeAndContent => Ordering.by(_.scopeAndContent)
+      case TableHeaderNames.coveringDates   => Ordering.by(_.coveringDates)
+      case _                                => Ordering.by(_.ccr)
     }
 
     if (direction == orderDirectionDescending) ordering.reverse else ordering
@@ -51,7 +49,13 @@ case class RowOrdering(field: String, direction: String) {
 
 object RowOrdering {
 
-  lazy val defaultOrdering = RowOrdering(FieldNames.ccr, orderDirectionAscending)
+  object TableHeaderNames {
+    val ccr = "ccr"
+    val scopeAndContent = "scope-and-content"
+    val coveringDates = "covering-dates"
+  }
+
+  lazy val defaultOrdering = RowOrdering(TableHeaderNames.ccr, orderDirectionAscending)
 
   val fieldKey = "field"
   val directionKey = "direction"

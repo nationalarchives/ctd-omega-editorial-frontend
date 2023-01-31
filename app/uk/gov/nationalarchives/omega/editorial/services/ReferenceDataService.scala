@@ -276,4 +276,10 @@ class ReferenceDataService {
     LegalStatus("ref.3", "Public Records unless otherwise Stated"),
     LegalStatus("ref.4", "Welsh Public Record(s)")
   )
+
+  def isPlaceOfDepositRecognised(placeOfDeposit: String): Boolean =
+    getPlacesOfDeposit.map(_.id).contains(placeOfDeposit)
+
+  def isCreatorRecognised(creatorID: String): Boolean =
+    creatorID.trim.nonEmpty && getCreators.exists(_.id == creatorID)
 }

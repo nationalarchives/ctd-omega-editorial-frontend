@@ -30,4 +30,17 @@ object ExpectedValues {
   case class ExpectedDate(day: String, month: String, year: String)
 
   case class ExpectedSummaryErrorMessage(message: String, fieldName: String)
+
+  case class ExpectedRelatedMaterial(
+    linkHref: Option[String] = None,
+    linkText: Option[String] = None,
+    description: Option[String] = None
+  )
+
+  case class ExpectedSeparatedMaterial(
+    linkHref: Option[String] = None,
+    linkText: Option[String] = None,
+    description: Option[String] = None
+  )
+
 }

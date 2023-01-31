@@ -19,19 +19,12 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.support
+package uk.gov.nationalarchives.omega.editorial.models
 
-import play.api.data.Form
-import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
+import play.api.libs.json.{ Json, Reads }
 
-trait FormSupport {
+case class EditSetEntry(ccr: String, oci: String, scopeAndContent: String, coveringDates: String)
 
-  def formToEither[A](form: Form[A]): Either[Form[A], A] = form.fold(Left.apply, Right.apply)
-
-}
-
-object FormSupport {
-
-  type EditSetRecordFormValuesTransformer = Form[EditSetRecordFormValues] => Form[EditSetRecordFormValues]
-
+object EditSetEntry {
+  implicit val editSetEntryReads: Reads[EditSetEntry] = Json.reads[EditSetEntry]
 }

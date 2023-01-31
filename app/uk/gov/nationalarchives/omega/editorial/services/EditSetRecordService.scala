@@ -19,19 +19,24 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.support
+package uk.gov.nationalarchives.omega.editorial.services
 
-import play.api.data.Form
-import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
+import uk.gov.nationalarchives.omega.editorial.models.EditSetRecord
 
-trait FormSupport {
+import javax.inject.{ Inject, Singleton }
 
-  def formToEither[A](form: Form[A]): Either[Form[A], A] = form.fold(Left.apply, Right.apply)
+@Singleton
+class EditSetRecordService @Inject() (referenceDataService: ReferenceDataService) {
 
-}
+  def preparePlaceOfDeposit(editSetRecord: EditSetRecord): EditSetRecord = {
+    val correctedValue =
+      if (referenceDataService.isPlaceOfDepositRecognised(editSetRecord.placeOfDepositID))
+        editSetRecord.placeOfDepositID
+      else ""
+    editSetRecord.copy(placeOfDepositID = correctedValue)
+  }
 
-object FormSupport {
-
-  type EditSetRecordFormValuesTransformer = Form[EditSetRecordFormValues] => Form[EditSetRecordFormValues]
+  def prepareCreatorIDs(editSetRecord: EditSetRecord): EditSetRecord =
+    editSetRecord.copy(creatorIDs = editSetRecord.creatorIDs.filter(referenceDataService.isCreatorRecognised))
 
 }
