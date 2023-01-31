@@ -181,6 +181,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
           ExpectedEditRecordPage(
             title = "Edit record",
             heading = "TNA reference: COAL 80/80/1",
+            headingPacId = "COAL.2022.V1RJW.P Physical Record",
             legend = "Intellectual properties",
             classicCatalogueRef = "COAL 80/80/1",
             omegaCatalogueId = "COAL.2022.V1RJW.P",
@@ -264,6 +265,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
           ExpectedEditRecordPage(
             title = "Edit record",
             heading = "TNA reference: COAL 80/80/3",
+            headingPacId = "COAL.2022.V1RJW.P Physical Record",
             legend = "Intellectual properties",
             classicCatalogueRef = "COAL 80/80/3",
             omegaCatalogueId = "COAL.2022.V3RJW.P",
@@ -325,6 +327,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
           ExpectedEditRecordPage(
             title = "Edit record",
             heading = "TNA reference: COAL 80/80/10",
+            headingPacId = "COAL.2022.V1RJW.P Physical Record",
             legend = "Intellectual properties",
             classicCatalogueRef = "COAL 80/80/10",
             omegaCatalogueId = "COAL.2022.V10RJW.P",
@@ -377,6 +380,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
           ExpectedEditRecordPage(
             title = "Edit record",
             heading = "TNA reference: COAL 80/80/4",
+            headingPacId = "COAL.2022.V1RJW.P Physical Record",
             legend = "Intellectual properties",
             classicCatalogueRef = "COAL 80/80/4",
             omegaCatalogueId = "COAL.2022.V4RJW.P",
@@ -2601,6 +2605,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
     ExpectedEditRecordPage(
       title = "Edit record",
       heading = s"TNA reference: ${editSetRecord.ccr}",
+      headingPacId = s"${editSetRecord.oci} Physical Record",
       legend = "Intellectual properties",
       classicCatalogueRef = editSetRecord.ccr,
       omegaCatalogueId = editSetRecord.oci,
@@ -2676,6 +2681,7 @@ object EditSetRecordControllerSpec {
   case class ExpectedEditRecordPage(
     title: String,
     heading: String,
+    headingPacId: String,
     legend: String,
     classicCatalogueRef: String,
     omegaCatalogueId: String,

@@ -40,6 +40,7 @@ edit-set.record.edit.scope-and-content=Scope and content
 edit-set.record.edit.separated-material=Separated material
 edit-set.record.edit.start-date=Start date
 edit-set.record.edit.title=Edit record
+edit-set.record.edit.type.physical=Physical Record
 edit-set.record.error.background-too-long=Administrative / biographical background too long, maximum length 8000 characters
 edit-set.record.error.choose-an-option=You must choose an option
 edit-set.record.error.covering-dates-too-long=Covering date too long, maximum length 255 characters

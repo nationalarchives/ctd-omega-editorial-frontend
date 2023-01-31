@@ -34,6 +34,7 @@
         editSetName: String,
         title: String,
         record: EditSetRecord,
+        recordType: String,
         legalStatusReferenceData: Seq[LegalStatus],
         placesOfDeposit: Seq[PlaceOfDeposit],
         creators: Seq[Creator],
@@ -443,7 +444,7 @@
         @govukErrorSummary(ErrorSummary().withFormErrorsAsText(editSetRecordForm))
     }
     <h1 class="govuk-heading-l">@messages("edit-set.record.edit.heading", record.ccr)</h1>
-    <h2 class="govuk-heading-m">@messages("edit-set.record.edit.id", record.oci)</h2>
+    <h2 class="govuk-heading-m">@messages("edit-set.record.edit.id", record.oci) @recordType</h2>
     <p class="govuk-body">@messages("placeholder.series-national-coal-board")</p>
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
     @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetRecordController.submit("1", record.oci)) {

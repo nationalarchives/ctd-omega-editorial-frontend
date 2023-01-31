@@ -309,11 +309,13 @@ class EditSetRecordController @Inject() (
     form: Form[EditSetRecordFormValues]
   )(implicit request: Request[AnyContent]): HtmlFormat.Appendable = {
     val title = resolvedMessage(MessageKeys.title)
+    val recordType = if(editSetRecord.oci.endsWith(".P")) resolvedMessage(MessageKeys.recordTypePhysical) else ""
     editSetRecordEdit(
       user,
       editSetName,
       title,
       editSetRecord,
+      recordType,
       legalStatuses,
       placesOfDeposit,
       creators,
@@ -457,5 +459,6 @@ object EditSetRecordController {
     val scopeAndContentMissing = "edit-set.record.missing.scope-and-content"
     val startDateInvalid = "edit-set.record.error.start-date"
     val title = "edit-set.record.edit.title"
+    val recordTypePhysical = "edit-set.record.edit.type.physical"
   }
 }
