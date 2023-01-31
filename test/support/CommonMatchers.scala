@@ -27,7 +27,6 @@ import support.ExpectedValues.{ ExpectedRelatedMaterial, ExpectedSelectOption, E
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetRecordController
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError
-import uk.gov.nationalarchives.omega.editorial.services.RowOrdering
 
 import scala.jdk.CollectionConverters._
 
@@ -582,13 +581,13 @@ object CommonMatchers {
   def haveTableHeaderFieldAndDirection(headerText: String, fieldAndDirection: (String, String)): Matcher[Document] = {
     val (field, direction) = fieldAndDirection
     (document: Document) => {
-      haveTableHeaderLink(headerText, RowOrdering.fieldKey, field)(document)
-      haveTableHeaderLink(headerText, RowOrdering.directionKey, direction)(document)
+      haveTableHeaderLink(headerText, "field", field)(document)
+      haveTableHeaderLink(headerText, "direction", direction)(document)
     }
   }
 
   def haveFieldQueryParameter(headerText: String, queryStringValue: String): Matcher[Document] =
-    haveTableHeaderLink(headerText, RowOrdering.fieldKey, queryStringValue)
+    haveTableHeaderLink(headerText, "field", queryStringValue)
 
   private def asExpectedSummaryErrorMessage(element: Element): ExpectedSummaryErrorMessage =
     ExpectedSummaryErrorMessage(element.text(), element.attr("href").replace("#", ""))

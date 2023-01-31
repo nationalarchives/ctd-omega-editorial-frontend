@@ -30,8 +30,6 @@ import support.BaseSpec
 import support.CommonMatchers._
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.editSetRecords.restoreOriginalRecords
-import uk.gov.nationalarchives.omega.editorial.services.RowOrdering
-import uk.gov.nationalarchives.omega.editorial.services.RowOrdering.TableHeaderNames
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
 
 /** Add your spec here. You can mock out a whole application including requests, plugins etc.
@@ -155,7 +153,7 @@ class EditSetControllerSpec extends BaseSpec {
       redirectLocation(editSet) mustBe Some("/login")
     }
 
-    "order Edit Sets" when {
+    "order records" when {
 
       def orderingRequest(field: String, direction: String, offset: Int = 1) = {
         val request = FakeRequest(GET, s"/edit-set/1?field=$field&direction=$direction&offset=$offset")
@@ -172,11 +170,9 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
-            ccrTableHeader = ExpectedTableHeader(TableHeaderNames.ccr, RowOrdering.orderDirectionDescending),
-            scopeAndContentTableHeader =
-              ExpectedTableHeader(TableHeaderNames.scopeAndContent, RowOrdering.orderDirectionAscending),
-            coveringDateTableHeader =
-              ExpectedTableHeader(TableHeaderNames.coveringDates, RowOrdering.orderDirectionAscending),
+            ccrTableHeader = ExpectedTableHeader("ccr", "descending"),
+            scopeAndContentTableHeader = ExpectedTableHeader("scope-and-content", "ascending"),
+            coveringDateTableHeader = ExpectedTableHeader("covering-dates", "ascending"),
             header = "Edit set: COAL 80 Sample",
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -248,7 +244,7 @@ class EditSetControllerSpec extends BaseSpec {
 
       "CCR, descending" in {
 
-        val page = orderingRequest(TableHeaderNames.ccr, "descending")
+        val page = orderingRequest("ccr", "descending")
 
         status(page) mustBe OK
         assertPageAsExpected(
@@ -256,11 +252,9 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
-            ccrTableHeader = ExpectedTableHeader(TableHeaderNames.ccr, RowOrdering.orderDirectionAscending),
-            scopeAndContentTableHeader =
-              ExpectedTableHeader(TableHeaderNames.scopeAndContent, RowOrdering.orderDirectionAscending),
-            coveringDateTableHeader =
-              ExpectedTableHeader(TableHeaderNames.coveringDates, RowOrdering.orderDirectionAscending),
+            ccrTableHeader = ExpectedTableHeader("ccr", "ascending"),
+            scopeAndContentTableHeader = ExpectedTableHeader("scope-and-content", "ascending"),
+            coveringDateTableHeader = ExpectedTableHeader("covering-dates", "ascending"),
             header = "Edit set: COAL 80 Sample",
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -331,7 +325,7 @@ class EditSetControllerSpec extends BaseSpec {
 
       "Scope and Content, ascending" in {
 
-        val page = orderingRequest(TableHeaderNames.scopeAndContent, RowOrdering.orderDirectionAscending)
+        val page = orderingRequest("scope-and-content", "ascending")
 
         status(page) mustBe OK
         assertPageAsExpected(
@@ -339,11 +333,9 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
-            ccrTableHeader = ExpectedTableHeader(TableHeaderNames.ccr, RowOrdering.orderDirectionAscending),
-            scopeAndContentTableHeader =
-              ExpectedTableHeader(TableHeaderNames.scopeAndContent, RowOrdering.orderDirectionDescending),
-            coveringDateTableHeader =
-              ExpectedTableHeader(TableHeaderNames.coveringDates, RowOrdering.orderDirectionAscending),
+            ccrTableHeader = ExpectedTableHeader("ccr", "ascending"),
+            scopeAndContentTableHeader = ExpectedTableHeader("scope-and-content", "descending"),
+            coveringDateTableHeader = ExpectedTableHeader("covering-dates", "ascending"),
             header = "Edit set: COAL 80 Sample",
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -415,7 +407,7 @@ class EditSetControllerSpec extends BaseSpec {
 
       "Scope and Content, descending" in {
 
-        val page = orderingRequest(TableHeaderNames.scopeAndContent, RowOrdering.orderDirectionDescending)
+        val page = orderingRequest("scope-and-content", "descending")
 
         status(page) mustBe OK
         assertPageAsExpected(
@@ -424,11 +416,9 @@ class EditSetControllerSpec extends BaseSpec {
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
             header = "Edit set: COAL 80 Sample",
-            ccrTableHeader = ExpectedTableHeader(TableHeaderNames.ccr, RowOrdering.orderDirectionAscending),
-            scopeAndContentTableHeader =
-              ExpectedTableHeader(TableHeaderNames.scopeAndContent, RowOrdering.orderDirectionAscending),
-            coveringDateTableHeader =
-              ExpectedTableHeader(TableHeaderNames.coveringDates, RowOrdering.orderDirectionAscending),
+            ccrTableHeader = ExpectedTableHeader("ccr", "ascending"),
+            scopeAndContentTableHeader = ExpectedTableHeader("scope-and-content", "ascending"),
+            coveringDateTableHeader = ExpectedTableHeader("covering-dates", "ascending"),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/12",
@@ -499,7 +489,7 @@ class EditSetControllerSpec extends BaseSpec {
 
       "Covering dates, ascending" in {
 
-        val page = orderingRequest(TableHeaderNames.coveringDates, RowOrdering.orderDirectionAscending)
+        val page = orderingRequest("covering-dates", "ascending")
 
         status(page) mustBe OK
         assertPageAsExpected(
@@ -507,11 +497,9 @@ class EditSetControllerSpec extends BaseSpec {
           ExpectedEditSetPage(
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
-            ccrTableHeader = ExpectedTableHeader(TableHeaderNames.ccr, RowOrdering.orderDirectionAscending),
-            scopeAndContentTableHeader =
-              ExpectedTableHeader(TableHeaderNames.scopeAndContent, RowOrdering.orderDirectionAscending),
-            coveringDateTableHeader =
-              ExpectedTableHeader(TableHeaderNames.coveringDates, RowOrdering.orderDirectionDescending),
+            ccrTableHeader = ExpectedTableHeader("ccr", "ascending"),
+            scopeAndContentTableHeader = ExpectedTableHeader("covering-dates", "ascending"),
+            coveringDateTableHeader = ExpectedTableHeader("covering-dates", "descending"),
             header = "Edit set: COAL 80 Sample",
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
@@ -583,7 +571,7 @@ class EditSetControllerSpec extends BaseSpec {
 
       "Covering dates, descending" in {
 
-        val page = orderingRequest(TableHeaderNames.coveringDates, RowOrdering.orderDirectionDescending)
+        val page = orderingRequest("covering-dates", "descending")
 
         status(page) mustBe OK
         assertPageAsExpected(
@@ -592,11 +580,9 @@ class EditSetControllerSpec extends BaseSpec {
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
             header = "Edit set: COAL 80 Sample",
-            ccrTableHeader = ExpectedTableHeader(TableHeaderNames.ccr, RowOrdering.orderDirectionAscending),
-            scopeAndContentTableHeader =
-              ExpectedTableHeader(TableHeaderNames.scopeAndContent, RowOrdering.orderDirectionAscending),
-            coveringDateTableHeader =
-              ExpectedTableHeader(TableHeaderNames.coveringDates, RowOrdering.orderDirectionAscending),
+            ccrTableHeader = ExpectedTableHeader("ccr", "ascending"),
+            scopeAndContentTableHeader = ExpectedTableHeader("scope-and-content", "ascending"),
+            coveringDateTableHeader = ExpectedTableHeader("covering-dates", "ascending"),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/12",
@@ -676,11 +662,9 @@ class EditSetControllerSpec extends BaseSpec {
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
             header = "Edit set: COAL 80 Sample",
-            ccrTableHeader = ExpectedTableHeader(TableHeaderNames.ccr, RowOrdering.orderDirectionDescending),
-            scopeAndContentTableHeader =
-              ExpectedTableHeader(TableHeaderNames.scopeAndContent, RowOrdering.orderDirectionAscending),
-            coveringDateTableHeader =
-              ExpectedTableHeader(TableHeaderNames.coveringDates, RowOrdering.orderDirectionAscending),
+            ccrTableHeader = ExpectedTableHeader("ccr", "descending"),
+            scopeAndContentTableHeader = ExpectedTableHeader("scope-and-content", "ascending"),
+            coveringDateTableHeader = ExpectedTableHeader("covering-dates", "ascending"),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/1",
@@ -750,7 +734,7 @@ class EditSetControllerSpec extends BaseSpec {
       }
 
       "Page 2 sorted by CCR, ascending" in {
-        val page = orderingRequest(TableHeaderNames.ccr, RowOrdering.orderDirectionAscending, offset = 2)
+        val page = orderingRequest("ccr", "ascending", offset = 2)
 
         status(page) mustBe OK
         assertPageAsExpected(
@@ -759,11 +743,9 @@ class EditSetControllerSpec extends BaseSpec {
             title = "Browse Edit Set (Page 2 of 2)",
             caption = "Showing 11 - 12 of 12 records",
             header = "Edit set: COAL 80 Sample",
-            ccrTableHeader = ExpectedTableHeader(TableHeaderNames.ccr, RowOrdering.orderDirectionDescending),
-            scopeAndContentTableHeader =
-              ExpectedTableHeader(TableHeaderNames.scopeAndContent, RowOrdering.orderDirectionAscending),
-            coveringDateTableHeader =
-              ExpectedTableHeader(TableHeaderNames.coveringDates, RowOrdering.orderDirectionAscending),
+            ccrTableHeader = ExpectedTableHeader("ccr", "descending"),
+            scopeAndContentTableHeader = ExpectedTableHeader("scope-and-content", "ascending"),
+            coveringDateTableHeader = ExpectedTableHeader("covering-dates", "ascending"),
             expectedSummaryRows = Seq(
               ExpectedEditSetSummaryRow(
                 ccr = "COAL 80/80/8",

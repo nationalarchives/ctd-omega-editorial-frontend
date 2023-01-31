@@ -25,7 +25,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
 import uk.gov.nationalarchives.omega.editorial.models._
-import uk.gov.nationalarchives.omega.editorial.services.{ EditSetPagination, EditSetService, RowOrdering }
+import uk.gov.nationalarchives.omega.editorial.services.{ EditSetEntryRowOrder, EditSetPagination, EditSetService }
 import uk.gov.nationalarchives.omega.editorial.support.{ FormSupport, MessageSupport }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
 
@@ -52,29 +52,29 @@ class EditSetController @Inject() (
       val ordering = for {
         field     <- queryStringValue(request, fieldKey)
         direction <- queryStringValue(request, orderDirectionKey)
-      } yield RowOrdering(field, direction)
+      } yield EditSetEntryRowOrder.fromNames(field, direction)
 
-      generateEditSetView(id, user, ordering.getOrElse(RowOrdering.defaultOrdering))
+      generateEditSetView(id, user, ordering.getOrElse(EditSetEntryRowOrder.defaultOrder))
     }
   }
 
   private def queryStringValue(request: Request[AnyContent], key: String): Option[String] =
     request.queryString.get(key).flatMap(_.headOption)
 
-  private def generateEditSetView(id: String, user: User, ordering: RowOrdering)(implicit
+  private def generateEditSetView(id: String, user: User, editSetEntryRowOrder: EditSetEntryRowOrder)(implicit
     request: Request[AnyContent]
   ): Result = {
     val currentEditSet = editSetService.getEditSet(id)
-
-    val editSetEntries = currentEditSet.entries.sorted(ordering.ordering)
     val pageNumber = queryStringValue(request, offsetKey).map(_.toInt).getOrElse(1)
+    val sortedEntries = currentEditSet.entries.sorted(editSetEntryRowOrder.currentOrdering)
 
     val editSetPage = new EditSetPagination(
       id = id,
-      ordering = ordering,
+      rowOrder = editSetEntryRowOrder,
       nextText = resolveMessage("edit-set.pagination.next"),
       previousText = resolveMessage("edit-set.pagination.previous")
-    ).makeEditSetPage(editSetEntries, pageNumber)
+    ).makeEditSetPage(sortedEntries, pageNumber)
+
     val title = resolveMessage("edit-set.title", editSetPage.pageNumber, editSetPage.totalPages)
     val heading: String = resolveMessage(
       "edit-set.heading",
@@ -83,7 +83,7 @@ class EditSetController @Inject() (
       editSetPage.numberOfLastEntry.toString,
       editSetPage.totalNumberOfEntries.toString
     )
-    Ok(editSet(user, title, heading, editSetPage, ordering))
+    Ok(editSet(user, title, heading, editSetPage, editSetEntryRowOrder))
   }
 }
 

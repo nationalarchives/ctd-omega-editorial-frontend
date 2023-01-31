@@ -25,11 +25,10 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination._
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController
 import uk.gov.nationalarchives.omega.editorial.controllers.routes
 import uk.gov.nationalarchives.omega.editorial.models.EditSetEntry
-import uk.gov.nationalarchives.omega.editorial.services.RowOrdering
 
 class EditSetPagination(
   id: String,
-  ordering: RowOrdering,
+  rowOrder: EditSetEntryRowOrder,
   nextText: String,
   previousText: String,
   itemsPerPage: Int = EditSetPagination.entriesPerPage
@@ -116,8 +115,8 @@ class EditSetPagination(
   private def formatViewUrl(page: Int): String =
     s"${routes.EditSetController.view(id).url}" +
       s"?${EditSetController.offsetKey}=$page" +
-      s"&${EditSetController.fieldKey}=${ordering.field}" +
-      s"&${EditSetController.orderDirectionKey}=${ordering.direction}"
+      s"&${EditSetController.fieldKey}=${rowOrder.field}" +
+      s"&${EditSetController.orderDirectionKey}=${rowOrder.direction}"
 
 }
 

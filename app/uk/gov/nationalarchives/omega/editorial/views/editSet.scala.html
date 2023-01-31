@@ -19,13 +19,12 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *@
 
-@import uk.gov.nationalarchives.omega.editorial.models.{ User, EditSetEntry }
+@import uk.gov.nationalarchives.omega.editorial.models.User
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
-@import views.html.helper.CSRF
 @import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 @import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination.EditSetPage
-@import uk.gov.nationalarchives.omega.editorial.services.RowOrdering
+@import uk.gov.nationalarchives.omega.editorial.services.EditSetEntryRowOrder
 
 @this(
   govukPagination: GovukPagination,
@@ -37,7 +36,7 @@
   title: String,
   heading: String,
   page: EditSetPage,
-  ordering: RowOrdering,
+  rowOrder: EditSetEntryRowOrder,
 )(implicit messages: Messages, request: Request[AnyContent])
 
 @recordLink(ccr: String, oci: String) = {
@@ -47,7 +46,7 @@
 }
 
 @headerLink(headerValue: String, displayName: String) = {
-  @defining(s"/edit-set/1?field=${headerValue}&direction=${ordering.orderingKey(headerValue)}") { href =>
+  @defining(s"/edit-set/1?field=${headerValue}&direction=${rowOrder.orderingKey(headerValue)}") { href =>
     <a class="govuk-link govuk-link--no-visited-state" href="@href">@displayName</a>
   }
 }
@@ -61,15 +60,15 @@
           Seq(
               HeadCell(
                   content = HtmlContent(headerLink(FieldNames.ccr, messages("edit-set.record.edit.ccr"))),
-                  attributes = Map("aria-sort" -> ordering.ariaSortValue(FieldNames.ccr))
+                  attributes = Map("aria-sort" -> rowOrder.ariaSortValue(FieldNames.ccr))
               ),
               HeadCell(
                   content = HtmlContent(headerLink(FieldNames.scopeAndContent, messages("edit-set.record.edit.scope-and-content"))),
-                  attributes = Map("aria-sort" -> ordering.ariaSortValue(FieldNames.scopeAndContent))
+                  attributes = Map("aria-sort" -> rowOrder.ariaSortValue(FieldNames.scopeAndContent))
               ),
               HeadCell(
                   content = HtmlContent(headerLink(FieldNames.coveringDates, messages("edit-set.record.edit.covering-dates"))),
-                  attributes = Map("aria-sort" -> ordering.ariaSortValue(FieldNames.coveringDates))
+                  attributes = Map("aria-sort" -> rowOrder.ariaSortValue(FieldNames.coveringDates))
               )
           )
       ),

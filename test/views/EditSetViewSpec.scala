@@ -29,7 +29,7 @@ import support.CommonMatchers._
 import uk.gov.hmrc.govukfrontend.views.Aliases.Pagination
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry }
 import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination.EditSetPage
-import uk.gov.nationalarchives.omega.editorial.services.RowOrdering
+import uk.gov.nationalarchives.omega.editorial.services.EditSetEntryRowOrder
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
 
 class EditSetViewSpec extends BaseSpec {
@@ -49,7 +49,7 @@ class EditSetViewSpec extends BaseSpec {
         editSet.entries.size,
         1
       )
-      val editSetHtml: Html = editSetInstance(user, title, heading, editSetPage, RowOrdering.defaultOrdering)(
+      val editSetHtml: Html = editSetInstance(user, title, heading, editSetPage, EditSetEntryRowOrder.defaultOrder)(
         Helpers.stubMessages(),
         CSRFTokenHelper.addCSRFToken(FakeRequest())
       )
@@ -140,7 +140,7 @@ class EditSetViewSpec extends BaseSpec {
         title = "EditSetTitleTest",
         heading = editSet.name,
         page = editSetPage,
-        ordering = RowOrdering.defaultOrdering
+        rowOrder = EditSetEntryRowOrder.defaultOrder
       )(
         Helpers.stubMessages(),
         CSRFTokenHelper.addCSRFToken(FakeRequest())
