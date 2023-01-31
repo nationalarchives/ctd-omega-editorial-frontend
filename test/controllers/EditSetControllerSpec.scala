@@ -498,7 +498,7 @@ class EditSetControllerSpec extends BaseSpec {
             title = "Browse Edit Set (Page 1 of 2)",
             caption = "Showing 1 - 10 of 12 records",
             ccrTableHeader = ExpectedTableHeader("ccr", "ascending"),
-            scopeAndContentTableHeader = ExpectedTableHeader("covering-dates", "ascending"),
+            scopeAndContentTableHeader = ExpectedTableHeader("scope-and-content", "ascending"),
             coveringDateTableHeader = ExpectedTableHeader("covering-dates", "descending"),
             header = "Edit set: COAL 80 Sample",
             expectedSummaryRows = Seq(
@@ -776,18 +776,22 @@ class EditSetControllerSpec extends BaseSpec {
   ): Assertion = {
     document must haveTitle(expectedEditRecordPage.title)
     document must haveCaption(expectedEditRecordPage.caption)
-    document must haveTableHeaderFieldAndDirection(
-      "CCR",
-      expectedEditRecordPage.ccrTableHeader.sortField -> expectedEditRecordPage.ccrTableHeader.sortOrder
-    )
-    document must haveTableHeaderFieldAndDirection(
+
+    document must haveDirectionInTableHeader("CCR", expectedEditRecordPage.ccrTableHeader.sortOrder)
+    document must haveFieldInTableHeader("CCR", expectedEditRecordPage.ccrTableHeader.sortField)
+
+    document must haveDirectionInTableHeader(
       "Scope and content",
-      expectedEditRecordPage.scopeAndContentTableHeader.sortField -> expectedEditRecordPage.scopeAndContentTableHeader.sortOrder
+      expectedEditRecordPage.scopeAndContentTableHeader.sortOrder
     )
-    document must haveTableHeaderFieldAndDirection(
-      "Covering dates",
-      expectedEditRecordPage.coveringDateTableHeader.sortField -> expectedEditRecordPage.coveringDateTableHeader.sortOrder
+    document must haveFieldInTableHeader(
+      "Scope and content",
+      expectedEditRecordPage.scopeAndContentTableHeader.sortField
     )
+
+    document must haveDirectionInTableHeader("Covering dates", expectedEditRecordPage.coveringDateTableHeader.sortOrder)
+    document must haveFieldInTableHeader("Covering dates", expectedEditRecordPage.coveringDateTableHeader.sortField)
+
     document must haveSummaryRows(expectedEditRecordPage.expectedSummaryRows.size)
     expectedEditRecordPage.expectedSummaryRows.zipWithIndex.foreach { case (expectedEditSetSummaryRow, index) =>
       document must haveSummaryRowContents(

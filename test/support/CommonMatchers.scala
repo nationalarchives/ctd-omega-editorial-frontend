@@ -578,16 +578,11 @@ object CommonMatchers {
       )
     }
 
-  def haveTableHeaderFieldAndDirection(headerText: String, fieldAndDirection: (String, String)): Matcher[Document] = {
-    val (field, direction) = fieldAndDirection
-    (document: Document) => {
-      haveTableHeaderLink(headerText, "field", field)(document)
-      haveTableHeaderLink(headerText, "direction", direction)(document)
-    }
-  }
+  def haveDirectionInTableHeader(headerText: String, direction: String): Matcher[Document] =
+    haveTableHeaderLink(headerText, "direction", direction)
 
-  def haveFieldQueryParameter(headerText: String, queryStringValue: String): Matcher[Document] =
-    haveTableHeaderLink(headerText, "field", queryStringValue)
+  def haveFieldInTableHeader(headerText: String, field: String): Matcher[Document] =
+    haveTableHeaderLink(headerText, "field", field)
 
   private def asExpectedSummaryErrorMessage(element: Element): ExpectedSummaryErrorMessage =
     ExpectedSummaryErrorMessage(element.text(), element.attr("href").replace("#", ""))
