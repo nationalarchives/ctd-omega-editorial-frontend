@@ -165,3 +165,21 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
 
 // Adds additional packages into conf/routes
 // play.sbt.routes.RoutesKeys.routesImport += "uk.gov.nationalarchives.binders._"
+
+//
+// Test Coverage
+//
+
+// This will prevent the version conflict with Twirl, when running coverage.
+ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
+
+// This will include coverage generation for both unit and integration tests.
+coverageEnabled := true
+
+val packagesExcludedFromCoverageCheck = Seq(
+  ".*Reverse.*",
+  "uk.gov.nationalarchives.omega.editorial.views.html.*",
+  "router.*"
+)
+
+coverageExcludedPackages := packagesExcludedFromCoverageCheck.mkString(";")

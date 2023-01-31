@@ -1,1 +1,1 @@
-sbt clean test IntegrationTest/test fmtCheck
+sbt clean test IntegrationTest/test fmtCheck coverageReport
