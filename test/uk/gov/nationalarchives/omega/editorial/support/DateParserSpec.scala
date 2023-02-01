@@ -74,30 +74,15 @@ class DateParserSpec extends WordSpec with MustMatchers {
         )((rawDate: String, expectedDate: LocalDate) => parse(rawDate) mustBe Some(expectedDate))
       }
       "day starting with a zero" in {
-        forAll(
-          Table(
-            ("Raw Date", "Expected Date"),
-            ("09/4/2022", LocalDate.of(2022, APRIL, 9))
-          )
-        )((rawDate: String, expectedDate: LocalDate) => parse(rawDate) mustBe Some(expectedDate))
+        parse("09/4/2022") mustBe Some(LocalDate.of(2022, APRIL, 9))
       }
 
       "month starting with a zero" in {
-        forAll(
-          Table(
-            ("Raw Date", "Expected Date"),
-            ("29/04/2022", LocalDate.of(2022, APRIL, 29))
-          )
-        )((rawDate: String, expectedDate: LocalDate) => parse(rawDate) mustBe Some(expectedDate))
+        parse("29/04/2022") mustBe Some(LocalDate.of(2022, APRIL, 29))
       }
 
       "year starting with a zero" in {
-        forAll(
-          Table(
-            ("Raw Date", "Expected Date"),
-            ("5/9/022", LocalDate.of(22, SEPTEMBER, 5))
-          )
-        )((rawDate: String, expectedDate: LocalDate) => parse(rawDate) mustBe Some(expectedDate))
+        parse("5/9/022") mustBe Some(LocalDate.of(22, SEPTEMBER, 5))
       }
 
       "year is 1, 2 or 3 digits" in {
@@ -106,7 +91,7 @@ class DateParserSpec extends WordSpec with MustMatchers {
             ("Raw Date", "Expected Date"),
             ("1/12/1", LocalDate.of(1, DECEMBER, 1)),
             ("5/9/10", LocalDate.of(10, SEPTEMBER, 5)),
-            ("5/9/1000", LocalDate.of(1000, SEPTEMBER, 5))
+            ("5/9/100", LocalDate.of(100, SEPTEMBER, 5))
           )
         )((rawDate: String, expectedDate: LocalDate) => parse(rawDate) mustBe Some(expectedDate))
       }
@@ -121,6 +106,9 @@ class DateParserSpec extends WordSpec with MustMatchers {
       "non existent" in {
         Seq("29/2/2022", "30/2/2022", "31/2/2022", "42/10/2022", "10/14/2022")
           .foreach(rawDate => parse(rawDate) mustBe empty)
+      }
+      "given a negative year" in {
+        parse("1/11/-10") mustBe empty
       }
     }
   }

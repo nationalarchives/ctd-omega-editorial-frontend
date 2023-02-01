@@ -31,7 +31,6 @@ import uk.gov.nationalarchives.omega.editorial.services.{ EditSetPagination, Edi
 import uk.gov.nationalarchives.omega.editorial.support.{ FormSupport, MessageSupport }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
 
-
 import javax.inject._
 
 /** This controller creates an `Action` to handle HTTP requests to the application's home page.
