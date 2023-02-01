@@ -110,6 +110,9 @@ class DateParserSpec extends WordSpec with MustMatchers {
       "given a negative year" in {
         parse("1/11/-10") mustBe empty
       }
+      "given year is zero" in {
+        parse("1/11/0") mustBe empty
+      }
     }
   }
 
