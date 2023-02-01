@@ -181,7 +181,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
           ExpectedEditRecordPage(
             title = "Edit record",
             heading = "TNA reference: COAL 80/80/1",
-            headingPacId = "COAL.2022.V1RJW.P Physical Record",
+            headingPacId = "PAC-ID: COAL.2022.V1RJW.P Physical Record",
             legend = "Intellectual properties",
             classicCatalogueRef = "COAL 80/80/1",
             omegaCatalogueId = "COAL.2022.V1RJW.P",
@@ -265,7 +265,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
           ExpectedEditRecordPage(
             title = "Edit record",
             heading = "TNA reference: COAL 80/80/3",
-            headingPacId = "COAL.2022.V1RJW.P Physical Record",
+            headingPacId = "PAC-ID: COAL.2022.V3RJW.P Physical Record",
             legend = "Intellectual properties",
             classicCatalogueRef = "COAL 80/80/3",
             omegaCatalogueId = "COAL.2022.V3RJW.P",
@@ -327,7 +327,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
           ExpectedEditRecordPage(
             title = "Edit record",
             heading = "TNA reference: COAL 80/80/10",
-            headingPacId = "COAL.2022.V1RJW.P Physical Record",
+            headingPacId = "PAC-ID: COAL.2022.V10RJW.P Physical Record",
             legend = "Intellectual properties",
             classicCatalogueRef = "COAL 80/80/10",
             omegaCatalogueId = "COAL.2022.V10RJW.P",
@@ -380,7 +380,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
           ExpectedEditRecordPage(
             title = "Edit record",
             heading = "TNA reference: COAL 80/80/4",
-            headingPacId = "COAL.2022.V1RJW.P Physical Record",
+            headingPacId = "PAC-ID: COAL.2022.V4RJW.P Physical Record",
             legend = "Intellectual properties",
             classicCatalogueRef = "COAL 80/80/4",
             omegaCatalogueId = "COAL.2022.V4RJW.P",
@@ -411,10 +411,20 @@ class EditSetRecordControllerSpec extends BaseSpec {
             custodialHistory = "",
             relatedMaterial = Seq.empty,
             separatedMaterial = Seq.empty
-          )
+          ).copy()
         )
       }
+      "all data is valid with no record type suffix" in {
+        val oci = "COAL.2022.V13RJW"
+        val getRecordResult = getRecordForEditingWhileLoggedIn(1, oci)
+        assertPageAsExpected(
+          asDocument(getRecordResult),
+          generateExpectedEditRecordPageFromRecord(oci).copy(
+            headingPacId = s"PAC-ID: $oci"
+          )
+        )
 
+      }
     }
 
     "redirect to the login page from the application when requested with invalid session token" in {
@@ -2471,6 +2481,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
   private def assertPageAsExpected(document: Document, expectedEditRecordPage: ExpectedEditRecordPage): Assertion = {
     document must haveTitle(expectedEditRecordPage.title)
     document must haveHeading(expectedEditRecordPage.heading)
+    document must haveHeadingPacId(expectedEditRecordPage.headingPacId)
     document must haveLegend(expectedEditRecordPage.legend)
     document must haveClassicCatalogueRef(expectedEditRecordPage.classicCatalogueRef)
     document must haveOmegaCatalogueId(expectedEditRecordPage.omegaCatalogueId)
@@ -2605,7 +2616,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
     ExpectedEditRecordPage(
       title = "Edit record",
       heading = s"TNA reference: ${editSetRecord.ccr}",
-      headingPacId = s"${editSetRecord.oci} Physical Record",
+      headingPacId = s"PAC-ID: ${editSetRecord.oci} Physical Record",
       legend = "Intellectual properties",
       classicCatalogueRef = editSetRecord.ccr,
       omegaCatalogueId = editSetRecord.oci,
