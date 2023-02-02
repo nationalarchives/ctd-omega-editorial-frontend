@@ -130,8 +130,17 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
     headerLicense := Some(HeaderLicense.MIT("2022", "The National Archives")),
     libraryDependencies ++= Seq(
       guice,
-      "org.webjars.npm"         % "govuk-frontend"     % "4.3.1",
-      "uk.gov.hmrc"            %% "play-frontend-hmrc" % "6.2.0-play-28",
+      "org.webjars.npm" % "govuk-frontend"             % "4.3.1",
+      "uk.gov.hmrc"    %% "play-frontend-hmrc"         % "6.2.0-play-28",
+      "org.typelevel"  %% "cats-effect"                % "3.4.4",
+      "org.typelevel"  %% "cats-core"                  % "2.9.0",
+      "org.typelevel"  %% "cats-effect-kernel"         % "3.4.4",
+      "org.typelevel"  %% "log4cats-core"              % "2.5.0",
+      "org.typelevel"  %% "log4cats-slf4j"             % "2.5.0",
+      "dev.fpinbo"     %% "jms4s-active-mq-artemis"    % "0.0.1-2d6d83c",
+      "dev.fpinbo"     %% "jms4s-simple-queue-service" % "0.0.1-2d6d83c",
+      "org.slf4j"       % "slf4j-api"                  % "2.0.6",
+      "ch.qos.logback" % "logback-classic" % "1.4.4", // Needed to avoid class cast exception involving NOPLoggerFactory + LoggerContext.
       "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0"  % Test,
       "org.jsoup"               % "jsoup"              % "1.15.3" % Test
     ),
