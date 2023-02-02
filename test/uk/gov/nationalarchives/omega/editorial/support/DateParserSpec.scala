@@ -30,7 +30,7 @@ import java.time.Month.{ APRIL, DECEMBER, SEPTEMBER }
 
 class DateParserSpec extends WordSpec with MustMatchers {
 
-  "'parse' returns the expected the result" when {
+  "'parseDate' returns the expected the result" when {
     "the date should be considered valid" when {
       "before the switchover period" in {
         forAll(
@@ -73,8 +73,32 @@ class DateParserSpec extends WordSpec with MustMatchers {
           )
         )((rawDate: String, expectedDate: LocalDate) => parse(rawDate) mustBe Some(expectedDate))
       }
+      "day starting with a zero" in {
+        parse("09/4/2022") mustBe Some(LocalDate.of(2022, APRIL, 9))
+      }
+
+      "month starting with a zero" in {
+        parse("29/04/2022") mustBe Some(LocalDate.of(2022, APRIL, 29))
+      }
+
+      "year starting with a zero" in {
+        parse("5/9/022") mustBe Some(LocalDate.of(22, SEPTEMBER, 5))
+      }
+
+      "year is 1, 2 or 3 digits" in {
+        forAll(
+          Table(
+            ("Raw Date", "Expected Date"),
+            ("1/12/1", LocalDate.of(1, DECEMBER, 1)),
+            ("5/9/10", LocalDate.of(10, SEPTEMBER, 5)),
+            ("5/9/100", LocalDate.of(100, SEPTEMBER, 5))
+          )
+        )((rawDate: String, expectedDate: LocalDate) => parse(rawDate) mustBe Some(expectedDate))
+      }
     }
+
     "the date should be considered invalid" when {
+
       "malformed" in {
         Seq("14-9-2020", "9/2020", "2020", "1/14/9/2020")
           .foreach(rawDate => parse(rawDate) mustBe empty)
@@ -82,6 +106,12 @@ class DateParserSpec extends WordSpec with MustMatchers {
       "non existent" in {
         Seq("29/2/2022", "30/2/2022", "31/2/2022", "42/10/2022", "10/14/2022")
           .foreach(rawDate => parse(rawDate) mustBe empty)
+      }
+      "given a negative year" in {
+        parse("1/11/-10") mustBe empty
+      }
+      "given year is zero" in {
+        parse("1/11/0") mustBe empty
       }
     }
   }

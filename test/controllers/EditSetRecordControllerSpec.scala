@@ -1272,6 +1272,127 @@ class EditSetRecordControllerSpec extends BaseSpec {
           )
 
         }
+
+        "start date has a leading zero" when {
+          "in day" in {
+
+            val oci = "COAL.2022.V1RJW.P"
+            val values =
+              valuesFromRecord(oci) ++ Map(
+                FieldNames.startDateDay -> "01"
+              )
+            val editRecordPageResponse = submitWhileLoggedIn("save", 1, oci, values)
+
+            status(editRecordPageResponse) mustBe SEE_OTHER
+            redirectLocation(editRecordPageResponse) mustBe Some(s"/edit-set/1/record/$oci/edit/save")
+
+            val getRecordResult = getRecordForEditingWhileLoggedIn(1, oci)
+            assertPageAsExpected(
+              asDocument(getRecordResult),
+              generateExpectedEditRecordPageFromRecord(oci).copy(startDate = ExpectedDate("1", "1", "1962"))
+            )
+          }
+
+          "in month" in {
+
+            val oci = "COAL.2022.V1RJW.P"
+            val values =
+              valuesFromRecord(oci) ++ Map(
+                FieldNames.startDateMonth -> "01"
+              )
+            val editRecordPageResponse = submitWhileLoggedIn("save", 1, oci, values)
+
+            status(editRecordPageResponse) mustBe SEE_OTHER
+            redirectLocation(editRecordPageResponse) mustBe Some(s"/edit-set/1/record/$oci/edit/save")
+
+            val getRecordResult = getRecordForEditingWhileLoggedIn(1, oci)
+            assertPageAsExpected(
+              asDocument(getRecordResult),
+              generateExpectedEditRecordPageFromRecord(oci).copy(startDate = ExpectedDate("1", "1", "1962"))
+            )
+          }
+
+          "in year" in {
+
+            val oci = "COAL.2022.V1RJW.P"
+            val values =
+              valuesFromRecord(oci) ++ Map(
+                FieldNames.startDateYear -> "0962"
+              )
+            val editRecordPageResponse = submitWhileLoggedIn("save", 1, oci, values)
+
+            status(editRecordPageResponse) mustBe SEE_OTHER
+            redirectLocation(editRecordPageResponse) mustBe Some(s"/edit-set/1/record/$oci/edit/save")
+
+            val getRecordResult = getRecordForEditingWhileLoggedIn(1, oci)
+            assertPageAsExpected(
+              asDocument(getRecordResult),
+              generateExpectedEditRecordPageFromRecord(oci).copy(startDate = ExpectedDate("1", "1", "962"))
+            )
+          }
+        }
+        "end date has a leading zero" when {
+          "in day" in {
+
+            val oci = "COAL.2022.V1RJW.P"
+            val values =
+              valuesFromRecord(oci) ++ Map(
+                FieldNames.endDateDay -> "03"
+              )
+            val editRecordPageResponse = submitWhileLoggedIn("save", 1, oci, values)
+
+            status(editRecordPageResponse) mustBe SEE_OTHER
+            redirectLocation(editRecordPageResponse) mustBe Some(s"/edit-set/1/record/$oci/edit/save")
+
+            val getRecordResult = getRecordForEditingWhileLoggedIn(1, oci)
+            assertPageAsExpected(
+              asDocument(getRecordResult),
+              generateExpectedEditRecordPageFromRecord(oci).copy(endDate = ExpectedDate("3", "12", "1962"))
+            )
+          }
+
+          "in month" in {
+
+            val oci = "COAL.2022.V1RJW.P"
+            val values =
+              valuesFromRecord(oci) ++ Map(
+                FieldNames.endDateMonth -> "01"
+              )
+            val editRecordPageResponse = submitWhileLoggedIn("save", 1, oci, values)
+
+            status(editRecordPageResponse) mustBe SEE_OTHER
+            redirectLocation(editRecordPageResponse) mustBe Some(s"/edit-set/1/record/$oci/edit/save")
+
+            val getRecordResult = getRecordForEditingWhileLoggedIn(1, oci)
+
+            assertPageAsExpected(
+              asDocument(getRecordResult),
+              generateExpectedEditRecordPageFromRecord(oci).copy(endDate = ExpectedDate("31", "1", "1962"))
+            )
+          }
+
+          "in year" in {
+
+            val oci = "COAL.2022.V1RJW.P"
+            val values =
+              valuesFromRecord(oci) ++ Map(
+                FieldNames.startDateYear -> "962",
+                FieldNames.endDateYear   -> "0962"
+              )
+            val editRecordPageResponse = submitWhileLoggedIn("save", 1, oci, values)
+
+            status(editRecordPageResponse) mustBe SEE_OTHER
+            redirectLocation(editRecordPageResponse) mustBe Some(s"/edit-set/1/record/$oci/edit/save")
+
+            val getRecordResult = getRecordForEditingWhileLoggedIn(1, oci)
+            assertPageAsExpected(
+              asDocument(getRecordResult),
+              generateExpectedEditRecordPageFromRecord(oci)
+                .copy(startDate = ExpectedDate("1", "1", "962"), endDate = ExpectedDate("31", "12", "962"))
+            )
+          }
+        }
+
       }
     }
 

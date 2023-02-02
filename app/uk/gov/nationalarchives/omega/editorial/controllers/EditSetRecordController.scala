@@ -109,9 +109,7 @@ class EditSetRecordController @Inject() (
           BadRequest("This action is not allowed")
 
       }
-
     }
-
   }
 
   def save(id: String, oci: String): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>

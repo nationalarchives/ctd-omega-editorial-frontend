@@ -43,13 +43,28 @@ import scala.util.Try
   */
 object DateParser {
 
+  private val partDelimiter = "/"
+
   private val dateTimeFormatter =
-    DateTimeFormatter.ofPattern("d/M/yyyy").withLocale(Locale.UK).withResolverStyle(ResolverStyle.SMART)
+    DateTimeFormatter
+      .ofPattern(s"d${partDelimiter}M${partDelimiter}y")
+      .withLocale(Locale.UK)
+      .withResolverStyle(ResolverStyle.SMART)
 
   def parse(rawDateAsYearMonthDay: String): Option[LocalDate] =
     Try(LocalDate.parse(rawDateAsYearMonthDay, dateTimeFormatter)).toOption
       .filter(dateIsSameAsOriginal(_, rawDateAsYearMonthDay))
 
   private def dateIsSameAsOriginal(date: LocalDate, rawDateAsYearMonthDay: String): Boolean =
-    dateTimeFormatter.format(date) == rawDateAsYearMonthDay
+    dateTimeFormatter.format(date) == normaliseFormat(rawDateAsYearMonthDay)
+
+  private def normaliseFormat(originalRawDate: String): String = {
+    val partsOfOriginalRawDateWithoutLeadingZeros =
+      originalRawDate
+        .split(partDelimiter)
+        .map(part => String.valueOf(part.toInt))
+        .toSeq
+    partsOfOriginalRawDateWithoutLeadingZeros.mkString(partDelimiter)
+  }
+
 }
