@@ -411,19 +411,27 @@ class EditSetRecordControllerSpec extends BaseSpec {
             custodialHistory = "",
             relatedMaterial = Seq.empty,
             separatedMaterial = Seq.empty
-          ).copy()
+          )
         )
       }
       "all data is valid with no record type suffix" in {
-        val oci = "COAL.2022.V13RJW"
+        val oci = "COAL.2022.V2RJW"
         val getRecordResult = getRecordForEditingWhileLoggedIn(1, oci)
         assertPageAsExpected(
           asDocument(getRecordResult),
           generateExpectedEditRecordPageFromRecord(oci).copy(
-            headingPacId = s"PAC-ID: $oci"
+            headingPacId = s"PAC-ID: $oci",
+            optionsForCreators = Seq(
+              Seq(
+                ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
+                ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+              )
+            )
           )
         )
-
       }
     }
 

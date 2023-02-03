@@ -84,7 +84,7 @@ package object editSetRecords {
     .parse(
       """{
         |  "ccr" : "COAL 80/80/2",
-        |  "oci" : "COAL.2022.V2RJW.P",
+        |  "oci" : "COAL.2022.V2RJW",
         |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
         |  "coveringDates" : "1966",
         |  "formerReferenceDepartment" : "",
@@ -383,34 +383,9 @@ package object editSetRecords {
     )
     .as[EditSetRecord]
 
-  private val editSetRecord13: EditSetRecord = Json
-    .parse(
-      """{
-        |  "ccr" : "COAL 20/80/13",
-        |  "oci" : "COAL.2022.V13RJW",
-        |  "scopeAndContent" : "Coal Mining Memorial Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.",
-        |  "coveringDates" : "2000",
-        |  "formerReferenceDepartment" : "",
-        |  "formerReferencePro" : "",
-        |  "startDateDay" : "1",
-        |  "startDateMonth" : "1",
-        |  "startDateYear" : "2000",
-        |  "endDateDay" : "31",
-        |  "endDateMonth" : "12",
-        |  "endDateYear" : "2000",
-        |  "legalStatusID": "ref.4",
-        |  "placeOfDepositID" : "1",
-        |  "note": "",
-        |  "background": "",
-        |  "custodialHistory" : "",
-        |  "creatorIDs": ["8R6"]
-        |} """.stripMargin
-    )
-    .as[EditSetRecord]
-
   private val originalEditSetRecordMap: Map[String, EditSetRecord] = Map(
     "COAL.2022.V1RJW.P"  -> editSetRecord1,
-    "COAL.2022.V2RJW.P"  -> editSetRecord2,
+    "COAL.2022.V2RJW"    -> editSetRecord2,
     "COAL.2022.V3RJW.P"  -> editSetRecord3,
     "COAL.2022.V4RJW.P"  -> editSetRecord4,
     "COAL.2022.V5RJW.P"  -> editSetRecord5,
@@ -420,8 +395,7 @@ package object editSetRecords {
     "COAL.2022.V9RJW.P"  -> editSetRecord9,
     "COAL.2022.V10RJW.P" -> editSetRecord10,
     "COAL.2022.V11RJW.P" -> editSetRecord11,
-    "COAL.2022.V12RJW.P" -> editSetRecord12,
-    "COAL.2022.V13RJW"   -> editSetRecord13
+    "COAL.2022.V12RJW.P" -> editSetRecord12
   )
 
   var editSetRecordMap: Map[String, EditSetRecord] = originalEditSetRecordMap
@@ -454,7 +428,7 @@ package object editSets {
         |    },
         |    {
         |      "ccr" : "COAL 80/80/2",
-        |      "oci" : "COAL.2022.V2RJW.P",
+        |      "oci" : "COAL.2022.V2RJW",
         |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
         |      "coveringDates" : "1966"
         |    },
