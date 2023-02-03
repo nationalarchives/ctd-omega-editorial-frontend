@@ -45,7 +45,7 @@ object DateParser {
 
   private val partDelimiter = "/"
 
-  private val dateTimeFormatter =
+  val dateTimeFormatter =
     DateTimeFormatter
       .ofPattern(s"d${partDelimiter}M${partDelimiter}y")
       .withLocale(Locale.UK)
