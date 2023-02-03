@@ -59,7 +59,7 @@ class CoveringDateCalculatorSpec extends BaseSpec with TableDrivenPropertyChecks
       ),
       "1582 Oct 11"               -> defineTestCoveringDate("1582 Oct 11" -> "1582 Oct 11"),
       "1582 Oct 11 - 1582 Nov 29" -> defineTestCoveringDate("1582 Oct 11" -> "1582 Nov 29"),
-      "1 - 2023"                  -> defineTestCoveringDate("1 Jan 1" -> s"${LocalDate.now().getYear()} Dec 31"),
+      "1 - 2023"                  -> defineTestCoveringDate("1 Jan 1" -> s"${LocalDate.now().getYear} Dec 31"),
       // Dates related to the switchover from the Julian to the Gregorian calendar.
       "1752 Aug"                  -> defineTestCoveringDate("1752 Aug 1" -> "1752 Aug 31"),
       "1752 Aug 1–1752 Aug 2"     -> defineTestCoveringDate("1752 Aug 1" -> "1752 Aug 2"),
@@ -99,7 +99,7 @@ class CoveringDateCalculatorSpec extends BaseSpec with TableDrivenPropertyChecks
       "01 Oct 1305"                           -> ParseError,
       "Mon 1 Oct 1330"                        -> ParseError,
       "0 - 2023"                              -> DateTooFarInPast(LocalDate.of(0, 1, 1)),
-      s"1 - ${LocalDate.now().getYear() + 1}" -> DateTooFarInFuture(LocalDate.of(LocalDate.now().getYear + 1, 12, 31)),
+      s"1 - ${LocalDate.now().getYear + 1}" -> DateTooFarInFuture(LocalDate.of(LocalDate.now().getYear + 1, 12, 31)),
       "1999 - 1305" -> InvalidRange(DateRange(LocalDate.of(1999, 1, 1), LocalDate.of(1305, 12, 31))),
       "1999 - 1305; 2000 Feb 3 - 1306 Nov 30" -> MultipleErrors(
         List(
