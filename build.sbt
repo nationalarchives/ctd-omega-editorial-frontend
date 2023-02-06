@@ -166,6 +166,9 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
 // Adds additional packages into conf/routes
 // play.sbt.routes.RoutesKeys.routesImport += "uk.gov.nationalarchives.binders._"
 
+// Integration tests are automatically included, as the IntegrationTest config is extended from Test.
+Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
+
 //
 // Test Coverage
 //
