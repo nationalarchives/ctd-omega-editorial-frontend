@@ -34,7 +34,7 @@ import support.ExpectedValues._
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetRecordController.FieldNames
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetRecordController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.editSetRecords.{ editSetRecordMap, restoreOriginalRecords }
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, RelatedMaterial, SeparatedMaterial }
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, PhysicalRecord, RelatedMaterial, SeparatedMaterial }
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
 import scala.concurrent.Future
@@ -2612,10 +2612,16 @@ class EditSetRecordControllerSpec extends BaseSpec {
 
   private def generateExpectedEditRecordPageFromRecord(oci: String): ExpectedEditRecordPage = {
     val editSetRecord = getExpectedEditSetRecord(oci)
+    println("record type: " + editSetRecord.recordType)
+    val messages: Map[String, String] =
+      Map("edit-set.record.edit.type.physical" -> "Physical Record")
     ExpectedEditRecordPage(
       title = "Edit record",
       heading = s"TNA reference: ${editSetRecord.ccr}",
-      subHeading = s"PAC-ID: ${editSetRecord.oci} Physical Record",
+      subHeading = s"PAC-ID: ${editSetRecord.oci} ${editSetRecord.recordType match {
+          case Some(PhysicalRecord) => messages.get("edit-set.record.edit.type.physical").get
+          case _                    => ""
+        }}",
       legend = "Intellectual properties",
       classicCatalogueRef = editSetRecord.ccr,
       omegaCatalogueId = editSetRecord.oci,
@@ -2636,19 +2642,6 @@ class EditSetRecordControllerSpec extends BaseSpec {
       ).map(expectedSelectedOption =>
         expectedSelectedOption.copy(selected = expectedSelectedOption.value == editSetRecord.placeOfDepositID)
       ),
-//      optionsForCreators = editSetRecord.creatorIDs
-//        .filter(creatorId => allCreators.exists(_.id == creatorId))
-//        .map(creatorId =>
-//          Seq(
-//            ExpectedSelectOption("", "Select creator", disabled = true),
-//            ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-//            ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-//            ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-//            ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-//          ).map(expectedSelectedOption =>
-//            expectedSelectedOption.copy(selected = expectedSelectedOption.value == creatorId)
-//          )
-//        ),
       optionsForCreators = {
         val recognisedCreatorIds = editSetRecord.creatorIDs.filter(creatorId => allCreators.exists(_.id == creatorId))
         val correctedCreatorIds = if (recognisedCreatorIds.nonEmpty) recognisedCreatorIds else Seq("")
