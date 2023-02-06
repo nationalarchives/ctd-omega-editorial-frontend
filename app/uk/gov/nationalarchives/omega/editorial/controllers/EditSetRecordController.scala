@@ -309,13 +309,11 @@ class EditSetRecordController @Inject() (
     form: Form[EditSetRecordFormValues]
   )(implicit request: Request[AnyContent]): HtmlFormat.Appendable = {
     val title = resolvedMessage(MessageKeys.title)
-    val recordType = if (editSetRecord.oci.endsWith(".P")) resolvedMessage(MessageKeys.recordTypePhysical) else ""
     editSetRecordEdit(
       user,
       editSetName,
       title,
       editSetRecord,
-      recordType,
       legalStatuses,
       placesOfDeposit,
       creators,

@@ -181,7 +181,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
           ExpectedEditRecordPage(
             title = "Edit record",
             heading = "TNA reference: COAL 80/80/1",
-            headingPacId = "PAC-ID: COAL.2022.V1RJW.P Physical Record",
+            subHeading = "PAC-ID: COAL.2022.V1RJW.P PhysicalRecord",
             legend = "Intellectual properties",
             classicCatalogueRef = "COAL 80/80/1",
             omegaCatalogueId = "COAL.2022.V1RJW.P",
@@ -265,7 +265,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
           ExpectedEditRecordPage(
             title = "Edit record",
             heading = "TNA reference: COAL 80/80/3",
-            headingPacId = "PAC-ID: COAL.2022.V3RJW.P Physical Record",
+            subHeading = "PAC-ID: COAL.2022.V3RJW.P PhysicalRecord",
             legend = "Intellectual properties",
             classicCatalogueRef = "COAL 80/80/3",
             omegaCatalogueId = "COAL.2022.V3RJW.P",
@@ -327,7 +327,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
           ExpectedEditRecordPage(
             title = "Edit record",
             heading = "TNA reference: COAL 80/80/10",
-            headingPacId = "PAC-ID: COAL.2022.V10RJW.P Physical Record",
+            subHeading = "PAC-ID: COAL.2022.V10RJW.P PhysicalRecord",
             legend = "Intellectual properties",
             classicCatalogueRef = "COAL 80/80/10",
             omegaCatalogueId = "COAL.2022.V10RJW.P",
@@ -380,7 +380,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
           ExpectedEditRecordPage(
             title = "Edit record",
             heading = "TNA reference: COAL 80/80/4",
-            headingPacId = "PAC-ID: COAL.2022.V4RJW.P Physical Record",
+            subHeading = "PAC-ID: COAL.2022.V4RJW.P PhysicalRecord",
             legend = "Intellectual properties",
             classicCatalogueRef = "COAL 80/80/4",
             omegaCatalogueId = "COAL.2022.V4RJW.P",
@@ -420,7 +420,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
         assertPageAsExpected(
           asDocument(getRecordResult),
           generateExpectedEditRecordPageFromRecord(oci).copy(
-            headingPacId = s"PAC-ID: $oci",
+            subHeading = s"PAC-ID: $oci",
             optionsForCreators = Seq(
               Seq(
                 ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
@@ -2489,7 +2489,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
   private def assertPageAsExpected(document: Document, expectedEditRecordPage: ExpectedEditRecordPage): Assertion = {
     document must haveTitle(expectedEditRecordPage.title)
     document must haveHeading(expectedEditRecordPage.heading)
-    document must haveHeadingPacId(expectedEditRecordPage.headingPacId)
+    document must haveSubHeading(expectedEditRecordPage.subHeading)
     document must haveLegend(expectedEditRecordPage.legend)
     document must haveClassicCatalogueRef(expectedEditRecordPage.classicCatalogueRef)
     document must haveOmegaCatalogueId(expectedEditRecordPage.omegaCatalogueId)
@@ -2624,7 +2624,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
     ExpectedEditRecordPage(
       title = "Edit record",
       heading = s"TNA reference: ${editSetRecord.ccr}",
-      headingPacId = s"PAC-ID: ${editSetRecord.oci} Physical Record",
+      subHeading = s"PAC-ID: ${editSetRecord.oci} PhysicalRecord",
       legend = "Intellectual properties",
       classicCatalogueRef = editSetRecord.ccr,
       omegaCatalogueId = editSetRecord.oci,
@@ -2700,7 +2700,7 @@ object EditSetRecordControllerSpec {
   case class ExpectedEditRecordPage(
     title: String,
     heading: String,
-    headingPacId: String,
+    subHeading: String,
     legend: String,
     classicCatalogueRef: String,
     omegaCatalogueId: String,

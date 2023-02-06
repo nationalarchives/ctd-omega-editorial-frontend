@@ -139,7 +139,7 @@ class EditRecordViewSpec extends BaseSpec {
       )
       document must haveTitle("TNA reference: COAL 80/80/1")
       document must haveHeading("edit-set.record.edit.heading")
-      document must haveHeadingPacId("edit-set.record.edit.id Physical Record")
+      document must haveSubHeading("edit-set.record.edit.id")
       document must haveClassicCatalogueRef("COAL 80/80/1")
       document must haveOmegaCatalogueId("COAL.2022.V1RJW.P")
       document must haveScopeAndContent(
@@ -168,7 +168,6 @@ class EditRecordViewSpec extends BaseSpec {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
       val title = "EditRecordTitleTest"
       val editSetName = "COAL 80 Sample"
-      val recordType = "Physical Record"
       val filledForm = emptyForm
         .fill(emptyRecordValues)
         .withError(FormError(FieldNames.scopeAndContent, "Enter the scope and content."))
@@ -179,7 +178,6 @@ class EditRecordViewSpec extends BaseSpec {
           editSetName,
           title,
           editSetRecord,
-          recordType,
           legalStatusReferenceData,
           allPlacesOfDeposits,
           allCreators,
@@ -203,7 +201,6 @@ class EditRecordViewSpec extends BaseSpec {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
       val title = "EditRecordTitleTest"
       val editSetName = "COAL 80 Sample"
-      val recordType = "Physical Record"
       val filledForm = emptyForm
         .fill(
           emptyRecordValues.copy(
@@ -218,7 +215,6 @@ class EditRecordViewSpec extends BaseSpec {
           editSetName,
           title,
           editSetRecord,
-          recordType,
           legalStatusReferenceData,
           allPlacesOfDeposits,
           allCreators,
@@ -247,7 +243,6 @@ class EditRecordViewSpec extends BaseSpec {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
       val title = "EditRecordTitleTest"
       val editSetName = "COAL 80 Sample"
-      val recordType = "Physical Record"
       val filledForm = emptyForm
         .fill(
           emptyRecordValues.copy(
@@ -269,7 +264,6 @@ class EditRecordViewSpec extends BaseSpec {
           editSetName,
           title,
           editSetRecord,
-          recordType,
           legalStatusReferenceData,
           allPlacesOfDeposits,
           allCreators,
@@ -300,7 +294,6 @@ class EditRecordViewSpec extends BaseSpec {
 
       val title = "EditRecordTitleTest"
       val editSetName = "COAL 80 Sample"
-      val recordType = "Physical Record"
       val filledForm = emptyForm
         .fill(emptyRecordValues)
         .withError(FormError(FieldNames.legalStatusID, "Select a valid legal status"))
@@ -311,7 +304,6 @@ class EditRecordViewSpec extends BaseSpec {
           editSetName,
           title,
           editSetRecord,
-          recordType,
           legalStatusReferenceData,
           allPlacesOfDeposits,
           allCreators,
@@ -332,7 +324,6 @@ class EditRecordViewSpec extends BaseSpec {
       val editSetRecordEditInstance = inject[editSetRecordEdit]
       val title = "EditRecordTitleTest"
       val editSetName = "COAL 80 Sample"
-      val recordType = "Physical Record"
       val filledForm = emptyForm
         .fill(
           emptyRecordValues.copy(
@@ -354,7 +345,6 @@ class EditRecordViewSpec extends BaseSpec {
           editSetName,
           title,
           editSetRecord,
-          recordType,
           legalStatusReferenceData,
           allPlacesOfDeposits,
           allCreators,
@@ -386,7 +376,6 @@ class EditRecordViewSpec extends BaseSpec {
 
       val title = "EditRecordTitleTest"
       val editSetName = "COAL 80 Sample"
-      val recordType = "Physical Record"
       val inputData = EditSetRecordFormValues(
         scopeAndContent = "",
         coveringDates = "Mon 1 Oct 1330",
@@ -416,7 +405,6 @@ class EditRecordViewSpec extends BaseSpec {
           editSetName,
           title,
           editSetRecord,
-          recordType,
           legalStatusReferenceData,
           allPlacesOfDeposits,
           allCreators,
@@ -489,7 +477,6 @@ class EditRecordViewSpec extends BaseSpec {
         editSetName = "COAL 80 Sample",
         title = title,
         record = editSetRecord,
-        recordType = "Physical Record",
         legalStatusReferenceData,
         placesOfDeposit = allPlacesOfDeposits,
         creators = allCreators,

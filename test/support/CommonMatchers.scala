@@ -101,7 +101,7 @@ object CommonMatchers {
       actualValue = document.select("h1.govuk-heading-l").text()
     )
 
-  def haveHeadingPacId(expectedValue: String): Matcher[Document] = (document: Document) =>
+  def haveSubHeading(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "a heading",
       expectedValue = expectedValue,
