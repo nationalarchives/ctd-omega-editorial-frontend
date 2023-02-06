@@ -103,7 +103,7 @@ object CommonMatchers {
 
   def haveSubHeading(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
-      label = "a heading",
+      label = "a sub heading",
       expectedValue = expectedValue,
       actualValue = document.select("h2.govuk-heading-m").text()
     )

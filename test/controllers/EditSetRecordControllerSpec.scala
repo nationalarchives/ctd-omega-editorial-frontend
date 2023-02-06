@@ -181,7 +181,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
           ExpectedEditRecordPage(
             title = "Edit record",
             heading = "TNA reference: COAL 80/80/1",
-            subHeading = "PAC-ID: COAL.2022.V1RJW.P PhysicalRecord",
+            subHeading = "PAC-ID: COAL.2022.V1RJW.P Physical Record",
             legend = "Intellectual properties",
             classicCatalogueRef = "COAL 80/80/1",
             omegaCatalogueId = "COAL.2022.V1RJW.P",
@@ -265,7 +265,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
           ExpectedEditRecordPage(
             title = "Edit record",
             heading = "TNA reference: COAL 80/80/3",
-            subHeading = "PAC-ID: COAL.2022.V3RJW.P PhysicalRecord",
+            subHeading = "PAC-ID: COAL.2022.V3RJW.P Physical Record",
             legend = "Intellectual properties",
             classicCatalogueRef = "COAL 80/80/3",
             omegaCatalogueId = "COAL.2022.V3RJW.P",
@@ -327,7 +327,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
           ExpectedEditRecordPage(
             title = "Edit record",
             heading = "TNA reference: COAL 80/80/10",
-            subHeading = "PAC-ID: COAL.2022.V10RJW.P PhysicalRecord",
+            subHeading = "PAC-ID: COAL.2022.V10RJW.P Physical Record",
             legend = "Intellectual properties",
             classicCatalogueRef = "COAL 80/80/10",
             omegaCatalogueId = "COAL.2022.V10RJW.P",
@@ -380,7 +380,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
           ExpectedEditRecordPage(
             title = "Edit record",
             heading = "TNA reference: COAL 80/80/4",
-            subHeading = "PAC-ID: COAL.2022.V4RJW.P PhysicalRecord",
+            subHeading = "PAC-ID: COAL.2022.V4RJW.P Physical Record",
             legend = "Intellectual properties",
             classicCatalogueRef = "COAL 80/80/4",
             omegaCatalogueId = "COAL.2022.V4RJW.P",
@@ -420,16 +420,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
         assertPageAsExpected(
           asDocument(getRecordResult),
           generateExpectedEditRecordPageFromRecord(oci).copy(
-            subHeading = s"PAC-ID: $oci",
-            optionsForCreators = Seq(
-              Seq(
-                ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-              )
-            )
+            subHeading = s"PAC-ID: $oci"
           )
         )
       }
@@ -2624,7 +2615,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
     ExpectedEditRecordPage(
       title = "Edit record",
       heading = s"TNA reference: ${editSetRecord.ccr}",
-      subHeading = s"PAC-ID: ${editSetRecord.oci} PhysicalRecord",
+      subHeading = s"PAC-ID: ${editSetRecord.oci} Physical Record",
       legend = "Intellectual properties",
       classicCatalogueRef = editSetRecord.ccr,
       omegaCatalogueId = editSetRecord.oci,
@@ -2645,19 +2636,35 @@ class EditSetRecordControllerSpec extends BaseSpec {
       ).map(expectedSelectedOption =>
         expectedSelectedOption.copy(selected = expectedSelectedOption.value == editSetRecord.placeOfDepositID)
       ),
-      optionsForCreators = editSetRecord.creatorIDs
-        .filter(creatorId => allCreators.exists(_.id == creatorId))
-        .map(creatorId =>
-          Seq(
-            ExpectedSelectOption("", "Select creator", disabled = true),
-            ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-            ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-            ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-            ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-          ).map(expectedSelectedOption =>
-            expectedSelectedOption.copy(selected = expectedSelectedOption.value == creatorId)
+//      optionsForCreators = editSetRecord.creatorIDs
+//        .filter(creatorId => allCreators.exists(_.id == creatorId))
+//        .map(creatorId =>
+//          Seq(
+//            ExpectedSelectOption("", "Select creator", disabled = true),
+//            ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+//            ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+//            ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+//            ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+//          ).map(expectedSelectedOption =>
+//            expectedSelectedOption.copy(selected = expectedSelectedOption.value == creatorId)
+//          )
+//        ),
+      optionsForCreators = {
+        val recognisedCreatorIds = editSetRecord.creatorIDs.filter(creatorId => allCreators.exists(_.id == creatorId))
+        val correctedCreatorIds = if (recognisedCreatorIds.nonEmpty) recognisedCreatorIds else Seq("")
+        correctedCreatorIds
+          .map(creatorId =>
+            Seq(
+              ExpectedSelectOption("", "Select creator", disabled = true),
+              ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+              ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+              ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
+              ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+            ).map(expectedSelectedOption =>
+              expectedSelectedOption.copy(selected = expectedSelectedOption.value == creatorId)
+            )
           )
-        ),
+      },
       relatedMaterial = editSetRecord.relatedMaterial.map {
         case RelatedMaterial.LinkAndDescription(linkHref, linkText, description) =>
           ExpectedRelatedMaterial(linkHref = Some(linkHref), linkText = Some(linkText), description = Some(description))
