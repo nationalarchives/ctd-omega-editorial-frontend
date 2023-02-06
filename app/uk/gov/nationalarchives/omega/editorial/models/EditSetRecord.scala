@@ -48,7 +48,7 @@ case class EditSetRecord(
   relatedMaterial: Seq[RelatedMaterial] = Seq.empty,
   separatedMaterial: Seq[SeparatedMaterial] = Seq.empty,
   creatorIDs: Seq[String] = Seq.empty
-){
+) {
 
   val recordType: Option[RecordType] = if (oci.endsWith(".P")) Option(PhysicalRecord) else None
 
