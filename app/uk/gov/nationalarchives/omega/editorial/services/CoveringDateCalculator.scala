@@ -78,16 +78,31 @@ object CoveringDateCalculator {
     yearMonth.atEndOfMonth()
 
   private def validateDateRanges(ranges: List[DateRange]): Result[List[DateRange]] =
-    ranges.partitionMap(checkDateRange) match {
+    ranges.partitionMap { range =>
+      checkDatesNotInFutureOrPast(range).flatMap(checkStartDateBeforeEndDate)
+    } match {
       case (Nil, results) => Right(results)
       case (List(err), _) => Left(err)
       case (errs, _)      => Left(MultipleErrors(errs))
     }
 
-  private def checkDateRange(range: DateRange): Result[DateRange] =
+  private def checkStartDateBeforeEndDate(range: DateRange): Result[DateRange] =
     if (range.start.isBefore(range.end) || range.start == range.end)
       Right(range)
     else
       Left(InvalidRange(range))
+
+  private def checkDatesNotInFutureOrPast(range: DateRange): Result[DateRange] =
+    for {
+      validStart <- checkDate(range.start)
+      validEnd   <- checkDate(range.end)
+    } yield DateRange(validStart, validEnd)
+
+  private def checkDate(date: LocalDate): Result[LocalDate] =
+    date match {
+      case date if date.getYear <= 0                      => Left(DateTooFarInPast(date))
+      case date if date.getYear > LocalDate.now().getYear => Left(DateTooFarInFuture(date))
+      case _                                              => Right(date)
+    }
 
 }

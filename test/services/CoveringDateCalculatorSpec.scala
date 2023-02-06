@@ -27,6 +27,7 @@ import support.CommonMatchers.{ failToParseAs, parseSuccessfullyAs }
 import uk.gov.nationalarchives.omega.editorial.models.DateRange
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateCalculator
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError._
+import uk.gov.nationalarchives.omega.editorial.support.DateParser
 
 import java.time._
 import java.time.format.DateTimeFormatter
@@ -58,6 +59,7 @@ class CoveringDateCalculatorSpec extends BaseSpec with TableDrivenPropertyChecks
       ),
       "1582 Oct 11"               -> defineTestCoveringDate("1582 Oct 11" -> "1582 Oct 11"),
       "1582 Oct 11 - 1582 Nov 29" -> defineTestCoveringDate("1582 Oct 11" -> "1582 Nov 29"),
+      "1 - 2023"                  -> defineTestCoveringDate("1 Jan 1" -> s"${LocalDate.now().getYear} Dec 31"),
       // Dates related to the switchover from the Julian to the Gregorian calendar.
       "1752 Aug"                  -> defineTestCoveringDate("1752 Aug 1" -> "1752 Aug 31"),
       "1752 Aug 1–1752 Aug 2"     -> defineTestCoveringDate("1752 Aug 1" -> "1752 Aug 2"),
@@ -75,19 +77,40 @@ class CoveringDateCalculatorSpec extends BaseSpec with TableDrivenPropertyChecks
       }
     }
 
+    forAll(validScenarioTestTable) { (input, _) =>
+      s"""successfully calculated $input date range should also parse as a date"""" in {
+        val Right(dateRanges) = CoveringDateCalculator.getStartAndEndDates(input)
+        dateRanges.foreach { case DateRange(start, end) =>
+          val startStringDate = start.format(DateParser.dateTimeFormatter)
+          DateParser.parse(startStringDate) mustBe Some(start)
+
+          val endStringDate = end.format(DateParser.dateTimeFormatter)
+          DateParser.parse(endStringDate) mustBe Some(end)
+        }
+      }
+    }
+
     // TODO: Right now we don't check parse errors
     val invalidScenarioTestTable = Tables.Table(
-      "date input"      -> "parse error",
-      "1270s"           -> ParseError,
-      "1305 Sept - Oct" -> ParseError,
-      "Temp Edw I"      -> ParseError,
-      "01 Oct 1305"     -> ParseError,
-      "Mon 1 Oct 1330"  -> ParseError,
-      "1999 - 1305"     -> InvalidRange(DateRange(LocalDate.of(1999, 1, 1), LocalDate.of(1305, 12, 31))),
+      "date input"                            -> "parse error",
+      "1270s"                                 -> ParseError,
+      "1305 Sept - Oct"                       -> ParseError,
+      "Temp Edw I"                            -> ParseError,
+      "01 Oct 1305"                           -> ParseError,
+      "Mon 1 Oct 1330"                        -> ParseError,
+      "0 - 2023"                              -> DateTooFarInPast(LocalDate.of(0, 1, 1)),
+      s"1 - ${LocalDate.now().getYear + 1}" -> DateTooFarInFuture(LocalDate.of(LocalDate.now().getYear + 1, 12, 31)),
+      "1999 - 1305" -> InvalidRange(DateRange(LocalDate.of(1999, 1, 1), LocalDate.of(1305, 12, 31))),
       "1999 - 1305; 2000 Feb 3 - 1306 Nov 30" -> MultipleErrors(
         List(
           InvalidRange(DateRange(LocalDate.of(1999, 1, 1), LocalDate.of(1305, 12, 31))),
           InvalidRange(DateRange(LocalDate.of(2000, 2, 3), LocalDate.of(1306, 11, 30)))
+        )
+      ),
+      "1999 - 1305; 0 Feb 3 - 1306 Nov 30" -> MultipleErrors(
+        List(
+          InvalidRange(DateRange(LocalDate.of(1999, 1, 1), LocalDate.of(1305, 12, 31))),
+          DateTooFarInPast(LocalDate.of(0, 2, 3))
         )
       )
     )
