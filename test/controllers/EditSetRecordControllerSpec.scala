@@ -2612,7 +2612,6 @@ class EditSetRecordControllerSpec extends BaseSpec {
 
   private def generateExpectedEditRecordPageFromRecord(oci: String): ExpectedEditRecordPage = {
     val editSetRecord = getExpectedEditSetRecord(oci)
-    println("record type: " + editSetRecord.recordType)
     val messages: Map[String, String] =
       Map("edit-set.record.edit.type.physical" -> "Physical Record")
     ExpectedEditRecordPage(
