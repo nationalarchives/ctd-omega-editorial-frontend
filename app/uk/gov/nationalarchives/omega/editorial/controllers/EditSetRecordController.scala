@@ -383,8 +383,6 @@ object EditSetRecordController {
   val noSelectionForPlaceOfDeposit = ""
   val fieldKey = "field"
   val orderDirectionKey = "direction"
-  val orderDirectionAscending = "ascending"
-  val orderDirectionDescending = "descending"
   val offsetKey = "offset"
 
   sealed abstract class SubmitAction
@@ -417,12 +415,10 @@ object EditSetRecordController {
     val coveringDates = "covering-dates"
     val creatorIDs = "creator-ids"
     val custodialHistory = "custodial-history"
-    val orderDirection = "direction"
     val endDateDay = "end-date-day"
     val endDateMonth = "end-date-month"
     val endDateYear = "end-date-year"
     val endDateFieldError = "end-date-field-error"
-    val orderField = "field"
     val formerReferenceDepartment = "former-reference-department"
     val formerReferencePro = "former-reference-pro"
     val legalStatusID = "legal-status-id"
@@ -457,6 +453,5 @@ object EditSetRecordController {
     val scopeAndContentMissing = "edit-set.record.missing.scope-and-content"
     val startDateInvalid = "edit-set.record.error.start-date"
     val title = "edit-set.record.edit.title"
-    val recordTypePhysical = "edit-set.record.edit.type.physical"
   }
 }

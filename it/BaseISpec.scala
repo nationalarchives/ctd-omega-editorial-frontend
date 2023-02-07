@@ -1,24 +1,40 @@
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.scalatest.Assertion
+import org.scalatest.{ Assertion, BeforeAndAfterEach }
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.Application
+import play.api.{ Application, inject }
 import play.api.http.Status.SEE_OTHER
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.ws.{ WSClient, WSCookie, WSResponse }
+import play.api.libs.ws.{ DefaultWSCookie, WSClient, WSCookie, WSResponse }
 import play.api.test.Helpers.{ await, defaultAwaitTimeout }
+import support.TestReferenceDataService
+import uk.gov.nationalarchives.omega.editorial.models.Creator
+import uk.gov.nationalarchives.omega.editorial.services.ReferenceDataService
 
-abstract class BaseISpec extends PlaySpec with GuiceOneServerPerSuite {
+abstract class BaseISpec extends PlaySpec with GuiceOneServerPerSuite with BeforeAndAfterEach {
 
   implicit val wsClient: WSClient = app.injector.instanceOf[WSClient]
 
   val csrfTokenName = "csrfToken"
+  lazy val invalidSessionCookie: DefaultWSCookie = DefaultWSCookie(
+    name = playSessionCookieName,
+    value = "whatever",
+    domain = None,
+    path = None,
+    maxAge = None,
+    secure = false,
+    httpOnly = false
+  )
+  val testReferenceDataService: TestReferenceDataService = app.injector.instanceOf[TestReferenceDataService]
+  val allCreators: Seq[Creator] = testReferenceDataService.getCreators
 
   private val playSessionCookieName = "PLAY_SESSION"
 
   override def fakeApplication(): Application =
-    GuiceApplicationBuilder().configure(Map.empty[String, String]).build()
+    GuiceApplicationBuilder()
+      .bindings(inject.bind[ReferenceDataService].to[TestReferenceDataService])
+      .build()
 
   def asDocument(response: WSResponse): Document = Jsoup.parse(response.body)
 

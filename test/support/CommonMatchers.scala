@@ -371,6 +371,8 @@ object CommonMatchers {
   def haveErrorMessageForScopeAndContent(expectedValue: String): Matcher[Document] =
     haveErrorMessageForField("scope and content", s"#${FieldNames.scopeAndContent}-error", expectedValue)
 
+  def haveNoErrorMessageForScopeAndContent: Matcher[Document] = haveErrorMessageForScopeAndContent("")
+
   def haveErrorMessageForFormerReferenceDepartment(expectedValue: String): Matcher[Document] =
     haveErrorMessageForField(
       "former reference department",
@@ -378,12 +380,17 @@ object CommonMatchers {
       expectedValue
     )
 
+  def haveNoErrorMessageForFormerReferenceDepartment: Matcher[Document] =
+    haveErrorMessageForFormerReferenceDepartment("")
+
   def haveErrorMessageForFormerReferencePro(expectedValue: String): Matcher[Document] =
     haveErrorMessageForField(
       "former reference pro",
       s"#${EditSetRecordController.FieldNames.formerReferencePro}-error",
       expectedValue
     )
+
+  def haveNoErrorMessageForFormerReferencePro: Matcher[Document] = haveErrorMessageForFormerReferencePro("")
 
   def haveErrorMessageForPlaceOfDeposit(expectedValue: String): Matcher[Document] =
     haveErrorMessageForField(
@@ -667,8 +674,6 @@ object CommonMatchers {
   private def removeInvisibleErrorMessagePrefix(original: String) =
     original
       .replace("Error: ", "")
-      .replace("login.hidden.error ", "") // TODO: Remove if LoginViewSpec is removed.
-
   private def haveErrorMessageForField(
     fieldName: String,
     valueSelector: String,
