@@ -7,7 +7,7 @@ import support.ExpectedValues.ExpectedSummaryErrorMessage
 
 class LoginISpec extends BaseISpec {
 
-  "when viewed" should {
+  "when viewed" must {
     "have the expected contents" in {
 
       val response = getLoginPage()
@@ -27,7 +27,7 @@ class LoginISpec extends BaseISpec {
 
     }
   }
-  "when submitted" should {
+  "when submitted" must {
 
     val correctUsername = "1234"
     val correctPassword = "1234"

@@ -6,8 +6,8 @@ import support.CommonMatchers._
 
 class EditSetISpec extends BaseISpec {
 
-  "when viewed, for a specified edit set ID" should {
-    "when logged in" should {
+  "when viewed, for a specified edit set ID" must {
+    "when logged in" must {
       "have the expected contents" when {
         "not specifying the page" when {
           "nor the ordering" in {
@@ -971,7 +971,7 @@ class EditSetISpec extends BaseISpec {
         }
       }
     }
-    "when not logged in" should {
+    "when not logged in" must {
       "redirect to the login page" in {
 
         val response = getEditSetPageWhileLoggedOut("1", None, None, None)
@@ -980,7 +980,7 @@ class EditSetISpec extends BaseISpec {
 
       }
     }
-    "when session cookie isn't valid" should {
+    "when session cookie isn't valid" must {
       "redirect to the login page" in {
 
         val response = getEditSetPage(
