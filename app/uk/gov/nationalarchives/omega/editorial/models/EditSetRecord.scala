@@ -23,6 +23,10 @@ package uk.gov.nationalarchives.omega.editorial.models
 
 import play.api.libs.json.{ Json, Reads }
 
+sealed trait RecordType
+
+case object PhysicalRecord extends RecordType
+
 case class EditSetRecord(
   ccr: String,
   oci: String,
@@ -44,7 +48,11 @@ case class EditSetRecord(
   relatedMaterial: Seq[RelatedMaterial] = Seq.empty,
   separatedMaterial: Seq[SeparatedMaterial] = Seq.empty,
   creatorIDs: Seq[String] = Seq.empty
-)
+) {
+
+  val recordType: Option[RecordType] = if (oci.endsWith(".P")) Option(PhysicalRecord) else None
+
+}
 
 object EditSetRecord {
 

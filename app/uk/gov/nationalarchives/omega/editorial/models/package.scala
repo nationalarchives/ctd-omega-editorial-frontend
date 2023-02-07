@@ -84,7 +84,7 @@ package object editSetRecords {
     .parse(
       """{
         |  "ccr" : "COAL 80/80/2",
-        |  "oci" : "COAL.2022.V2RJW.P",
+        |  "oci" : "COAL.2022.V2RJW",
         |  "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
         |  "coveringDates" : "1966",
         |  "formerReferenceDepartment" : "",
@@ -385,7 +385,7 @@ package object editSetRecords {
 
   private val originalEditSetRecordMap: Map[String, EditSetRecord] = Map(
     "COAL.2022.V1RJW.P"  -> editSetRecord1,
-    "COAL.2022.V2RJW.P"  -> editSetRecord2,
+    "COAL.2022.V2RJW"    -> editSetRecord2,
     "COAL.2022.V3RJW.P"  -> editSetRecord3,
     "COAL.2022.V4RJW.P"  -> editSetRecord4,
     "COAL.2022.V5RJW.P"  -> editSetRecord5,
@@ -428,7 +428,7 @@ package object editSets {
         |    },
         |    {
         |      "ccr" : "COAL 80/80/2",
-        |      "oci" : "COAL.2022.V2RJW.P",
+        |      "oci" : "COAL.2022.V2RJW",
         |      "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
         |      "coveringDates" : "1966"
         |    },

@@ -137,9 +137,9 @@ class EditRecordViewSpec extends BaseSpec {
           )
         )
       )
-
       document must haveTitle("TNA reference: COAL 80/80/1")
       document must haveHeading("edit-set.record.edit.heading")
+      document must haveSubHeading("edit-set.record.edit.id")
       document must haveClassicCatalogueRef("COAL 80/80/1")
       document must haveOmegaCatalogueId("COAL.2022.V1RJW.P")
       document must haveScopeAndContent(

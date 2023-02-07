@@ -101,6 +101,13 @@ object CommonMatchers {
       actualValue = document.select("h1.govuk-heading-l").text()
     )
 
+  def haveSubHeading(expectedValue: String): Matcher[Document] = (document: Document) =>
+    singleValueMatcher(
+      label = "a sub heading",
+      expectedValue = expectedValue,
+      actualValue = document.select("h2.govuk-heading-m").text()
+    )
+
   def haveClassicCatalogueRef(expectedValue: String): Matcher[Document] = (document: Document) =>
     singleValueMatcher(
       label = "a classic catalogue ref",

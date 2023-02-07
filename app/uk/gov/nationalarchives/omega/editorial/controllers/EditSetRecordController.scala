@@ -457,5 +457,6 @@ object EditSetRecordController {
     val scopeAndContentMissing = "edit-set.record.missing.scope-and-content"
     val startDateInvalid = "edit-set.record.error.start-date"
     val title = "edit-set.record.edit.title"
+    val recordTypePhysical = "edit-set.record.edit.type.physical"
   }
 }

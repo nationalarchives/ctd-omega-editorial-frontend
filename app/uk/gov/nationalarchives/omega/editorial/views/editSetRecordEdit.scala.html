@@ -25,7 +25,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.Implicits.RichErrorSummary
 @import uk.gov.nationalarchives.omega.editorial.controllers.EditSetRecordController.FieldNames
 @import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
-@import uk.gov.nationalarchives.omega.editorial.models.{EditSetRecord, LegalStatus, PlaceOfDeposit, RelatedMaterial, SeparatedMaterial, User}
+@import uk.gov.nationalarchives.omega.editorial.models.{EditSetRecord, LegalStatus, PlaceOfDeposit, RelatedMaterial, SeparatedMaterial, User, PhysicalRecord}
 @import uk.gov.nationalarchives.omega.editorial.models.Creator
 
 @this(govukButton: GovukButton, govukInput: GovukInput, govukTextarea: GovukTextarea, govukFieldset: GovukFieldset, govukErrorSummary: GovukErrorSummary, govukSelect: GovukSelect, govukLabel: GovukLabel)
@@ -443,7 +443,10 @@
         @govukErrorSummary(ErrorSummary().withFormErrorsAsText(editSetRecordForm))
     }
     <h1 class="govuk-heading-l">@messages("edit-set.record.edit.heading", record.ccr)</h1>
-    <h2 class="govuk-heading-m">@messages("edit-set.record.edit.id", record.oci)</h2>
+    <h2 class="govuk-heading-m">@messages("edit-set.record.edit.id", record.oci, record.recordType match {
+        case Some(PhysicalRecord) => messages("edit-set.record.edit.type.physical")
+        case _ => ""
+        })</h2>
     <p class="govuk-body">@messages("placeholder.series-national-coal-board")</p>
     <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
     @helper.form(action = uk.gov.nationalarchives.omega.editorial.controllers.routes.EditSetRecordController.submit("1", record.oci)) {
