@@ -77,7 +77,8 @@ class EditSetPagination(
     val afterItems = (currentPage until numberOfPages) match {
       case items if items.length >= 3 =>
         List(editSetPaginationItem(currentPage + 1), ellipsisItem, editSetPaginationItem(items.length))
-      case items => items.map(index => editSetPaginationItem(currentPage + index)).toList
+      case items =>
+        items.map(index => editSetPaginationItem(index + 1)).toList
     }
 
     Pagination(
@@ -116,7 +117,7 @@ class EditSetPagination(
     s"${routes.EditSetController.view(id).url}" +
       s"?${EditSetController.offsetKey}=$page" +
       s"&${EditSetController.fieldKey}=${rowOrder.field}" +
-      s"&${EditSetController.orderDirectionKey}=${rowOrder.direction}"
+      s"&${EditSetController.orderDirectionKey}=${rowOrder.direction.name}"
 
 }
 

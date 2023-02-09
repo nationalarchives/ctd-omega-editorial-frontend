@@ -105,6 +105,29 @@ class EditSetPaginationSpec extends BaseSpec {
       page.totalNumberOfEntries mustBe 22
     }
 
+    "format next href correctly" in {
+      val entries = Seq.fill(22)(sampleEntry)
+      val page = new EditSetPagination("1", sampleOrdering, "Next", "Previous").makeEditSetPage(entries, pageNumber = 1)
+
+      page must haveNextHref("/edit-set/1?offset=3&field=ccr&direction=ascending")
+    }
+
+    "format page 2 href correctly" in {
+      val entries = Seq.fill(22)(sampleEntry)
+      val page = new EditSetPagination("1", sampleOrdering, "Next", "Previous").makeEditSetPage(entries, pageNumber = 1)
+
+      page must havePageNumberLink(2, "/edit-set/1?offset=2&field=ccr&direction=ascending")
+    }
+
+    "format page 3 href correctly" in {
+      val entries = Seq.fill(32)(sampleEntry)
+      val page = new EditSetPagination("1", sampleOrdering, "Next", "Previous").makeEditSetPage(entries, pageNumber = 2)
+
+      pprint.pprintln(page)
+
+      page must havePageNumberLink(3, "/edit-set/1?offset=3&field=ccr&direction=ascending")
+    }
+
   }
 
 }
@@ -155,6 +178,48 @@ object EditSetPaginationSpec {
       "The page did have ellipsis items, which was not expected"
     MatchResult(
       page.pagination.items.exists(_.count(_.ellipsis.contains(true)) == 2),
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveNextHref(expectedHref: String): Matcher[EditSetPage] = (page: EditSetPage) => {
+    val errorMessageIfExpected = page.pagination.next.map(_.href) match {
+      case Some(href) =>
+        s"""The hrefs did not match:
+           | expected: $expectedHref
+           | found:    $href
+          """.stripMargin
+      case None =>
+        s"""The page next link did not have an href"""
+    }
+    val errorMessageIfNotExpected =
+      "The page did have an href, which was not expected"
+    MatchResult(
+      page.pagination.next.map(_.href) == Some(expectedHref),
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def havePageNumberLink(pageNumber: Int, expectedHref: String): Matcher[EditSetPage] = (page: EditSetPage) => {
+    val link = for {
+      items <- page.pagination.items
+      item  <- items.toList.lift(pageNumber - 1)
+    } yield item.href
+    val errorMessageIfExpected = link match {
+      case Some(href) =>
+        s"""The hrefs did not match:
+           | expected: $expectedHref
+           | found:    $href
+          """.stripMargin
+      case None =>
+        s"""The page next link did not have an href"""
+    }
+    val errorMessageIfNotExpected =
+      "The page did have an href, which was not expected"
+    MatchResult(
+      link == Some(expectedHref),
       errorMessageIfExpected,
       errorMessageIfNotExpected
     )

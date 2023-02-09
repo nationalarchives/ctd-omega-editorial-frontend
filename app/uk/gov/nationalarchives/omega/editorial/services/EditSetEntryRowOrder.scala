@@ -23,7 +23,11 @@ package uk.gov.nationalarchives.omega.editorial.services
 
 import uk.gov.nationalarchives.omega.editorial.models.EditSetEntry
 
-sealed abstract class Direction(val name: String)
+sealed abstract class Direction(val name: String) {
+
+  override def toString: String = name
+
+}
 
 object Direction {
 
@@ -45,12 +49,14 @@ sealed abstract class EditSetEntryRowOrder(
     else fieldOrdering
 
   def ariaSortValue(headerName: String): String =
-    if (field == headerName) direction.name
+    if (field.trim.equalsIgnoreCase(headerName.trim)) direction.name
     else "none"
 
   def orderingKey(headerName: String): String =
-    if (field == headerName && direction == Direction.Ascending) Direction.Descending.name
-    else Direction.Ascending.name
+    if (field.trim.equalsIgnoreCase(headerName.trim) && direction == Direction.Ascending)
+      Direction.Descending.name
+    else
+      Direction.Ascending.name
 
 }
 
@@ -76,7 +82,7 @@ object EditSetEntryRowOrder {
   def fromNames(field: String, direction: String): EditSetEntryRowOrder =
     all
       .find { order =>
-        order.field == field && order.direction.name == direction
+        order.field.trim.equalsIgnoreCase(field.trim) && order.direction.name.trim.equalsIgnoreCase(direction)
       }
       .getOrElse {
         defaultOrder
