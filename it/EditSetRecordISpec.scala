@@ -3255,7 +3255,6 @@ class EditSetRecordISpec extends BaseISpec {
     }
   }
 
-  //
   private def assertPageAsExpected(
     response: WSResponse,
     expectedStatus: Int,
