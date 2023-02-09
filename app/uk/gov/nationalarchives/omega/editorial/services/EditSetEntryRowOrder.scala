@@ -82,7 +82,7 @@ object EditSetEntryRowOrder {
   def fromNames(field: String, direction: String): EditSetEntryRowOrder =
     all
       .find { order =>
-        order.field.trim.equalsIgnoreCase(field.trim) && order.direction.name.trim.equalsIgnoreCase(direction)
+        order.field.trim.equalsIgnoreCase(field.trim) && order.direction.name.trim.equalsIgnoreCase(direction.trim)
       }
       .getOrElse {
         defaultOrder
