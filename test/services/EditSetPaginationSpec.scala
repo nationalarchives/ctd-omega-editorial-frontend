@@ -123,8 +123,6 @@ class EditSetPaginationSpec extends BaseSpec {
       val entries = Seq.fill(32)(sampleEntry)
       val page = new EditSetPagination("1", sampleOrdering, "Next", "Previous").makeEditSetPage(entries, pageNumber = 2)
 
-      pprint.pprintln(page)
-
       page must havePageNumberLink(3, "/edit-set/1?offset=3&field=ccr&direction=ascending")
     }
 
