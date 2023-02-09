@@ -57,10 +57,10 @@ class EditSetPagination(
         (None, None)
 
       case 1 =>
-        (None, nextLink(numberOfPages))
+        (None, nextLink(currentPage + 1))
 
       case `numberOfPages` =>
-        (previousLink(1), None)
+        (previousLink(currentPage - 1), None)
 
       case _ =>
         (previousLink(currentPage - 1), nextLink(currentPage + 1))
