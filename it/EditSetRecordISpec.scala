@@ -3080,7 +3080,7 @@ class EditSetRecordISpec extends BaseISpec {
       title = "Edit record",
       heading = s"TNA reference: ${editSetRecord.ccr}",
       subHeading = s"PAC-ID: ${editSetRecord.oci} ${editSetRecord.recordType match {
-          case Some(PhysicalRecord) => messages.get("edit-set.record.edit.type.physical").get
+          case Some(PhysicalRecord) => messages("edit-set.record.edit.type.physical")
           case _                    => ""
         }}",
       legend = "Intellectual properties",
