@@ -1,6 +1,6 @@
 import controllers.EditSetControllerSpec.ExpectedEditSetSummaryRow
 import play.api.http.Status.OK
-import play.api.libs.ws.{ DefaultWSCookie, WSCookie, WSResponse }
+import play.api.libs.ws.{ WSCookie, WSResponse }
 import play.api.test.Helpers.{ await, defaultAwaitTimeout }
 import support.CommonMatchers._
 
@@ -988,17 +988,7 @@ class EditSetISpec extends BaseISpec {
           None,
           None,
           None,
-          Some(
-            DefaultWSCookie(
-              name = "bad-cookie",
-              value = "whatever",
-              domain = None,
-              path = None,
-              maxAge = None,
-              secure = false,
-              httpOnly = false
-            )
-          )
+          Option(invalidSessionCookie)
         )
 
         assertRedirection(response, "/login")
