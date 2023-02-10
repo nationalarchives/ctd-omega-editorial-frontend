@@ -18,8 +18,6 @@ Compile / headerSources ++= (Compile / TwirlKeys.compileTemplates / sources).val
 lazy val IntegrationTestConfig = config("it") extend Test
 IntegrationTestConfig / scalaSource := baseDirectory.value / "/it"
 
-ThisBuild / githubOwner := "nationalarchives"
-ThisBuild / githubRepository := "ctd-omega-editorial-frontend"
 
 lazy val root = Project("ctd-omega-editorial-frontend", file("."))
   .enablePlugins(PlayScala)
@@ -40,6 +38,8 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
     description := "Omega Editorial Frontend",
     organizationName := "The National Archives",
     organizationHomepage := Some(url("http://nationalarchives.gov.uk")),
+    githubOwner := "nationalarchives",
+    githubRepository := "ctd-omega-editorial-frontend",
     scmInfo := Some(
       ScmInfo(
         url("https://github.com/nationalarchives/ctd-omega-editorial-frontend"),
