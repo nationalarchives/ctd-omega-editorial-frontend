@@ -18,6 +18,9 @@ Compile / headerSources ++= (Compile / TwirlKeys.compileTemplates / sources).val
 lazy val IntegrationTestConfig = config("it") extend Test
 IntegrationTestConfig / scalaSource := baseDirectory.value / "/it"
 
+ThisBuild / githubOwner := "nationalarchives"
+ThisBuild / githubRepository := "ctd-omega-editorial-frontend"
+
 lazy val root = Project("ctd-omega-editorial-frontend", file("."))
   .enablePlugins(PlayScala)
   .enablePlugins(BuildInfoPlugin)
@@ -128,12 +131,15 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
       MavenRepository("HMRC-open-artefacts-maven2", "https://open.artefacts.tax.service.gov.uk/maven2")
     ),
     headerLicense := Some(HeaderLicense.MIT("2022", "The National Archives")),
+    resolvers += Resolver.githubPackages("rwalpole"),
     libraryDependencies ++= Seq(
       guice,
-      "org.webjars.npm"         % "govuk-frontend"     % "4.3.1",
-      "uk.gov.hmrc"            %% "play-frontend-hmrc" % "6.2.0-play-28",
-      "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0"  % Test,
-      "org.jsoup"               % "jsoup"              % "1.15.3" % Test
+      "org.webjars.npm"         % "govuk-frontend"             % "4.3.1",
+      "uk.gov.hmrc"            %% "play-frontend-hmrc"         % "6.2.0-play-28",
+      "dev.fpinbo"             %% "jms4s-active-mq-artemis"    % "0.0.1-53518bb-SNAPSHOT",
+      "dev.fpinbo"             %% "jms4s-simple-queue-service" % "0.0.1-53518bb-SNAPSHOT",
+      "org.scalatestplus.play" %% "scalatestplus-play"         % "5.0.0"  % Test,
+      "org.jsoup"               % "jsoup"                      % "1.15.3" % Test
     ),
     publishMavenStyle := true,
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
