@@ -5,6 +5,9 @@ on:
       - main
   pull_request:
 
+env:
+  GITHUB_TOKEN: ${{ github.token }}
+
 jobs:
   test-workflows:
     name: Editorial Tests
@@ -24,13 +27,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Run tests
         run: sbt -v +test
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
       - name: Run integration tests
         run: sbt -v IntegrationTest/test
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
       - name: Generate a coverage report
         run: sbt coverageReport
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
