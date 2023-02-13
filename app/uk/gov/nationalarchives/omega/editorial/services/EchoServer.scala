@@ -62,11 +62,11 @@ class EchoServer {
     } yield consumer
 
     consumerResource
-      .use(_.handle { (jmsMessage, mf) =>
+      .use(_.handle { (jmsMessage, messageFactory) =>
         for {
           requestText <- jmsMessage.asTextF[IO]
           responseText = s"Echo Server: $requestText"
-          responseMessage <- mf.makeTextMessage(responseText)
+          responseMessage <- messageFactory.makeTextMessage(responseText)
           requestMessageId = jmsMessage.getJMSMessageId.get
           _ = responseMessage.setJMSCorrelationId(requestMessageId)
         } yield AckAction.send(responseMessage, responseQueryName)
