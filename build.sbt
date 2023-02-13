@@ -18,7 +18,6 @@ Compile / headerSources ++= (Compile / TwirlKeys.compileTemplates / sources).val
 lazy val IntegrationTestConfig = config("it") extend Test
 IntegrationTestConfig / scalaSource := baseDirectory.value / "/it"
 
-
 lazy val root = Project("ctd-omega-editorial-frontend", file("."))
   .enablePlugins(PlayScala)
   .enablePlugins(BuildInfoPlugin)
@@ -140,6 +139,9 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
       "dev.fpinbo"             %% "jms4s-simple-queue-service" % "0.0.1-53518bb-SNAPSHOT",
       "org.scalatestplus.play" %% "scalatestplus-play"         % "5.0.0"  % Test,
       "org.jsoup"               % "jsoup"                      % "1.15.3" % Test
+    ).map(_.exclude("org.slf4j", "*")),
+    libraryDependencies ++= Seq(
+      "ch.qos.logback" % "logback-classic" % "1.1.3"
     ),
     publishMavenStyle := true,
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
