@@ -163,3 +163,58 @@ You'll find it in `/target/scala-2.13/scoverage-report/`.
 Remember to run `sbt fmtCheck`.
 
 For convenience, you can run [runBeforePushing.sh](./runBeforePushing.sh), which runs it after all of the tests; note that a coverage report is also generated.
+
+## JMS EchoServer
+
+This is just a proof-of-concept of how we can embed the `EchoServer` from [jms4s-request-reply-stub](https://github.com/nationalarchives/jms4s-request-reply-stub).
+
+Before starting the application, you'll need to boot the [ElasticMQ](https://github.com/softwaremill/elasticmq) container.
+
+```
+docker-compose up -d
+```
+
+When you start this application (with `sbt run`, for example), it will automatically listen for JMS messages on the `request-general` queue;
+whenever you send a message to that queue, an echo message will be posted to the response queue, called `omega-editorial-web-application-instance-1`.
+
+For example:
+
+```
+curl "http://localhost:9324/request-general?Action=SendMessage&MessageBody=HelloWorld"
+```
+
+``` 
+<SendMessageResponse xmlns="http://queue.amazonaws.com/doc/2012-11-05/">
+  <SendMessageResult>
+    <MD5OfMessageBody>68e109f0f40ca72a15e05cc22786f8e6</MD5OfMessageBody>
+    <MessageId>e33514d3-e126-4f5a-b15c-157e2e3edbfb</MessageId>
+  </SendMessageResult>
+  <ResponseMetadata>
+    <RequestId>00000000-0000-0000-0000-000000000000</RequestId>
+  </ResponseMetadata>
+</SendMessageResponse>
+```
+
+You can check the [Elastic MQ] console at `http://localhost:9325/` where you should see that there's one more message in `omega-editorial-web-application-instance-1`.
+
+In order to retrieve that message, run:
+
+``` 
+curl "http://localhost:9324/omega-editorial-web-application-instance-1?Action=ReceiveMessage"
+```
+
+``` 
+<ReceiveMessageResponse xmlns="http://queue.amazonaws.com/doc/2012-11-05/">
+  <ReceiveMessageResult>
+    <Message>
+      <MessageId>93d62818-d34f-4088-8fd9-a2de5377df8a</MessageId>
+      <ReceiptHandle>93d62818-d34f-4088-8fd9-a2de5377df8a#7b4f7f8e-6bc1-46a6-b6ca-dfcd0ad946f9</ReceiptHandle>
+      <MD5OfBody>edd5290abc2df3bf6d034867b69369c2</MD5OfBody>
+      <Body>Echo Server: HelloWorld</Body>
+    </Message>
+  </ReceiveMessageResult>
+  <ResponseMetadata>
+    <RequestId>00000000-0000-0000-0000-000000000000</RequestId>
+  </ResponseMetadata>
+</ReceiveMessageResponse>
+```
