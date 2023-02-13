@@ -19,20 +19,14 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial
+package uk.gov.nationalarchives.omega.editorial.modules
 
-import cats.effect.unsafe.implicits.global
-import javax.inject.{ Inject, Singleton }
-import scala.concurrent.Future
+import com.google.inject.AbstractModule
+import uk.gov.nationalarchives.omega.editorial.EchoServerBootstrap
 
-import uk.gov.nationalarchives.omega.editorial.services.EchoServer
+class StartupModule extends AbstractModule {
 
-@Singleton
-class EchoServerBootstrap @Inject() (echoServer: EchoServer) {
-
-  start()
-
-  def start(): Future[Unit] =
-    echoServer.startEchoServer.unsafeToFuture()
+  override def configure(): Unit =
+    bind(classOf[EchoServerBootstrap]).asEagerSingleton()
 
 }

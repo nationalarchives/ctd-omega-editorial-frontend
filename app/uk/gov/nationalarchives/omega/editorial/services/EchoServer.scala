@@ -22,20 +22,20 @@
 package uk.gov.nationalarchives.omega.editorial.services
 
 import cats.effect._
-import jms4s.JmsClient
 import jms4s.config.QueueName
+import jms4s.JmsAcknowledgerConsumer.AckAction
+import jms4s.JmsClient
 import jms4s.sqs.simpleQueueService
 import jms4s.sqs.simpleQueueService._
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jFactory
-import jms4s.JmsAcknowledgerConsumer.AckAction
 
 import javax.inject.Singleton
 import scala.concurrent.duration.DurationInt
 
 // Copied (more or less) from https://github.com/nationalarchives/jms4s-request-reply-stub
 @Singleton
-class EchoServer extends IOApp {
+class EchoServer {
 
   private implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jFactory[IO].getLogger
   private val requestQueueName = QueueName("request-general")
@@ -51,10 +51,8 @@ class EchoServer extends IOApp {
     )
   )
 
-  override def run(args: List[String]): IO[ExitCode] = {
-
+  def startEchoServer: IO[Unit] = {
     val consumerResource = for {
-      _      <- Resource.liftK(IO.println("Starting EchoServer..."))
       client <- jmsClient
       consumer <- client.createAcknowledgerConsumer(
                     requestQueueName,
@@ -66,16 +64,13 @@ class EchoServer extends IOApp {
     consumerResource
       .use(_.handle { (jmsMessage, mf) =>
         for {
-          requestText     <- jmsMessage.asTextF[IO]
-          _               <- IO.println(s"Echo Server received message: $requestText")
-          responseText    <- IO.pure(s"Echo Server: $requestText")
+          requestText <- jmsMessage.asTextF[IO]
+          responseText = s"Echo Server: $requestText"
           responseMessage <- mf.makeTextMessage(responseText)
           requestMessageId = jmsMessage.getJMSMessageId.get
           _ = responseMessage.setJMSCorrelationId(requestMessageId)
-          _ <- IO.println(s"Echo Server sending response message: $responseText with correlationId: $requestMessageId")
         } yield AckAction.send(responseMessage, responseQueryName)
       })
-      .as(ExitCode.Success)
 
   }
 }

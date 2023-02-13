@@ -21,16 +21,13 @@
 
 package controllers
 
-import org.scalatestplus.play._
-import org.scalatestplus.play.guice._
 import play.api.test.Helpers._
 import play.api.test._
 import uk.gov.nationalarchives.omega.editorial.controllers.{ LogoutController, SessionKeys }
-import uk.gov.nationalarchives.omega.editorial.models.session.Session
+import support.BaseSpec
 
-class LogoutControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
+class LogoutControllerSpec extends BaseSpec {
 
-  val validSessionToken: String = Session.generateToken("1234")
   val loginPagePath: String = "/login"
 
   "LogoutController GET" should {

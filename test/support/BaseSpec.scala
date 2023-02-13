@@ -38,6 +38,7 @@ import uk.gov.nationalarchives.omega.editorial.models.{ Creator, PlaceOfDeposit,
 import uk.gov.nationalarchives.omega.editorial.services.{ EditSetRecordService, EditSetService, ReferenceDataService }
 
 import scala.concurrent.Future
+import uk.gov.nationalarchives.omega.editorial.modules.StartupModule
 
 class BaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with BeforeAndAfterEach {
 
@@ -52,6 +53,7 @@ class BaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with Bef
 
   override def fakeApplication(): Application =
     GuiceApplicationBuilder()
+      .disable[StartupModule]
       .bindings(bind[ReferenceDataService].to[TestReferenceDataService])
       .build()
 
