@@ -45,7 +45,7 @@ class EchoServer {
   private val jmsClient: Resource[IO, JmsClient[IO]] = simpleQueueService.makeJmsClient[IO](
     Config(
       endpoint = Endpoint(Some(DirectAddress(HTTP, "localhost", Some(9324))), "elasticmq"),
-      credentials = Some(Credentials("x", "x")),
+      credentials = None,
       clientId = ClientId("echo_server_1"),
       None
     )
