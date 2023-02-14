@@ -1405,26 +1405,6 @@ class EditSetRecordISpec extends BaseISpec {
 
           val editSetRecordOci = "COAL.2022.V2RJW"
           val values = valuesFromRecord(editSetRecordOci) ++ Map("place-of-deposit-id" -> "3")
-//            Map(
-//              "scope-and-content" -> "The Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
-//              "covering-dates"              -> "1960",
-//              "former-reference-department" -> "Photographs",
-//              "former-reference-pro"        -> "CAB 172",
-//              "start-date-day"              -> "2",
-//              "start-date-month"            -> "4",
-//              "start-date-year"             -> "1960",
-//              "end-date-day"                -> "26",
-//              "end-date-month"              -> "10",
-//              "end-date-year"               -> "1960",
-//              "legal-status-id"             -> "ref.2",
-//              "note"                        -> "A brief note about COAL.2022.V1RJW.P.",
-//              "background"        -> "The photo was taken by a daughter of one of the coal miners who used them.",
-//              "custodial-history" -> "These files originally created by successor or predecessor departments for COAL",
-//              "place-of-deposit-id" -> "3",
-//              "creator-ids[0]"      -> "46F",
-//              "creator-ids[1]"      -> "8R6"
-//            )
-
           val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
           assertRedirection(submissionResponse, s"/edit-set/1/record/$editSetRecordOci/edit/save")
