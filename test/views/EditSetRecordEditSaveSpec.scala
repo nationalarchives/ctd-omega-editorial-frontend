@@ -63,7 +63,6 @@ class EditSetRecordEditSaveSpec extends BaseSpec {
     "render the header" in {
 
       val document = generateDocument()
-      println(document)
       document must haveHeaderTitle("header.title")
       document must haveVisibleLogoutLink
       document must haveLogoutLinkLabel("header.logout")

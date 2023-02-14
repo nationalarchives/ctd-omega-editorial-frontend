@@ -1379,6 +1379,7 @@ class EditSetRecordISpec extends BaseISpec {
           val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
           assertRedirection(submissionResponse, "/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+
           assertPageAsExpected(
             getEditSetRecordSavePage(idOfExistingEditSet, editSetRecordOci),
             OK,
@@ -1387,6 +1388,54 @@ class EditSetRecordISpec extends BaseISpec {
               bannerLineOne = "Changes to the following record have been saved:",
               bannerLineTwo = "TNA reference: COAL 80/80/1",
               bannerLineThree = s"PAC-ID: $editSetRecordOci Physical Record",
+              bannerLineFour = "Series: National Coal Board and predecessors: Photographs",
+              backLinkLabel = "Back to edit set (COAL 80 Sample)",
+              backLinkHref = "/edit-set/1"
+            )
+          )
+
+          assertPageAsExpected(
+            getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
+            OK,
+            generateExpectedEditRecordPageFromRecord(editSetRecordOci)
+          )
+
+        }
+        "fields are provided and valid without record type suffix" in {
+
+          val editSetRecordOci = "COAL.2022.V2RJW"
+          val values = valuesFromRecord(editSetRecordOci) ++ Map("place-of-deposit-id" -> "3")
+//            Map(
+//              "scope-and-content" -> "The Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
+//              "covering-dates"              -> "1960",
+//              "former-reference-department" -> "Photographs",
+//              "former-reference-pro"        -> "CAB 172",
+//              "start-date-day"              -> "2",
+//              "start-date-month"            -> "4",
+//              "start-date-year"             -> "1960",
+//              "end-date-day"                -> "26",
+//              "end-date-month"              -> "10",
+//              "end-date-year"               -> "1960",
+//              "legal-status-id"             -> "ref.2",
+//              "note"                        -> "A brief note about COAL.2022.V1RJW.P.",
+//              "background"        -> "The photo was taken by a daughter of one of the coal miners who used them.",
+//              "custodial-history" -> "These files originally created by successor or predecessor departments for COAL",
+//              "place-of-deposit-id" -> "3",
+//              "creator-ids[0]"      -> "46F",
+//              "creator-ids[1]"      -> "8R6"
+//            )
+
+          val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
+
+          assertRedirection(submissionResponse, s"/edit-set/1/record/$editSetRecordOci/edit/save")
+          assertPageAsExpected(
+            getEditSetRecordSavePage(idOfExistingEditSet, editSetRecordOci),
+            OK,
+            ExpectedEditRecordSavePage(
+              title = "Edit record",
+              bannerLineOne = "Changes to the following record have been saved:",
+              bannerLineTwo = "TNA reference: COAL 80/80/2",
+              bannerLineThree = s"PAC-ID: $editSetRecordOci",
               bannerLineFour = "Series: National Coal Board and predecessors: Photographs",
               backLinkLabel = "Back to edit set (COAL 80 Sample)",
               backLinkHref = "/edit-set/1"
@@ -1456,6 +1505,37 @@ class EditSetRecordISpec extends BaseISpec {
               bannerLineOne = "Changes to the following record have been discarded:",
               bannerLineTwo = "TNA reference: COAL 80/80/1",
               bannerLineThree = s"PAC-ID: $editSetRecordOci Physical Record",
+              bannerLineFour = "Series: National Coal Board and predecessors: Photographs",
+              backLinkLabel = "Back to edit set (COAL 80 Sample)",
+              backLinkHref = "/edit-set/1"
+            )
+          )
+
+          assertPageAsExpected(
+            getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
+            OK,
+            generateExpectedEditRecordPageFromRecord(editSetRecordOci)
+          )
+
+        }
+
+        "all fields are unchanged without a record type suffix" in {
+
+          val editSetRecordOci = "COAL.2022.V2RJW"
+          val values = valuesFromRecord(editSetRecordOci)
+
+          val submissionResponse = submitDiscardingChanges(idOfExistingEditSet, editSetRecordOci, values)
+
+          assertRedirection(submissionResponse, s"/edit-set/1/record/$editSetRecordOci/edit/discard")
+
+          assertPageAsExpected(
+            getEditSetRecordDiscardPage(idOfExistingEditSet, editSetRecordOci),
+            OK,
+            ExpectedEditRecordDiscardPage(
+              title = "Edit record",
+              bannerLineOne = "Changes to the following record have been discarded:",
+              bannerLineTwo = "TNA reference: COAL 80/80/2",
+              bannerLineThree = s"PAC-ID: $editSetRecordOci",
               bannerLineFour = "Series: National Coal Board and predecessors: Photographs",
               backLinkLabel = "Back to edit set (COAL 80 Sample)",
               backLinkHref = "/edit-set/1"
