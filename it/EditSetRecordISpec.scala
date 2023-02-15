@@ -1387,7 +1387,7 @@ class EditSetRecordISpec extends BaseISpec {
               title = "Edit record",
               bannerLineOne = "Changes to the following record have been saved:",
               bannerLineTwo = "TNA reference: COAL 80/80/1",
-              bannerLineThree = "PAC-ID: COAL.2022.V1RJW.P {1}",
+              bannerLineThree = s"PAC-ID: $editSetRecordOci Physical Record",
               bannerLineFour = "Series: National Coal Board and predecessors: Photographs",
               backLinkLabel = "Back to edit set (COAL 80 Sample)",
               backLinkHref = "/edit-set/1"
@@ -1397,77 +1397,35 @@ class EditSetRecordISpec extends BaseISpec {
           assertPageAsExpected(
             getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
             OK,
-            ExpectedEditRecordEditPage(
+            generateExpectedEditRecordPageFromRecord(editSetRecordOci)
+          )
+
+        }
+        "fields are provided and valid without record type suffix" in {
+
+          val editSetRecordOci = "COAL.2022.V2RJW"
+          val values = valuesFromRecord(editSetRecordOci) ++ Map("place-of-deposit-id" -> "3")
+          val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
+
+          assertRedirection(submissionResponse, s"/edit-set/1/record/$editSetRecordOci/edit/save")
+          assertPageAsExpected(
+            getEditSetRecordSavePage(idOfExistingEditSet, editSetRecordOci),
+            OK,
+            ExpectedEditRecordSavePage(
               title = "Edit record",
-              heading = "TNA reference: COAL 80/80/1",
-              subHeading = "PAC-ID: COAL.2022.V1RJW.P {1}",
-              legend = "Intellectual properties",
-              classicCatalogueRef = "COAL 80/80/1",
-              omegaCatalogueId = "COAL.2022.V1RJW.P",
-              scopeAndContent =
-                "The Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
-              coveringDates = "1960",
-              formerReferenceDepartment = "Photographs",
-              formerReferencePro = "CAB 172",
-              startDate = ExpectedDate("2", "4", "1960"),
-              endDate = ExpectedDate("26", "10", "1960"),
-              legalStatusID = "ref.2",
-              note = "A brief note about COAL.2022.V1RJW.P.",
-              background = "The photo was taken by a daughter of one of the coal miners who used them.",
-              custodialHistory = "These files originally created by successor or predecessor departments for COAL",
-              optionsForPlaceOfDepositID = Seq(
-                ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                ExpectedSelectOption("1", "The National Archives, Kew"),
-                ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
-                ExpectedSelectOption("3", "British Library, National Sound Archive", selected = true)
-              ),
-              optionsForCreators = Seq(
-                Seq(
-                  ExpectedSelectOption("", "Select creator", disabled = true),
-                  ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                  ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                  ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                  ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                ),
-                Seq(
-                  ExpectedSelectOption("", "Select creator", disabled = true),
-                  ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                  ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                  ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                  ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
-                )
-              ),
-              relatedMaterial = Seq(
-                ExpectedRelatedMaterial(
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                ),
-                ExpectedRelatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/3")
-                ),
-                ExpectedRelatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/2"),
-                  description =
-                    Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-                )
-              ),
-              separatedMaterial = Seq(
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/5")
-                ),
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/6")
-                ),
-                ExpectedSeparatedMaterial(
-                  linkHref = Some("#;"),
-                  linkText = Some("COAL 80/80/7")
-                )
-              )
+              bannerLineOne = "Changes to the following record have been saved:",
+              bannerLineTwo = "TNA reference: COAL 80/80/2",
+              bannerLineThree = s"PAC-ID: $editSetRecordOci",
+              bannerLineFour = "Series: National Coal Board and predecessors: Photographs",
+              backLinkLabel = "Back to edit set (COAL 80 Sample)",
+              backLinkHref = "/edit-set/1"
             )
+          )
+
+          assertPageAsExpected(
+            getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
+            OK,
+            generateExpectedEditRecordPageFromRecord(editSetRecordOci)
           )
 
         }
@@ -1492,7 +1450,7 @@ class EditSetRecordISpec extends BaseISpec {
               title = "Edit record",
               bannerLineOne = "Changes to the following record have been discarded:",
               bannerLineTwo = "TNA reference: COAL 80/80/1",
-              bannerLineThree = "PAC-ID: COAL.2022.V1RJW.P {1}",
+              bannerLineThree = s"PAC-ID: $editSetRecordOci Physical Record",
               bannerLineFour = "Series: National Coal Board and predecessors: Photographs",
               backLinkLabel = "Back to edit set (COAL 80 Sample)",
               backLinkHref = "/edit-set/1"
@@ -1526,7 +1484,38 @@ class EditSetRecordISpec extends BaseISpec {
               title = "Edit record",
               bannerLineOne = "Changes to the following record have been discarded:",
               bannerLineTwo = "TNA reference: COAL 80/80/1",
-              bannerLineThree = "PAC-ID: COAL.2022.V1RJW.P {1}",
+              bannerLineThree = s"PAC-ID: $editSetRecordOci Physical Record",
+              bannerLineFour = "Series: National Coal Board and predecessors: Photographs",
+              backLinkLabel = "Back to edit set (COAL 80 Sample)",
+              backLinkHref = "/edit-set/1"
+            )
+          )
+
+          assertPageAsExpected(
+            getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
+            OK,
+            generateExpectedEditRecordPageFromRecord(editSetRecordOci)
+          )
+
+        }
+
+        "all fields are unchanged without a record type suffix" in {
+
+          val editSetRecordOci = "COAL.2022.V2RJW"
+          val values = valuesFromRecord(editSetRecordOci)
+
+          val submissionResponse = submitDiscardingChanges(idOfExistingEditSet, editSetRecordOci, values)
+
+          assertRedirection(submissionResponse, s"/edit-set/1/record/$editSetRecordOci/edit/discard")
+
+          assertPageAsExpected(
+            getEditSetRecordDiscardPage(idOfExistingEditSet, editSetRecordOci),
+            OK,
+            ExpectedEditRecordDiscardPage(
+              title = "Edit record",
+              bannerLineOne = "Changes to the following record have been discarded:",
+              bannerLineTwo = "TNA reference: COAL 80/80/2",
+              bannerLineThree = s"PAC-ID: $editSetRecordOci",
               bannerLineFour = "Series: National Coal Board and predecessors: Photographs",
               backLinkLabel = "Back to edit set (COAL 80 Sample)",
               backLinkHref = "/edit-set/1"

@@ -120,9 +120,10 @@ class EditSetRecordController @Inject() (
       val heading: String =
         resolvedMessage(MessageKeys.heading, editSetRecords.getEditSetRecordByOCI(oci).get.ccr)
       val message: String = resolvedMessage(MessageKeys.buttonSave)
+      val recordType: Option[RecordType] = editSetRecords.getEditSetRecordByOCI(oci).get.recordType
       logger.info(s"Save changes for record id $oci edit set id $id")
 
-      Ok(editSetRecordEditSave(user, editSetName, title, heading, oci, message))
+      Ok(editSetRecordEditSave(user, editSetName, title, heading, oci, message, recordType))
     }
   }
 
@@ -134,9 +135,10 @@ class EditSetRecordController @Inject() (
       val heading: String =
         resolvedMessage(MessageKeys.heading, editSetRecords.getEditSetRecordByOCI(oci).get.ccr)
       val message: String = resolvedMessage(MessageKeys.buttonDiscard)
+      val recordType: Option[RecordType] = editSetRecords.getEditSetRecordByOCI(oci).get.recordType
       logger.info(s"Discard changes for record id $oci edit set id $id ")
 
-      Ok(editSetRecordEditDiscard(user, editSetName, title, heading, oci, message))
+      Ok(editSetRecordEditDiscard(user, editSetName, title, heading, oci, message, recordType))
     }
   }
 
