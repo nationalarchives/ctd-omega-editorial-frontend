@@ -22,50 +22,73 @@
 package uk.gov.nationalarchives.omega.editorial.services
 
 
-import cats.MonadError
 import cats.effect._
 import cats.implicits._
 import cats.instances.either._
-import cats.syntax.flatMap._
-import cats.syntax.functor._
-import cats.syntax.monadError._
 import javax.inject.Singleton
-import jms4s.JmsAcknowledgerConsumer.AckAction
-import jms4s.JmsClient
 import jms4s.config.QueueName
 import jms4s.jms.JmsMessage
+import jms4s.jms.MessageFactory
+import jms4s.JmsAcknowledgerConsumer.AckAction
+import jms4s.JmsClient
 import jms4s.sqs.simpleQueueService
 import jms4s.sqs.simpleQueueService._
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jFactory
+import org.typelevel.log4cats.slf4j.Slf4jLogger
 import play.api.libs.json.{ Reads, Json }
+
 import scala.concurrent.duration.DurationInt
+
 import uk.gov.nationalarchives.omega.editorial.editSets
 import uk.gov.nationalarchives.omega.editorial.models.EditSet
 import uk.gov.nationalarchives.omega.editorial.models.GetEditSet
+import cats.MonadError
+import org.typelevel.log4cats.Logger
 
 // Copied (more or less) from https://github.com/nationalarchives/jms4s-request-reply-stub
 @Singleton
 class EchoServer {
   import EchoServer._
 
-  private implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jFactory[IO].getLogger
+  // private implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jLogger.getLogger[IO]
+
   private val requestQueueName = QueueName("request-general")
   private val responseQueryName = QueueName("omega-editorial-web-application-instance-1")
   private val consumerConcurrencyLevel = 1
 
-  private val jmsClient: Resource[IO, JmsClient[IO]] = simpleQueueService.makeJmsClient[IO](
-    Config(
-      endpoint = Endpoint(Some(DirectAddress(HTTP, "localhost", Some(9324))), "elasticmq"),
-      credentials = None,
-      clientId = ClientId("echo_server_1"),
-      None
-    )
-  )
+  // private val jmsClient: Resource[IO, JmsClient[IO]] = simpleQueueService.makeJmsClient[IO](
+  //   Config(
+  //     endpoint = Endpoint(Some(DirectAddress(HTTP, "localhost", Some(9324))), "elasticmq"),
+  //     credentials = None,
+  //     clientId = ClientId("echo_server_1"),
+  //     None
+  //   )
+  // )
+
+  private val jmsClient: Resource[IO, JmsClient[IO]] = ???
+
+  def eitherToIO[F[_], A](x: Either[EchoServerError, A])(implicit me: MonadError[F, Throwable]): F[A] =
+    x match {
+      case Right(ok) => me.pure(ok)
+      case Left(err) => me.raiseError(err)
+    }
+
+  def handleMessage[F[_]](
+    jmsMessage: JmsMessage,
+    messageFactory: MessageFactory[F]
+  )(implicit me: MonadError[F, Throwable], l: Logger[F]): F[JmsMessage.JmsTextMessage] =
+    for {
+      requestMessageId <- eitherToIO[F, String](jmsMessageId(jmsMessage))
+      _ <- Logger[F].info("")
+      responseText <- eitherToIO[F, String](createResponse(jmsMessage))
+      responseMessage <- messageFactory.makeTextMessage(responseText)
+      _ = responseMessage.setJMSCorrelationId(requestMessageId)
+    } yield responseMessage
 
   def startEchoServer: IO[Unit] = {
     val consumerResource = for {
-       _ <- Resource.eval(logger.info("Starting EchoServer..."))
+       // _ <- Resource.eval(logger.info("Starting EchoServer..."))
       client <- jmsClient
       consumer <- client.createAcknowledgerConsumer(
                     requestQueueName,
@@ -74,30 +97,20 @@ class EchoServer {
                   )
     } yield consumer
 
-    consumerResource
-      .use(_.handle { (jmsMessage, messageFactory) =>
-        for {
-          // requestMessageId <- jmsMessageId(jmsMessage)
-          // responseText <- createResponse(jmsMessage)
-          responseMessage <- messageFactory.makeTextMessage("blaf")
-          // _ = responseMessage.setJMSCorrelationId(requestMessageId)
-          // requestText <- jmsMessage.asTextF[IO]
-          // _ <- logger.info(s"Echo Server received message: $requestText")
-          // // sid <- getSIDHeader(jmsMessage).left.map(x => throw new Exception(x.toString))
-          // responseText = s"Echo Server: $requestText"
-          // responseMessage <- messageFactory.makeTextMessage(responseText)
-          // requestMessageId = jmsMessage.getJMSMessageId.get
-          // _ = responseMessage.setJMSCorrelationId(requestMessageId)
-          // _ <- logger.info(s"Echo Server sending response message: $responseText with correlationId: $requestMessageId")
-        } yield AckAction.send(???, responseQueryName)
-      })
+    ???
+    // consumerResource
+    //   .use(_.handle { (jmsMessage, messageFactory) =>
+    //     handleMessage[IO](jmsMessage, messageFactory).map { message =>
+    //       AckAction.send(message, responseQueryName)
+    //     }
+    //   })
 
   }
 }
 
 object EchoServer {
 
-  sealed abstract class EchoServerError extends Exception
+  sealed abstract class EchoServerError extends Throwable
 
   final case object MissingSID extends EchoServerError
   final case object MissingJMSID extends EchoServerError
@@ -110,8 +123,8 @@ object EchoServer {
   val sidHeaderKey = "sid"
   val sid1 = "OSGEES001"
 
-  def jmsMessageId[F[_]](jmsMessage: JmsMessage)(implicit me: MonadError[F, EchoServerError]): F[String] =
-    me.fromOption(jmsMessage.getJMSMessageId, { MissingJMSID })
+  def jmsMessageId(jmsMessage: JmsMessage): Outcome[String] =
+    jmsMessage.getJMSMessageId.toRight { MissingJMSID }
 
   def createResponse(jmsMessage: JmsMessage): Outcome[String] =
     jmsMessage.getStringProperty(sidHeaderKey) match {
@@ -137,9 +150,8 @@ object EchoServer {
       CannotParse(messageText)
     }
 
-  def messageText(jmsMessage: JmsMessage): Outcome[String] = ???
-  // def messageText[F[_]](jmsMessage: JmsMessage)(implicit me: MonadError[F, EchoServerError]): F[String] =
-  //   jmsMessage.asTextF.adaptError { ex => NotATextMessage(ex) }
+  def messageText(jmsMessage: JmsMessage): Outcome[String] =
+    jmsMessage.asTextF.toEither.leftMap { NotATextMessage }
 
   def getEditSet(jmsMessage: JmsMessage): Outcome[EditSet] =
     for {

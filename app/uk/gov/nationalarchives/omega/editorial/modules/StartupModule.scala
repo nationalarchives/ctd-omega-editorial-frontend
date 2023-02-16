@@ -26,7 +26,7 @@ import uk.gov.nationalarchives.omega.editorial.EchoServerBootstrap
 
 class StartupModule extends AbstractModule {
 
-  override def configure(): Unit =
-    bind(classOf[EchoServerBootstrap]).asEagerSingleton()
+  // override def configure(): Unit =
+  //   bind(classOf[EchoServerBootstrap]).asEagerSingleton()
 
 }
