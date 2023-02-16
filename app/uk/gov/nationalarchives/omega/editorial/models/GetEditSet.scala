@@ -21,10 +21,14 @@
 
 package uk.gov.nationalarchives.omega.editorial.models
 
-import play.api.libs.json._
+import play.api.libs.json.{ Json, Format }
+import java.time.LocalDateTime
 
-case class EditSet(name: String, id: String, entries: Seq[EditSetEntry])
+case class GetEditSet(
+  oci: String,
+  timestamp: LocalDateTime
+)
 
-object EditSet {
-  implicit val editSetReads: Format[EditSet] = Json.format[EditSet]
+object GetEditSet {
+  implicit val getEditSetFormats: Format[GetEditSet] = Json.format[GetEditSet]
 }

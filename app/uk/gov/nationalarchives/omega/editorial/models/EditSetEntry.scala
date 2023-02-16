@@ -21,10 +21,10 @@
 
 package uk.gov.nationalarchives.omega.editorial.models
 
-import play.api.libs.json.{ Json, Reads }
+import play.api.libs.json.{ Json, Format }
 
 case class EditSetEntry(ccr: String, oci: String, scopeAndContent: String, coveringDates: String)
 
 object EditSetEntry {
-  implicit val editSetEntryReads: Reads[EditSetEntry] = Json.reads[EditSetEntry]
+  implicit val editSetEntryReads: Format[EditSetEntry] = Json.format[EditSetEntry]
 }

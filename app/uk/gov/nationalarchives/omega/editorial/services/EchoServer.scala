@@ -21,21 +21,33 @@
 
 package uk.gov.nationalarchives.omega.editorial.services
 
+
+import cats.MonadError
 import cats.effect._
-import jms4s.config.QueueName
+import cats.implicits._
+import cats.instances.either._
+import cats.syntax.flatMap._
+import cats.syntax.functor._
+import cats.syntax.monadError._
+import javax.inject.Singleton
 import jms4s.JmsAcknowledgerConsumer.AckAction
 import jms4s.JmsClient
+import jms4s.config.QueueName
+import jms4s.jms.JmsMessage
 import jms4s.sqs.simpleQueueService
 import jms4s.sqs.simpleQueueService._
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jFactory
-
-import javax.inject.Singleton
+import play.api.libs.json.{ Reads, Json }
 import scala.concurrent.duration.DurationInt
+import uk.gov.nationalarchives.omega.editorial.editSets
+import uk.gov.nationalarchives.omega.editorial.models.EditSet
+import uk.gov.nationalarchives.omega.editorial.models.GetEditSet
 
 // Copied (more or less) from https://github.com/nationalarchives/jms4s-request-reply-stub
 @Singleton
 class EchoServer {
+  import EchoServer._
 
   private implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jFactory[IO].getLogger
   private val requestQueueName = QueueName("request-general")
@@ -65,15 +77,76 @@ class EchoServer {
     consumerResource
       .use(_.handle { (jmsMessage, messageFactory) =>
         for {
-          requestText <- jmsMessage.asTextF[IO]
-          _ <- logger.info(s"Echo Server received message: $requestText")
-          responseText = s"Echo Server: $requestText"
-          responseMessage <- messageFactory.makeTextMessage(responseText)
-          requestMessageId = jmsMessage.getJMSMessageId.get
-          _ = responseMessage.setJMSCorrelationId(requestMessageId)
-          _ <- logger.info(s"Echo Server sending response message: $responseText with correlationId: $requestMessageId")
-        } yield AckAction.send(responseMessage, responseQueryName)
+          // requestMessageId <- jmsMessageId(jmsMessage)
+          // responseText <- createResponse(jmsMessage)
+          responseMessage <- messageFactory.makeTextMessage("blaf")
+          // _ = responseMessage.setJMSCorrelationId(requestMessageId)
+          // requestText <- jmsMessage.asTextF[IO]
+          // _ <- logger.info(s"Echo Server received message: $requestText")
+          // // sid <- getSIDHeader(jmsMessage).left.map(x => throw new Exception(x.toString))
+          // responseText = s"Echo Server: $requestText"
+          // responseMessage <- messageFactory.makeTextMessage(responseText)
+          // requestMessageId = jmsMessage.getJMSMessageId.get
+          // _ = responseMessage.setJMSCorrelationId(requestMessageId)
+          // _ <- logger.info(s"Echo Server sending response message: $responseText with correlationId: $requestMessageId")
+        } yield AckAction.send(???, responseQueryName)
       })
 
   }
+}
+
+object EchoServer {
+
+  sealed abstract class EchoServerError extends Exception
+
+  final case object MissingSID extends EchoServerError
+  final case object MissingJMSID extends EchoServerError
+  final case class SidNotFound(badSid: String) extends EchoServerError
+  final case class NotATextMessage(err: Throwable) extends EchoServerError
+  final case class CannotParse(txt: String) extends EchoServerError
+
+  type Outcome[A] = Either[EchoServerError, A]
+
+  val sidHeaderKey = "sid"
+  val sid1 = "OSGEES001"
+
+  def jmsMessageId[F[_]](jmsMessage: JmsMessage)(implicit me: MonadError[F, EchoServerError]): F[String] =
+    me.fromOption(jmsMessage.getJMSMessageId, { MissingJMSID })
+
+  def createResponse(jmsMessage: JmsMessage): Outcome[String] =
+    jmsMessage.getStringProperty(sidHeaderKey) match {
+      case Some(sidValue) if sidValue == sid1 => 
+        getEditSet(jmsMessage).map { editSet =>
+          Json.toJson(editSet).toString
+        }
+
+      case Some(sidValue) =>
+        Left(SidNotFound(sidValue))
+
+      case None =>
+        Left(MissingSID)
+    }
+
+  def echoMessage(jmsMessage: JmsMessage): Outcome[String] =
+    messageText(jmsMessage).map { requestText =>
+      s"Echo Server: $requestText"
+    }
+
+  def parse[A](messageText: String)(implicit reads: Reads[A]): Outcome[A] =
+    Json.parse(messageText).validate[A].asEither.left.map { _ =>
+      CannotParse(messageText)
+    }
+
+  def messageText(jmsMessage: JmsMessage): Outcome[String] = ???
+  // def messageText[F[_]](jmsMessage: JmsMessage)(implicit me: MonadError[F, EchoServerError]): F[String] =
+  //   jmsMessage.asTextF.adaptError { ex => NotATextMessage(ex) }
+
+  def getEditSet(jmsMessage: JmsMessage): Outcome[EditSet] =
+    for {
+      messageText <- messageText(jmsMessage)
+      // TODO We'll need to get the OCI from the GetEditSet eventuly
+      _ <- parse[GetEditSet](messageText)
+    } yield editSets.editSet1
+
+
 }
