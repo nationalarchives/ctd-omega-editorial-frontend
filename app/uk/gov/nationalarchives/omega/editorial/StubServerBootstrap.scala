@@ -25,10 +25,10 @@ import cats.effect.unsafe.implicits.global
 import javax.inject.{ Inject, Singleton }
 import scala.concurrent.Future
 
-import uk.gov.nationalarchives.omega.editorial.services.EchoServer
+import uk.gov.nationalarchives.omega.editorial.services.jms.StubServer
 
 @Singleton
-class EchoServerBootstrap @Inject() (echoServer: EchoServer) {
+class StubServerBootstrap @Inject() (echoServer: StubServer) {
 
   start()
 

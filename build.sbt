@@ -142,10 +142,6 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
       "org.typelevel"          %% "cats-effect-kernel"         % "3.4.4",
       "org.webjars.npm"         % "govuk-frontend"             % "4.3.1",
       "uk.gov.hmrc"            %% "play-frontend-hmrc"         % "6.2.0-play-28",
-      "net.logstash.logback" % "logstash-logback-encoder" % "5.3",
-      "com.fasterxml.jackson.core" % "jackson-databind" % "2.12.0",
-      "com.fasterxml.jackson.core" % "jackson-core" % "2.12.0",
-      "com.fasterxml.jackson.core" % "jackson-annotations" % "2.12.0",
       "org.scalatestplus.play" %% "scalatestplus-play"         % "5.0.0"  % Test,
       "org.jsoup"               % "jsoup"                      % "1.15.3" % Test
     )

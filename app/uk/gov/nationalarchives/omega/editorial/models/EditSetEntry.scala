@@ -21,7 +21,7 @@
 
 package uk.gov.nationalarchives.omega.editorial.models
 
-import play.api.libs.json.{ Json, Format }
+import play.api.libs.json.{ Format, Json }
 
 case class EditSetEntry(ccr: String, oci: String, scopeAndContent: String, coveringDates: String)
 
