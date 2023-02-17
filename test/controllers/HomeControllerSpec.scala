@@ -21,22 +21,18 @@
 
 package controllers
 
-import org.scalatestplus.play._
-import org.scalatestplus.play.guice._
 import play.api.mvc.{ AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesActionBuilderImpl, DefaultMessagesControllerComponents }
 import play.api.test._
 import play.api.test.Helpers._
 import uk.gov.nationalarchives.omega.editorial.controllers.{ HomeController, SessionKeys }
-import uk.gov.nationalarchives.omega.editorial.models.session.Session
+import support.BaseSpec
 
 /** Add your spec here. You can mock out a whole application including requests, plugins etc.
   *
   * For more information, see https://www.playframework.com/documentation/latest/ScalaTestingWithScalaTest
   */
-class HomeControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
+class HomeControllerSpec extends BaseSpec {
 
-  val validSessionToken = Session.generateToken("1234")
-  val invalidSessionToken = Session.generateToken("invalid-user")
   val landingPagePath = "/edit-set/1"
   val loginPagePath = "/login"
 
