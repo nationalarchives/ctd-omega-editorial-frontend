@@ -25,14 +25,16 @@ import cats.implicits._
 import cats.MonadError
 import jms4s.jms.JmsMessage
 import play.api.libs.json.{ Json, Reads }
+import org.typelevel.log4cats.Logger
 
 import uk.gov.nationalarchives.omega.editorial.editSets
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, GetEditSet }
 
-class ResponseBuilder[F[_] : ResponseBuilder.ME] {
+class ResponseBuilder[F[_] : ResponseBuilder.ME : Logger] {
   import ResponseBuilder._
 
   private val me = MonadError[F, Throwable]
+  private val logger = Logger[F]
 
   def jmsMessageId(jmsMessage: JmsMessage): F[String] =
     me.fromOption(
@@ -43,15 +45,19 @@ class ResponseBuilder[F[_] : ResponseBuilder.ME] {
   def createResponseText(jmsMessage: JmsMessage): F[String] =
     jmsMessage.getStringProperty(sidHeaderKey) match {
       case Some(sidValue) if sidValue == sid1 =>
-        getEditSet(jmsMessage).map { editSet =>
-          Json.toJson(editSet).toString
-        }
+        logger.info(s"got a message with sid header '$sidValue', trying to parse payload") *>
+          getEditSet(jmsMessage).flatMap { editSet =>
+            logger.info("parsed payload, creating edit set response") *>
+              me.pure(Json.toJson(editSet).toString)
+          }
 
       case Some(sidValue) =>
-        me.raiseError(SidNotFound(sidValue))
+        logger.warn(s"found sid $sidValue, which does not match $sid1") *>
+          me.raiseError(SidNotFound(sidValue))
 
       case None =>
-        echoMessage(jmsMessage)
+        logger.warn(s"did not find a sid value. creating echo message.") *>
+          echoMessage(jmsMessage)
     }
 
   private def getEditSet(jmsMessage: JmsMessage): F[EditSet] =

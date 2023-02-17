@@ -133,7 +133,6 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
     resolvers += Resolver.githubPackages("rwalpole"),
     libraryDependencies ++= Seq(
       guice,
-      "dev.fpinbo"             %% "jms4s-active-mq-artemis"    % "0.0.1-53518bb-SNAPSHOT",
       "dev.fpinbo"             %% "jms4s-simple-queue-service" % "0.0.1-53518bb-SNAPSHOT",
       "org.typelevel"          %% "log4cats-core"              % "2.5.0",
       "org.typelevel"          %% "log4cats-slf4j"             % "2.5.0",

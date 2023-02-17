@@ -65,14 +65,14 @@ class StubServer {
                     concurrencyLevel = consumerConcurrencyLevel,
                     pollingInterval = 50.millis
                   )
+      _ <- Resource.eval(consumer.handle { (jmsMessage, messageFactory) =>
+             handleMessage(jmsMessage, messageFactory).map { message =>
+               AckAction.send(message, responseQueryName)
+             }
+           })
     } yield consumer
 
-    consumerResource
-      .use(_.handle { (jmsMessage, messageFactory) =>
-        handleMessage(jmsMessage, messageFactory).map { message =>
-          AckAction.send(message, responseQueryName)
-        }
-      })
+    consumerResource.useForever
   }
 
   private def handleMessage(
