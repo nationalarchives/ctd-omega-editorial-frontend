@@ -149,11 +149,7 @@ To run the unit tests only:
 sbt test
 ```
 
-Please note that before running the integration tests, we must ensure that ElasticMQ is running:
-
-```
-docker-compose up -d
-```
+Note that there's no need to bring up any docker containers, as [Testcontainers](https://github.com/testcontainers/testcontainers-scala) will manage those automatically.
 
 To run just the integration tests:
 
@@ -182,3 +178,21 @@ You'll find it in `/target/scala-2.13/scoverage-report/`.
 Remember to run `sbt fmtCheck`.
 
 For convenience, you can run [runBeforePushing.sh](./runBeforePushing.sh), which runs it after all of the tests; note that a coverage report is also generated.
+
+### If Developing On macOS
+
+#### Docker
+
+If you are using [colima](https://github.com/abiosoft/colima) as a container provider for macos (as opposed to [Docker Desktop](https://docs.docker.com/desktop/install/mac-install/)),
+then you'll need to set the following env vars:
+
+```
+export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
+export DOCKER_HOST=unix://$HOME/.colima/default/docker.sock
+```
+
+And if you see warning messages like the following, it's OK: it's still working. It's [a known issue](https://github.com/testcontainers/testcontainers-java/issues/6450).
+
+```
+2023-02-23 14:20:41 WARN  o.t.utility.RyukResourceReaper  Can not connect to Ryuk at localhost:49185
+```

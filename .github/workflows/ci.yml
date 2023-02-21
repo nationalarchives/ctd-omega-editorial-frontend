@@ -27,14 +27,22 @@ jobs:
         uses: actions/checkout@v2
       - name: Run unit tests
         run: sbt -v +test
-      - name: Install docker (on macos, only)
-        run: brew install docker && brew install docker-compose && colima start && docker --version
-        if: ${{ matrix.os == 'macos-latest' }}
-      - name: Start docker compose
-        run: docker-compose up -d && docker-compose ps
-      - name: Run integration tests
+      - name: Run integration tests (ubuntu)
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         run: sbt -v IntegrationTest/test
-      - name: Shutdown docker compose
-        run: docker-compose down
+      - name: Run integration tests (macos)
+        if: ${{ matrix.os == 'macos-latest' }}
+        env:
+          TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE: /var/run/docker.sock
+          DOCKER_HOST: unix:///Users/runner/.colima/default/docker.sock
+        run: |
+          brew install docker 
+          brew install docker-compose
+          mkdir -p ~/.docker/cli-plugins
+          ln -sfn /usr/local/opt/docker-compose/bin/docker-compose ~/.docker/cli-plugins/docker-compose
+          colima start
+          echo "Pulling docker images to make the tests run quicker."
+          docker-compose pull
+          sbt -v IntegrationTest/test
       - name: Generate a coverage report
         run: sbt coverageReport

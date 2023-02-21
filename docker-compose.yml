@@ -1,7 +1,6 @@
 version: "3.7"
 services:
   elasticmq-native:
-    container_name: elasticmq-container-for-frontend
     ports:
       - 9324:9324
       - 9325:9325

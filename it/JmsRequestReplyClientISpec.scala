@@ -21,20 +21,38 @@
 
 import cats.effect.testing.scalatest.AsyncIOSpec
 import cats.effect.{ IO, Resource }
+import com.dimafeng.testcontainers.scalatest.TestContainerForAll
+import com.dimafeng.testcontainers.{ DockerComposeContainer, ExposedService }
 import org.scalatest.freespec.FixtureAsyncFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{ BeforeAndAfterAll, FutureOutcome }
+import org.testcontainers.containers.wait.strategy.Wait
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jFactory
 import uk.gov.nationalarchives.omega.editorial.connectors._
 import uk.gov.nationalarchives.omega.editorial.services.EchoServer
 
+import java.io.File
 import scala.concurrent.duration.{ FiniteDuration, SECONDS }
 import scala.util.{ Failure, Success }
 
-class JmsRequestReplyClientISpec extends FixtureAsyncFreeSpec with AsyncIOSpec with Matchers with BeforeAndAfterAll {
+class JmsRequestReplyClientISpec
+    extends FixtureAsyncFreeSpec with AsyncIOSpec with Matchers with BeforeAndAfterAll with TestContainerForAll {
 
   override type FixtureParam = RequestReplyHandler
+
+  private val dockerComposeLocation = "docker-compose.yml"
+  private val elasticMQContainerName = "elasticmq-native"
+  private val elasticMQContainerExportPort = 9324
+
+  override val containerDef: DockerComposeContainer.Def =
+    DockerComposeContainer.Def(
+      new File(dockerComposeLocation),
+      tailChildContainers = true,
+      exposedServices = Seq(
+        ExposedService(elasticMQContainerName, elasticMQContainerExportPort, Wait.forListeningPort())
+      )
+    )
 
   implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jFactory[IO].getLogger
 
@@ -42,14 +60,15 @@ class JmsRequestReplyClientISpec extends FixtureAsyncFreeSpec with AsyncIOSpec w
   private val requestQueueName = "request-general"
   private val replyQueueName = "omega-editorial-web-application-instance-1"
   private val messagingServerHost = "localhost"
-  private val messagingServerPort = 9324
-
+  private var messagingServerPort: Int = _
   private val echoServer = new EchoServer
 
-  override def beforeAll(): Unit =
-    echoServer.startEchoServer.unsafeToFuture().onComplete {
-      case Success(_)         =>
-      case Failure(exception) => fail(s"Failed to start Echo Server", exception)
+  override def afterContainersStart(container: Containers): Unit =
+    container match {
+      case dockerComposeContainer: DockerComposeContainer =>
+        messagingServerPort =
+          dockerComposeContainer.getServicePort(elasticMQContainerName, elasticMQContainerExportPort)
+        startEchoServer()
     }
 
   override def withFixture(test: OneArgAsyncTest): FutureOutcome = {
@@ -69,27 +88,33 @@ class JmsRequestReplyClientISpec extends FixtureAsyncFreeSpec with AsyncIOSpec w
 
   "SQS Client" - {
     "send a message and handle the reply" in { requestReplyHandler =>
-      val result = sendRequest(requestReplyHandler, "hello 1234")
+      val result = sendRequest(requestReplyHandler, "hello 1/1234")
 
-      result.asserting(_ mustBe "Echo Server: hello 1234")
+      result.asserting(_ mustBe "Echo Server: hello 1/1234")
     }
     "send two messages and handle the replies" in { requestReplyHandler =>
-      val result1 = sendRequest(requestReplyHandler, "hello 1234")
-      val result2 = sendRequest(requestReplyHandler, "hello 5678")
+      val result1 = sendRequest(requestReplyHandler, "hello 2/1234")
+      val result2 = sendRequest(requestReplyHandler, "hello 2/5678")
 
-      result1.asserting(_ mustBe "Echo Server: hello 1234") *>
-        result2.asserting(_ mustBe "Echo Server: hello 5678")
+      result1.asserting(_ mustBe "Echo Server: hello 2/1234") *>
+        result2.asserting(_ mustBe "Echo Server: hello 2/5678")
     }
     "send three messages and handle the replies" in { requestReplyHandler =>
-      val result1 = sendRequest(requestReplyHandler, "hello 1234")
-      val result2 = sendRequest(requestReplyHandler, "hello 5678")
-      val result3 = sendRequest(requestReplyHandler, "hello 9000")
+      val result1 = sendRequest(requestReplyHandler, "hello 3/1234")
+      val result2 = sendRequest(requestReplyHandler, "hello 3/5678")
+      val result3 = sendRequest(requestReplyHandler, "hello 3/9000")
 
-      result1.asserting(_ mustBe "Echo Server: hello 1234") *>
-        result2.asserting(_ mustBe "Echo Server: hello 5678") *>
-        result3.asserting(_ mustBe "Echo Server: hello 9000")
+      result1.asserting(_ mustBe "Echo Server: hello 3/1234") *>
+        result2.asserting(_ mustBe "Echo Server: hello 3/5678") *>
+        result3.asserting(_ mustBe "Echo Server: hello 3/9000")
     }
   }
+
+  private def startEchoServer(): Unit =
+    echoServer.startEchoServer.unsafeToFuture().onComplete {
+      case Success(_)         =>
+      case Failure(exception) => fail(s"Failed to start Echo Server", exception)
+    }
 
   private def sendRequest(requestReplyHandler: RequestReplyHandler, message: String): IO[String] =
     requestReplyHandler.handle(requestQueueName, RequestMessage(message, serviceId))
