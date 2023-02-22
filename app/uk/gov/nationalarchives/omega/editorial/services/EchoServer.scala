@@ -41,6 +41,7 @@ class EchoServer {
   private val requestQueueName = QueueName("request-general")
   private val responseQueryName = QueueName("omega-editorial-web-application-instance-1")
   private val consumerConcurrencyLevel = 1
+  private val pollingInterval = 50.millis
 
   private val jmsClient: Resource[IO, JmsClient[IO]] = simpleQueueService.makeJmsClient[IO](
     Config(
@@ -53,12 +54,12 @@ class EchoServer {
 
   def startEchoServer: IO[Unit] = {
     val consumerResource = for {
-       _ <- Resource.eval(logger.info("Starting EchoServer..."))
+      _      <- Resource.eval(logger.info("Starting EchoServer..."))
       client <- jmsClient
       consumer <- client.createAcknowledgerConsumer(
                     requestQueueName,
                     concurrencyLevel = consumerConcurrencyLevel,
-                    pollingInterval = 50.millis
+                    pollingInterval = pollingInterval
                   )
     } yield consumer
 
@@ -66,7 +67,7 @@ class EchoServer {
       .use(_.handle { (jmsMessage, messageFactory) =>
         for {
           requestText <- jmsMessage.asTextF[IO]
-          _ <- logger.info(s"Echo Server received message: $requestText")
+          _           <- logger.info(s"Echo Server received message: $requestText")
           responseText = s"Echo Server: $requestText"
           responseMessage <- messageFactory.makeTextMessage(responseText)
           requestMessageId = jmsMessage.getJMSMessageId.get

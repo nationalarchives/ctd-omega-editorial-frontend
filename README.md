@@ -149,6 +149,12 @@ To run the unit tests only:
 sbt test
 ```
 
+Please note that before running the integration tests, we must ensure that ElasticMQ is running:
+
+```
+docker-compose up -d
+```
+
 To run just the integration tests:
 
 ```

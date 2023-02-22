@@ -25,9 +25,16 @@ jobs:
           java-version: 8
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Run tests
+      - name: Run unit tests
         run: sbt -v +test
+      - name: Install docker (on macos, only)
+        run: brew install docker && brew install docker-compose && colima start && docker --version
+        if: ${{ matrix.os == 'macos-latest' }}
+      - name: Start docker compose
+        run: docker-compose up -d && docker-compose ps
       - name: Run integration tests
         run: sbt -v IntegrationTest/test
+      - name: Shutdown docker compose
+        run: docker-compose down
       - name: Generate a coverage report
         run: sbt coverageReport

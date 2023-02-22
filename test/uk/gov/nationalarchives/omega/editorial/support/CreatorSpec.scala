@@ -21,13 +21,14 @@
 
 package uk.gov.nationalarchives.omega.editorial.support
 
+import org.scalatest.matchers.must.Matchers._
 import org.scalatest.prop.TableDrivenPropertyChecks.forAll
 import org.scalatest.prop.Tables
-import org.scalatest.{ MustMatchers, WordSpec }
+import org.scalatest.wordspec.AnyWordSpec
 import uk.gov.nationalarchives.omega.editorial.models.Creator.{ CreatorTypeCorporateBody, CreatorTypePerson }
 import uk.gov.nationalarchives.omega.editorial.models.{ CorporateBody, Creator, Person }
 
-class CreatorSpec extends WordSpec with MustMatchers {
+class CreatorSpec extends AnyWordSpec {
 
   "attempting to generate a creator from a corporate body" should {
     "succeed" when {
