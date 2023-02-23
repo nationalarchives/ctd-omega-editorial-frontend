@@ -53,7 +53,7 @@ class EchoServer {
 
   def startEchoServer: IO[Unit] = {
     val consumerResource = for {
-       _ <- Resource.eval(logger.info("Starting EchoServer..."))
+      _      <- Resource.eval(logger.info("Starting EchoServer..."))
       client <- jmsClient
       consumer <- client.createAcknowledgerConsumer(
                     requestQueueName,
@@ -66,7 +66,7 @@ class EchoServer {
       .use(_.handle { (jmsMessage, messageFactory) =>
         for {
           requestText <- jmsMessage.asTextF[IO]
-          _ <- logger.info(s"Echo Server received message: $requestText")
+          _           <- logger.info(s"Echo Server received message: $requestText")
           responseText = s"Echo Server: $requestText"
           responseMessage <- messageFactory.makeTextMessage(responseText)
           requestMessageId = jmsMessage.getJMSMessageId.get

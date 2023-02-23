@@ -28,8 +28,7 @@ import play.api.mvc._
 import javax.inject.Inject
 import scala.concurrent.{ ExecutionContext, Future }
 
-class ResponseHeaderFilter @Inject() (implicit val mat: Materializer, ec: ExecutionContext)
-    extends Filter with Logging {
+class CacheControlFilter @Inject() (implicit val mat: Materializer, ec: ExecutionContext) extends Filter with Logging {
   def apply(nextFilter: RequestHeader => Future[Result])(requestHeader: RequestHeader): Future[Result] =
     nextFilter(requestHeader).map { result =>
       result.withHeaders("Cache-Control" -> "no-cache, max-age=0, no-store")

@@ -30,5 +30,5 @@ import javax.inject.Inject
 class CustomFilter @Inject() (
   corsFilter: CORSFilter,
   csrfFilter: CSRFFilter,
-  responseHeaderFilter: ResponseHeaderFilter
-) extends DefaultHttpFilters(corsFilter, csrfFilter, responseHeaderFilter)
+  cacheControlFilter: CacheControlFilter
+) extends DefaultHttpFilters(corsFilter, csrfFilter, cacheControlFilter)
