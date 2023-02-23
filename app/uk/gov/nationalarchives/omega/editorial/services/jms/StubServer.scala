@@ -35,7 +35,6 @@ import org.typelevel.log4cats.slf4j.Slf4jLogger
 
 import scala.concurrent.duration.DurationInt
 
-// Copied (more or less) from https://github.com/nationalarchives/jms4s-request-reply-stub
 @Singleton
 class StubServer {
 
@@ -56,9 +55,9 @@ class StubServer {
     )
   )
 
-  def startEchoServer: IO[Unit] = {
+  def startStubServer: IO[Unit] = {
     val consumerResource = for {
-      _      <- Resource.eval(logger.info("Starting EchoServer..."))
+      _      <- Resource.eval(logger.info("Starting StubServer..."))
       client <- jmsClient
       consumer <- client.createAcknowledgerConsumer(
                     requestQueueName,

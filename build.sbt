@@ -127,10 +127,14 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
     ),
     resolvers ++= Seq(
       Resolver.mavenLocal,
+      Resolver.githubPackages("rwalpole"),
       MavenRepository("HMRC-open-artefacts-maven2", "https://open.artefacts.tax.service.gov.uk/maven2")
     ),
+    githubTokenSource := TokenSource.Or(
+      TokenSource.Environment("GITHUB_TOKEN"),
+      TokenSource.GitConfig("github.token") //  ~/.gitconfig
+    ),
     headerLicense := Some(HeaderLicense.MIT("2022", "The National Archives")),
-    resolvers += Resolver.githubPackages("rwalpole"),
     libraryDependencies ++= Seq(
       guice,
       "dev.fpinbo"             %% "jms4s-simple-queue-service" % "0.0.1-53518bb-SNAPSHOT",
@@ -144,7 +148,7 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
       "org.scalatestplus.play" %% "scalatestplus-play"         % "5.0.0"  % Test,
       "org.jsoup"               % "jsoup"                      % "1.15.3" % Test
     )
-    .map(_.exclude("org.slf4j", "*")),
+      .map(_.exclude("org.slf4j", "*")),
     libraryDependencies ++= Seq(
       "ch.qos.logback" % "logback-classic" % "1.3.0"
     ),

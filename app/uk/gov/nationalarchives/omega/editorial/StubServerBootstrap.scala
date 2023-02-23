@@ -28,11 +28,11 @@ import scala.concurrent.Future
 import uk.gov.nationalarchives.omega.editorial.services.jms.StubServer
 
 @Singleton
-class StubServerBootstrap @Inject() (echoServer: StubServer) {
+class StubServerBootstrap @Inject() (stubServer: StubServer) {
 
   start()
 
   def start(): Future[Unit] =
-    echoServer.startEchoServer.unsafeToFuture()
+    stubServer.startStubServer.unsafeToFuture()
 
 }
