@@ -56,8 +56,8 @@ class ResponseBuilder[F[_] : ResponseBuilder.ME : Logger] {
           me.raiseError(SidNotFound(sidValue))
 
       case None =>
-        logger.warn(s"did not find a sid value. creating echo message.") *>
-          echoMessage(jmsMessage)
+        logger.warn(s"did not find a sid value set") *>
+          me.raiseError(MissingSid)
     }
 
   private def getEditSet(jmsMessage: JmsMessage): F[EditSet] =
@@ -69,11 +69,6 @@ class ResponseBuilder[F[_] : ResponseBuilder.ME : Logger] {
 
   private def messageText(jmsMessage: JmsMessage): F[String] =
     jmsMessage.asTextF[F].adaptError(err => NotATextMessage(err))
-
-  private def echoMessage(jmsMessage: JmsMessage): F[String] =
-    messageText(jmsMessage).map { requestText =>
-      s"Echo Server: $requestText"
-    }
 
   private def parse[A : Reads](messageText: String): F[A] =
     me.fromOption(
@@ -91,6 +86,7 @@ object ResponseBuilder {
 
   final case object MissingJMSID extends EchoServerError
   final case class SidNotFound(badSid: String) extends EchoServerError
+  final case object MissingSid extends EchoServerError
   final case class NotATextMessage(err: Throwable) extends EchoServerError
   final case class CannotParse(txt: String) extends EchoServerError
 
