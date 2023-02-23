@@ -27,7 +27,7 @@ import play.filters.csrf.CSRFFilter
 
 import javax.inject.Inject
 
-class CustomFilter @Inject() (
+class CustomFilters @Inject() (
   corsFilter: CORSFilter,
   csrfFilter: CSRFFilter,
   cacheControlFilter: CacheControlFilter
