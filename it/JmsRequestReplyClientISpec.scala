@@ -51,7 +51,8 @@ class JmsRequestReplyClientISpec
       tailChildContainers = true,
       exposedServices = Seq(
         ExposedService(elasticMQContainerName, elasticMQContainerExportPort, Wait.forListeningPort())
-      )
+      ),
+      localCompose = false // Will use a container instead of the local binary.
     )
 
   implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jFactory[IO].getLogger
