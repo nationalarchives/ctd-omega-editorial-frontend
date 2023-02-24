@@ -40,12 +40,8 @@ jobs:
           DOCKER_HOST: unix:///Users/runner/.colima/default/docker.sock
         run: |
           brew install docker 
-          brew install docker-compose
           mkdir -p ~/.docker/cli-plugins
-          ln -sfn /usr/local/opt/docker-compose/bin/docker-compose ~/.docker/cli-plugins/docker-compose
           colima start
-          echo "Pulling docker images to make the tests run quicker."
-          docker-compose pull
           sbt -v IntegrationTest/test
       - name: Generate a coverage report
         run: sbt coverageReport
