@@ -22,17 +22,17 @@
 package uk.gov.nationalarchives.omega.editorial
 
 import cats.effect.unsafe.implicits.global
-import javax.inject.{ Inject, Singleton }
-import scala.concurrent.Future
-
 import uk.gov.nationalarchives.omega.editorial.services.EchoServer
 
+import javax.inject.Singleton
+import scala.concurrent.Future
+
 @Singleton
-class EchoServerBootstrap @Inject() (echoServer: EchoServer) {
+class EchoServerBootstrap {
 
   start()
 
   def start(): Future[Unit] =
-    echoServer.startEchoServer.unsafeToFuture()
+    new EchoServer("localhost", 5432).startEchoServer.unsafeToFuture()
 
 }

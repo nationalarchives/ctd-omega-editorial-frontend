@@ -22,20 +22,18 @@
 package uk.gov.nationalarchives.omega.editorial.services
 
 import cats.effect._
-import jms4s.config.QueueName
 import jms4s.JmsAcknowledgerConsumer.AckAction
 import jms4s.JmsClient
+import jms4s.config.QueueName
 import jms4s.sqs.simpleQueueService
 import jms4s.sqs.simpleQueueService._
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jFactory
 
-import javax.inject.Singleton
 import scala.concurrent.duration.DurationInt
 
 // Copied (more or less) from https://github.com/nationalarchives/jms4s-request-reply-stub
-@Singleton
-class EchoServer {
+class EchoServer(host: String, port: Int) {
 
   private implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jFactory[IO].getLogger
   private val requestQueueName = QueueName("request-general")
@@ -45,7 +43,7 @@ class EchoServer {
 
   private val jmsClient: Resource[IO, JmsClient[IO]] = simpleQueueService.makeJmsClient[IO](
     Config(
-      endpoint = Endpoint(Some(DirectAddress(HTTP, "localhost", Some(9324))), "elasticmq"),
+      endpoint = Endpoint(Some(DirectAddress(HTTP, host, Some(port))), "elasticmq"),
       credentials = None,
       clientId = ClientId("echo_server_1"),
       None

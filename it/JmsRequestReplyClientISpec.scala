@@ -41,7 +41,7 @@ class JmsRequestReplyClientISpec
 
   override type FixtureParam = RequestReplyHandler
 
-  private val dockerComposeLocation = "docker-compose.yml"
+  private val dockerComposeLocation = "docker-compose-it.yml"
   private val elasticMQContainerName = "elasticmq-native"
   private val elasticMQContainerExportPort = 9324
 
@@ -62,13 +62,14 @@ class JmsRequestReplyClientISpec
   private val replyQueueName = "omega-editorial-web-application-instance-1"
   private val messagingServerHost = "localhost"
   private var messagingServerPort: Int = _
-  private val echoServer = new EchoServer
+  private var echoServer: EchoServer = _
 
   override def afterContainersStart(container: Containers): Unit =
     container match {
       case dockerComposeContainer: DockerComposeContainer =>
         messagingServerPort =
           dockerComposeContainer.getServicePort(elasticMQContainerName, elasticMQContainerExportPort)
+        echoServer = new EchoServer(messagingServerHost, messagingServerPort)
         startEchoServer()
     }
 
