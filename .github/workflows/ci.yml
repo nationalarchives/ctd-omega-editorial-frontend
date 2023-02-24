@@ -29,7 +29,10 @@ jobs:
         run: sbt -v +test
       - name: Run integration tests (ubuntu)
         if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: sbt -v IntegrationTest/test
+        run: | 
+          docker info
+          docker-compose --version
+          sbt -v IntegrationTest/test
       - name: Run integration tests (macos)
         if: ${{ matrix.os == 'macos-latest' }}
         env:
