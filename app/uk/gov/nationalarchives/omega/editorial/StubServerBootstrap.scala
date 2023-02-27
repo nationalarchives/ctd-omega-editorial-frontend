@@ -33,6 +33,6 @@ class StubServerBootstrap @Inject() (stubServer: StubServer) {
   start()
 
   def start(): Future[Unit] =
-    stubServer.startStubServer.unsafeToFuture()
+    stubServer.start.unsafeToFuture()
 
 }

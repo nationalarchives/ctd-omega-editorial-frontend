@@ -56,7 +56,7 @@ class StubServer {
     )
   )
 
-  def startStubServer: IO[Unit] = {
+  def start: IO[Unit] = {
     val consumerResource = for {
       _      <- Resource.eval(logger.info("Starting StubServer..."))
       client <- jmsClient

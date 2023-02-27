@@ -37,7 +37,7 @@ import java.time.Month
 import scala.concurrent.duration.{ FiniteDuration, SECONDS }
 import scala.util.{ Failure, Success }
 
-class JmsRequestReplyClientISpec extends FixtureAsyncFreeSpec with AsyncIOSpec with Matchers with BeforeAndAfterAll {
+class GetEditSetISpec extends FixtureAsyncFreeSpec with AsyncIOSpec with Matchers with BeforeAndAfterAll {
 
   override type FixtureParam = RequestReplyHandler
 
@@ -52,7 +52,7 @@ class JmsRequestReplyClientISpec extends FixtureAsyncFreeSpec with AsyncIOSpec w
   private val stubServer = new StubServer
 
   override def beforeAll(): Unit =
-    stubServer.startStubServer.unsafeToFuture().onComplete {
+    stubServer.start.unsafeToFuture().onComplete {
       case Success(_)         =>
       case Failure(exception) => fail(s"Failed to start Stub Server", exception)
     }
@@ -72,7 +72,7 @@ class JmsRequestReplyClientISpec extends FixtureAsyncFreeSpec with AsyncIOSpec w
     }
   }
 
-  "SQS Client" - {
+  "GetEditSet Client" - {
 
     "send a message and handle the reply" in { requestReplyHandler =>
       val request =
