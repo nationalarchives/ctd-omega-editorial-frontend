@@ -51,7 +51,7 @@ class StubServer {
     Config(
       endpoint = Endpoint(Some(DirectAddress(HTTP, "localhost", Some(9324))), "elasticmq"),
       credentials = None,
-      clientId = ClientId("echo_server_1"),
+      clientId = ClientId("stub_server_1"),
       None
     )
   )

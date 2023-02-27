@@ -79,11 +79,11 @@ object ResponseBuilder {
 
   type ME[F[_]] = MonadError[F, Throwable]
 
-  sealed abstract class EchoServerError extends Throwable
+  sealed abstract class StubServerError extends Throwable
 
-  final case object MissingJMSID extends EchoServerError
-  final case class NotATextMessage(err: Throwable) extends EchoServerError
-  final case class CannotParse(txt: String) extends EchoServerError
+  final case object MissingJMSID extends StubServerError
+  final case class NotATextMessage(err: Throwable) extends StubServerError
+  final case class CannotParse(txt: String) extends StubServerError
 
   val sidHeaderKey = "sid"
   val sid1 = "OSGEES001"
