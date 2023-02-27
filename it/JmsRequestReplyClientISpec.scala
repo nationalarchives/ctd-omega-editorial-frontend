@@ -110,7 +110,7 @@ class JmsRequestReplyClientISpec extends FixtureAsyncFreeSpec with AsyncIOSpec w
     "Send a message with the wrong service ID and get an appropriate error" in { requestReplyHandler =>
       val request =
         Json.stringify(Json.toJson(GetEditSet(oci = "1", LocalDateTime.of(2023, Month.FEBRUARY, 24, 8, 10))))
-      val expected = ???
+      val expected = ""
 
       val result = sendRequest(requestReplyHandler, request, "OSGEES002")
 
@@ -120,7 +120,7 @@ class JmsRequestReplyClientISpec extends FixtureAsyncFreeSpec with AsyncIOSpec w
 
     "Send a message with the wrong json body and get an appropriate error" in { requestReplyHandler =>
       val request = Json.stringify(Json.toJson(Map("missing" -> "value")))
-      val expected = ???
+      val expected = ""
 
       val result = sendRequest(requestReplyHandler, request)
 
