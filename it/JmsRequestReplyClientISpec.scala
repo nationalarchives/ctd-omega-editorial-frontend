@@ -43,7 +43,7 @@ class JmsRequestReplyClientISpec extends FixtureAsyncFreeSpec with AsyncIOSpec w
 
   implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jFactory[IO].getLogger
 
-  private val serviceId = ResponseBuilder.sid1
+  private val defaultServiceId = ResponseBuilder.sid1
   private val requestQueueName = "request-general"
   private val replyQueueName = "omega-editorial-web-application-instance-1"
   private val messagingServerHost = "localhost"
@@ -75,30 +75,63 @@ class JmsRequestReplyClientISpec extends FixtureAsyncFreeSpec with AsyncIOSpec w
   "SQS Client" - {
     "send a message and handle the reply" in { requestReplyHandler =>
       val request = GetEditSet(oci = "1", LocalDateTime.of(2023, Month.FEBRUARY, 24, 8, 10))
-      val result = sendRequest(requestReplyHandler, Json.stringify(Json.toJson(request)))
       val expected = Json.stringify(Json.toJson(editSets.editSet1))
 
+      val result = sendRequest(requestReplyHandler, Json.stringify(Json.toJson(request)))
       result.asserting(_ mustBe expected)
     }
+
     "send two messages and handle the replies" in { requestReplyHandler =>
-      val result1 = sendRequest(requestReplyHandler, "hello 1234")
-      val result2 = sendRequest(requestReplyHandler, "hello 5678")
+      val request = Json.stringify(Json.toJson(GetEditSet(oci = "1", LocalDateTime.of(2023, Month.FEBRUARY, 24, 8, 10))))
+      val expected = Json.stringify(Json.toJson(editSets.editSet1))
 
-      result1.asserting(_ mustBe "Echo Server: hello 1234") *>
-        result2.asserting(_ mustBe "Echo Server: hello 5678")
+      val result1 = sendRequest(requestReplyHandler, request)
+      val result2 = sendRequest(requestReplyHandler, request)
+
+      result1.asserting(_ mustBe expected) *>
+        result2.asserting(_ mustBe expected)
     }
+
     "send three messages and handle the replies" in { requestReplyHandler =>
-      val result1 = sendRequest(requestReplyHandler, "hello 1234")
-      val result2 = sendRequest(requestReplyHandler, "hello 5678")
-      val result3 = sendRequest(requestReplyHandler, "hello 9000")
+      val request = Json.stringify(Json.toJson(GetEditSet(oci = "1", LocalDateTime.of(2023, Month.FEBRUARY, 24, 8, 10))))
+      val expected = Json.stringify(Json.toJson(editSets.editSet1))
 
-      result1.asserting(_ mustBe "Echo Server: hello 1234") *>
-        result2.asserting(_ mustBe "Echo Server: hello 5678") *>
-        result3.asserting(_ mustBe "Echo Server: hello 9000")
+      val result1 = sendRequest(requestReplyHandler, request)
+      val result2 = sendRequest(requestReplyHandler, request)
+      val result3 = sendRequest(requestReplyHandler, request)
+
+      result1.asserting(_ mustBe expected) *>
+        result2.asserting(_ mustBe expected) *>
+        result3.asserting(_ mustBe expected)
     }
+
+    "Send a message with the wrong service ID and get an appropriate error" in { requestReplyHandler =>
+      val request = Json.stringify(Json.toJson(GetEditSet(oci = "1", LocalDateTime.of(2023, Month.FEBRUARY, 24, 8, 10))))
+      val expected = ???
+
+      val result = sendRequest(requestReplyHandler, request, "OSGEES002")
+
+      // TODO: we never get any kind of response here, what are we doing about error handling here?
+      result.asserting(_ mustBe expected)
+    }
+
+    "Send a message with the wrong json body and get an appropriate error" in { requestReplyHandler =>
+      val request = Json.stringify(Json.toJson(Map("missing" -> "value")))
+      val expected = ???
+
+      val result = sendRequest(requestReplyHandler, request)
+
+      // TODO: we never get any kind of response here, what are we doing about error handling here?
+      result.asserting(_ mustBe expected)
+    }
+
   }
 
-  private def sendRequest(requestReplyHandler: RequestReplyHandler, message: String): IO[String] =
+  private def sendRequest(
+    requestReplyHandler: RequestReplyHandler,
+    message: String,
+    serviceId: String = defaultServiceId
+  ): IO[String] =
     requestReplyHandler.handle(requestQueueName, RequestMessage(message, serviceId))
 
 }
