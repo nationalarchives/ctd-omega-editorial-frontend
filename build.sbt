@@ -154,7 +154,8 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
       "org.scalatestplus.play" %% "scalatestplus-play"            % "5.1.0"  % Test,
       "org.jsoup"               % "jsoup"                         % "1.15.3" % Test,
       "org.typelevel"          %% "cats-effect-testing-scalatest" % "1.5.0"  % Test,
-      "org.mockito"            %% "mockito-scala-scalatest"       % "1.17.5" % Test
+      "org.mockito"            %% "mockito-scala-scalatest"       % "1.17.5" % Test,
+      "com.dimafeng"           %% "testcontainers-scala-scalatest" % "0.40.12" % Test
     ).map(_.exclude("org.slf4j", "*")),
     libraryDependencies ++= Seq(
       "ch.qos.logback" % "logback-classic" % "1.3.0"
@@ -195,6 +196,11 @@ Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
 
 // If set to 'true', we might have intermittent test failures due to how MonitoredApiConnector is currently implemented.
 Test / parallelExecution := false
+
+// Recommended for Testcontainers as it facilitates graceful shutdown of any containers.
+IntegrationTest / fork := true
+IntegrationTest / logBuffered := false
+
 
 //
 // Test Coverage
