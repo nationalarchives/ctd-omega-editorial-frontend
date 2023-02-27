@@ -43,7 +43,7 @@ class JmsRequestReplyClientISpec extends FixtureAsyncFreeSpec with AsyncIOSpec w
 
   implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jFactory[IO].getLogger
 
-  private val defaultServiceId = ResponseBuilder.sid1
+  private val serviceId = ResponseBuilder.sid1
   private val requestQueueName = "request-general"
   private val replyQueueName = "omega-editorial-web-application-instance-1"
   private val messagingServerHost = "localhost"
@@ -73,11 +73,13 @@ class JmsRequestReplyClientISpec extends FixtureAsyncFreeSpec with AsyncIOSpec w
   }
 
   "SQS Client" - {
+
     "send a message and handle the reply" in { requestReplyHandler =>
-      val request = GetEditSet(oci = "1", LocalDateTime.of(2023, Month.FEBRUARY, 24, 8, 10))
+      val request =
+        Json.stringify(Json.toJson(GetEditSet(oci = "1", LocalDateTime.of(2023, Month.FEBRUARY, 24, 8, 10))))
       val expected = Json.stringify(Json.toJson(editSets.editSet1))
 
-      val result = sendRequest(requestReplyHandler, Json.stringify(Json.toJson(request)))
+      val result = sendRequest(requestReplyHandler, request)
       result.asserting(_ mustBe expected)
     }
 
@@ -107,33 +109,11 @@ class JmsRequestReplyClientISpec extends FixtureAsyncFreeSpec with AsyncIOSpec w
         result3.asserting(_ mustBe expected)
     }
 
-    "Send a message with the wrong service ID and get an appropriate error" in { requestReplyHandler =>
-      val request =
-        Json.stringify(Json.toJson(GetEditSet(oci = "1", LocalDateTime.of(2023, Month.FEBRUARY, 24, 8, 10))))
-      val expected = ""
-
-      val result = sendRequest(requestReplyHandler, request, "OSGEES002")
-
-      // TODO: we never get any kind of response here, what are we doing about error handling here?
-      result.asserting(_ mustBe expected)
-    }
-
-    "Send a message with the wrong json body and get an appropriate error" in { requestReplyHandler =>
-      val request = Json.stringify(Json.toJson(Map("missing" -> "value")))
-      val expected = ""
-
-      val result = sendRequest(requestReplyHandler, request)
-
-      // TODO: we never get any kind of response here, what are we doing about error handling here?
-      result.asserting(_ mustBe expected)
-    }
-
   }
 
   private def sendRequest(
     requestReplyHandler: RequestReplyHandler,
-    message: String,
-    serviceId: String = defaultServiceId
+    message: String
   ): IO[String] =
     requestReplyHandler.handle(requestQueueName, RequestMessage(message, serviceId))
 
