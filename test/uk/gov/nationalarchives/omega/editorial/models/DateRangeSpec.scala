@@ -21,12 +21,14 @@
 
 package uk.gov.nationalarchives.omega.editorial.models
 
-import org.scalatest.{ MustMatchers, WordSpec }
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.wordspec.AnyWordSpec
 
 import java.time.LocalDate
 import java.time.Month.{ DECEMBER, FEBRUARY, JANUARY, OCTOBER }
 
-class DateRangeSpec extends WordSpec with MustMatchers {
+class DateRangeSpec extends AnyWordSpec {
 
   private val october4th2020: LocalDate = LocalDate.of(2020, OCTOBER, 4)
   private val october14th2020 = LocalDate.of(2020, OCTOBER, 14)
@@ -37,7 +39,7 @@ class DateRangeSpec extends WordSpec with MustMatchers {
 
   "extracting a single date range" when {
     "there are none" in {
-      DateRange.single(Seq.empty) mustBe empty
+      DateRange.single(Seq.empty) mustBe Matchers.empty
     }
     "there is only one" in {
       val dateRange = DateRange(october4th2020, october14th2020)

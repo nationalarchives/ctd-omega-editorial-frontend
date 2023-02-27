@@ -128,12 +128,31 @@ sudo systemctl stop ctd-omega-editorial-frontend
 
 ## Dev
 
+### Building the application
+
+In order to download one of the dependencies from a private github resolver,
+you will need a github acess token. The instructions for creating a token are
+[here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token#creating-a-personal-access-token-classic)
+
+* A "Classic" token works here.
+* The only scope the token needs is "repo" -- you only have to select that checkbox.
+* Set the `GITHUB_TOKEN` environment variable in the session you wish to build the project, e.g.
+```
+export GITHUB_TOKEN='<your token here>'
+```
+
 ### Running Tests
 
 To run the unit tests only:
 
 ```
 sbt test
+```
+
+Please note that before running the integration tests, we must ensure that ElasticMQ is running:
+
+```
+docker-compose up -d
 ```
 
 To run just the integration tests:

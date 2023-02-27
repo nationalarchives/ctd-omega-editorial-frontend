@@ -28,6 +28,7 @@ import play.twirl.api.Html
 import support.BaseSpec
 import support.CommonMatchers._
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEditSave
+import uk.gov.nationalarchives.omega.editorial.models.PhysicalRecord
 
 class EditSetRecordEditSaveSpec extends BaseSpec {
 
@@ -43,7 +44,7 @@ class EditSetRecordEditSaveSpec extends BaseSpec {
       val oci = "EditRecordOciTest"
 
       val confirmationEditSetRecordEditHtml: Html =
-        editSetRecordEditSaveInstance(user, editSetName, title, heading, oci, saveChanges)
+        editSetRecordEditSaveInstance(user, editSetName, title, heading, oci, saveChanges, Some(PhysicalRecord))
 
       val document = asDocument(confirmationEditSetRecordEditHtml)
       document must haveTitle("EditRecordTitleTest")
@@ -62,7 +63,6 @@ class EditSetRecordEditSaveSpec extends BaseSpec {
     "render the header" in {
 
       val document = generateDocument()
-
       document must haveHeaderTitle("header.title")
       document must haveVisibleLogoutLink
       document must haveLogoutLinkLabel("header.logout")
@@ -82,7 +82,8 @@ class EditSetRecordEditSaveSpec extends BaseSpec {
         title = "EditRecordTitleTest",
         heading = "EditRecordHeadingTest",
         oci = "EditRecordOciTest",
-        message = "Your changes have been saved."
+        message = "Your changes have been saved.",
+        Some(PhysicalRecord)
       )
     )
   }

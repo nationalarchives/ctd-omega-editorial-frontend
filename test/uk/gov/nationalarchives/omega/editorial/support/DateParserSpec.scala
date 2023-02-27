@@ -21,14 +21,16 @@
 
 package uk.gov.nationalarchives.omega.editorial.support
 
+import org.scalatest.matchers.must.Matchers._
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.prop.TableDrivenPropertyChecks._
-import org.scalatest.{ MustMatchers, WordSpec }
+import org.scalatest.wordspec.AnyWordSpec
 import uk.gov.nationalarchives.omega.editorial.support.DateParser.parse
 
 import java.time.LocalDate
 import java.time.Month.{ APRIL, DECEMBER, SEPTEMBER }
 
-class DateParserSpec extends WordSpec with MustMatchers {
+class DateParserSpec extends AnyWordSpec {
 
   "'parseDate' returns the expected the result" when {
     "the date should be considered valid" when {

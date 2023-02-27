@@ -27,6 +27,7 @@ import play.api.test.Helpers
 import play.twirl.api.Html
 import support.BaseSpec
 import support.CommonMatchers._
+import uk.gov.nationalarchives.omega.editorial.models.PhysicalRecord
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEditDiscard
 
 class EditSetRecordEditDiscardSpec extends BaseSpec {
@@ -43,7 +44,7 @@ class EditSetRecordEditDiscardSpec extends BaseSpec {
       val oci = "EditRecordOciTest"
 
       val confirmationEditSetRecordEditHtml: Html =
-        editSetRecordEditDiscardInstance(user, editSetName, title, heading, oci, discardChanges)
+        editSetRecordEditDiscardInstance(user, editSetName, title, heading, oci, discardChanges, Some(PhysicalRecord))
 
       val document = asDocument(confirmationEditSetRecordEditHtml)
       document must haveTitle(title)
@@ -81,7 +82,8 @@ class EditSetRecordEditDiscardSpec extends BaseSpec {
         title = "EditRecordTitleTest",
         heading = "EditRecordHeadingTest",
         oci = "EditRecordOciTest",
-        message = "Any changes have been discarded. Showing last saved version."
+        message = "Any changes have been discarded. Showing last saved version.",
+        Some(PhysicalRecord)
       )
     )
   }

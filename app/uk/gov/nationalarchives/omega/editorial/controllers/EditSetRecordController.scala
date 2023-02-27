@@ -120,9 +120,10 @@ class EditSetRecordController @Inject() (
       val heading: String =
         resolvedMessage(MessageKeys.heading, editSetRecords.getEditSetRecordByOCI(oci).get.ccr)
       val message: String = resolvedMessage(MessageKeys.buttonSave)
+      val recordType: Option[RecordType] = editSetRecords.getEditSetRecordByOCI(oci).get.recordType
       logger.info(s"Save changes for record id $oci edit set id $id")
 
-      Ok(editSetRecordEditSave(user, editSetName, title, heading, oci, message))
+      Ok(editSetRecordEditSave(user, editSetName, title, heading, oci, message, recordType))
     }
   }
 
@@ -134,9 +135,10 @@ class EditSetRecordController @Inject() (
       val heading: String =
         resolvedMessage(MessageKeys.heading, editSetRecords.getEditSetRecordByOCI(oci).get.ccr)
       val message: String = resolvedMessage(MessageKeys.buttonDiscard)
+      val recordType: Option[RecordType] = editSetRecords.getEditSetRecordByOCI(oci).get.recordType
       logger.info(s"Discard changes for record id $oci edit set id $id ")
 
-      Ok(editSetRecordEditDiscard(user, editSetName, title, heading, oci, message))
+      Ok(editSetRecordEditDiscard(user, editSetName, title, heading, oci, message, recordType))
     }
   }
 
@@ -383,8 +385,6 @@ object EditSetRecordController {
   val noSelectionForPlaceOfDeposit = ""
   val fieldKey = "field"
   val orderDirectionKey = "direction"
-  val orderDirectionAscending = "ascending"
-  val orderDirectionDescending = "descending"
   val offsetKey = "offset"
 
   sealed abstract class SubmitAction
@@ -417,12 +417,10 @@ object EditSetRecordController {
     val coveringDates = "covering-dates"
     val creatorIDs = "creator-ids"
     val custodialHistory = "custodial-history"
-    val orderDirection = "direction"
     val endDateDay = "end-date-day"
     val endDateMonth = "end-date-month"
     val endDateYear = "end-date-year"
     val endDateFieldError = "end-date-field-error"
-    val orderField = "field"
     val formerReferenceDepartment = "former-reference-department"
     val formerReferencePro = "former-reference-pro"
     val legalStatusID = "legal-status-id"
@@ -457,6 +455,5 @@ object EditSetRecordController {
     val scopeAndContentMissing = "edit-set.record.missing.scope-and-content"
     val startDateInvalid = "edit-set.record.error.start-date"
     val title = "edit-set.record.edit.title"
-    val recordTypePhysical = "edit-set.record.edit.type.physical"
   }
 }

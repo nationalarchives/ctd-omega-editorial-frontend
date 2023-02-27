@@ -651,6 +651,88 @@ class EditSetControllerSpec extends BaseSpec {
 
       }
 
+      "Covering dates, normalizing direction names" in {
+
+        val page = orderingRequest("covering-dates", "Descending")
+        status(page) mustBe OK
+
+        assertPageAsExpected(
+          asDocument(page),
+          ExpectedEditSetPage(
+            title = "Browse Edit Set (Page 1 of 2)",
+            caption = "Showing 1 - 10 of 12 records",
+            header = "Edit set: COAL 80 Sample",
+            ccrTableHeader = ExpectedTableHeader("ccr", "ascending"),
+            scopeAndContentTableHeader = ExpectedTableHeader("scope-and-content", "ascending"),
+            coveringDateTableHeader = ExpectedTableHeader("covering-dates", "ascending"),
+            expectedSummaryRows = Seq(
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/12",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (L)",
+                coveringDates = "1977"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/11",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (K)",
+                coveringDates = "1975"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/10",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
+                coveringDates = "1973"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/9",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (I)",
+                coveringDates = "1971"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/8",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (H)",
+                coveringDates = "1969"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/7",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (G)",
+                coveringDates = "1967"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/2",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (A)",
+                coveringDates = "1966"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/6",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (F)",
+                coveringDates = "1965"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/3",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (C)",
+                coveringDates = "1964"
+              ),
+              ExpectedEditSetSummaryRow(
+                ccr = "COAL 80/80/5",
+                scopeAndContents =
+                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (E)",
+                coveringDates = "1963"
+              )
+            ),
+            numberOfPages = 2
+          )
+        )
+
+      }
+
       "Unknown field and direction" in {
 
         val page = orderingRequest("height", "upwards")

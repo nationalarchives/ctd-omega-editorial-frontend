@@ -22,11 +22,12 @@
 package services
 
 import org.scalatest.matchers.{ MatchResult, Matcher }
+import org.scalatest.prop.{ TableDrivenPropertyChecks, Tables }
 import support.BaseSpec
 import uk.gov.nationalarchives.omega.editorial.models.EditSetEntry
 import uk.gov.nationalarchives.omega.editorial.services.{ EditSetEntryRowOrder, EditSetPagination }
 
-class EditSetPaginationSpec extends BaseSpec {
+class EditSetPaginationSpec extends BaseSpec with TableDrivenPropertyChecks {
   import EditSetPaginationSpec._
 
   "EditSetPagination" should {
@@ -105,6 +106,44 @@ class EditSetPaginationSpec extends BaseSpec {
       page.totalNumberOfEntries mustBe 22
     }
 
+    "format next href correctly" in {
+      val entries = Seq.fill(22)(sampleEntry)
+      val page = new EditSetPagination("1", sampleOrdering, "Next", "Previous").makeEditSetPage(entries, pageNumber = 1)
+
+      page must haveNextHref("/edit-set/1?offset=2&field=ccr&direction=ascending")
+    }
+
+    "format each page correctly" should {
+      val numberOfPages = 10
+      val entries = Seq.fill(numberOfPages * EditSetPagination.entriesPerPage)(sampleEntry)
+      val pageTable = Tables.Table("page number", (1 to numberOfPages): _*)
+
+      forAll(pageTable) { pageNumber =>
+        val page = new EditSetPagination("1", sampleOrdering, "Next", "Previous")
+          .makeEditSetPage(entries, pageNumber = pageNumber)
+
+        if (pageNumber > 1)
+          s"have a number link to the next page and a previous link on page $pageNumber" in {
+            page must havePageNumberLink(
+              pageNumber - 1,
+              s"/edit-set/1?offset=${pageNumber - 1}&field=ccr&direction=ascending"
+            )
+            page must havePaginationPreviousLink
+          }
+        s"have a number link to the current page, $pageNumber" in {
+          page must havePageNumberLink(pageNumber, s"/edit-set/1?offset=$pageNumber&field=ccr&direction=ascending")
+        }
+        if (pageNumber < numberOfPages)
+          s"have a number link to the previous page and a next link on page $pageNumber" in {
+            page must havePageNumberLink(
+              pageNumber + 1,
+              s"/edit-set/1?offset=${pageNumber + 1}&field=ccr&direction=ascending"
+            )
+            page must havePaginationNextLink
+          }
+      }
+    }
+
   }
 
 }
@@ -155,6 +194,48 @@ object EditSetPaginationSpec {
       "The page did have ellipsis items, which was not expected"
     MatchResult(
       page.pagination.items.exists(_.count(_.ellipsis.contains(true)) == 2),
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def haveNextHref(expectedHref: String): Matcher[EditSetPage] = (page: EditSetPage) => {
+    val errorMessageIfExpected = page.pagination.next.map(_.href) match {
+      case Some(href) =>
+        s"""The hrefs did not match:
+           | expected: $expectedHref
+           | found:    $href
+          """.stripMargin
+      case None =>
+        s"""The page next link did not have an href"""
+    }
+    val errorMessageIfNotExpected =
+      "The page did have an href, which was not expected"
+    MatchResult(
+      page.pagination.next.map(_.href) == Some(expectedHref),
+      errorMessageIfExpected,
+      errorMessageIfNotExpected
+    )
+  }
+
+  def havePageNumberLink(pageNumber: Int, expectedHref: String): Matcher[EditSetPage] = (page: EditSetPage) => {
+    val link = for {
+      items <- page.pagination.items
+      item  <- items.toList.find(_.number.exists(_ == pageNumber.toString))
+    } yield item.href
+    val errorMessageIfExpected = link match {
+      case Some(href) =>
+        s"""The hrefs did not match:
+           | expected: $expectedHref
+           | found:    $href
+          """.stripMargin
+      case None =>
+        s"""The page next link did not have an href"""
+    }
+    val errorMessageIfNotExpected =
+      "The page did have an href, which was not expected"
+    MatchResult(
+      link == Some(expectedHref),
       errorMessageIfExpected,
       errorMessageIfNotExpected
     )

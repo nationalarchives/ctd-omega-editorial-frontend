@@ -23,10 +23,12 @@
 @import uk.gov.nationalarchives.omega.editorial.models.User
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import uk.gov.nationalarchives.omega.editorial.models.RecordType
+@import uk.gov.nationalarchives.omega.editorial.models.PhysicalRecord
 
 @this(govukNotificationBanner: GovukNotificationBanner)
 
-@(user: User, editSetName: String, title: String, heading: String, oci: String, message: String)(implicit messages: Messages)
+@(user: User, editSetName: String, title: String, heading: String, oci: String, message: String,  recordType: Option[RecordType])(implicit messages: Messages)
 
 @backLink = {
   <a class="govuk-back-link" href="/edit-set/1">@messages("edit-set.record.edit.back-to-edit-set", editSetName)</a>
@@ -35,7 +37,10 @@
 @content = {
   <h3 class="govuk-notification-banner__heading">@message</h3>
   <p class="govuk-body"><strong>@heading</strong></p>
-  <p class="govuk-body"><strong>@messages("edit-set.record.edit.id", oci)</strong></p>
+  <p class="govuk-body"><strong>@messages("edit-set.record.edit.id", oci, recordType match {
+      case Some(PhysicalRecord) => messages("edit-set.record.edit.type.physical")
+      case _ => ""
+      })</strong></p>
   <p class="govuk-body">@messages("placeholder.series-national-coal-board")</p>
 }
 

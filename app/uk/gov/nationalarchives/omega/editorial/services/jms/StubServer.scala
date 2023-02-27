@@ -45,6 +45,7 @@ class StubServer {
   private val requestQueueName = QueueName("request-general")
   private val responseQueryName = QueueName("omega-editorial-web-application-instance-1")
   private val consumerConcurrencyLevel = 1
+  private val pollingInterval = 50.millis
 
   private val jmsClient: Resource[IO, JmsClient[IO]] = simpleQueueService.makeJmsClient[IO](
     Config(
@@ -62,7 +63,7 @@ class StubServer {
       consumer <- client.createAcknowledgerConsumer(
                     requestQueueName,
                     concurrencyLevel = consumerConcurrencyLevel,
-                    pollingInterval = 50.millis
+                    pollingInterval = pollingInterval
                   )
       _ <- Resource.eval(consumer.handle { (jmsMessage, messageFactory) =>
              handleMessage(jmsMessage, messageFactory).map { message =>
