@@ -35,7 +35,6 @@ import uk.gov.nationalarchives.omega.editorial.services.jms.{ ResponseBuilder, S
 import java.time.LocalDateTime
 import java.time.Month
 import scala.concurrent.duration.{ FiniteDuration, SECONDS }
-import scala.util.{ Failure, Success }
 
 class GetEditSetISpec extends FixtureAsyncFreeSpec with AsyncIOSpec with Matchers with BeforeAndAfterAll {
 
@@ -51,11 +50,10 @@ class GetEditSetISpec extends FixtureAsyncFreeSpec with AsyncIOSpec with Matcher
 
   private val stubServer = new StubServer
 
-  override def beforeAll(): Unit =
-    stubServer.start.unsafeToFuture().onComplete {
-      case Success(_)         =>
-      case Failure(exception) => fail(s"Failed to start Stub Server", exception)
-    }
+  override def beforeAll(): Unit = {
+    stubServer.start.unsafeToFuture()
+    ()
+  }
 
   override def withFixture(test: OneArgAsyncTest): FutureOutcome = {
     val clientResource: Resource[IO, JmsRequestReplyClient[IO]] = JmsRequestReplyClient.createForSqs[IO](
