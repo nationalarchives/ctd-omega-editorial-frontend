@@ -131,13 +131,16 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
     ),
     resolvers ++= Seq(
       Resolver.mavenLocal,
+      Resolver.githubPackages("rwalpole"),
       MavenRepository("HMRC-open-artefacts-maven2", "https://open.artefacts.tax.service.gov.uk/maven2")
     ),
+    githubTokenSource := TokenSource.Or(
+      TokenSource.Environment("GITHUB_TOKEN"),
+      TokenSource.GitConfig("github.token") //  ~/.gitconfig
+    ),
     headerLicense := Some(HeaderLicense.MIT("2022", "The National Archives")),
-    resolvers += Resolver.githubPackages("rwalpole"),
     libraryDependencies ++= Seq(
       guice,
-      "dev.fpinbo"             %% "jms4s-active-mq-artemis"       % "0.0.1-53518bb-SNAPSHOT",
       "dev.fpinbo"             %% "jms4s-simple-queue-service"    % "0.0.1-53518bb-SNAPSHOT",
       "org.typelevel"          %% "log4cats-core"                 % "2.5.0",
       "org.typelevel"          %% "log4cats-slf4j"                % "2.5.0",
@@ -151,7 +154,7 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
       "org.typelevel"          %% "cats-effect-testing-scalatest" % "1.5.0"  % Test
     ).map(_.exclude("org.slf4j", "*")),
     libraryDependencies ++= Seq(
-      "ch.qos.logback" % "logback-classic" % "1.1.7"
+      "ch.qos.logback" % "logback-classic" % "1.3.0"
     ),
     publishMavenStyle := true,
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),

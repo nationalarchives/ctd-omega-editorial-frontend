@@ -19,12 +19,20 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.models
+package uk.gov.nationalarchives.omega.editorial
 
-import play.api.libs.json._
+import cats.effect.unsafe.implicits.global
+import javax.inject.{ Inject, Singleton }
+import scala.concurrent.Future
 
-case class EditSet(name: String, id: String, entries: Seq[EditSetEntry])
+import uk.gov.nationalarchives.omega.editorial.services.jms.StubServer
 
-object EditSet {
-  implicit val editSetReads: Format[EditSet] = Json.format[EditSet]
+@Singleton
+class StubServerBootstrap @Inject() (stubServer: StubServer) {
+
+  start()
+
+  def start(): Future[Unit] =
+    stubServer.start.unsafeToFuture()
+
 }

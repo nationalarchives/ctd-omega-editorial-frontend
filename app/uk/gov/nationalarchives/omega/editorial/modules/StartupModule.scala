@@ -22,11 +22,11 @@
 package uk.gov.nationalarchives.omega.editorial.modules
 
 import com.google.inject.AbstractModule
-import uk.gov.nationalarchives.omega.editorial.EchoServerBootstrap
+import uk.gov.nationalarchives.omega.editorial.StubServerBootstrap
 
 class StartupModule extends AbstractModule {
 
   override def configure(): Unit =
-    bind(classOf[EchoServerBootstrap]).asEagerSingleton()
+    bind(classOf[StubServerBootstrap]).asEagerSingleton()
 
 }

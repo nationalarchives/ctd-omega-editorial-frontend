@@ -19,20 +19,16 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial
+package uk.gov.nationalarchives.omega.editorial.models
 
-import cats.effect.unsafe.implicits.global
-import javax.inject.{ Inject, Singleton }
-import scala.concurrent.Future
+import play.api.libs.json.{ Format, Json }
+import java.time.LocalDateTime
 
-import uk.gov.nationalarchives.omega.editorial.services.EchoServer
+case class GetEditSet(
+  oci: String,
+  timestamp: LocalDateTime
+)
 
-@Singleton
-class EchoServerBootstrap @Inject() (echoServer: EchoServer) {
-
-  start()
-
-  def start(): Future[Unit] =
-    echoServer.startEchoServer.unsafeToFuture()
-
+object GetEditSet {
+  implicit val getEditSetFormats: Format[GetEditSet] = Json.format[GetEditSet]
 }
