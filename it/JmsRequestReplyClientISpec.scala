@@ -82,7 +82,8 @@ class JmsRequestReplyClientISpec extends FixtureAsyncFreeSpec with AsyncIOSpec w
     }
 
     "send two messages and handle the replies" in { requestReplyHandler =>
-      val request = Json.stringify(Json.toJson(GetEditSet(oci = "1", LocalDateTime.of(2023, Month.FEBRUARY, 24, 8, 10))))
+      val request =
+        Json.stringify(Json.toJson(GetEditSet(oci = "1", LocalDateTime.of(2023, Month.FEBRUARY, 24, 8, 10))))
       val expected = Json.stringify(Json.toJson(editSets.editSet1))
 
       val result1 = sendRequest(requestReplyHandler, request)
@@ -93,7 +94,8 @@ class JmsRequestReplyClientISpec extends FixtureAsyncFreeSpec with AsyncIOSpec w
     }
 
     "send three messages and handle the replies" in { requestReplyHandler =>
-      val request = Json.stringify(Json.toJson(GetEditSet(oci = "1", LocalDateTime.of(2023, Month.FEBRUARY, 24, 8, 10))))
+      val request =
+        Json.stringify(Json.toJson(GetEditSet(oci = "1", LocalDateTime.of(2023, Month.FEBRUARY, 24, 8, 10))))
       val expected = Json.stringify(Json.toJson(editSets.editSet1))
 
       val result1 = sendRequest(requestReplyHandler, request)
@@ -106,7 +108,8 @@ class JmsRequestReplyClientISpec extends FixtureAsyncFreeSpec with AsyncIOSpec w
     }
 
     "Send a message with the wrong service ID and get an appropriate error" in { requestReplyHandler =>
-      val request = Json.stringify(Json.toJson(GetEditSet(oci = "1", LocalDateTime.of(2023, Month.FEBRUARY, 24, 8, 10))))
+      val request =
+        Json.stringify(Json.toJson(GetEditSet(oci = "1", LocalDateTime.of(2023, Month.FEBRUARY, 24, 8, 10))))
       val expected = ???
 
       val result = sendRequest(requestReplyHandler, request, "OSGEES002")
