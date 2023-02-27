@@ -141,17 +141,18 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
     headerLicense := Some(HeaderLicense.MIT("2022", "The National Archives")),
     libraryDependencies ++= Seq(
       guice,
-      "dev.fpinbo"             %% "jms4s-simple-queue-service"    % "0.0.1-53518bb-SNAPSHOT",
-      "org.typelevel"          %% "log4cats-core"                 % "2.5.0",
-      "org.typelevel"          %% "log4cats-slf4j"                % "2.5.0",
-      "org.typelevel"          %% "cats-core"                     % "2.9.0",
-      "org.typelevel"          %% "cats-effect"                   % "3.4.4",
-      "org.typelevel"          %% "cats-effect-kernel"            % "3.4.4",
-      "org.webjars.npm"         % "govuk-frontend"                % "4.3.1",
-      "uk.gov.hmrc"            %% "play-frontend-hmrc"            % "6.2.0-play-28",
-      "org.scalatestplus.play" %% "scalatestplus-play"            % "5.1.0"  % Test,
-      "org.jsoup"               % "jsoup"                         % "1.15.3" % Test,
-      "org.typelevel"          %% "cats-effect-testing-scalatest" % "1.5.0"  % Test
+      "dev.fpinbo"             %% "jms4s-simple-queue-service"     % "0.0.1-53518bb-SNAPSHOT",
+      "org.typelevel"          %% "log4cats-core"                  % "2.5.0",
+      "org.typelevel"          %% "log4cats-slf4j"                 % "2.5.0",
+      "org.typelevel"          %% "cats-core"                      % "2.9.0",
+      "org.typelevel"          %% "cats-effect"                    % "3.4.4",
+      "org.typelevel"          %% "cats-effect-kernel"             % "3.4.4",
+      "org.webjars.npm"         % "govuk-frontend"                 % "4.3.1",
+      "uk.gov.hmrc"            %% "play-frontend-hmrc"             % "6.2.0-play-28",
+      "org.scalatestplus.play" %% "scalatestplus-play"             % "5.1.0"   % Test,
+      "org.jsoup"               % "jsoup"                          % "1.15.3"  % Test,
+      "org.typelevel"          %% "cats-effect-testing-scalatest"  % "1.5.0"   % Test,
+      "com.dimafeng"           %% "testcontainers-scala-scalatest" % "0.40.12" % Test
     ).map(_.exclude("org.slf4j", "*")),
     libraryDependencies ++= Seq(
       "ch.qos.logback" % "logback-classic" % "1.3.0"
@@ -189,6 +190,10 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
 
 // Integration tests are automatically included, as the IntegrationTest config is extended from Test.
 Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
+
+// Recommended for Testcontainers as it facilitates graceful shutdown of any containers.
+IntegrationTest / fork := true
+IntegrationTest / logBuffered := false
 
 //
 // Test Coverage

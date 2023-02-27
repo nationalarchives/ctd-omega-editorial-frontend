@@ -22,17 +22,18 @@
 package uk.gov.nationalarchives.omega.editorial
 
 import cats.effect.unsafe.implicits.global
+import play.api.Configuration
+import uk.gov.nationalarchives.omega.editorial.services.jms.StubServer
+
 import javax.inject.{ Inject, Singleton }
 import scala.concurrent.Future
 
-import uk.gov.nationalarchives.omega.editorial.services.jms.StubServer
-
 @Singleton
-class StubServerBootstrap @Inject() (stubServer: StubServer) {
+class StubServerBootstrap @Inject() (configuration: Configuration) {
 
   start()
 
   def start(): Future[Unit] =
-    stubServer.start.unsafeToFuture()
+    new StubServer(configuration.get[String]("jms.host"), configuration.get[Int]("jms.port")).start.unsafeToFuture()
 
 }
