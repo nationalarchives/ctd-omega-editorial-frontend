@@ -33,9 +33,9 @@ import uk.gov.nationalarchives.omega.editorial.models.GetEditSet
 import uk.gov.nationalarchives.omega.editorial.services.jms.{ ResponseBuilder, StubServer }
 
 import java.time.LocalDateTime
+import java.time.Month
 import scala.concurrent.duration.{ FiniteDuration, SECONDS }
 import scala.util.{ Failure, Success }
-import java.time.Month
 
 class JmsRequestReplyClientISpec extends FixtureAsyncFreeSpec with AsyncIOSpec with Matchers with BeforeAndAfterAll {
 
@@ -111,10 +111,7 @@ class JmsRequestReplyClientISpec extends FixtureAsyncFreeSpec with AsyncIOSpec w
 
   }
 
-  private def sendRequest(
-    requestReplyHandler: RequestReplyHandler,
-    message: String
-  ): IO[String] =
+  private def sendRequest(requestReplyHandler: RequestReplyHandler, message: String): IO[String] =
     requestReplyHandler.handle(requestQueueName, RequestMessage(message, serviceId))
 
 }
