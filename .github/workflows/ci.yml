@@ -27,14 +27,19 @@ jobs:
         uses: actions/checkout@v2
       - name: Run unit tests
         run: sbt -v +test
-      - name: Install docker (on macos, only)
-        run: brew install docker && brew install docker-compose && colima start && docker --version
-        if: ${{ matrix.os == 'macos-latest' }}
-      - name: Start docker compose
-        run: docker-compose up -d && docker-compose ps
-      - name: Run integration tests
+      - name: Run integration tests (ubuntu)
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         run: sbt -v IntegrationTest/test
-      - name: Shutdown docker compose
-        run: docker-compose down
+      # Please note that the following step will not complete; it will hang when running GetEditSetISpec.
+      # See https://national-archives.atlassian.net/browse/PACT-788?focusedCommentId=42101.
+      - name: Run integration tests (macos)
+        if: ${{ matrix.os == 'macos-latest' }}
+        env:
+          TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE: /var/run/docker.sock
+          DOCKER_HOST: unix:///Users/runner/.colima/default/docker.sock
+        run: |
+          brew install docker 
+          colima start
+          sbt -v IntegrationTest/test
       - name: Generate a coverage report
         run: sbt coverageReport

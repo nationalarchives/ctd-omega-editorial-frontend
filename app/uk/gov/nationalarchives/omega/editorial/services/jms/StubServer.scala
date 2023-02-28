@@ -22,12 +22,10 @@
 package uk.gov.nationalarchives.omega.editorial.services.jms
 
 import cats.effect._
-import javax.inject.Singleton
-import jms4s.config.QueueName
-import jms4s.jms.JmsMessage
-import jms4s.jms.MessageFactory
 import jms4s.JmsAcknowledgerConsumer.AckAction
 import jms4s.JmsClient
+import jms4s.config.QueueName
+import jms4s.jms.{ JmsMessage, MessageFactory }
 import jms4s.sqs.simpleQueueService
 import jms4s.sqs.simpleQueueService._
 import org.typelevel.log4cats.SelfAwareStructuredLogger
@@ -35,8 +33,7 @@ import org.typelevel.log4cats.slf4j.Slf4jLogger
 
 import scala.concurrent.duration.DurationInt
 
-@Singleton
-class StubServer {
+class StubServer(host: String, port: Int) {
 
   private implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jLogger.getLogger[IO]
 
@@ -49,7 +46,7 @@ class StubServer {
 
   private val jmsClient: Resource[IO, JmsClient[IO]] = simpleQueueService.makeJmsClient[IO](
     Config(
-      endpoint = Endpoint(Some(DirectAddress(HTTP, "localhost", Some(9324))), "elasticmq"),
+      endpoint = Endpoint(Some(DirectAddress(HTTP, host, Some(port))), "elasticmq"),
       credentials = None,
       clientId = ClientId("stub_server_1"),
       None
