@@ -23,7 +23,7 @@ package support
 
 import org.jsoup.nodes.{ Document, Element }
 import org.scalatest.matchers.{ MatchResult, Matcher }
-import support.ExpectedValues.{ ExpectedRelatedMaterial, ExpectedSelectOption, ExpectedSeparatedMaterial, ExpectedSummaryErrorMessage }
+import support.ExpectedValues.{ ExpectedMaterial, ExpectedSelectOption, ExpectedSummaryErrorMessage }
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetRecordController
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError
@@ -192,7 +192,7 @@ object CommonMatchers {
       actualValue = document.select(s"#${EditSetRecordController.FieldNames.endDateYear}").attr("value")
     )
 
-  def haveRelatedMaterial(relatedMaterials: ExpectedRelatedMaterial*): Matcher[Document] = (document: Document) =>
+  def haveRelatedMaterial(relatedMaterials: ExpectedMaterial*): Matcher[Document] = (document: Document) =>
     if (relatedMaterials.isEmpty)
       singleValueMatcher(
         label = "a single list item for related material with the text None",
@@ -206,7 +206,7 @@ object CommonMatchers {
         actualValue = getRelatedMaterialItems(document)
       )
 
-  def haveSeparatedMaterial(separatedMaterials: ExpectedSeparatedMaterial*): Matcher[Document] = (document: Document) =>
+  def haveSeparatedMaterial(separatedMaterials: ExpectedMaterial*): Matcher[Document] = (document: Document) =>
     if (separatedMaterials.isEmpty)
       singleValueMatcher(
         label = "a single list item for separate material with the text None",
@@ -645,20 +645,20 @@ object CommonMatchers {
     )
   }
 
-  private def getRelatedMaterialItems(document: Document): Seq[ExpectedRelatedMaterial] =
+  private def getRelatedMaterialItems(document: Document): Seq[ExpectedMaterial] =
     getMaterialListItems(document, listId = "related-material")
       .map { listItem =>
-        ExpectedRelatedMaterial(
+        ExpectedMaterial(
           linkHref = noneIfEmpty(listItem.select("a").attr("href")),
           linkText = noneIfEmpty(listItem.select("a").text()),
           description = noneIfEmpty(listItem.select("span").text())
         )
       }
 
-  private def getSeperatedMaterialItems(document: Document): Seq[ExpectedSeparatedMaterial] =
+  private def getSeperatedMaterialItems(document: Document): Seq[ExpectedMaterial] =
     getMaterialListItems(document, listId = "separated-material")
       .map { listItem =>
-        ExpectedSeparatedMaterial(
+        ExpectedMaterial(
           linkHref = noneIfEmpty(listItem.select("a").attr("href")),
           linkText = noneIfEmpty(listItem.select("a").text()),
           description = noneIfEmpty(listItem.select("span").text())

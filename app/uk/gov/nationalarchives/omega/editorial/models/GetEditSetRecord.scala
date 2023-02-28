@@ -21,31 +21,16 @@
 
 package uk.gov.nationalarchives.omega.editorial.models
 
-import play.api.libs.json._
-import play.api.libs.functional.syntax._
-import play.api.libs.json.Reads._
+import play.api.libs.json.{ Format, Json }
 
-sealed abstract class RelatedMaterial
+import java.time.LocalDateTime
 
-object RelatedMaterial {
+case class GetEditSetRecord(
+  editSetOci: String,
+  recordOci: String,
+  timestamp: LocalDateTime
+)
 
-  case class LinkAndDescription(linkHref: String, linkText: String, description: String) extends RelatedMaterial
-  case class LinkOnly(linkHref: String, linkText: String) extends RelatedMaterial
-  case class DescriptionOnly(description: String) extends RelatedMaterial
-
-  val linkHrefPropertyReads: Reads[String] = (__ \ "linkHref").read[String]
-  val linkTextPropertyReads: Reads[String] = (__ \ "linkText").read[String]
-  val descriptionPropertyReads: Reads[String] = (__ \ "description").read[String]
-
-  val linkAndDescriptionReads: Reads[RelatedMaterial] =
-    (linkHrefPropertyReads and linkTextPropertyReads and descriptionPropertyReads)(LinkAndDescription.apply _)
-
-  val linkReads: Reads[RelatedMaterial] =
-    (linkHrefPropertyReads and linkTextPropertyReads)(LinkOnly.apply _)
-
-  val descriptionReads: Reads[RelatedMaterial] =
-    descriptionPropertyReads.map(DescriptionOnly.apply)
-
-  implicit val relatedMaterialReads: Reads[RelatedMaterial] = linkAndDescriptionReads | linkReads | descriptionReads
-
+object GetEditSetRecord {
+  implicit val format: Format[GetEditSetRecord] = Json.format[GetEditSetRecord]
 }
