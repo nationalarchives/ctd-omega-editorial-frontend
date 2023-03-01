@@ -49,12 +49,8 @@ class ApiConnector @Inject() (
   private lazy val hostEndpoint = HostBrokerEndpoint(host = "localhost", port = 9324)
   private lazy val credentials = UsernamePasswordCredentials(username = "?", password = "?")
 
-  private lazy val clientAndCloser: IO[(JmsRequestReplyClient[IO], IO[Unit])] = createClientAndCloser
-  private lazy val client = clientAndCloser.map(_._1)
-  private lazy val closer = clientAndCloser.flatMap(_._2)
-
-  private lazy val handler: IO[RequestReplyHandler] =
-    client.map(RequestReplyHandler.apply)
+  private lazy val (client, closer): (JmsRequestReplyClient[IO], IO[Unit]) = createClientAndCloser.unsafeRunSync()
+  private lazy val handler: RequestReplyHandler = RequestReplyHandler(client)
 
   lifecycle.addStopHook { () =>
     closer.unsafeToFuture()
@@ -73,12 +69,10 @@ class ApiConnector @Inject() (
       JmsRequestReplyClient.createForSqs[IO](hostEndpoint, credentials)(replyQueueName).allocated
 
   private def handle(requestBody: String): IO[String] =
-    handler.flatMap {
-      _.handle(
-        requestQueueName,
-        requestMessage = RequestMessage(requestBody, getEditSetSID)
-      )
-    }
+    handler.handle(
+      requestQueueName,
+      requestMessage = RequestMessage(requestBody, getEditSetSID)
+    )
 
   private def parse[A : Reads](messageText: String): IO[A] =
     IO.fromOption(
