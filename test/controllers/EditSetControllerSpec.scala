@@ -26,6 +26,7 @@ import org.scalatest.compatible.Assertion
 import play.api.mvc._
 import play.api.test._
 import play.api.test.Helpers._
+import scala.concurrent.ExecutionContext.Implicits.global
 import support.BaseSpec
 import support.CommonMatchers._
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }

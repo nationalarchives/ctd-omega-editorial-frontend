@@ -1,26 +1,12 @@
 import cats.effect.unsafe.implicits.global
 import cats.implicits._
-import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.{ Application, inject }
 
-import java.time.{ LocalDateTime, Month }
-
-import support.TestReferenceDataService
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
 import uk.gov.nationalarchives.omega.editorial.editSets
-import uk.gov.nationalarchives.omega.editorial.services.ReferenceDataService
-import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 
 class ApiConnectorISpec extends BaseISpec {
 
-  private lazy val testTimeProvider: TimeProvider = () => LocalDateTime.of(2023, Month.FEBRUARY, 28, 1, 1, 1)
   private val idOfExistingEditSet = "1"
-
-  override def fakeApplication(): Application =
-    GuiceApplicationBuilder()
-      .bindings(inject.bind[ReferenceDataService].to[TestReferenceDataService])
-      .overrides(inject.bind[TimeProvider].toInstance(testTimeProvider))
-      .build()
 
   lazy val apiConnector: ApiConnector = app.injector.instanceOf[ApiConnector]
 

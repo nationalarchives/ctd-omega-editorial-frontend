@@ -19,24 +19,26 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.services
-
-import cats.effect.unsafe.implicits.global
-import play.api.Logger
-import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
-import uk.gov.nationalarchives.omega.editorial.models.EditSet
+package support
 
 import javax.inject.{ Inject, Singleton }
-import scala.concurrent.Future
+import play.api.inject.ApplicationLifecycle
+import cats.effect.IO
+
+import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
+import uk.gov.nationalarchives.omega.editorial.models.EditSet
+import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
+import uk.gov.nationalarchives.omega.editorial.config.Config
+import uk.gov.nationalarchives.omega.editorial.editSets
 
 @Singleton
-class EditSetService @Inject() (apiConnector: ApiConnector) {
+class TestApiConnector @Inject() (
+  config: Config,
+  timeProvider: TimeProvider,
+  lifecycle: ApplicationLifecycle
+) extends ApiConnector(config, timeProvider, lifecycle) {
 
-  private val logger: Logger = Logger(this.getClass)
-
-  def getEditSet(id: String): Future[EditSet] = {
-    logger.info(s"The edit set id is $id ")
-    apiConnector.getEditSet(id).unsafeToFuture()
-  }
+  override def getEditSet(id: String): IO[EditSet] =
+    IO.pure(editSets.editSet1)
 
 }

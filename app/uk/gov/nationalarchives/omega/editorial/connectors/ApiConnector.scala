@@ -31,7 +31,7 @@ import play.api.libs.json.{ Json, Reads }
 
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, GetEditSet }
 import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
-import uk.gov.nationalarchives.omega.editorial.config.{ Config, HostBrokerEndpoint, UsernamePasswordCredentials }
+import uk.gov.nationalarchives.omega.editorial.config.Config
 
 @Singleton
 class ApiConnector @Inject() (
@@ -51,10 +51,6 @@ class ApiConnector @Inject() (
   private lazy val (client, closer): (JmsRequestReplyClient[IO], IO[Unit]) = createClientAndCloser.unsafeRunSync()
   private lazy val handler: RequestReplyHandler = RequestReplyHandler(client)
 
-  lifecycle.addStopHook { () =>
-    closer.unsafeToFuture()
-  }
-
   def getEditSet(id: String): IO[EditSet] = {
     val now = timeProvider.now()
     val requestBody = Json.stringify(Json.toJson(GetEditSet(id, now)))
@@ -64,8 +60,15 @@ class ApiConnector @Inject() (
   }
 
   private def createClientAndCloser: IO[(JmsRequestReplyClient[IO], IO[Unit])] =
-    logger.info(s"Attempting to subscribe to $replyQueueName...") *>
+    registerStopHook() *>
+      logger.info(s"Attempting to subscribe to $replyQueueName...") *>
       JmsRequestReplyClient.createForSqs[IO](config.broker, config.credentials)(replyQueueName).allocated
+
+  private def registerStopHook(): IO[Unit] = IO.delay {
+    lifecycle.addStopHook { () =>
+      closer.unsafeToFuture()
+    }
+  }
 
   private def handle(requestBody: String): IO[String] =
     handler.handle(
