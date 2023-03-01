@@ -32,6 +32,7 @@ import jms4s.sqs.simpleQueueService.{ Credentials, DirectAddress, HTTP }
 import jms4s.{ JmsClient, JmsProducer }
 import org.typelevel.log4cats.Logger
 import uk.gov.nationalarchives.omega.editorial.connectors.JmsRequestReplyClient.ReplyMessageHandler
+import uk.gov.nationalarchives.omega.editorial.config.{ HostBrokerEndpoint, UsernamePasswordCredentials }
 
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
@@ -214,7 +215,3 @@ private object RandomClientIdGen {
       sync.map(sync.blocking(UUID.randomUUID()))(uuid => s"jms-rr-client-$uuid")
   }
 }
-
-case class HostBrokerEndpoint(host: String, port: Int)
-
-case class UsernamePasswordCredentials(username: String, password: String)

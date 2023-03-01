@@ -31,9 +31,11 @@ import play.api.libs.json.{ Json, Reads }
 
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, GetEditSet }
 import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
+import uk.gov.nationalarchives.omega.editorial.config.{ Config, HostBrokerEndpoint, UsernamePasswordCredentials }
 
 @Singleton
 class ApiConnector @Inject() (
+  config: Config,
   timeProvider: TimeProvider,
   lifecycle: ApplicationLifecycle
 ) {
@@ -45,9 +47,6 @@ class ApiConnector @Inject() (
 
   private val requestQueueName = "request-general"
   private val replyQueueName = "omega-editorial-web-application-instance-1"
-
-  private lazy val hostEndpoint = HostBrokerEndpoint(host = "localhost", port = 9324)
-  private lazy val credentials = UsernamePasswordCredentials(username = "?", password = "?")
 
   private lazy val (client, closer): (JmsRequestReplyClient[IO], IO[Unit]) = createClientAndCloser.unsafeRunSync()
   private lazy val handler: RequestReplyHandler = RequestReplyHandler(client)
@@ -66,7 +65,7 @@ class ApiConnector @Inject() (
 
   private def createClientAndCloser: IO[(JmsRequestReplyClient[IO], IO[Unit])] =
     logger.info(s"Attempting to subscribe to $replyQueueName...") *>
-      JmsRequestReplyClient.createForSqs[IO](hostEndpoint, credentials)(replyQueueName).allocated
+      JmsRequestReplyClient.createForSqs[IO](config.broker, config.credentials)(replyQueueName).allocated
 
   private def handle(requestBody: String): IO[String] =
     handler.handle(

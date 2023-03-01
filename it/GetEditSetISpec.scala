@@ -31,6 +31,7 @@ import uk.gov.nationalarchives.omega.editorial.connectors._
 import uk.gov.nationalarchives.omega.editorial.editSets
 import uk.gov.nationalarchives.omega.editorial.models.GetEditSet
 import uk.gov.nationalarchives.omega.editorial.services.jms.{ ResponseBuilder, StubServer }
+import uk.gov.nationalarchives.omega.editorial.config.{ HostBrokerEndpoint, UsernamePasswordCredentials }
 
 import java.time.LocalDateTime
 import java.time.Month
