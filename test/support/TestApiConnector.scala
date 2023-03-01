@@ -21,22 +21,13 @@
 
 package support
 
-import javax.inject.{ Inject, Singleton }
-import play.api.inject.ApplicationLifecycle
 import cats.effect.IO
 
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
 import uk.gov.nationalarchives.omega.editorial.models.EditSet
-import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
-import uk.gov.nationalarchives.omega.editorial.config.Config
 import uk.gov.nationalarchives.omega.editorial.editSets
 
-@Singleton
-class TestApiConnector @Inject() (
-  config: Config,
-  timeProvider: TimeProvider,
-  lifecycle: ApplicationLifecycle
-) extends ApiConnector(config, timeProvider, lifecycle) {
+object TestApiConnector extends ApiConnector(null, null, null) {
 
   override def getEditSet(id: String): IO[EditSet] =
     IO.pure(editSets.editSet1)

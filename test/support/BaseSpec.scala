@@ -66,7 +66,7 @@ class BaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with Bef
       .disable[StartupModule]
       .bindings(
         bind[ReferenceDataService].to[TestReferenceDataService],
-        bind[ApiConnector].to[TestApiConnector],
+        bind[ApiConnector].toInstance(TestApiConnector),
         bind[TimeProvider].toInstance(testTimeProvider),
         bind[Config].toInstance(testConfig)
       )
