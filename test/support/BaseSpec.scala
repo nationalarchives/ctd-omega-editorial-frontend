@@ -57,7 +57,7 @@ class BaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with Bef
 
   private lazy val testTimeProvider: TimeProvider = () => LocalDateTime.of(2023, Month.FEBRUARY, 28, 1, 1, 1)
   private lazy val testConfig: Config = Config(
-    broker = HostBrokerEndpoint("localhost", 0),
+    broker = HostBrokerEndpoint("not.a.real.host", 0),
     credentials = UsernamePasswordCredentials("?", "?")
   )
 
