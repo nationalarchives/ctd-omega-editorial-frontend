@@ -34,7 +34,7 @@ class EditSetService @Inject() (apiConnector: ApiConnector) {
 
   private val logger: Logger = Logger(this.getClass)
 
-  def getEditSet(id: String): Future[EditSet] = {
+  def get(id: String): Future[EditSet] = {
     logger.info(s"The edit set id is $id ")
     apiConnector.getEditSet(id).unsafeToFuture()
   }

@@ -17,18 +17,6 @@ class ApiConnectorISpec extends BaseISpec {
       editSetResponse mustBe editSets.editSet1
     }
 
-    s"get the edit set twice for id: $idOfExistingEditSet" in {
-      val action = for {
-        editSetResponse1 <- apiConnector.getEditSet(idOfExistingEditSet)
-        editSetResponse2 <- apiConnector.getEditSet(idOfExistingEditSet)
-      } yield (editSetResponse1, editSetResponse2)
-
-      val (editSetResponse1, editSetResponse2) = action.unsafeRunSync()
-
-      editSetResponse1 mustBe editSets.editSet1
-      editSetResponse2 mustBe editSets.editSet1
-    }
-
     s"get the edit set 100 times for id: $idOfExistingEditSet" in {
       val action = (1 to 100).toList.traverse(_ => apiConnector.getEditSet(idOfExistingEditSet))
 

@@ -66,7 +66,7 @@ class EditSetController @Inject() (
   private def generateEditSetView(id: String, user: User, editSetEntryRowOrder: EditSetEntryRowOrder)(implicit
     request: Request[AnyContent]
   ): Future[Result] =
-    editSetService.getEditSet(id).map { currentEditSet =>
+    editSetService.get(id).map { currentEditSet =>
       val pageNumber = queryStringValue(request, offsetKey).map(_.toInt).getOrElse(1)
       val sortedEntries = currentEditSet.entries.sorted(editSetEntryRowOrder.currentOrdering)
 
@@ -90,7 +90,6 @@ class EditSetController @Inject() (
 }
 
 object EditSetController {
-  case class EditSetReorder(field: String, direction: String)
 
   object FieldNames {
     val ccr = "ccr"
@@ -101,8 +100,6 @@ object EditSetController {
 
   val fieldKey = "field"
   val orderDirectionKey = "direction"
-  val orderDirectionAscending = "ascending"
-  val orderDirectionDescending = "descending"
   val offsetKey = "offset"
 
 }
