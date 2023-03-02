@@ -29,8 +29,9 @@ import play.api.libs.json.{ Json, Reads }
 import uk.gov.nationalarchives.omega.editorial.editSetRecords.getEditSetRecordByOCI
 import uk.gov.nationalarchives.omega.editorial.editSets
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, GetEditSet, GetEditSetRecord }
+import uk.gov.nationalarchives.omega.editorial.services.jms.ResponseBuilder.ME
 
-class ResponseBuilder[F[_] : ResponseBuilder.ME : Logger] {
+class ResponseBuilder[F[_] : ME : Logger] {
   import ResponseBuilder._
 
   private val me = MonadError[F, Throwable]
@@ -45,21 +46,21 @@ class ResponseBuilder[F[_] : ResponseBuilder.ME : Logger] {
   def createResponseText(jmsMessage: JmsMessage): F[String] =
     jmsMessage.getStringProperty(sidHeaderKey) match {
       case Some(sidValue) if sidValue == SID.GetEditSet =>
-        handleRequestForGettingAnEditSet(jmsMessage, sidValue)
-      case Some(sidValue) if sidValue == ResponseBuilder.SID.GetEditSetRecord =>
-        handleRequestForGettingAnEditSetRecord(jmsMessage)
+        handleGetEditSet(jmsMessage, sidValue)
+      case Some(sidValue) if sidValue == SID.GetEditSetRecord =>
+        handleGetEditSetRecord(jmsMessage)
       case unknown =>
         onUnhandledCase(s"SID is unrecognised: [$unknown]")
     }
 
-  private def handleRequestForGettingAnEditSet(jmsMessage: JmsMessage, sidValue: String): F[String] =
+  private def handleGetEditSet(jmsMessage: JmsMessage, sidValue: String): F[String] =
     logger.info(s"got a message with sid header '$sidValue', trying to parse payload") *>
       getEditSet(jmsMessage).flatMap { editSet =>
         logger.info("parsed payload, creating edit set response") *>
           me.pure(Json.toJson(editSet).toString)
       }
 
-  private def handleRequestForGettingAnEditSetRecord(jmsMessage: JmsMessage): F[String] =
+  private def handleGetEditSetRecord(jmsMessage: JmsMessage): F[String] =
     asGetEditSetRecordRequest(jmsMessage).flatMap(getEditSetRecordRequest =>
       getEditSetRecordByOCI(getEditSetRecordRequest.recordOci)
         .map(editSetRecord => me.pure(Json.toJson(editSetRecord).toString))
@@ -83,10 +84,7 @@ class ResponseBuilder[F[_] : ResponseBuilder.ME : Logger] {
     } yield editSets.editSet1
 
   private def asGetEditSetRecordRequest(jmsMessage: JmsMessage): F[GetEditSetRecord] =
-    for {
-      messageText      <- messageText(jmsMessage)
-      getEditSetRecord <- parse[GetEditSetRecord](messageText)
-    } yield getEditSetRecord
+    messageText(jmsMessage).flatMap(parse[GetEditSetRecord])
 
   private def messageText(jmsMessage: JmsMessage): F[String] =
     jmsMessage.asTextF[F].adaptError(err => NotATextMessage(err))
