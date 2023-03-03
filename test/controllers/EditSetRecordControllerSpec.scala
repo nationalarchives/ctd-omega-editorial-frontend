@@ -34,7 +34,7 @@ import support.ExpectedValues._
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetRecordController.FieldNames
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetRecordController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.editSetRecords.{ editSetRecordMap, restoreOriginalRecords }
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, Material, PhysicalRecord }
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, MaterialReference, PhysicalRecord }
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
 import scala.concurrent.Future
@@ -2658,22 +2658,22 @@ class EditSetRecordControllerSpec extends BaseSpec {
           )
       },
       relatedMaterial = editSetRecord.relatedMaterial.map {
-        case Material.LinkAndDescription(linkHref, linkText, description) =>
+        case MaterialReference.LinkAndDescription(linkHref, linkText, description) =>
           ExpectedMaterial(linkHref = Some(linkHref), linkText = Some(linkText), description = Some(description))
-        case Material.LinkOnly(linkHref, linkText) =>
+        case MaterialReference.LinkOnly(linkHref, linkText) =>
           ExpectedMaterial(linkHref = Some(linkHref), linkText = Some(linkText))
-        case Material.DescriptionOnly(description) => ExpectedMaterial(description = Some(description))
+        case MaterialReference.DescriptionOnly(description) => ExpectedMaterial(description = Some(description))
       },
       separatedMaterial = editSetRecord.separatedMaterial.map {
-        case Material.LinkAndDescription(linkHref, linkText, description) =>
+        case MaterialReference.LinkAndDescription(linkHref, linkText, description) =>
           ExpectedMaterial(
             linkHref = Some(linkHref),
             linkText = Some(linkText),
             description = Some(description)
           )
-        case Material.LinkOnly(linkHref, linkText) =>
+        case MaterialReference.LinkOnly(linkHref, linkText) =>
           ExpectedMaterial(linkHref = Some(linkHref), linkText = Some(linkText))
-        case Material.DescriptionOnly(description) =>
+        case MaterialReference.DescriptionOnly(description) =>
           ExpectedMaterial(description = Some(description))
       },
       custodialHistory = editSetRecord.custodialHistory

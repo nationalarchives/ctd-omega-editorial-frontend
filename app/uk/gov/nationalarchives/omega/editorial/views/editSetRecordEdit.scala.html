@@ -25,7 +25,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.Implicits.RichErrorSummary
 @import uk.gov.nationalarchives.omega.editorial.controllers.EditSetRecordController.FieldNames
 @import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
-@import uk.gov.nationalarchives.omega.editorial.models.{Creator, EditSetRecord, LegalStatus, Material, PhysicalRecord, PlaceOfDeposit, User}
+@import uk.gov.nationalarchives.omega.editorial.models.{Creator, EditSetRecord, LegalStatus, MaterialReference, PhysicalRecord, PlaceOfDeposit, User}
 
 @this(govukButton: GovukButton, govukInput: GovukInput, govukTextarea: GovukTextarea, govukFieldset: GovukFieldset, govukErrorSummary: GovukErrorSummary, govukSelect: GovukSelect, govukLabel: GovukLabel)
 @(
@@ -52,28 +52,28 @@
     <li>@messages("edit-set.record.edit.no-list-items")</li>
 }
 
-@relatedMaterialLink(link: Material.LinkOnly) = {
+@relatedMaterialLink(link: MaterialReference.LinkOnly) = {
     <li><a href="@link.linkHref">@link.linkText</a></li>
 }
 
-@relatedMaterialDescription(description: Material.DescriptionOnly) = {
+@relatedMaterialDescription(description: MaterialReference.DescriptionOnly) = {
     <li><span>@description.description</span></li>
 }
 
-@relatedMaterialLinkAndDescription(linkAndDescription: Material.LinkAndDescription) = {
+@relatedMaterialLinkAndDescription(linkAndDescription: MaterialReference.LinkAndDescription) = {
     <li><a href="@linkAndDescription.linkHref">@linkAndDescription.linkText</a>
         - <span>@linkAndDescription.description</span></li>
 }
 
-@separatedMaterialLink(link: Material.LinkOnly) = {
+@separatedMaterialLink(link: MaterialReference.LinkOnly) = {
     <li><a href="@link.linkHref">@link.linkText</a></li>
 }
 
-@separatedMaterialDescription(description: Material.DescriptionOnly) = {
+@separatedMaterialDescription(description: MaterialReference.DescriptionOnly) = {
     <li><span>@description.description</span></li>
 }
 
-@separatedMaterialLinkAndDescription(linkAndDescription: Material.LinkAndDescription) = {
+@separatedMaterialLinkAndDescription(linkAndDescription: MaterialReference.LinkAndDescription) = {
     <li><a href="@linkAndDescription.linkHref">@linkAndDescription.linkText</a>
         - <span>@linkAndDescription.description</span></li>
 }
@@ -396,13 +396,13 @@
         else
             record.relatedMaterial.map {
 
-                case e: Material.LinkAndDescription =>
+                case e: MaterialReference.LinkAndDescription =>
                     relatedMaterialLinkAndDescription(e)
 
-                    case e: Material.LinkOnly =>
+                    case e: MaterialReference.LinkOnly =>
                         relatedMaterialLink(e)
 
-                    case e: Material.DescriptionOnly =>
+                    case e: MaterialReference.DescriptionOnly =>
                         relatedMaterialDescription(e)
 
                 }
@@ -417,13 +417,13 @@
             else
                 record.separatedMaterial.map {
 
-                    case e: Material.LinkAndDescription =>
+                    case e: MaterialReference.LinkAndDescription =>
                         separatedMaterialLinkAndDescription(e)
 
-                    case e: Material.LinkOnly =>
+                    case e: MaterialReference.LinkOnly =>
                         separatedMaterialLink(e)
 
-                    case e: Material.DescriptionOnly =>
+                    case e: MaterialReference.DescriptionOnly =>
                         separatedMaterialDescription(e)
 
                 }

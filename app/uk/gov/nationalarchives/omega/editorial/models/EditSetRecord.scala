@@ -45,8 +45,8 @@ case class EditSetRecord(
   note: String,
   background: String,
   custodialHistory: String,
-  relatedMaterial: Seq[Material] = Seq.empty,
-  separatedMaterial: Seq[Material] = Seq.empty,
+  relatedMaterial: Seq[MaterialReference] = Seq.empty,
+  separatedMaterial: Seq[MaterialReference] = Seq.empty,
   creatorIDs: Seq[String] = Seq.empty
 ) {
 

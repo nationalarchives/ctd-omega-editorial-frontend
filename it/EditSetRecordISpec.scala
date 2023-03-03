@@ -6,7 +6,7 @@ import play.api.test.Helpers.{ await, defaultAwaitTimeout }
 import support.CommonMatchers._
 import support.ExpectedValues._
 import uk.gov.nationalarchives.omega.editorial.editSetRecords.{ editSetRecordMap, restoreOriginalRecords }
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, Material, PhysicalRecord }
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, MaterialReference, PhysicalRecord }
 
 class EditSetRecordISpec extends BaseISpec {
 
@@ -3109,22 +3109,22 @@ class EditSetRecordISpec extends BaseISpec {
           )
       },
       relatedMaterial = editSetRecord.relatedMaterial.map {
-        case Material.LinkAndDescription(linkHref, linkText, description) =>
+        case MaterialReference.LinkAndDescription(linkHref, linkText, description) =>
           ExpectedMaterial(linkHref = Some(linkHref), linkText = Some(linkText), description = Some(description))
-        case Material.LinkOnly(linkHref, linkText) =>
+        case MaterialReference.LinkOnly(linkHref, linkText) =>
           ExpectedMaterial(linkHref = Some(linkHref), linkText = Some(linkText))
-        case Material.DescriptionOnly(description) => ExpectedMaterial(description = Some(description))
+        case MaterialReference.DescriptionOnly(description) => ExpectedMaterial(description = Some(description))
       },
       separatedMaterial = editSetRecord.separatedMaterial.map {
-        case Material.LinkAndDescription(linkHref, linkText, description) =>
+        case MaterialReference.LinkAndDescription(linkHref, linkText, description) =>
           ExpectedMaterial(
             linkHref = Some(linkHref),
             linkText = Some(linkText),
             description = Some(description)
           )
-        case Material.LinkOnly(linkHref, linkText) =>
+        case MaterialReference.LinkOnly(linkHref, linkText) =>
           ExpectedMaterial(linkHref = Some(linkHref), linkText = Some(linkText))
-        case Material.DescriptionOnly(description) =>
+        case MaterialReference.DescriptionOnly(description) =>
           ExpectedMaterial(description = Some(description))
       },
       custodialHistory = editSetRecord.custodialHistory

@@ -22,39 +22,33 @@
 package uk.gov.nationalarchives.omega.editorial.models
 
 import play.api.libs.functional.syntax._
-import play.api.libs.json.Reads._
 import play.api.libs.json._
 
-sealed abstract class Material
+sealed abstract class MaterialReference
 
-object Material {
+object MaterialReference {
 
-  case class LinkAndDescription(linkHref: String, linkText: String, description: String) extends Material
+  case class LinkAndDescription(linkHref: String, linkText: String, description: String) extends MaterialReference
 
-  case class LinkOnly(linkHref: String, linkText: String) extends Material
+  case class LinkOnly(linkHref: String, linkText: String) extends MaterialReference
 
-  case class DescriptionOnly(description: String) extends Material
+  case class DescriptionOnly(description: String) extends MaterialReference
 
-  implicit val format: Format[Material] = new Format[Material] {
-    override def writes(material: Material): JsValue = material match {
+  implicit val format: Format[MaterialReference] = new Format[MaterialReference] {
+    override def writes(material: MaterialReference): JsValue = material match {
       case linkAndDescription: LinkAndDescription => Json.toJson(linkAndDescription)(Json.writes[LinkAndDescription])
       case linkOnly: LinkOnly                     => Json.toJson(linkOnly)(Json.writes[LinkOnly])
       case descriptionOnly: DescriptionOnly       => Json.toJson(descriptionOnly)(Json.writes[DescriptionOnly])
     }
 
-    override def reads(json: JsValue): JsResult[Material] =
+    override def reads(json: JsValue): JsResult[MaterialReference] =
       linkAndDescriptionFormat.reads(json) | linkOnlyFormat.reads(json) | descriptionOnlyFormat.reads(json)
   }
 
-  private val linkAndDescriptionFormat: Format[LinkAndDescription] =
-    ((JsPath \ "linkHref").format[String] and (JsPath \ "linkText").format[String] and (JsPath \ "description")
-      .format[String])(LinkAndDescription.apply, unlift(LinkAndDescription.unapply))
+  private val linkAndDescriptionFormat: Format[LinkAndDescription] = Json.format[LinkAndDescription]
 
-  private val linkOnlyFormat: Format[LinkOnly] =
-    ((JsPath \ "linkHref").format[String] and (JsPath \ "linkText")
-      .format[String])(LinkOnly.apply, unlift(LinkOnly.unapply))
+  private val linkOnlyFormat: Format[LinkOnly] = Json.format[LinkOnly]
 
-  private val descriptionOnlyFormat: Format[DescriptionOnly] =
-    (JsPath \ "description").format[String].inmap(DescriptionOnly.apply, unlift(DescriptionOnly.unapply))
+  private val descriptionOnlyFormat: Format[DescriptionOnly] = Json.format[DescriptionOnly]
 
 }

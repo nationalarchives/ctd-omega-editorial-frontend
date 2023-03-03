@@ -31,7 +31,7 @@ import support.CommonMatchers._
 import support.ExpectedValues.ExpectedSummaryErrorMessage
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetRecordController.FieldNames
 import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, LegalStatus, Material }
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, LegalStatus, MaterialReference }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEdit
 
 class EditRecordViewSpec extends BaseSpec {
@@ -84,15 +84,15 @@ class EditRecordViewSpec extends BaseSpec {
     note = "",
     custodialHistory = "",
     relatedMaterial = Seq(
-      Material.DescriptionOnly(
+      MaterialReference.DescriptionOnly(
         description = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
       ),
-      Material.LinkAndDescription(
+      MaterialReference.LinkAndDescription(
         linkHref = "#;",
         linkText = "COAL 80/80/2",
         description = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
       ),
-      Material.LinkOnly(linkHref = "#;", linkText = "COAL 80/80/3")
+      MaterialReference.LinkOnly(linkHref = "#;", linkText = "COAL 80/80/3")
     )
   )
 

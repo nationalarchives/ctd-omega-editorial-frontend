@@ -1,11 +1,12 @@
-import cats.effect.{ IO, Resource }
 import cats.effect.testing.scalatest.AsyncIOSpec
-import org.scalatest.{ BeforeAndAfterAll, FutureOutcome }
+import cats.effect.{ IO, Resource }
 import org.scalatest.freespec.FixtureAsyncFreeSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.{ BeforeAndAfterAll, FutureOutcome }
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jFactory
-import uk.gov.nationalarchives.omega.editorial.connectors.{ HostBrokerEndpoint, JmsRequestReplyClient, RequestMessage, RequestReplyHandler, UsernamePasswordCredentials }
+import uk.gov.nationalarchives.omega.editorial.config.{ HostBrokerEndpoint, UsernamePasswordCredentials }
+import uk.gov.nationalarchives.omega.editorial.connectors.{ JmsRequestReplyClient, RequestMessage, RequestReplyHandler }
 import uk.gov.nationalarchives.omega.editorial.services.jms.StubServer
 
 import scala.concurrent.duration.{ FiniteDuration, SECONDS }
