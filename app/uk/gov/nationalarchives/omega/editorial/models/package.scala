@@ -403,7 +403,7 @@ package object editSetRecords {
   def getEditSetRecordByOCI(oci: String): Option[EditSetRecord] =
     editSetRecordMap.get(oci)
 
-  def saveEditSetRecord(editSetRecord: EditSetRecord) = {
+  def saveEditSetRecord(editSetRecord: EditSetRecord): Unit = {
     val editSetRecordOCI = editSetRecord.oci;
     editSetRecordMap -= editSetRecordOCI
     editSetRecordMap += (editSetRecordOCI -> editSetRecord)

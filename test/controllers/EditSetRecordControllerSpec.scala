@@ -34,7 +34,7 @@ import support.ExpectedValues._
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetRecordController.FieldNames
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetRecordController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.editSetRecords.{ editSetRecordMap, restoreOriginalRecords }
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, PhysicalRecord, RelatedMaterial, SeparatedMaterial }
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, MaterialReference, PhysicalRecord }
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
 import scala.concurrent.Future
@@ -218,29 +218,29 @@ class EditSetRecordControllerSpec extends BaseSpec {
               )
             ),
             separatedMaterial = Seq(
-              ExpectedSeparatedMaterial(
+              ExpectedMaterial(
                 linkHref = Some("#;"),
                 linkText = Some("COAL 80/80/5")
               ),
-              ExpectedSeparatedMaterial(
+              ExpectedMaterial(
                 linkHref = Some("#;"),
                 linkText = Some("COAL 80/80/6")
               ),
-              ExpectedSeparatedMaterial(
+              ExpectedMaterial(
                 linkHref = Some("#;"),
                 linkText = Some("COAL 80/80/7")
               )
             ),
             relatedMaterial = Seq(
-              ExpectedRelatedMaterial(
+              ExpectedMaterial(
                 description =
                   Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
               ),
-              ExpectedRelatedMaterial(
+              ExpectedMaterial(
                 linkHref = Some("#;"),
                 linkText = Some("COAL 80/80/3")
               ),
-              ExpectedRelatedMaterial(
+              ExpectedMaterial(
                 linkHref = Some("#;"),
                 linkText = Some("COAL 80/80/2"),
                 description =
@@ -358,7 +358,7 @@ class EditSetRecordControllerSpec extends BaseSpec {
             custodialHistory = "",
             relatedMaterial = Seq.empty,
             separatedMaterial = Seq(
-              ExpectedSeparatedMaterial(description =
+              ExpectedMaterial(description =
                 Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
               )
             )
@@ -2658,23 +2658,23 @@ class EditSetRecordControllerSpec extends BaseSpec {
           )
       },
       relatedMaterial = editSetRecord.relatedMaterial.map {
-        case RelatedMaterial.LinkAndDescription(linkHref, linkText, description) =>
-          ExpectedRelatedMaterial(linkHref = Some(linkHref), linkText = Some(linkText), description = Some(description))
-        case RelatedMaterial.LinkOnly(linkHref, linkText) =>
-          ExpectedRelatedMaterial(linkHref = Some(linkHref), linkText = Some(linkText))
-        case RelatedMaterial.DescriptionOnly(description) => ExpectedRelatedMaterial(description = Some(description))
+        case MaterialReference.LinkAndDescription(linkHref, linkText, description) =>
+          ExpectedMaterial(linkHref = Some(linkHref), linkText = Some(linkText), description = Some(description))
+        case MaterialReference.LinkOnly(linkHref, linkText) =>
+          ExpectedMaterial(linkHref = Some(linkHref), linkText = Some(linkText))
+        case MaterialReference.DescriptionOnly(description) => ExpectedMaterial(description = Some(description))
       },
       separatedMaterial = editSetRecord.separatedMaterial.map {
-        case SeparatedMaterial.LinkAndDescription(linkHref, linkText, description) =>
-          ExpectedSeparatedMaterial(
+        case MaterialReference.LinkAndDescription(linkHref, linkText, description) =>
+          ExpectedMaterial(
             linkHref = Some(linkHref),
             linkText = Some(linkText),
             description = Some(description)
           )
-        case SeparatedMaterial.LinkOnly(linkHref, linkText) =>
-          ExpectedSeparatedMaterial(linkHref = Some(linkHref), linkText = Some(linkText))
-        case SeparatedMaterial.DescriptionOnly(description) =>
-          ExpectedSeparatedMaterial(description = Some(description))
+        case MaterialReference.LinkOnly(linkHref, linkText) =>
+          ExpectedMaterial(linkHref = Some(linkHref), linkText = Some(linkText))
+        case MaterialReference.DescriptionOnly(description) =>
+          ExpectedMaterial(description = Some(description))
       },
       custodialHistory = editSetRecord.custodialHistory
     )
@@ -2715,8 +2715,8 @@ object EditSetRecordControllerSpec {
     custodialHistory: String,
     optionsForPlaceOfDepositID: Seq[ExpectedSelectOption],
     optionsForCreators: Seq[Seq[ExpectedSelectOption]],
-    relatedMaterial: Seq[ExpectedRelatedMaterial] = Seq.empty,
-    separatedMaterial: Seq[ExpectedSeparatedMaterial] = Seq.empty,
+    relatedMaterial: Seq[ExpectedMaterial] = Seq.empty,
+    separatedMaterial: Seq[ExpectedMaterial] = Seq.empty,
     summaryErrorMessages: Seq[ExpectedSummaryErrorMessage] = Seq.empty,
     errorMessageForStartDate: Option[String] = None,
     errorMessageForEndDate: Option[String] = None,

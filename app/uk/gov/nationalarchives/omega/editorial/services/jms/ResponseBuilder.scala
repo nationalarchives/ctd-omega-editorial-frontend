@@ -21,16 +21,17 @@
 
 package uk.gov.nationalarchives.omega.editorial.services.jms
 
-import cats.implicits._
 import cats.MonadError
+import cats.implicits._
 import jms4s.jms.JmsMessage
-import play.api.libs.json.{ Json, Reads }
 import org.typelevel.log4cats.Logger
-
+import play.api.libs.json.{ Json, Reads }
+import uk.gov.nationalarchives.omega.editorial.editSetRecords.getEditSetRecordByOCI
 import uk.gov.nationalarchives.omega.editorial.editSets
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, GetEditSet }
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, GetEditSet, GetEditSetRecord }
+import uk.gov.nationalarchives.omega.editorial.services.jms.ResponseBuilder.ME
 
-class ResponseBuilder[F[_] : ResponseBuilder.ME : Logger] {
+class ResponseBuilder[F[_] : ME : Logger] {
   import ResponseBuilder._
 
   private val me = MonadError[F, Throwable]
@@ -44,18 +45,36 @@ class ResponseBuilder[F[_] : ResponseBuilder.ME : Logger] {
 
   def createResponseText(jmsMessage: JmsMessage): F[String] =
     jmsMessage.getStringProperty(sidHeaderKey) match {
-      case Some(sidValue) if sidValue == sid1 =>
-        logger.info(s"got a message with sid header '$sidValue', trying to parse payload") *>
-          getEditSet(jmsMessage).flatMap { editSet =>
-            logger.info("parsed payload, creating edit set response") *>
-              me.pure(Json.toJson(editSet).toString)
-          }
-
+      case Some(sidValue) if sidValue == SID.GetEditSet =>
+        handleGetEditSet(jmsMessage, sidValue)
+      case Some(sidValue) if sidValue == SID.GetEditSetRecord =>
+        handleGetEditSetRecord(jmsMessage)
       case unknown =>
-        logger.error(s"Expected a SID value of $sid1, but got $unknown, failing") *>
-          me.raiseError(new NotImplementedError(s"unhandled case for SID $unknown"))
-
+        onUnhandledCase(s"SID is unrecognised: [$unknown]")
     }
+
+  private def handleGetEditSet(jmsMessage: JmsMessage, sidValue: String): F[String] =
+    logger.info(s"got a message with sid header '$sidValue', trying to parse payload") *>
+      getEditSet(jmsMessage).flatMap { editSet =>
+        logger.info("parsed payload, creating edit set response") *>
+          me.pure(Json.toJson(editSet).toString)
+      }
+
+  private def handleGetEditSetRecord(jmsMessage: JmsMessage): F[String] =
+    asGetEditSetRecordRequest(jmsMessage).flatMap(getEditSetRecordRequest =>
+      getEditSetRecordByOCI(getEditSetRecordRequest.recordOci)
+        .map(editSetRecord => me.pure(Json.toJson(editSetRecord).toString))
+        .getOrElse(
+          onUnhandledCase(
+            s"Unable to find record for Edit Set with OCI [${getEditSetRecordRequest.editSetOci}] and Record OCI [${getEditSetRecordRequest.recordOci}]"
+          )
+        )
+    )
+
+  private def onUnhandledCase(errorMessage: String): F[String] =
+    logger.error(errorMessage) *> me.raiseError(
+      new NotImplementedError(s"We don't yet handle this case: $errorMessage")
+    )
 
   private def getEditSet(jmsMessage: JmsMessage): F[EditSet] =
     for {
@@ -63,6 +82,9 @@ class ResponseBuilder[F[_] : ResponseBuilder.ME : Logger] {
       // TODO We'll need to get the OCI from the GetEditSet eventuly
       _ <- parse[GetEditSet](messageText)
     } yield editSets.editSet1
+
+  private def asGetEditSetRecordRequest(jmsMessage: JmsMessage): F[GetEditSetRecord] =
+    messageText(jmsMessage).flatMap(parse[GetEditSetRecord])
 
   private def messageText(jmsMessage: JmsMessage): F[String] =
     jmsMessage.asTextF[F].adaptError(err => NotATextMessage(err))
@@ -82,10 +104,14 @@ object ResponseBuilder {
   sealed abstract class StubServerError extends Throwable
 
   final case object MissingJMSID extends StubServerError
-  final case class NotATextMessage(err: Throwable) extends StubServerError
-  final case class CannotParse(txt: String) extends StubServerError
+  private final case class NotATextMessage(err: Throwable) extends StubServerError
+  private final case class CannotParse(txt: String) extends StubServerError
 
-  val sidHeaderKey = "sid"
-  val sid1 = "OSGEES001"
+  private val sidHeaderKey = "sid"
+
+  object SID {
+    val GetEditSet = "OSGEES001"
+    val GetEditSetRecord = "OSGESR001"
+  }
 
 }

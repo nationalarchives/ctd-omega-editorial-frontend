@@ -26,5 +26,5 @@ import play.api.libs.json.{ Format, Json }
 case class EditSetEntry(ccr: String, oci: String, scopeAndContent: String, coveringDates: String)
 
 object EditSetEntry {
-  implicit val editSetEntryReads: Format[EditSetEntry] = Json.format[EditSetEntry]
+  implicit val format: Format[EditSetEntry] = Json.format[EditSetEntry]
 }

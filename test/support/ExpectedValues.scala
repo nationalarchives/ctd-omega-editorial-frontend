@@ -31,13 +31,7 @@ object ExpectedValues {
 
   case class ExpectedSummaryErrorMessage(message: String, fieldName: String)
 
-  case class ExpectedRelatedMaterial(
-    linkHref: Option[String] = None,
-    linkText: Option[String] = None,
-    description: Option[String] = None
-  )
-
-  case class ExpectedSeparatedMaterial(
+  case class ExpectedMaterial(
     linkHref: Option[String] = None,
     linkText: Option[String] = None,
     description: Option[String] = None

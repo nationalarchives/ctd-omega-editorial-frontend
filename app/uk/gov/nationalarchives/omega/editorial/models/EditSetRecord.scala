@@ -21,7 +21,7 @@
 
 package uk.gov.nationalarchives.omega.editorial.models
 
-import play.api.libs.json.{ Json, Reads }
+import play.api.libs.json.{ Format, Json }
 
 sealed trait RecordType
 
@@ -45,8 +45,8 @@ case class EditSetRecord(
   note: String,
   background: String,
   custodialHistory: String,
-  relatedMaterial: Seq[RelatedMaterial] = Seq.empty,
-  separatedMaterial: Seq[SeparatedMaterial] = Seq.empty,
+  relatedMaterial: Seq[MaterialReference] = Seq.empty,
+  separatedMaterial: Seq[MaterialReference] = Seq.empty,
   creatorIDs: Seq[String] = Seq.empty
 ) {
 
@@ -57,7 +57,5 @@ case class EditSetRecord(
 object EditSetRecord {
 
   type Transformer = EditSetRecord => EditSetRecord
-
-  implicit val editSetRecordReads: Reads[EditSetRecord] = Json.using[Json.WithDefaultValues].reads[EditSetRecord]
-
+  implicit val format: Format[EditSetRecord] = Json.using[Json.WithDefaultValues].format[EditSetRecord]
 }
