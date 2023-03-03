@@ -21,6 +21,7 @@
 
 package uk.gov.nationalarchives.omega.editorial.controllers
 
+import cats.effect.unsafe.implicits.global
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
@@ -30,6 +31,7 @@ import uk.gov.nationalarchives.omega.editorial.support.{ FormSupport, MessageSup
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
 
 import javax.inject._
+import scala.concurrent.{ ExecutionContext, Future }
 
 /** This controller creates an `Action` to handle HTTP requests to the application's home page.
   */
@@ -38,7 +40,8 @@ class EditSetController @Inject() (
   messagesControllerComponents: MessagesControllerComponents,
   editSetService: EditSetService,
   editSet: editSet
-) extends MessagesAbstractController(messagesControllerComponents) with I18nSupport with Secured with FormSupport
+)(implicit ec: ExecutionContext)
+    extends MessagesAbstractController(messagesControllerComponents) with I18nSupport with Secured with FormSupport
     with MessageSupport {
   import EditSetController._
 
@@ -47,8 +50,8 @@ class EditSetController @Inject() (
     * The configuration in the `routes` file means that this method will be called when the application receives a `GET`
     * request with a path of `/edit-set/{id}`.
     */
-  def view(id: String): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
-    withUser { user =>
+  def view(id: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    withUserAsync { user =>
       val ordering = for {
         field     <- queryStringValue(request, fieldKey)
         direction <- queryStringValue(request, orderDirectionKey)
@@ -63,32 +66,31 @@ class EditSetController @Inject() (
 
   private def generateEditSetView(id: String, user: User, editSetEntryRowOrder: EditSetEntryRowOrder)(implicit
     request: Request[AnyContent]
-  ): Result = {
-    val currentEditSet = editSetService.getEditSet(id)
-    val pageNumber = queryStringValue(request, offsetKey).map(_.toInt).getOrElse(1)
-    val sortedEntries = currentEditSet.entries.sorted(editSetEntryRowOrder.currentOrdering)
+  ): Future[Result] =
+    editSetService.get(id).unsafeToFuture().map { currentEditSet =>
+      val pageNumber = queryStringValue(request, offsetKey).map(_.toInt).getOrElse(1)
+      val sortedEntries = currentEditSet.entries.sorted(editSetEntryRowOrder.currentOrdering)
 
-    val editSetPage = new EditSetPagination(
-      id = id,
-      rowOrder = editSetEntryRowOrder,
-      nextText = resolveMessage("edit-set.pagination.next"),
-      previousText = resolveMessage("edit-set.pagination.previous")
-    ).makeEditSetPage(sortedEntries, pageNumber)
+      val editSetPage = new EditSetPagination(
+        id = id,
+        rowOrder = editSetEntryRowOrder,
+        nextText = resolveMessage("edit-set.pagination.next"),
+        previousText = resolveMessage("edit-set.pagination.previous")
+      ).makeEditSetPage(sortedEntries, pageNumber)
 
-    val title = resolveMessage("edit-set.title", editSetPage.pageNumber, editSetPage.totalPages)
-    val heading: String = resolveMessage(
-      "edit-set.heading",
-      currentEditSet.name,
-      editSetPage.numberOfFirstEntry.toString,
-      editSetPage.numberOfLastEntry.toString,
-      editSetPage.totalNumberOfEntries.toString
-    )
-    Ok(editSet(user, title, heading, editSetPage, editSetEntryRowOrder))
-  }
+      val title = resolveMessage("edit-set.title", editSetPage.pageNumber, editSetPage.totalPages)
+      val heading: String = resolveMessage(
+        "edit-set.heading",
+        currentEditSet.name,
+        editSetPage.numberOfFirstEntry.toString,
+        editSetPage.numberOfLastEntry.toString,
+        editSetPage.totalNumberOfEntries.toString
+      )
+      Ok(editSet(user, title, heading, editSetPage, editSetEntryRowOrder))
+    }
 }
 
 object EditSetController {
-  case class EditSetReorder(field: String, direction: String)
 
   object FieldNames {
     val ccr = "ccr"
@@ -99,8 +101,6 @@ object EditSetController {
 
   val fieldKey = "field"
   val orderDirectionKey = "direction"
-  val orderDirectionAscending = "ascending"
-  val orderDirectionDescending = "descending"
   val offsetKey = "offset"
 
 }

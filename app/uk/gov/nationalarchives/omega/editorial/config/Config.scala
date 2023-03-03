@@ -19,31 +19,12 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.modules
+package uk.gov.nationalarchives.omega.editorial.config
 
-import com.google.inject.{ AbstractModule, Provides, Singleton }
-import pureconfig.ConfigSource
-import pureconfig.generic.auto._
+case class Config(
+  broker: HostBrokerEndpoint,
+  credentials: UsernamePasswordCredentials
+)
 
-import java.time.LocalDateTime
-
-import uk.gov.nationalarchives.omega.editorial.config.Config
-import uk.gov.nationalarchives.omega.editorial.StubServerBootstrap
-import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
-
-class StartupModule extends AbstractModule {
-
-  override def configure(): Unit =
-    bind(classOf[StubServerBootstrap]).asEagerSingleton()
-
-  @Provides
-  @Singleton
-  def configProvider: Config =
-    ConfigSource.default.loadOrThrow[Config]
-
-  @Provides
-  @Singleton
-  def defaultTimeProvider: TimeProvider =
-    () => LocalDateTime.now()
-
-}
+case class HostBrokerEndpoint(host: String, port: Int)
+case class UsernamePasswordCredentials(username: String, password: String)

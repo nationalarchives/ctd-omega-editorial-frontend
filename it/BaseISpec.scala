@@ -1,18 +1,22 @@
+import java.time.{ LocalDateTime, Month }
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.{ Assertion, BeforeAndAfterEach }
-import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.{ Application, inject }
+import org.scalatestplus.play.PlaySpec
 import play.api.http.Status.SEE_OTHER
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.{ DefaultWSCookie, WSClient, WSCookie, WSResponse }
 import play.api.test.Helpers.{ await, defaultAwaitTimeout }
+import play.api.{ Application, inject }
 import support.TestReferenceDataService
 import uk.gov.nationalarchives.omega.editorial.models.Creator
 import uk.gov.nationalarchives.omega.editorial.services.ReferenceDataService
+import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 
 abstract class BaseISpec extends PlaySpec with GuiceOneServerPerSuite with BeforeAndAfterEach {
+
+  private lazy val testTimeProvider: TimeProvider = () => LocalDateTime.of(2023, Month.FEBRUARY, 28, 1, 1, 1)
 
   implicit val wsClient: WSClient = app.injector.instanceOf[WSClient]
 
@@ -34,6 +38,7 @@ abstract class BaseISpec extends PlaySpec with GuiceOneServerPerSuite with Befor
   override def fakeApplication(): Application =
     GuiceApplicationBuilder()
       .bindings(inject.bind[ReferenceDataService].to[TestReferenceDataService])
+      .overrides(inject.bind[TimeProvider].toInstance(testTimeProvider))
       .build()
 
   def asDocument(response: WSResponse): Document = Jsoup.parse(response.body)
