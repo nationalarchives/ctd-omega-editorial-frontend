@@ -23,6 +23,8 @@ package controllers
 
 import cats.effect.IO
 import org.mockito.ArgumentMatchers.anyString
+
+import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.i18n.Messages
 import play.api.mvc._
 import play.api.test._
