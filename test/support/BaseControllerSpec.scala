@@ -42,19 +42,15 @@
 
 package support
 
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import org.mockito.scalatest.MockitoSugar
 import org.scalatest.{ BeforeAndAfterAll, BeforeAndAfterEach }
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.play.PlaySpec
 import play.api.mvc.Results
-import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
-import play.twirl.api.Content
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, User }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 
-class BasePlaySpec
+class BaseControllerSpec
     extends PlaySpec with Results with Matchers with BeforeAndAfterAll with BeforeAndAfterEach with MockitoSugar {
 
   val messages: Map[String, Map[String, String]] =
@@ -64,9 +60,7 @@ class BasePlaySpec
         "edit-set.table-caption" -> "Showing {0} - {1} of {2} records"
       )
     )
-
   val validSessionToken: String = Session.generateToken("1234")
-  val mockEditSetView: EditSet = mock[EditSet]
   val user: User = User("dummy user")
   val invalidSessionToken: String = Session.generateToken("invalid-user")
 

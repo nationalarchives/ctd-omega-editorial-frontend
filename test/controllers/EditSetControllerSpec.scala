@@ -31,7 +31,7 @@ import play.api.test.Helpers._
 import scala.concurrent.ExecutionContext.Implicits.global
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
 import play.twirl.api.Html
-import support.BasePlaySpec
+import support.BaseControllerSpec
 import uk.gov.nationalarchives.omega.editorial.editSets.getEditSet
 import uk.gov.nationalarchives.omega.editorial.models.User
 import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination.EditSetPage
@@ -43,7 +43,7 @@ import uk.gov.nationalarchives.omega.editorial.views.html.editSet
   *
   * For more information, see https://www.playframework.com/documentation/latest/ScalaTestingWithScalaTest
   */
-class EditSetControllerSpec extends BasePlaySpec {
+class EditSetControllerSpec extends BaseControllerSpec {
   override def beforeEach(): Unit = {
     super.beforeEach()
     restoreOriginalRecords()
