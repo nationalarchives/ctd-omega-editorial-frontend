@@ -21,6 +21,7 @@
 
 package uk.gov.nationalarchives.omega.editorial.controllers
 
+import cats.effect.unsafe.implicits.global
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
@@ -66,7 +67,7 @@ class EditSetController @Inject() (
   private def generateEditSetView(id: String, user: User, editSetEntryRowOrder: EditSetEntryRowOrder)(implicit
     request: Request[AnyContent]
   ): Future[Result] =
-    editSetService.get(id).map { currentEditSet =>
+    editSetService.get(id).unsafeToFuture().map { currentEditSet =>
       val pageNumber = queryStringValue(request, offsetKey).map(_.toInt).getOrElse(1)
       val sortedEntries = currentEditSet.entries.sorted(editSetEntryRowOrder.currentOrdering)
 

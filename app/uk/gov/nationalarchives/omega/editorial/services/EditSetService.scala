@@ -21,22 +21,21 @@
 
 package uk.gov.nationalarchives.omega.editorial.services
 
-import cats.effect.unsafe.implicits.global
+import cats.effect.IO
 import play.api.Logger
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
 import uk.gov.nationalarchives.omega.editorial.models.EditSet
 
 import javax.inject.{ Inject, Singleton }
-import scala.concurrent.Future
 
 @Singleton
 class EditSetService @Inject() (apiConnector: ApiConnector) {
 
   private val logger: Logger = Logger(this.getClass)
 
-  def get(id: String): Future[EditSet] = {
+  def get(id: String): IO[EditSet] = {
     logger.info(s"The edit set id is $id ")
-    apiConnector.getEditSet(id).unsafeToFuture()
+    apiConnector.getEditSet(id)
   }
 
 }
