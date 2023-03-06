@@ -30,7 +30,6 @@ import play.api.mvc._
 import play.api.test._
 import play.api.test.Helpers._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
 import play.twirl.api.Html
 import support.BaseControllerSpec

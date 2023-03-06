@@ -26,7 +26,7 @@ import org.scalatest.{ BeforeAndAfterAll, BeforeAndAfterEach }
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.play.PlaySpec
 import play.api.mvc.Results
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, User }
+import uk.gov.nationalarchives.omega.editorial.models.User
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 
 class BaseControllerSpec
