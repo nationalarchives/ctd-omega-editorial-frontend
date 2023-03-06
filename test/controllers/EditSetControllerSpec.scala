@@ -23,22 +23,21 @@ package controllers
 
 import cats.effect.IO
 import org.mockito.ArgumentMatchers.anyString
-
-import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.i18n.Messages
 import play.api.mvc._
-import play.api.test._
 import play.api.test.Helpers._
-
-import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
+import play.api.test._
 import play.twirl.api.Html
 import support.BaseControllerSpec
+import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
+import uk.gov.nationalarchives.omega.editorial.editSetRecords.restoreOriginalRecords
 import uk.gov.nationalarchives.omega.editorial.editSets.getEditSet
 import uk.gov.nationalarchives.omega.editorial.models.User
 import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination.EditSetPage
 import uk.gov.nationalarchives.omega.editorial.services.{ EditSetEntryRowOrder, EditSetService }
-import uk.gov.nationalarchives.omega.editorial.editSetRecords.restoreOriginalRecords
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /** Add your spec here. You can mock out a whole application including requests, plugins etc.
   *
@@ -53,22 +52,10 @@ class EditSetControllerSpec extends BaseControllerSpec {
   "EditSetController GET /edit-set/{id}" should {
 
     "render the edit set page from a new instance of controller" in {
-      val mockMessagesApi = stubMessagesApi(messages)
       val mockEditSet = mock[editSet]
       val mockEditSetService = mock[EditSetService]
-      val stub = stubControllerComponents()
       val controller = new EditSetController(
-        DefaultMessagesControllerComponents(
-          new DefaultMessagesActionBuilderImpl(stubBodyParser(AnyContentAsEmpty), mockMessagesApi)(
-            stub.executionContext
-          ),
-          DefaultActionBuilder(stub.actionBuilder.parser)(stub.executionContext),
-          stub.parsers,
-          mockMessagesApi,
-          stub.langs,
-          stub.fileMimeTypes,
-          stub.executionContext
-        ),
+        Helpers.stubMessagesControllerComponents(),
         mockEditSetService,
         mockEditSet
       )
@@ -96,22 +83,10 @@ class EditSetControllerSpec extends BaseControllerSpec {
       def orderingRequest(field: String, direction: String, offset: Int = 1) = {
         val request = FakeRequest(GET, s"/edit-set/1?field=$field&direction=$direction&offset=$offset")
           .withSession(SessionKeys.token -> validSessionToken)
-        val mockMessagesApi = stubMessagesApi(messages)
         val mockEditSet = mock[editSet]
         val mockEditSetService = mock[EditSetService]
-        val stub = stubControllerComponents()
         val controller = new EditSetController(
-          DefaultMessagesControllerComponents(
-            new DefaultMessagesActionBuilderImpl(stubBodyParser(AnyContentAsEmpty), mockMessagesApi)(
-              stub.executionContext
-            ),
-            DefaultActionBuilder(stub.actionBuilder.parser)(stub.executionContext),
-            stub.parsers,
-            mockMessagesApi,
-            stub.langs,
-            stub.fileMimeTypes,
-            stub.executionContext
-          ),
+          Helpers.stubMessagesControllerComponents(),
           mockEditSetService,
           mockEditSet
         )
