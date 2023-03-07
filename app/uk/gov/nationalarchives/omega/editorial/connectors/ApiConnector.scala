@@ -29,7 +29,7 @@ import org.typelevel.log4cats.slf4j.Slf4jLogger
 import play.api.inject.ApplicationLifecycle
 import play.api.libs.json.{ Json, Reads }
 
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, GetEditSet }
+import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 import uk.gov.nationalarchives.omega.editorial.config.Config
 
@@ -43,8 +43,6 @@ class ApiConnector @Inject() (
 
   private implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jLogger.getLogger[IO]
 
-  private val getEditSetSID = "OSGEES001"
-
   private val requestQueueName = "request-general"
   private val replyQueueName = "omega-editorial-web-application-instance-1"
 
@@ -56,7 +54,19 @@ class ApiConnector @Inject() (
     val requestBody = Json.stringify(Json.toJson(GetEditSet(id, now)))
 
     logger.info(s"Requesting edit set $id...") *>
-      handle(requestBody).flatMap(parse[EditSet])
+      handle(SID.GetEditSet, requestBody).flatMap(parse[EditSet])
+  }
+
+  def getEditSetRecord(editSetOci: String, recordOci: String): IO[Option[EditSetRecord]] = {
+    val now = timeProvider.now()
+    val requestBody = Json.stringify(
+      Json.toJson(
+        GetEditSetRecord(editSetOci, recordOci, now)
+      )
+    )
+
+    logger.info(s"Requesting record $recordOci from edit set $editSetOci")
+    handle(SID.GetEditSetRecord, requestBody).flatMap(parse[EditSetRecord]).redeem(_ => None, Some.apply)
   }
 
   private def createClientAndCloser: IO[(JmsRequestReplyClient[IO], IO[Unit])] =
@@ -70,10 +80,10 @@ class ApiConnector @Inject() (
     }
   }
 
-  private def handle(requestBody: String): IO[String] =
+  private def handle(sid: SID, requestBody: String): IO[String] =
     handler.handle(
       requestQueueName,
-      requestMessage = RequestMessage(requestBody, getEditSetSID)
+      requestMessage = RequestMessage(requestBody, sid.value)
     )
 
   private def parse[A : Reads](messageText: String): IO[A] =
@@ -84,6 +94,12 @@ class ApiConnector @Inject() (
 }
 
 object ApiConnector {
+
+  sealed abstract class SID(val value: String)
+  object SID {
+    case object GetEditSet extends SID("OSGEES001")
+    case object GetEditSetRecord extends SID("OSGESR001")
+  }
 
   case class CannotParseEditSetResponse(response: String) extends Exception(
         s"""can't parse edit set, got:
