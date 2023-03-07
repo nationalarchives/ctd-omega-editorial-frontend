@@ -66,7 +66,7 @@ class ResponseBuilder[F[_] : ME : Logger] {
     asGetEditSetRecordRequest(jmsMessage).flatMap(getEditSetRecordRequest =>
       getEditSetRecordByOCI(getEditSetRecordRequest.recordOci)
         .map(editSetRecord => me.pure(Json.toJson(editSetRecord).toString))
-        getOrElse onUnknownEditSetRecord(getEditSetRecordRequest.editSetOci, getEditSetRecordRequest.recordOci)
+        .getOrElse(onUnknownEditSetRecord(getEditSetRecordRequest.editSetOci, getEditSetRecordRequest.recordOci))
     )
 
   private def handleUpdateEditSetRecord(jmsMessage: JmsMessage): F[String] =
