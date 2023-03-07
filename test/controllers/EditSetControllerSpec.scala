@@ -33,6 +33,8 @@ import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, 
 import uk.gov.nationalarchives.omega.editorial.editSetRecords.restoreOriginalRecords
 import uk.gov.nationalarchives.omega.editorial.editSets.getEditSet
 import uk.gov.nationalarchives.omega.editorial.models.User
+import uk.gov.nationalarchives.omega.editorial.services.Direction.{ Ascending, Descending }
+import uk.gov.nationalarchives.omega.editorial.services.EditSetEntryRowOrder.{ CCROrder, CoveringDatesOrder, ScopeAndContentOrder }
 import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination.EditSetPage
 import uk.gov.nationalarchives.omega.editorial.services.{ EditSetEntryRowOrder, EditSetService }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
@@ -75,15 +77,32 @@ class EditSetControllerSpec extends BaseControllerSpec {
         )
 
       status(editSet) mustBe OK
-      contentType(editSet) mustBe Some("text/html")
+    }
+
+    "redirect to the login page from the application when requested with invalid session token" in {
+      val mockEditSet = mock[editSet]
+      val mockEditSetService = mock[EditSetService]
+      val controller = new EditSetController(
+        Helpers.stubMessagesControllerComponents(),
+        mockEditSetService,
+        mockEditSet
+      )
+      val editSet = controller
+        .view("1")
+        .apply(
+          CSRFTokenHelper.addCSRFToken(
+            FakeRequest(GET, "/edit-set/1").withSession(SessionKeys.token -> invalidSessionToken)
+          )
+        )
+
+      status(editSet) mustBe SEE_OTHER
     }
 
     "order records" when {
 
-      def orderingRequest(field: String, direction: String, offset: Int = 1) = {
+      def orderingRequest(mockEditSet: editSet, field: String, direction: String, offset: Int = 1) = {
         val request = FakeRequest(GET, s"/edit-set/1?field=$field&direction=$direction&offset=$offset")
           .withSession(SessionKeys.token -> validSessionToken)
-        val mockEditSet = mock[editSet]
         val mockEditSetService = mock[EditSetService]
         val controller = new EditSetController(
           Helpers.stubMessagesControllerComponents(),
@@ -92,7 +111,7 @@ class EditSetControllerSpec extends BaseControllerSpec {
         )
         when(mockEditSetService.get("1")).thenReturn(IO.pure(getEditSet()))
         when(
-          mockEditSet(any[User], anyString(), anyString(), any[EditSetPage], any[EditSetEntryRowOrder])(
+          mockEditSet(any[User], anyString, anyString, any[EditSetPage], any[EditSetEntryRowOrder])(
             any[Messages],
             any[Request[AnyContent]]
           )
@@ -102,16 +121,107 @@ class EditSetControllerSpec extends BaseControllerSpec {
           .view("1")
           .apply(CSRFTokenHelper.addCSRFToken(request))
 
-        verify(mockEditSetService).get(anyString())
+        verify(mockEditSetService, times(1)).get(anyString())
 
         editSet
       }
 
-      "with request parameters" in {
-        val page = orderingRequest("ccr", "ascending")
-
+      "CCR, ascending" in {
+        val mockEditSet = mock[editSet]
+        val page = orderingRequest(mockEditSet, "ccr", "ascending")
         status(page) mustBe OK
-        contentType(page) mustBe Some("text/html")
+        verify(mockEditSet).apply(any[User], anyString, anyString, any[EditSetPage], eqTo(CCROrder(Ascending)))(
+          any[Messages],
+          any[Request[AnyContent]]
+        )
+
+      }
+
+      "CCR, descending" in {
+        val mockEditSet = mock[editSet]
+        val page = orderingRequest(mockEditSet, "ccr", "descending")
+        status(page) mustBe OK
+        verify(mockEditSet).apply(any[User], anyString, anyString, any[EditSetPage], eqTo(CCROrder(Descending)))(
+          any[Messages],
+          any[Request[AnyContent]]
+        )
+      }
+
+      "Scope and Content, ascending" in {
+        val mockEditSet = mock[editSet]
+        val page = orderingRequest(mockEditSet, "scope-and-content", "ascending")
+        status(page) mustBe OK
+        verify(mockEditSet)
+          .apply(any[User], anyString, anyString, any[EditSetPage], eqTo(ScopeAndContentOrder(Ascending)))(
+            any[Messages],
+            any[Request[AnyContent]]
+          )
+      }
+
+      "Scope and Content, descending" in {
+        val mockEditSet = mock[editSet]
+        val page = orderingRequest(mockEditSet, "scope-and-content", "descending")
+        status(page) mustBe OK
+        verify(mockEditSet)
+          .apply(any[User], anyString, anyString, any[EditSetPage], eqTo(ScopeAndContentOrder(Descending)))(
+            any[Messages],
+            any[Request[AnyContent]]
+          )
+      }
+
+      "Covering dates, ascending" in {
+        val mockEditSet = mock[editSet]
+        val page = orderingRequest(mockEditSet, "covering-dates", "ascending")
+        status(page) mustBe OK
+        verify(mockEditSet)
+          .apply(any[User], anyString, anyString, any[EditSetPage], eqTo(CoveringDatesOrder(Ascending)))(
+            any[Messages],
+            any[Request[AnyContent]]
+          )
+      }
+
+      "Covering dates, descending" in {
+        val mockEditSet = mock[editSet]
+        val page = orderingRequest(mockEditSet, "covering-dates", "descending")
+        status(page) mustBe OK
+        verify(mockEditSet)
+          .apply(any[User], anyString, anyString, any[EditSetPage], eqTo(CoveringDatesOrder(Descending)))(
+            any[Messages],
+            any[Request[AnyContent]]
+          )
+      }
+
+      "Covering dates, normalizing direction names" in {
+        val mockEditSet = mock[editSet]
+        val page = orderingRequest(mockEditSet, "covering-dates", "Descending")
+        status(page) mustBe OK
+        verify(mockEditSet)
+          .apply(any[User], anyString, anyString, any[EditSetPage], eqTo(CoveringDatesOrder(Descending)))(
+            any[Messages],
+            any[Request[AnyContent]]
+          )
+      }
+
+      "Unknown field and direction" in {
+        val mockEditSet = mock[editSet]
+        val page = orderingRequest(mockEditSet, "height", "upwards")
+        status(page) mustBe OK
+        verify(mockEditSet)
+          .apply(any[User], anyString, anyString, any[EditSetPage], eqTo(CCROrder(Ascending)))(
+            any[Messages],
+            any[Request[AnyContent]]
+          )
+      }
+
+      "Page 2 sorted by CCR, ascending" in {
+        val mockEditSet = mock[editSet]
+        val page = orderingRequest(mockEditSet, "ccr", "ascending", offset = 2)
+        status(page) mustBe OK
+        verify(mockEditSet)
+          .apply(any[User], anyString, anyString, any[EditSetPage], eqTo(CCROrder(Ascending)))(
+            any[Messages],
+            any[Request[AnyContent]]
+          )
       }
     }
 

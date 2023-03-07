@@ -22,25 +22,15 @@
 package support
 
 import org.mockito.scalatest.MockitoSugar
-import org.scalatest.{ BeforeAndAfterAll, BeforeAndAfterEach }
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.{ BeforeAndAfterAll, BeforeAndAfterEach }
 import org.scalatestplus.play.PlaySpec
 import play.api.mvc.Results
-import uk.gov.nationalarchives.omega.editorial.models.User
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 
 class BaseControllerSpec
     extends PlaySpec with Results with Matchers with BeforeAndAfterAll with BeforeAndAfterEach with MockitoSugar {
 
-  val messages: Map[String, Map[String, String]] =
-    Map(
-      "en" -> Map(
-        "edit-set.heading"       -> "Edit set: COAL 80 Sample",
-        "edit-set.table-caption" -> "Showing {0} - {1} of {2} records"
-      )
-    )
   val validSessionToken: String = Session.generateToken("1234")
-  val user: User = User("dummy user")
   val invalidSessionToken: String = Session.generateToken("invalid-user")
-
 }

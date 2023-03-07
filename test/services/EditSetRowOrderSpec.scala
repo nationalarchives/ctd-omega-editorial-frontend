@@ -19,10 +19,10 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.services
+package services
 
 import support.BaseSpec
-import uk.gov.nationalarchives.omega.editorial.services.EditSetEntryRowOrder
+import uk.gov.nationalarchives.omega.editorial.services.{ Direction, EditSetEntryRowOrder }
 
 class EditSetEntryRowOrderSpec extends BaseSpec {
 
