@@ -21,10 +21,13 @@
 
 package support
 
-import uk.gov.nationalarchives.omega.editorial.models.session.Session
+import org.mockito.scalatest.MockitoSugar
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
+import org.scalatest.matchers.must.Matchers
+import org.scalatestplus.play.PlaySpec
+import play.api.mvc.Results
 
-class BaseControllerSpec extends UnitTest {
-
-  val validSessionToken: String = Session.generateToken("1234")
-  val invalidSessionToken: String = Session.generateToken("invalid-user")
-}
+/**
+  * This trait should be the base class for all unit tests
+  */
+trait UnitTest extends PlaySpec with Results with Matchers with BeforeAndAfterAll with BeforeAndAfterEach with MockitoSugar
