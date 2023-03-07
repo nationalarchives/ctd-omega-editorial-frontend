@@ -7,12 +7,13 @@ import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jFactory
 import uk.gov.nationalarchives.omega.editorial.config.{ HostBrokerEndpoint, UsernamePasswordCredentials }
 import uk.gov.nationalarchives.omega.editorial.connectors.{ JmsRequestReplyClient, RequestMessage, RequestReplyHandler }
+import uk.gov.nationalarchives.omega.editorial.models.StubData
 import uk.gov.nationalarchives.omega.editorial.services.jms.StubServer
 
 import scala.concurrent.duration.{ FiniteDuration, SECONDS }
 
 abstract class BaseRequestReplyServiceISpec
-    extends FixtureAsyncFreeSpec with AsyncIOSpec with Matchers with BeforeAndAfterAll {
+    extends FixtureAsyncFreeSpec with AsyncIOSpec with Matchers with BeforeAndAfterAll with StubData {
 
   override type FixtureParam = RequestReplyHandler
 
@@ -24,7 +25,6 @@ abstract class BaseRequestReplyServiceISpec
   private val replyQueueName = "omega-editorial-web-application-instance-1"
   private val messagingServerHost = "localhost"
   private val messagingServerPort = 9324
-
   private val stubServer = new StubServer
 
   override def beforeAll(): Unit = {

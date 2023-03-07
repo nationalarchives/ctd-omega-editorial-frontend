@@ -1,24 +1,30 @@
-import java.time.{ LocalDateTime, Month }
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.{ Assertion, BeforeAndAfterEach }
-import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import org.scalatestplus.play.PlaySpec
-import play.api.http.Status.SEE_OTHER
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import play.api.http.Status.{ OK, SEE_OTHER }
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.{ DefaultWSCookie, WSClient, WSCookie, WSResponse }
 import play.api.test.Helpers.{ await, defaultAwaitTimeout }
 import play.api.{ Application, inject }
-import support.TestReferenceDataService
+import support.{ ApiConnectorAssertions, ModelSupport, TestReferenceDataService }
+import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
 import uk.gov.nationalarchives.omega.editorial.models.Creator
 import uk.gov.nationalarchives.omega.editorial.services.ReferenceDataService
 import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 
-abstract class BaseISpec extends PlaySpec with GuiceOneServerPerSuite with BeforeAndAfterEach {
+import java.time.{ LocalDateTime, Month }
 
-  private lazy val testTimeProvider: TimeProvider = () => LocalDateTime.of(2023, Month.FEBRUARY, 28, 1, 1, 1)
+abstract class BaseISpec
+    extends PlaySpec with GuiceOneServerPerSuite with BeforeAndAfterEach with ModelSupport with ApiConnectorAssertions {
 
+  implicit val monitoredApiConnector: MonitoredApiConnector = app.injector.instanceOf[MonitoredApiConnector]
+  lazy implicit val testTimeProvider: TimeProvider = () => LocalDateTime.of(2023, Month.FEBRUARY, 28, 1, 1, 1)
   implicit val wsClient: WSClient = app.injector.instanceOf[WSClient]
+
+  val idOfExistingEditSet = "1" // We only support one, for the moment.
+  val ociOfExistingRecord: String = "COAL.2022.V1RJW.P"
 
   val csrfTokenName = "csrfToken"
   lazy val invalidSessionCookie: DefaultWSCookie = DefaultWSCookie(
@@ -38,8 +44,15 @@ abstract class BaseISpec extends PlaySpec with GuiceOneServerPerSuite with Befor
   override def fakeApplication(): Application =
     GuiceApplicationBuilder()
       .bindings(inject.bind[ReferenceDataService].to[TestReferenceDataService])
+      .bindings(inject.bind[ApiConnector].to[MonitoredApiConnector])
       .overrides(inject.bind[TimeProvider].toInstance(testTimeProvider))
       .build()
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    resetMessageBus()
+    monitoredApiConnector.reset()
+  }
 
   def asDocument(response: WSResponse): Document = Jsoup.parse(response.body)
 
@@ -73,5 +86,21 @@ abstract class BaseISpec extends PlaySpec with GuiceOneServerPerSuite with Befor
         .withFollowRedirects(false)
         .get()
     )
+
+  private def resetMessageBus(): Unit = {
+    clearRequestQueue()
+    clearResponseQueue()
+    ()
+  }
+
+  private def clearRequestQueue(): Assertion = clearQueue("request-general").status mustBe OK
+
+  private def clearResponseQueue(): Assertion =
+    clearQueue("omega-editorial-web-application-instance-1").status mustBe OK
+
+  private def clearQueue(name: String): WSResponse =
+    await {
+      wsClient.url(s"http://localhost:9324/$name?Action=PurgeQueue").get()
+    }
 
 }

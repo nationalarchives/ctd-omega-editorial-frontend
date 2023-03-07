@@ -11,7 +11,8 @@ class EditSetISpec extends BaseISpec {
         "not specifying the page" when {
           "nor the ordering" in {
 
-            val response = getEditSetPageWhileLoggedIn("1", None, None, None)
+            val editSetId = "1"
+            val response = getEditSetPageWhileLoggedIn(editSetId, None, None, None)
 
             assertPageAsExpected(
               response,
@@ -88,6 +89,9 @@ class EditSetISpec extends BaseISpec {
                 )
               )
             )
+
+            assertCallMadeToGetEditSet(editSetId)
+
           }
           "specifically ordering by" when {
 
@@ -104,7 +108,8 @@ class EditSetISpec extends BaseISpec {
 
             "CCR, ascending" in {
 
-              val response = getEditSetPageWhileLoggedIn("1", None, Some("ccr"), Some("ascending"))
+              val editSetId = "1"
+              val response = getEditSetPageWhileLoggedIn(editSetId, None, Some("ccr"), Some("ascending"))
 
               assertPageAsExpected(
                 response,
@@ -178,10 +183,14 @@ class EditSetISpec extends BaseISpec {
                 )
               )
 
+              assertCallMadeToGetEditSet(editSetId)
+
             }
             "CCR, descending" in {
 
-              val response = getEditSetPageWhileLoggedIn("1", None, Some("ccr"), Some("descending"))
+              val editSetId = "1"
+
+              val response = getEditSetPageWhileLoggedIn(editSetId, None, Some("ccr"), Some("descending"))
 
               assertPageAsExpected(
                 response,
@@ -255,10 +264,14 @@ class EditSetISpec extends BaseISpec {
                 )
               )
 
+              assertCallMadeToGetEditSet(editSetId)
+
             }
             "Scope and Content, ascending" in {
 
-              val response = getEditSetPageWhileLoggedIn("1", None, Some("scope-and-content"), Some("ascending"))
+              val editSetId = "1"
+
+              val response = getEditSetPageWhileLoggedIn(editSetId, None, Some("scope-and-content"), Some("ascending"))
 
               assertPageAsExpected(
                 response,
@@ -332,10 +345,14 @@ class EditSetISpec extends BaseISpec {
                 )
               )
 
+              assertCallMadeToGetEditSet(editSetId)
+
             }
             "Scope and Content, descending" in {
 
-              val response = getEditSetPageWhileLoggedIn("1", None, Some("scope-and-content"), Some("descending"))
+              val editSetId = "1"
+
+              val response = getEditSetPageWhileLoggedIn(editSetId, None, Some("scope-and-content"), Some("descending"))
 
               assertPageAsExpected(
                 response,
@@ -409,10 +426,14 @@ class EditSetISpec extends BaseISpec {
                 )
               )
 
+              assertCallMadeToGetEditSet(editSetId)
+
             }
             "Covering dates, ascending" in {
 
-              val response = getEditSetPageWhileLoggedIn("1", None, Some("covering-dates"), Some("ascending"))
+              val editSetId = "1"
+
+              val response = getEditSetPageWhileLoggedIn(editSetId, None, Some("covering-dates"), Some("ascending"))
 
               assertPageAsExpected(
                 response,
@@ -486,10 +507,14 @@ class EditSetISpec extends BaseISpec {
                 )
               )
 
+              assertCallMadeToGetEditSet(editSetId)
+
             }
             "Covering dates, descending" in {
 
-              val response = getEditSetPageWhileLoggedIn("1", None, Some("covering-dates"), Some("descending"))
+              val editSetId = "1"
+
+              val response = getEditSetPageWhileLoggedIn(editSetId, None, Some("covering-dates"), Some("descending"))
 
               assertPageAsExpected(
                 response,
@@ -563,10 +588,14 @@ class EditSetISpec extends BaseISpec {
                 )
               )
 
+              assertCallMadeToGetEditSet(editSetId)
+
             }
             "Unknown field and direction" in {
 
-              val response = getEditSetPageWhileLoggedIn("1", None, Some("age"), Some("upwards"))
+              val editSetId = "1"
+
+              val response = getEditSetPageWhileLoggedIn(editSetId, None, Some("age"), Some("upwards"))
 
               assertPageAsExpected(
                 response,
@@ -640,13 +669,17 @@ class EditSetISpec extends BaseISpec {
                 )
               )
 
+              assertCallMadeToGetEditSet(editSetId)
+
             }
           }
         }
         "specifying an existing page" when {
           "but not the ordering" in {
 
-            val response = getEditSetPageWhileLoggedIn("1", Some(2), None, None)
+            val editSetId = "1"
+
+            val response = getEditSetPageWhileLoggedIn(editSetId, Some(2), None, None)
 
             assertPageAsExpected(
               response,
@@ -676,6 +709,8 @@ class EditSetISpec extends BaseISpec {
               )
             )
 
+            assertCallMadeToGetEditSet(editSetId)
+
           }
           "specifically ordering by" when {
 
@@ -692,7 +727,9 @@ class EditSetISpec extends BaseISpec {
 
             "CCR, ascending" in {
 
-              val response = getEditSetPageWhileLoggedIn("1", Some(2), Some("ccr"), Some("ascending"))
+              val editSetId = "1"
+
+              val response = getEditSetPageWhileLoggedIn(editSetId, Some(2), Some("ccr"), Some("ascending"))
 
               assertPageAsExpected(
                 response,
@@ -718,10 +755,14 @@ class EditSetISpec extends BaseISpec {
                 )
               )
 
+              assertCallMadeToGetEditSet(editSetId)
+
             }
             "CCR, descending" in {
 
-              val response = getEditSetPageWhileLoggedIn("1", Some(2), Some("ccr"), Some("descending"))
+              val editSetId = "1"
+
+              val response = getEditSetPageWhileLoggedIn(editSetId, Some(2), Some("ccr"), Some("descending"))
 
               assertPageAsExpected(
                 response,
@@ -747,10 +788,15 @@ class EditSetISpec extends BaseISpec {
                 )
               )
 
+              assertCallMadeToGetEditSet(editSetId)
+
             }
             "Scope and Content, ascending" in {
 
-              val response = getEditSetPageWhileLoggedIn("1", Some(2), Some("scope-and-content"), Some("ascending"))
+              val editSetId = "1"
+
+              val response =
+                getEditSetPageWhileLoggedIn(editSetId, Some(2), Some("scope-and-content"), Some("ascending"))
 
               assertPageAsExpected(
                 response,
@@ -776,10 +822,15 @@ class EditSetISpec extends BaseISpec {
                 )
               )
 
+              assertCallMadeToGetEditSet(editSetId)
+
             }
             "Scope and Content, descending" in {
 
-              val response = getEditSetPageWhileLoggedIn("1", Some(2), Some("scope-and-content"), Some("descending"))
+              val editSetId = "1"
+
+              val response =
+                getEditSetPageWhileLoggedIn(editSetId, Some(2), Some("scope-and-content"), Some("descending"))
 
               assertPageAsExpected(
                 response,
@@ -805,10 +856,14 @@ class EditSetISpec extends BaseISpec {
                 )
               )
 
+              assertCallMadeToGetEditSet(editSetId)
+
             }
             "Covering dates, ascending" in {
 
-              val response = getEditSetPageWhileLoggedIn("1", Some(2), Some("covering-dates"), Some("ascending"))
+              val editSetId = "1"
+
+              val response = getEditSetPageWhileLoggedIn(editSetId, Some(2), Some("covering-dates"), Some("ascending"))
 
               assertPageAsExpected(
                 response,
@@ -834,10 +889,14 @@ class EditSetISpec extends BaseISpec {
                 )
               )
 
+              assertCallMadeToGetEditSet(editSetId)
+
             }
             "Covering dates, descending" in {
 
-              val response = getEditSetPageWhileLoggedIn("1", Some(2), Some("covering-dates"), Some("descending"))
+              val editSetId = "1"
+
+              val response = getEditSetPageWhileLoggedIn(editSetId, Some(2), Some("covering-dates"), Some("descending"))
 
               assertPageAsExpected(
                 response,
@@ -863,10 +922,14 @@ class EditSetISpec extends BaseISpec {
                 )
               )
 
+              assertCallMadeToGetEditSet(editSetId)
+
             }
             "Unknown field and direction" in {
 
-              val response = getEditSetPageWhileLoggedIn("1", Some(2), Some("age"), Some("upwards"))
+              val editSetId = "1"
+
+              val response = getEditSetPageWhileLoggedIn(editSetId, Some(2), Some("age"), Some("upwards"))
 
               assertPageAsExpected(
                 response,
@@ -892,6 +955,8 @@ class EditSetISpec extends BaseISpec {
                 )
               )
 
+              assertCallMadeToGetEditSet(editSetId)
+
             }
           }
 
@@ -912,7 +977,9 @@ class EditSetISpec extends BaseISpec {
 
           "but not the ordering" in {
 
-            val response = getEditSetPageWhileLoggedIn("1", Some(requestedPageNumber), None, None)
+            val editSetId = "1"
+
+            val response = getEditSetPageWhileLoggedIn(editSetId, Some(requestedPageNumber), None, None)
 
             assertPageAsExpected(
               response,
@@ -926,11 +993,15 @@ class EditSetISpec extends BaseISpec {
               )
             )
 
+            assertCallMadeToGetEditSet(editSetId)
           }
           "specifically ordering by" when {
             "CCR, ascending" in {
 
-              val response = getEditSetPageWhileLoggedIn("1", Some(requestedPageNumber), Some("ccr"), Some("ascending"))
+              val editSetId = "1"
+
+              val response =
+                getEditSetPageWhileLoggedIn(editSetId, Some(requestedPageNumber), Some("ccr"), Some("ascending"))
 
               assertPageAsExpected(
                 response,
@@ -943,6 +1014,8 @@ class EditSetISpec extends BaseISpec {
                   expectedSummaryRows = Seq.empty
                 )
               )
+
+              assertCallMadeToGetEditSet(editSetId)
 
             }
 
@@ -977,6 +1050,7 @@ class EditSetISpec extends BaseISpec {
 
         assertRedirection(response, "/login")
 
+        assertNoCallMadeToGetEditSet()
       }
     }
     "when session cookie isn't valid" must {
@@ -991,6 +1065,9 @@ class EditSetISpec extends BaseISpec {
         )
 
         assertRedirection(response, "/login")
+
+        assertNoCallMadeToGetEditSet()
+
       }
     }
 

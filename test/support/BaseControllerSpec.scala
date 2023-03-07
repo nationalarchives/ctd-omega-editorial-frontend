@@ -21,9 +21,10 @@
 
 package support
 
+import uk.gov.nationalarchives.omega.editorial.models.StubData
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 
-class BaseControllerSpec extends UnitTest {
+class BaseControllerSpec extends UnitTest with StubData {
 
   val validSessionToken: String = Session.generateToken("1234")
   val invalidSessionToken: String = Session.generateToken("invalid-user")

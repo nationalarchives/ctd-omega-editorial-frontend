@@ -24,18 +24,19 @@ package uk.gov.nationalarchives.omega.editorial.services
 import cats.effect.IO
 import play.api.Logger
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
-import uk.gov.nationalarchives.omega.editorial.models.EditSet
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, GetEditSet }
+import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 
 import javax.inject.{ Inject, Singleton }
 
 @Singleton
-class EditSetService @Inject() (apiConnector: ApiConnector) {
+class EditSetService @Inject() (apiConnector: ApiConnector, timeProvider: TimeProvider) {
 
   private val logger: Logger = Logger(this.getClass)
 
-  def get(id: String): IO[EditSet] = {
+  def get(id: String): IO[Option[EditSet]] = {
     logger.info(s"The edit set id is $id ")
-    apiConnector.getEditSet(id)
+    apiConnector.getEditSet(GetEditSet(id, timeProvider.now()))
   }
 
 }

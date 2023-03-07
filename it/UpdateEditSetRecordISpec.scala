@@ -2,8 +2,7 @@ import play.api.libs.json.Json
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector.SID
 import uk.gov.nationalarchives.omega.editorial.models.UpdateEditSetRecord
 
-import java.time.LocalDateTime
-
+import java.time.{ LocalDate, LocalDateTime, Month }
 class UpdateEditSetRecordISpec extends BaseRequestReplyServiceISpec {
 
   override val serviceId: String = SID.UpdateEditSetRecord.value
@@ -93,7 +92,57 @@ class UpdateEditSetRecordISpec extends BaseRequestReplyServiceISpec {
         UpdateEditSetRecord(
           editSetOci = editSetOci,
           recordOci = recordOci,
-          timestamp = LocalDateTime.now()
+          timestamp = LocalDateTime.now(),
+          fields = UpdateEditSetRecord.Fields(
+            description = "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
+            coveringDates = "1962",
+            formerReferenceDepartment = "MR 193 (9)",
+            formerReferencePro = "MPS 4/1",
+            startDate = LocalDate.of(1962, Month.JANUARY, 1),
+            endDate = LocalDate.of(1962, Month.DECEMBER, 31),
+            legalStatusId = "ref.1",
+            placeOfDepositID = "1",
+            note = "A note about COAL.2022.V1RJW.P.",
+            background = "Photo was taken by a daughter of one of the coal miners who used them.",
+            custodialHistory = "Files originally created by successor or predecessor departments for COAL",
+            relatedMaterial = Seq(
+              UpdateEditSetRecord.Fields.MaterialReference(
+                linkHref = None,
+                linkText = None,
+                description =
+                  Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+              ),
+              UpdateEditSetRecord.Fields.MaterialReference(
+                linkHref = Some("#;"),
+                linkText = Some("COAL 80/80/3"),
+                description = None
+              ),
+              UpdateEditSetRecord.Fields.MaterialReference(
+                linkHref = Some("#;"),
+                linkText = Some("COAL 80/80/2"),
+                description =
+                  Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
+              )
+            ),
+            separatedMaterial = Seq(
+              UpdateEditSetRecord.Fields.MaterialReference(
+                linkHref = Some("#;"),
+                linkText = Some("COAL 80/80/5"),
+                description = None
+              ),
+              UpdateEditSetRecord.Fields.MaterialReference(
+                linkHref = Some("#;"),
+                linkText = Some("COAL 80/80/6"),
+                description = None
+              ),
+              UpdateEditSetRecord.Fields.MaterialReference(
+                linkHref = Some("#;"),
+                linkText = Some("COAL 80/80/7"),
+                description = None
+              )
+            ),
+            creatorIDs = Seq("8R6", "92W")
+          )
         )
       )
     )
