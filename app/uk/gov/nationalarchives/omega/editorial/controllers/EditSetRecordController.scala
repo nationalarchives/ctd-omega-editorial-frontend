@@ -253,7 +253,8 @@ class EditSetRecordController @Inject() (
     getStartAndEndDates(rawCoveringDates).map(DateRange.single)
 
   private def findRecord(editSetOci: String, recordOci: String): Future[Outcome[EditSetRecord]] =
-    editRecordSetService.get(editSetOci, recordOci)
+    editRecordSetService
+      .get(editSetOci, recordOci)
       .unsafeToFuture()
       .map(_.toRight(RecordNotFound(recordOci)))
 
