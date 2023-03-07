@@ -59,17 +59,17 @@ class EditSetRecordController @Inject() (
   private lazy val creators: Seq[Creator] = referenceDataService.getCreators
   private lazy val placesOfDeposit: Seq[PlaceOfDeposit] = referenceDataService.getPlacesOfDeposit
 
-  def viewEditRecordForm(id: String, recordId: String): Action[AnyContent] = Action {
+  def viewEditRecordForm(id: String, recordId: String): Action[AnyContent] = Action.async {
     implicit request: Request[AnyContent] =>
-      withUser { user =>
+      withUserAsync { user =>
         logger.info(s"The edit set id is $id for record id $recordId")
         val editSetName = editSets.getEditSet().name
-        editSetRecords.getEditSetRecordByOCI(recordId) match {
-          case Some(record) =>
+        findRecord(id, recordId).map {
+          case Right(record) =>
             val recordPreparedForDisplay = prepareForDisplay(record)
             val recordForm = bindFormFromRecordForDisplay(recordPreparedForDisplay)
             Ok(generateEditSetRecordEditView(user, editSetName, recordPreparedForDisplay, recordForm))
-          case None => NotFound
+          case Left(_) => NotFound
         }
       }
   }
@@ -117,33 +117,37 @@ class EditSetRecordController @Inject() (
     }
   }
 
-  def save(id: String, oci: String): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
-    withUser { user =>
-      val title: String = resolvedMessage(MessageKeys.title)
-      val editSetName = editSets.getEditSet().name
-      editSetRecords.getEditSetRecordByOCI(oci).get
-      val heading: String =
-        resolvedMessage(MessageKeys.heading, editSetRecords.getEditSetRecordByOCI(oci).get.ccr)
-      val message: String = resolvedMessage(MessageKeys.buttonSave)
-      val recordType: Option[RecordType] = editSetRecords.getEditSetRecordByOCI(oci).get.recordType
-      logger.info(s"Save changes for record id $oci edit set id $id")
+  def save(id: String, oci: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    withUserAsync { user =>
+      findRecord(id, oci).map {
+        case Right(record) =>
+          val title = resolvedMessage(MessageKeys.title)
+          val editSetName = editSets.getEditSet().name
+          val heading = resolvedMessage(MessageKeys.heading, record.ccr)
+          val message = resolvedMessage(MessageKeys.buttonSave)
+          val recordType = record.recordType
+          logger.info(s"Save changes for record id $oci edit set id $id")
+          Ok(editSetRecordEditSave(user, editSetName, title, heading, oci, message, recordType))
 
-      Ok(editSetRecordEditSave(user, editSetName, title, heading, oci, message, recordType))
+        case Left(_) => NotFound
+      }
     }
   }
 
-  def discard(id: String, oci: String): Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
-    withUser { user =>
-      val title: String = resolvedMessage(MessageKeys.title)
-      val editSetName = editSets.getEditSet().name
-      editSetRecords.getEditSetRecordByOCI(oci).get
-      val heading: String =
-        resolvedMessage(MessageKeys.heading, editSetRecords.getEditSetRecordByOCI(oci).get.ccr)
-      val message: String = resolvedMessage(MessageKeys.buttonDiscard)
-      val recordType: Option[RecordType] = editSetRecords.getEditSetRecordByOCI(oci).get.recordType
-      logger.info(s"Discard changes for record id $oci edit set id $id ")
+  def discard(id: String, oci: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
+    withUserAsync { user =>
+      findRecord(id, oci).map {
+        case Right(record) =>
+          val title = resolvedMessage(MessageKeys.title)
+          val editSetName = editSets.getEditSet().name
+          val heading = resolvedMessage(MessageKeys.heading, record.ccr)
+          val message = resolvedMessage(MessageKeys.buttonDiscard)
+          val recordType = record.recordType
+          logger.info(s"Discard changes for record id $oci edit set id $id ")
 
-      Ok(editSetRecordEditDiscard(user, editSetName, title, heading, oci, message, recordType))
+          Ok(editSetRecordEditDiscard(user, editSetName, title, heading, oci, message, recordType))
+        case Left(_) => NotFound
+      }
     }
   }
 

@@ -97,7 +97,13 @@ class ApiConnector @Inject() (
 
 object ApiConnector {
 
-  sealed abstract class SID(val value: String)
+  sealed abstract class SID(val value: String) {
+
+    def matches(sid: String): Boolean =
+      sid.trim.equalsIgnoreCase(this.value)
+
+  }
+
   object SID {
     case object GetEditSet extends SID("OSGEES001")
     case object GetEditSetRecord extends SID("OSGESR001")
