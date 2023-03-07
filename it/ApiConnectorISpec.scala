@@ -20,20 +20,26 @@ class ApiConnectorISpec extends BaseISpec {
   }
 
   "when a request for an editSetRecord is made" must {
-    lazy val editSetRecordTable = Table(
-      "record oci"         -> "record",
-      "COAL.2022.V1RJW.P"  -> editSetRecords.getEditSetRecordByOCI("COAL.2022.V1RJW.P"),
-      "COAL.2022.V2RJW"    -> editSetRecords.getEditSetRecordByOCI("COAL.2022.V2RJW"),
-      "COAL.2022.V3RJW.P"  -> editSetRecords.getEditSetRecordByOCI("COAL.2022.V3RJW.P"),
-      "COAL.2022.V4RJW.P"  -> editSetRecords.getEditSetRecordByOCI("COAL.2022.V4RJW.P"),
-      "COAL.2022.V5RJW.P"  -> editSetRecords.getEditSetRecordByOCI("COAL.2022.V5RJW.P"),
-      "COAL.2022.V6RJW.P"  -> editSetRecords.getEditSetRecordByOCI("COAL.2022.V6RJW.P"),
-      "COAL.2022.V7RJW.P"  -> editSetRecords.getEditSetRecordByOCI("COAL.2022.V7RJW.P"),
-      "COAL.2022.V8RJW.P"  -> editSetRecords.getEditSetRecordByOCI("COAL.2022.V8RJW.P"),
-      "COAL.2022.V9RJW.P"  -> editSetRecords.getEditSetRecordByOCI("COAL.2022.V9RJW.P"),
-      "COAL.2022.V10RJW.P" -> editSetRecords.getEditSetRecordByOCI("COAL.2022.V10RJW.P"),
-      "COAL.2022.V11RJW.P" -> editSetRecords.getEditSetRecordByOCI("COAL.2022.V11RJW.P"),
-      "COAL.2022.V12RJW.P" -> editSetRecords.getEditSetRecordByOCI("COAL.2022.V12RJW.P")
+    val ocis = Seq(
+      "COAL.2022.V1RJW.P",
+      "COAL.2022.V2RJW",
+      "COAL.2022.V3RJW.P",
+      "COAL.2022.V4RJW.P",
+      "COAL.2022.V5RJW.P",
+      "COAL.2022.V6RJW.P",
+      "COAL.2022.V7RJW.P",
+      "COAL.2022.V8RJW.P",
+      "COAL.2022.V9RJW.P",
+      "COAL.2022.V10RJW.P",
+      "COAL.2022.V11RJW.P",
+      "COAL.2022.V12RJW.P"
+    )
+
+    val editSetRecordTable = Table(
+      "record oci" -> "record",
+      ocis.map { oci =>
+        oci -> editSetRecords.getEditSetRecordByOCI(oci)
+      }: _*
     )
 
     forAll(editSetRecordTable) { (oci, expectedResult) =>

@@ -30,7 +30,9 @@ import uk.gov.nationalarchives.omega.editorial.{ editSetRecords, editSets }
 object TestApiConnector extends ApiConnector(null, null, null) {
 
   override def getEditSet(id: String): IO[EditSet] =
-    IO.pure(editSets.editSet1)
+    IO.pure {
+      editSets.editSet1
+    }
 
   override def getEditSetRecord(editSetOci: String, recordOci: String): IO[Option[EditSetRecord]] =
     IO.pure {
