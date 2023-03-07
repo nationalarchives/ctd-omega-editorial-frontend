@@ -253,9 +253,9 @@ class EditSetRecordController @Inject() (
     getStartAndEndDates(rawCoveringDates).map(DateRange.single)
 
   private def findRecord(editSetOci: String, recordOci: String): Future[Outcome[EditSetRecord]] =
-    editRecordSetService.get(editSetOci, recordOci).unsafeToFuture().map {
-      _.toRight(RecordNotFound(recordOci))
-    }
+    editRecordSetService.get(editSetOci, recordOci)
+      .unsafeToFuture()
+      .map(_.toRight(RecordNotFound(recordOci)))
 
   private def getSubmitAction(record: EditSetRecord)(implicit request: Request[AnyContent]): Outcome[SubmitAction] =
     request.body.asFormUrlEncoded.get("action").headOption match {
