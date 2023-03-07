@@ -34,7 +34,7 @@ class GetEditSetRecordISpec extends BaseRequestReplyServiceISpec {
       "a single request" - {
         "for a known Edit Set" - {
           "and a known Record" in { requestReplyHandler =>
-            val request = generateGetEditSetRecordRequestAsJsonString("1", "COAL.2022.V4RJW.P")
+            val request = generateRequestAsJsonString("1", "COAL.2022.V4RJW.P")
 
             val result = sendRequest(requestReplyHandler, request)
 
@@ -70,8 +70,8 @@ class GetEditSetRecordISpec extends BaseRequestReplyServiceISpec {
 
         }
         "for an unknown Edit Set" - {
-          "and a known Record" in { requestReplyHandler =>
-            val request = generateGetEditSetRecordRequestAsJsonString("88", "COAL.2022.V1RJW.P")
+          "but a known Record" in { requestReplyHandler =>
+            val request = generateRequestAsJsonString("88", "COAL.2022.V1RJW.P")
 
             val result = sendRequest(requestReplyHandler, request)
 
@@ -129,8 +129,8 @@ class GetEditSetRecordISpec extends BaseRequestReplyServiceISpec {
       }
 
       "multiple requests, each for a known (but different) record" in { requestReplyHandler =>
-        val request1 = generateGetEditSetRecordRequestAsJsonString("1", "COAL.2022.V1RJW.P")
-        val request2 = generateGetEditSetRecordRequestAsJsonString("1", "COAL.2022.V4RJW.P")
+        val request1 = generateRequestAsJsonString("1", "COAL.2022.V1RJW.P")
+        val request2 = generateRequestAsJsonString("1", "COAL.2022.V4RJW.P")
 
         val result1 = sendRequest(requestReplyHandler, request1)
         val result2 = sendRequest(requestReplyHandler, request2)
@@ -230,7 +230,7 @@ class GetEditSetRecordISpec extends BaseRequestReplyServiceISpec {
 
   }
 
-  private def generateGetEditSetRecordRequestAsJsonString(editSetOci: String, recordOci: String): String =
+  private def generateRequestAsJsonString(editSetOci: String, recordOci: String): String =
     Json.stringify(
       Json.toJson(
         GetEditSetRecord(

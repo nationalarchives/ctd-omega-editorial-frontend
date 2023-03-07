@@ -28,7 +28,7 @@ import org.typelevel.log4cats.Logger
 import play.api.libs.json.{ Json, Reads }
 import uk.gov.nationalarchives.omega.editorial.editSetRecords.getEditSetRecordByOCI
 import uk.gov.nationalarchives.omega.editorial.editSets
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, GetEditSet, GetEditSetRecord }
+import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.services.jms.ResponseBuilder.ME
 
 class ResponseBuilder[F[_] : ME : Logger] {
@@ -49,6 +49,8 @@ class ResponseBuilder[F[_] : ME : Logger] {
         handleGetEditSet(jmsMessage, sidValue)
       case Some(sidValue) if sidValue == SID.GetEditSetRecord =>
         handleGetEditSetRecord(jmsMessage)
+      case Some(sidValue) if sidValue == SID.UpdateEditSetRecord =>
+        handleUpdateEditSetRecord(jmsMessage)
       case unknown =>
         onUnhandledCase(s"SID is unrecognised: [$unknown]")
     }
@@ -64,11 +66,29 @@ class ResponseBuilder[F[_] : ME : Logger] {
     asGetEditSetRecordRequest(jmsMessage).flatMap(getEditSetRecordRequest =>
       getEditSetRecordByOCI(getEditSetRecordRequest.recordOci)
         .map(editSetRecord => me.pure(Json.toJson(editSetRecord).toString))
-        .getOrElse(
-          onUnhandledCase(
-            s"Unable to find record for Edit Set with OCI [${getEditSetRecordRequest.editSetOci}] and Record OCI [${getEditSetRecordRequest.recordOci}]"
-          )
+        .getOrElse(onUnknownEditSetRecord(getEditSetRecordRequest.editSetOci, getEditSetRecordRequest.recordOci))
+    )
+
+  private def handleUpdateEditSetRecord(jmsMessage: JmsMessage): F[String] =
+    asUpdateEditSetRecordRequest(jmsMessage).flatMap(updateEditSetRecordRequest =>
+      getEditSetRecordByOCI(updateEditSetRecordRequest.recordOci)
+        .map(editSetRecord =>
+          me.pure(Json.toJson(updateEditSetRecord(editSetRecord, updateEditSetRecordRequest)).toString)
         )
+        .getOrElse(onUnknownEditSetRecord(updateEditSetRecordRequest.editSetOci, updateEditSetRecordRequest.recordOci))
+    )
+
+  private def updateEditSetRecord(
+    editSetRecord: EditSetRecord,
+    updateEditSetRecord: UpdateEditSetRecord
+  ): UpdateResponseStatus = {
+    logger.info(s"Attempting to update Edit Set Record with request [$updateEditSetRecord] ...")
+    UpdateResponseStatus("success", s"Successfully updated record with OCI [${editSetRecord.oci}]")
+  }
+
+  private def onUnknownEditSetRecord(editSetOci: String, recordOci: String): F[String] =
+    onUnhandledCase(
+      s"Unable to find record for Edit Set with OCI [$editSetOci] and Record OCI [$recordOci]"
     )
 
   private def onUnhandledCase(errorMessage: String): F[String] =
@@ -85,6 +105,9 @@ class ResponseBuilder[F[_] : ME : Logger] {
 
   private def asGetEditSetRecordRequest(jmsMessage: JmsMessage): F[GetEditSetRecord] =
     messageText(jmsMessage).flatMap(parse[GetEditSetRecord])
+
+  private def asUpdateEditSetRecordRequest(jmsMessage: JmsMessage): F[UpdateEditSetRecord] =
+    messageText(jmsMessage).flatMap(parse[UpdateEditSetRecord])
 
   private def messageText(jmsMessage: JmsMessage): F[String] =
     jmsMessage.asTextF[F].adaptError(err => NotATextMessage(err))
@@ -112,6 +135,7 @@ object ResponseBuilder {
   object SID {
     val GetEditSet = "OSGEES001"
     val GetEditSetRecord = "OSGESR001"
+    val UpdateEditSetRecord = "OSUESR001"
   }
 
 }
