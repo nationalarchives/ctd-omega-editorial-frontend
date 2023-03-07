@@ -1,4 +1,3 @@
-import controllers.EditSetControllerSpec.ExpectedEditSetSummaryRow
 import play.api.http.Status.OK
 import play.api.libs.ws.{ WSCookie, WSResponse }
 import play.api.test.Helpers.{ await, defaultAwaitTimeout }
@@ -1086,4 +1085,11 @@ class EditSetISpec extends BaseISpec {
   )
 
   case class ExpectedTableHeader(sortField: String, sortOrder: String)
+
+  case class ExpectedEditSetSummaryRow(
+    ccr: String,
+    scopeAndContents: String,
+    coveringDates: String
+  )
+
 }

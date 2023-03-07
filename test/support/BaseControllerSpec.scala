@@ -19,35 +19,12 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package services
+package support
 
-import support.BaseSpec
-import uk.gov.nationalarchives.omega.editorial.services.{ Direction, EditSetEntryRowOrder }
+import uk.gov.nationalarchives.omega.editorial.models.session.Session
 
-class EditSetEntryRowOrderSpec extends BaseSpec {
+class BaseControllerSpec extends UnitTest {
 
-  "EditSetEntryRowOrder" should {
-
-    "fromNames" should {
-
-      "parse a valid object from string names" in {
-        EditSetEntryRowOrder.fromNames("ccr", "ascending") mustBe EditSetEntryRowOrder.CCROrder(Direction.Ascending)
-      }
-
-      "default to ccr ascending when given incorrect direction name" in {
-        EditSetEntryRowOrder.fromNames("ccr", "Upwards") mustBe EditSetEntryRowOrder.CCROrder(Direction.Ascending)
-      }
-
-      "default to ccr ascending when given incorrect field and direction name" in {
-        EditSetEntryRowOrder.fromNames("cccr", "Upwards") mustBe EditSetEntryRowOrder.CCROrder(Direction.Ascending)
-      }
-
-      "treat field name and direction name case insensitively" in {
-        EditSetEntryRowOrder.fromNames("ccr", "Descending") mustBe EditSetEntryRowOrder.CCROrder(Direction.Descending)
-      }
-
-    }
-
-  }
-
+  val validSessionToken: String = Session.generateToken("1234")
+  val invalidSessionToken: String = Session.generateToken("invalid-user")
 }
