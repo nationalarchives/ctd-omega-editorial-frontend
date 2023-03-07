@@ -66,7 +66,9 @@ class ApiConnector @Inject() (
     )
 
     logger.info(s"Requesting record $recordOci from edit set $editSetOci")
-    handle(SID.GetEditSetRecord, requestBody).flatMap(parse[EditSetRecord]).redeem(_ => None, Some.apply)
+    handle(SID.GetEditSetRecord, requestBody)
+      .flatMap(parse[EditSetRecord])
+      .redeem(_ => None, Some.apply)
   }
 
   private def createClientAndCloser: IO[(JmsRequestReplyClient[IO], IO[Unit])] =
