@@ -152,7 +152,8 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
       "uk.gov.hmrc"            %% "play-frontend-hmrc"            % "6.2.0-play-28",
       "org.scalatestplus.play" %% "scalatestplus-play"            % "5.1.0"  % Test,
       "org.jsoup"               % "jsoup"                         % "1.15.3" % Test,
-      "org.typelevel"          %% "cats-effect-testing-scalatest" % "1.5.0"  % Test
+      "org.typelevel"          %% "cats-effect-testing-scalatest" % "1.5.0"  % Test,
+      "org.mockito"            %% "mockito-scala-scalatest"       % "1.17.5" % Test
     ).map(_.exclude("org.slf4j", "*")),
     libraryDependencies ++= Seq(
       "ch.qos.logback" % "logback-classic" % "1.3.0"

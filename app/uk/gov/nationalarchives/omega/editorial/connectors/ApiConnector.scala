@@ -107,6 +107,7 @@ object ApiConnector {
   object SID {
     case object GetEditSet extends SID("OSGEES001")
     case object GetEditSetRecord extends SID("OSGESR001")
+    case object UpdateEditSetRecord extends SID("OSUESR001")
   }
 
   case class CannotParseEditSetResponse(response: String) extends Exception(

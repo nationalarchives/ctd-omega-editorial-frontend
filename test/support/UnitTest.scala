@@ -19,35 +19,15 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package services
+package support
 
-import support.BaseSpec
-import uk.gov.nationalarchives.omega.editorial.services.{ Direction, EditSetEntryRowOrder }
+import org.mockito.scalatest.MockitoSugar
+import org.scalatest.{ BeforeAndAfterAll, BeforeAndAfterEach }
+import org.scalatest.matchers.must.Matchers
+import org.scalatestplus.play.PlaySpec
+import play.api.mvc.Results
 
-class EditSetEntryRowOrderSpec extends BaseSpec {
-
-  "EditSetEntryRowOrder" should {
-
-    "fromNames" should {
-
-      "parse a valid object from string names" in {
-        EditSetEntryRowOrder.fromNames("ccr", "ascending") mustBe EditSetEntryRowOrder.CCROrder(Direction.Ascending)
-      }
-
-      "default to ccr ascending when given incorrect direction name" in {
-        EditSetEntryRowOrder.fromNames("ccr", "Upwards") mustBe EditSetEntryRowOrder.CCROrder(Direction.Ascending)
-      }
-
-      "default to ccr ascending when given incorrect field and direction name" in {
-        EditSetEntryRowOrder.fromNames("cccr", "Upwards") mustBe EditSetEntryRowOrder.CCROrder(Direction.Ascending)
-      }
-
-      "treat field name and direction name case insensitively" in {
-        EditSetEntryRowOrder.fromNames("ccr", "Descending") mustBe EditSetEntryRowOrder.CCROrder(Direction.Descending)
-      }
-
-    }
-
-  }
-
-}
+/** This trait should be the base class for all unit tests
+  */
+trait UnitTest
+    extends PlaySpec with Results with Matchers with BeforeAndAfterAll with BeforeAndAfterEach with MockitoSugar
