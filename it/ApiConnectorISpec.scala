@@ -44,10 +44,7 @@ class ApiConnectorISpec extends BaseISpec {
 
     forAll(editSetRecordTable) { (oci, expectedResult) =>
       s"get an edit set record for oci: $oci" in {
-        val editSetRecordRespose =
-          apiConnector.getEditSetRecord(idOfExistingEditSet, oci).unsafeRunSync()
-
-        editSetRecordRespose mustBe expectedResult
+        apiConnector.getEditSetRecord(idOfExistingEditSet, oci).unsafeRunSync() mustBe expectedResult
       }
     }
   }

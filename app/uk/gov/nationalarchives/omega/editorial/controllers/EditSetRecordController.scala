@@ -80,12 +80,7 @@ class EditSetRecordController @Inject() (
         logger.info(s"The edit set id is $id for record id $oci")
         val editSetName = editSets.getEditSet().name
 
-        val action = for {
-          record <- recordOutcome
-          action <- getSubmitAction(record)
-        } yield action
-
-        action match {
+        recordOutcome.flatMap(getSubmitAction) match {
 
           case Right(Save(record, values)) =>
             val newRecord = modifyEditSetRecordWithFormValues(record, values)
