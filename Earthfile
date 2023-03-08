@@ -42,5 +42,5 @@ integration-test:
     COPY docker-compose.yml ./
     #RUN --push --secret GITHUB_TOKEN
     WITH DOCKER --compose docker-compose.yml
-       RUN --secret GITHUB_TOKEN false #sbt clean compile it:test
+       RUN --secret GITHUB_TOKEN sbt clean compile it:test
     END
