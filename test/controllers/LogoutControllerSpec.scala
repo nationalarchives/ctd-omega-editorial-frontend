@@ -21,20 +21,20 @@
 
 package controllers
 
-import play.api.test.Helpers._
 import play.api.test._
+import play.api.test.Helpers._
+import support.BaseControllerSpec
 import uk.gov.nationalarchives.omega.editorial.controllers.{ LogoutController, SessionKeys }
-import support.BaseSpec
 
-class LogoutControllerSpec extends BaseSpec {
+class LogoutControllerSpec extends BaseControllerSpec {
 
   val loginPagePath: String = "/login"
 
   "LogoutController GET" should {
     "redirect to the login page" when {
-      "when logged in" in {
 
-        val controller = inject[LogoutController]
+      "when logged in" in new LogoutTestCase {
+
         val result = controller
           .logout()
           .apply(FakeRequest().withSession(SessionKeys.token -> validSessionToken))
@@ -44,9 +44,8 @@ class LogoutControllerSpec extends BaseSpec {
         session(result).get(SessionKeys.token) mustBe empty
 
       }
-      "when already logged out" in {
 
-        val controller: LogoutController = inject[LogoutController]
+      "when already logged out" in new LogoutTestCase {
         val result = controller
           .logout()
           .apply(FakeRequest())
@@ -54,11 +53,16 @@ class LogoutControllerSpec extends BaseSpec {
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(loginPagePath)
         session(result).get(SessionKeys.token) mustBe empty
-
       }
 
     }
 
+  }
+
+  class LogoutTestCase() {
+    val controller = new LogoutController(
+      stubMessagesControllerComponents()
+    )
   }
 
 }
