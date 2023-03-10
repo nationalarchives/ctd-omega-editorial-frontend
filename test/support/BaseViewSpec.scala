@@ -23,11 +23,27 @@ package support
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
+import play.twirl.api.Content
+import uk.gov.hmrc.govukfrontend.views.html.components.{ GovukButton, GovukErrorMessage, GovukErrorSummary, GovukFieldset, GovukHint, GovukInput, GovukLabel, GovukSelect, GovukTextarea }
 import uk.gov.nationalarchives.omega.editorial.models.User
+import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEdit
 
 class BaseViewSpec extends UnitTest {
 
   val user: User = User("dummy user")
   def asDocument(html: String): Document = Jsoup.parse(html)
+  def asDocument(content: Content): Document = asDocument(contentAsString(content))
+
+  def getEditRecordInstance(): editSetRecordEdit =
+    new editSetRecordEdit(
+      new GovukButton,
+      new GovukInput(new GovukErrorMessage, new GovukHint, new GovukLabel),
+      new GovukTextarea(new GovukErrorMessage, new GovukHint, new GovukLabel),
+      new GovukFieldset,
+      new GovukErrorSummary,
+      new GovukSelect(new GovukErrorMessage, new GovukHint, new GovukLabel),
+      new GovukLabel
+    )
 
 }
