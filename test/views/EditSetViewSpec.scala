@@ -22,22 +22,25 @@
 package views
 
 import org.jsoup.nodes.Document
+import play.api.test.Helpers.{ contentType, defaultAwaitTimeout }
 import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import play.twirl.api.Html
-import support.BaseSpec
+import support.BaseViewSpec
 import support.CommonMatchers._
 import uk.gov.hmrc.govukfrontend.views.Aliases.Pagination
+import uk.gov.hmrc.govukfrontend.views.html.components.{ GovukPagination, GovukTable }
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry }
-import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination.EditSetPage
 import uk.gov.nationalarchives.omega.editorial.services.EditSetEntryRowOrder
+import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination.EditSetPage
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
 
-class EditSetViewSpec extends BaseSpec {
+class EditSetViewSpec extends BaseViewSpec {
 
   "Edit set Html" should {
     "render the given title and heading" in {
-
-      val editSetInstance = inject[editSet]
+      val govukPagination = new GovukPagination
+      val govukTable = new GovukTable
+      val editSetInstance = new editSet(govukPagination, govukTable)
       val editSet: EditSet = getEditSetTest("1")
       val title = "EditSetTitleTest"
       val heading = editSet.name
@@ -49,12 +52,14 @@ class EditSetViewSpec extends BaseSpec {
         editSet.entries.size,
         1
       )
+
       val editSetHtml: Html = editSetInstance(user, title, heading, editSetPage, EditSetEntryRowOrder.defaultOrder)(
         Helpers.stubMessages(),
         CSRFTokenHelper.addCSRFToken(FakeRequest())
       )
 
-      val document = asDocument(editSetHtml)
+      contentType(editSetHtml) mustBe "text/html"
+      val document = asDocument(Helpers.contentAsString(editSetHtml))
       document must haveTitle(title)
       document must haveHeader("COAL 80 Sample")
       document must haveCaption("edit-set.table-caption")
@@ -125,7 +130,9 @@ class EditSetViewSpec extends BaseSpec {
     )
 
   private def generateDocument(): Document = {
-    val editSetInstance = inject[editSet]
+    val govukPagination = new GovukPagination
+    val govukTable = new GovukTable
+    val editSetInstance = new editSet(govukPagination, govukTable)
     val editSet: EditSet = getEditSetTest("1")
     val editSetPage = EditSetPage(
       editSet.entries,
@@ -135,16 +142,19 @@ class EditSetViewSpec extends BaseSpec {
       1
     )
     asDocument(
-      editSetInstance(
-        user = user,
-        title = "EditSetTitleTest",
-        heading = editSet.name,
-        page = editSetPage,
-        rowOrder = EditSetEntryRowOrder.defaultOrder
-      )(
-        Helpers.stubMessages(),
-        CSRFTokenHelper.addCSRFToken(FakeRequest())
+      Helpers.contentAsString(
+        editSetInstance(
+          user = user,
+          title = "EditSetTitleTest",
+          heading = editSet.name,
+          page = editSetPage,
+          rowOrder = EditSetEntryRowOrder.defaultOrder
+        )(
+          Helpers.stubMessages(),
+          CSRFTokenHelper.addCSRFToken(FakeRequest())
+        )
       )
     )
   }
+
 }
