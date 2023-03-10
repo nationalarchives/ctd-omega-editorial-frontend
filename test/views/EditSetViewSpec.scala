@@ -130,9 +130,9 @@ class EditSetViewSpec extends BaseViewSpec {
     )
 
   private def generateDocument(): Document = {
-    val mockGovukPagination = new GovukPagination
-    val mockGovukTable = new GovukTable
-    val editSetInstance = new editSet(mockGovukPagination, mockGovukTable)
+    val govukPagination = new GovukPagination
+    val govukTable = new GovukTable
+    val editSetInstance = new editSet(govukPagination, govukTable)
     val editSet: EditSet = getEditSetTest("1")
     val editSetPage = EditSetPage(
       editSet.entries,
