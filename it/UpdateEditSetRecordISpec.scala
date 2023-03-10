@@ -1,12 +1,12 @@
 import play.api.libs.json.Json
+import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector.SID
 import uk.gov.nationalarchives.omega.editorial.models.UpdateEditSetRecord
-import uk.gov.nationalarchives.omega.editorial.services.jms.ResponseBuilder
 
 import java.time.LocalDateTime
 
 class UpdateEditSetRecordISpec extends BaseRequestReplyServiceISpec {
 
-  override val serviceId: String = ResponseBuilder.SID.UpdateEditSetRecord
+  override val serviceId: String = SID.UpdateEditSetRecord.value
 
   "The service to get an Edit Set Record by OCI, will" - {
     "succeed, when we make" - {

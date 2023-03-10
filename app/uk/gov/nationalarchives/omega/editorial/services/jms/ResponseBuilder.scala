@@ -21,11 +21,13 @@
 
 package uk.gov.nationalarchives.omega.editorial.services.jms
 
-import cats.MonadError
 import cats.implicits._
+import cats.MonadError
 import jms4s.jms.JmsMessage
 import org.typelevel.log4cats.Logger
 import play.api.libs.json.{ Json, Reads }
+
+import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector.SID
 import uk.gov.nationalarchives.omega.editorial.editSetRecords.getEditSetRecordByOCI
 import uk.gov.nationalarchives.omega.editorial.editSets
 import uk.gov.nationalarchives.omega.editorial.models._
@@ -45,11 +47,11 @@ class ResponseBuilder[F[_] : ME : Logger] {
 
   def createResponseText(jmsMessage: JmsMessage): F[String] =
     jmsMessage.getStringProperty(sidHeaderKey) match {
-      case Some(sidValue) if sidValue == SID.GetEditSet =>
+      case Some(sidValue) if SID.GetEditSet.matches(sidValue) =>
         handleGetEditSet(jmsMessage, sidValue)
-      case Some(sidValue) if sidValue == SID.GetEditSetRecord =>
+      case Some(sidValue) if SID.GetEditSetRecord.matches(sidValue) =>
         handleGetEditSetRecord(jmsMessage)
-      case Some(sidValue) if sidValue == SID.UpdateEditSetRecord =>
+      case Some(sidValue) if SID.UpdateEditSetRecord.matches(sidValue) =>
         handleUpdateEditSetRecord(jmsMessage)
       case unknown =>
         onUnhandledCase(s"SID is unrecognised: [$unknown]")
@@ -131,11 +133,5 @@ object ResponseBuilder {
   private final case class CannotParse(txt: String) extends StubServerError
 
   private val sidHeaderKey = "sid"
-
-  object SID {
-    val GetEditSet = "OSGEES001"
-    val GetEditSetRecord = "OSGESR001"
-    val UpdateEditSetRecord = "OSUESR001"
-  }
 
 }

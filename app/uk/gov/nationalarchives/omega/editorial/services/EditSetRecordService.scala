@@ -21,12 +21,17 @@
 
 package uk.gov.nationalarchives.omega.editorial.services
 
+import cats.effect.IO
 import uk.gov.nationalarchives.omega.editorial.models.EditSetRecord
+import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
 
 import javax.inject.{ Inject, Singleton }
 
 @Singleton
-class EditSetRecordService @Inject() (referenceDataService: ReferenceDataService) {
+class EditSetRecordService @Inject() (apiConnector: ApiConnector, referenceDataService: ReferenceDataService) {
+
+  def get(editSetOci: String, recordOci: String): IO[Option[EditSetRecord]] =
+    apiConnector.getEditSetRecord(editSetOci, recordOci)
 
   def preparePlaceOfDeposit(editSetRecord: EditSetRecord): EditSetRecord = {
     val correctedValue =

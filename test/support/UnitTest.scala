@@ -22,12 +22,12 @@
 package support
 
 import org.mockito.scalatest.MockitoSugar
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
+import org.scalatest.{ BeforeAndAfterAll, BeforeAndAfterEach }
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.play.PlaySpec
 import play.api.mvc.Results
 
-/**
-  * This trait should be the base class for all unit tests
+/** This trait should be the base class for all unit tests
   */
-trait UnitTest extends PlaySpec with Results with Matchers with BeforeAndAfterAll with BeforeAndAfterEach with MockitoSugar
+trait UnitTest
+    extends PlaySpec with Results with Matchers with BeforeAndAfterAll with BeforeAndAfterEach with MockitoSugar

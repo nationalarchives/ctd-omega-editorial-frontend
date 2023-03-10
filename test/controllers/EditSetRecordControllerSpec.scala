@@ -37,6 +37,7 @@ import uk.gov.nationalarchives.omega.editorial.editSetRecords.{ editSetRecordMap
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, MaterialReference, PhysicalRecord }
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class EditSetRecordControllerSpec extends BaseSpec {
