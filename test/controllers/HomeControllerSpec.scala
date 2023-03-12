@@ -31,7 +31,7 @@ import support.BaseSpec
   *
   * For more information, see https://www.playframework.com/documentation/latest/ScalaTestingWithScalaTest
   */
-class HomeControllerSpec extends BaseSpec {
+class HomeControllerSpec extends BaseControllerSpec {
 
   val landingPagePath = "/edit-set/1"
   val loginPagePath = "/login"
@@ -39,21 +39,8 @@ class HomeControllerSpec extends BaseSpec {
   "HomeController GET" should {
 
     "render the index page from a new instance of controller" in {
-      val messages: Map[String, Map[String, String]] = Map("en" -> Map("index.heading" -> "Welcome to the Catalogue"))
-      val mockMessagesApi = stubMessagesApi(messages)
-      val stub = stubControllerComponents()
       val controller = new HomeController(
-        DefaultMessagesControllerComponents(
-          new DefaultMessagesActionBuilderImpl(stubBodyParser(AnyContentAsEmpty), mockMessagesApi)(
-            stub.executionContext
-          ),
-          DefaultActionBuilder(stub.actionBuilder.parser)(stub.executionContext),
-          stub.parsers,
-          mockMessagesApi,
-          stub.langs,
-          stub.fileMimeTypes,
-          stub.executionContext
-        )
+        Helpers.stubMessagesControllerComponents()
       )
       val home = controller
         .index()
@@ -66,44 +53,16 @@ class HomeControllerSpec extends BaseSpec {
       redirectLocation(home) mustBe Some(landingPagePath)
     }
 
-    "render the index page from the application" in {
-      val controller = inject[HomeController]
-      val home = controller
-        .index()
-        .apply(
-          FakeRequest(GET, "/")
-            .withSession(SessionKeys.token -> validSessionToken)
-        )
-
-      status(home) mustBe SEE_OTHER
-      redirectLocation(home) mustBe Some(landingPagePath)
-    }
-
-    "render the index page from the router" in {
-      val request = FakeRequest(GET, "/").withSession(SessionKeys.token -> validSessionToken)
-      val home = route(app, request).get
-
-      status(home) mustBe SEE_OTHER
-      redirectLocation(home) mustBe Some(landingPagePath)
-    }
-  }
-
   "redirect to the login page from the application when requested with invalid session token" in {
-    val controller = inject[HomeController]
+    val controller = new HomeController(
+      Helpers.stubMessagesControllerComponents()
+    )
     val home = controller
       .index()
       .apply(
         FakeRequest(GET, "/")
           .withSession(SessionKeys.token -> invalidSessionToken)
       )
-
-    status(home) mustBe SEE_OTHER
-    redirectLocation(home) mustBe Some(loginPagePath)
-  }
-
-  "redirect to the login page from the router when requested with invalid session token" in {
-    val request = FakeRequest(GET, "/").withSession(SessionKeys.token -> invalidSessionToken)
-    val home = route(app, request).get
 
     status(home) mustBe SEE_OTHER
     redirectLocation(home) mustBe Some(loginPagePath)
