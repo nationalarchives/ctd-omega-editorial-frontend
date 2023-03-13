@@ -35,15 +35,4 @@ class BaseViewSpec extends UnitTest {
   def asDocument(html: String): Document = Jsoup.parse(html)
   def asDocument(content: Content): Document = asDocument(contentAsString(content))
 
-  def getEditRecordInstance(): editSetRecordEdit =
-    new editSetRecordEdit(
-      new GovukButton,
-      new GovukInput(new GovukErrorMessage, new GovukHint, new GovukLabel),
-      new GovukTextarea(new GovukErrorMessage, new GovukHint, new GovukLabel),
-      new GovukFieldset,
-      new GovukErrorSummary,
-      new GovukSelect(new GovukErrorMessage, new GovukHint, new GovukLabel),
-      new GovukLabel
-    )
-
 }
