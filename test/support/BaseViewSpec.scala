@@ -25,9 +25,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
 import play.twirl.api.Content
-import uk.gov.hmrc.govukfrontend.views.html.components.{ GovukButton, GovukErrorMessage, GovukErrorSummary, GovukFieldset, GovukHint, GovukInput, GovukLabel, GovukSelect, GovukTextarea }
 import uk.gov.nationalarchives.omega.editorial.models.User
-import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEdit
 
 class BaseViewSpec extends UnitTest {
 
