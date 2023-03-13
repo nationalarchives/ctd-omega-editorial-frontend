@@ -37,35 +37,36 @@ class HomeControllerSpec extends BaseControllerSpec {
   val loginPagePath = "/login"
 
   "HomeController GET" should {
-
-    "render the index page from a new instance of controller" {
-      val controller = new HomeController(
-        Helpers.stubMessagesControllerComponents()
-      )
-      val home = controller
-        .index()
-        .apply(
-          FakeRequest(GET, "/")
-            .withSession(SessionKeys.token -> validSessionToken)
+    "redirect to the landing page" when {
+      "render the index page from a new instance of controller" in {
+        val controller = new HomeController(
+          Helpers.stubMessagesControllerComponents()
         )
+        val home = controller
+          .index()
+          .apply(
+            FakeRequest(GET, "/")
+              .withSession(SessionKeys.token -> validSessionToken)
+          )
 
-      status(home) mustBe SEE_OTHER
-      redirectLocation(home) mustBe Some(landingPagePath)
-    }
+        status(home) mustBe SEE_OTHER
+        redirectLocation(home) mustBe Some(landingPagePath)
+      }
 
-    "redirect to the login page from the application when requested with invalid session token" {
-      val controller = new HomeController(
-        Helpers.stubMessagesControllerComponents()
-      )
-      val home = controller
-        .index()
-        .apply(
-          FakeRequest(GET, "/")
-            .withSession(SessionKeys.token -> invalidSessionToken)
+      "redirect to the login page from the application when requested with invalid session token" {
+        val controller = new HomeController(
+          Helpers.stubMessagesControllerComponents()
         )
+        val home = controller
+          .index()
+          .apply(
+            FakeRequest(GET, "/")
+              .withSession(SessionKeys.token -> invalidSessionToken)
+          )
 
-      status(home) mustBe SEE_OTHER
-      redirectLocation(home) mustBe Some(loginPagePath)
+        status(home) mustBe SEE_OTHER
+        redirectLocation(home) mustBe Some(loginPagePath)
+      }
     }
   }
 
