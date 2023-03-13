@@ -25,7 +25,7 @@ import play.api.mvc.{ AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesAc
 import play.api.test._
 import play.api.test.Helpers._
 import uk.gov.nationalarchives.omega.editorial.controllers.{ HomeController, SessionKeys }
-import support.BaseSpec
+import support.BaseControllerSpec
 
 /** Add your spec here. You can mock out a whole application including requests, plugins etc.
   *
@@ -38,7 +38,7 @@ class HomeControllerSpec extends BaseControllerSpec {
 
   "HomeController GET" should {
 
-    "render the index page from a new instance of controller" in new HomeTestCase {
+    "render the index page from a new instance of controller" {
       val controller = new HomeController(
         Helpers.stubMessagesControllerComponents()
       )
@@ -53,7 +53,7 @@ class HomeControllerSpec extends BaseControllerSpec {
       redirectLocation(home) mustBe Some(landingPagePath)
     }
 
-    "redirect to the login page from the application when requested with invalid session token" in new HomeTestCase {
+    "redirect to the login page from the application when requested with invalid session token" {
       val controller = new HomeController(
         Helpers.stubMessagesControllerComponents()
       )
@@ -69,9 +69,4 @@ class HomeControllerSpec extends BaseControllerSpec {
     }
   }
 
-  class HomeTestCase() {
-    val controller = new HomeController(
-      stubMessagesControllerComponents()
-    )
-  }
 }
