@@ -53,19 +53,19 @@ class HomeControllerSpec extends BaseControllerSpec {
       redirectLocation(home) mustBe Some(landingPagePath)
     }
 
-  "redirect to the login page from the application when requested with invalid session token" in {
-    val controller = new HomeController(
-      Helpers.stubMessagesControllerComponents()
-    )
-    val home = controller
-      .index()
-      .apply(
-        FakeRequest(GET, "/")
-          .withSession(SessionKeys.token -> invalidSessionToken)
+    "redirect to the login page from the application when requested with invalid session token" in {
+      val controller = new HomeController(
+        Helpers.stubMessagesControllerComponents()
       )
+      val home = controller
+        .index()
+        .apply(
+          FakeRequest(GET, "/")
+            .withSession(SessionKeys.token -> invalidSessionToken)
+        )
 
-    status(home) mustBe SEE_OTHER
-    redirectLocation(home) mustBe Some(loginPagePath)
+      status(home) mustBe SEE_OTHER
+      redirectLocation(home) mustBe Some(loginPagePath)
+    }
   }
-
 }
