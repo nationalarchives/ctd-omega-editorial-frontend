@@ -38,7 +38,7 @@ class HomeControllerSpec extends BaseControllerSpec {
 
   "HomeController GET" should {
 
-    "render the index page from a new instance of controller" in {
+    "render the index page from a new instance of controller" in new HomeTestCase {
       val controller = new HomeController(
         Helpers.stubMessagesControllerComponents()
       )
@@ -53,7 +53,7 @@ class HomeControllerSpec extends BaseControllerSpec {
       redirectLocation(home) mustBe Some(landingPagePath)
     }
 
-    "redirect to the login page from the application when requested with invalid session token" in {
+    "redirect to the login page from the application when requested with invalid session token" in new HomeTestCase {
       val controller = new HomeController(
         Helpers.stubMessagesControllerComponents()
       )
@@ -67,5 +67,11 @@ class HomeControllerSpec extends BaseControllerSpec {
       status(home) mustBe SEE_OTHER
       redirectLocation(home) mustBe Some(loginPagePath)
     }
+  }
+
+  class HomeTestCase() {
+    val controller = new HomeController(
+      stubMessagesControllerComponents()
+    )
   }
 }
