@@ -23,11 +23,14 @@ package support
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
+import play.twirl.api.Content
 import uk.gov.nationalarchives.omega.editorial.models.User
 
 class BaseViewSpec extends UnitTest {
 
   val user: User = User("dummy user")
   def asDocument(html: String): Document = Jsoup.parse(html)
+  def asDocument(content: Content): Document = asDocument(contentAsString(content))
 
 }
