@@ -32,5 +32,4 @@ class BaseViewSpec extends UnitTest {
   val user: User = User("dummy user")
   def asDocument(html: String): Document = Jsoup.parse(html)
   def asDocument(content: Content): Document = asDocument(contentAsString(content))
-
 }
