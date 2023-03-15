@@ -21,7 +21,6 @@
 
 package controllers
 
-import play.api.mvc.{ AnyContentAsEmpty, DefaultActionBuilder, DefaultMessagesActionBuilderImpl, DefaultMessagesControllerComponents }
 import play.api.test._
 import play.api.test.Helpers._
 import uk.gov.nationalarchives.omega.editorial.controllers.{ HomeController, SessionKeys }
@@ -52,8 +51,6 @@ class HomeControllerSpec extends BaseControllerSpec {
         status(home) mustBe SEE_OTHER
         redirectLocation(home) mustBe Some(landingPagePath)
       }
-
-      "abc" {1}
 
       "redirect to the login page from the application when requested with invalid session token" in {
         val controller = new HomeController(
