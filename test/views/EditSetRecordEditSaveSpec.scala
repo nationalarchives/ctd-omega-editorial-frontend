@@ -25,18 +25,19 @@ import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.test.Helpers
 import play.twirl.api.Html
-import support.BaseSpec
+import support.BaseViewSpec
 import support.CommonMatchers._
-import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEditSave
+import uk.gov.hmrc.govukfrontend.views.html.components.GovukNotificationBanner
 import uk.gov.nationalarchives.omega.editorial.models.PhysicalRecord
+import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEditSave
 
-class EditSetRecordEditSaveSpec extends BaseSpec {
+class EditSetRecordEditSaveSpec extends BaseViewSpec {
 
   "Edit set record edit save Html" should {
     "render the given title and heading with save changes message" in {
       implicit val messages: Messages = Helpers.stubMessages()
 
-      val editSetRecordEditSaveInstance = inject[editSetRecordEditSave]
+      val editSetRecordEditSaveInstance = getEditSetRecordEditSaveInstance
       val title = "EditRecordTitleTest"
       val editSetName = "COAL 80 Sample"
       val heading = "EditRecordHeadingTest"
@@ -74,7 +75,7 @@ class EditSetRecordEditSaveSpec extends BaseSpec {
 
   private def generateDocument(): Document = {
     implicit val messages: Messages = Helpers.stubMessages()
-    val editSetRecordEditSaveInstance = inject[editSetRecordEditSave]
+    val editSetRecordEditSaveInstance = getEditSetRecordEditSaveInstance
     asDocument(
       editSetRecordEditSaveInstance(
         user = user,
@@ -87,5 +88,8 @@ class EditSetRecordEditSaveSpec extends BaseSpec {
       )
     )
   }
+
+  private def getEditSetRecordEditSaveInstance: editSetRecordEditSave =
+    new editSetRecordEditSave(new GovukNotificationBanner)
 
 }
