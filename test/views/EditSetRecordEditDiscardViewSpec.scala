@@ -29,11 +29,15 @@ import uk.gov.hmrc.govukfrontend.views.html.components.GovukNotificationBanner
 import uk.gov.nationalarchives.omega.editorial.models.PhysicalRecord
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEditDiscard
 
-class EditSetRecordEditDiscardSpec extends BaseSpec {
+class EditSetRecordEditDiscardViewSpec extends BaseSpec {
+
+  implicit lazy val messages: Messages = Helpers.stubMessages()
+  lazy val banner = new GovukNotificationBanner
+  lazy val editSetRecordEditDiscardInstance = new editSetRecordEditDiscard(banner)
 
   "Edit set record edit discard Html" should {
 
-    "render the given title and heading with discard changes message" in new TestCase {
+    "render the given title and heading with discard changes message" in {
       val confirmationEditSetRecordEditHtml = editSetRecordEditDiscardInstance(
         user = user,
         editSetName = "COAL 80 Sample",
@@ -57,7 +61,7 @@ class EditSetRecordEditDiscardSpec extends BaseSpec {
       document must haveBackLink("/edit-set/1/record/EditRecordOciTest/edit", "edit-set.record.save.back")
     }
 
-    "render the header" in new TestCase {
+    "render the header" in {
       val confirmationEditSetRecordEditHtml = editSetRecordEditDiscardInstance(
         user = user,
         editSetName = "COAL 80 Sample",
@@ -73,15 +77,8 @@ class EditSetRecordEditDiscardSpec extends BaseSpec {
       document must haveVisibleLogoutLink
       document must haveLogoutLinkLabel("header.logout")
       document must haveLogoutLink
-
     }
 
-  }
-
-  class TestCase() {
-    implicit val messages: Messages = Helpers.stubMessages()
-    val banner = new GovukNotificationBanner
-    val editSetRecordEditDiscardInstance = new editSetRecordEditDiscard(banner)
   }
 
 }
