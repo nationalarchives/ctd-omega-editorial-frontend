@@ -23,13 +23,13 @@ package views
 
 import play.api.i18n.Messages
 import play.api.test.Helpers
-import support.BaseSpec
+import support.BaseViewSpec
 import support.CommonMatchers._
 import uk.gov.hmrc.govukfrontend.views.html.components.GovukNotificationBanner
 import uk.gov.nationalarchives.omega.editorial.models.PhysicalRecord
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEditDiscard
 
-class EditSetRecordEditDiscardViewSpec extends BaseSpec {
+class EditSetRecordEditDiscardViewSpec extends BaseViewSpec {
 
   implicit lazy val messages: Messages = Helpers.stubMessages()
   lazy val banner = new GovukNotificationBanner
