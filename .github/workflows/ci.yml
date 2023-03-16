@@ -5,8 +5,8 @@ on:
       - main
   pull_request:
 
-    # env:
-    #   GITHUB_TOKEN: ${{ github.token }}
+env:
+  GITHUB_TOKEN: ${{ github.token }}
 
 jobs:
   test-workflows:
@@ -37,6 +37,7 @@ jobs:
         uses: lhotari/action-upterm@v1
         with:
           limit-access-to-actor: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run integration tests
         run: sbt -v IntegrationTest/test
       - name: Shutdown docker compose
