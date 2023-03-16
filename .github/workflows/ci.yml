@@ -32,6 +32,11 @@ jobs:
         if: ${{ matrix.os == 'macos-latest' }}
       - name: Start docker compose
         run: docker-compose up -d && docker-compose ps
+      - uses: actions/checkout@v2
+      - name: Setup upterm session
+        uses: lhotari/action-upterm@v1
+        with:
+          limit-access-to-actor: true
       - name: Run integration tests
         run: sbt -v IntegrationTest/test
       - name: Shutdown docker compose
