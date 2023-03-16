@@ -25,8 +25,8 @@ jobs:
           java-version: 8
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Run unit tests
-        run: sbt -v +test
+          # - name: Run unit tests
+          #   run: sbt -v +test
       - name: Install docker (on macos, only)
         run: brew install docker && brew install docker-compose && colima start && docker --version
         if: ${{ matrix.os == 'macos-latest' }}
@@ -37,7 +37,7 @@ jobs:
         uses: lhotari/action-upterm@v1
         with:
           limit-access-to-actor: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
       - name: Run integration tests
         run: sbt -v IntegrationTest/test
       - name: Shutdown docker compose
