@@ -28,13 +28,10 @@ jobs:
           # - name: Run unit tests
           #   run: sbt -v +test
       - name: Install docker (on macos, only)
-        run: brew install docker && brew install docker-compose && colima start && docker --version
+        run: brew install podman && brew install docker-compose && podman machine init && podman machine start && alias docker podman
         if: ${{ matrix.os == 'macos-latest' }}
       - name: Start docker compose
         run: docker-compose up -d && docker-compose ps
-      - uses: actions/checkout@v2
-      - name: Setup upterm session
-        uses: lhotari/action-upterm@v1
       - name: Run integration tests
         run: sbt -v IntegrationTest/test
       - name: Shutdown docker compose
