@@ -56,14 +56,16 @@ class ApiConnector @Inject() (
   def getEditSetRecord(getEditSetRecord: GetEditSetRecord): IO[Option[EditSetRecord]] = {
     val requestBody = Json.stringify(Json.toJson(getEditSetRecord))
     logger.info(s"Requesting record ${getEditSetRecord.recordOci} from edit set ${getEditSetRecord.editSetOci}") *>
-    handle(SID.GetEditSetRecord, requestBody)
-      .flatMap(parse[EditSetRecord])
-      .redeem(_ => None, Some.apply)
+      handle(SID.GetEditSetRecord, requestBody)
+        .flatMap(parse[EditSetRecord])
+        .redeem(_ => None, Some.apply)
   }
 
   def updateEditSetRecord(updateEditSetRecord: UpdateEditSetRecord): IO[UpdateResponseStatus] = {
     val requestBody = Json.stringify(Json.toJson(updateEditSetRecord))
-    logger.info(s"Requesting update of edit set record ${updateEditSetRecord.recordOci}: \n${pprint.apply(updateEditSetRecord)}\n") *>
+    logger.info(
+      s"Requesting update of edit set record ${updateEditSetRecord.recordOci}: \n${pprint.apply(updateEditSetRecord)}\n"
+    ) *>
       handle(SID.UpdateEditSetRecord, requestBody).flatMap(parse[UpdateResponseStatus])
   }
 

@@ -62,50 +62,25 @@ class EditSetRecordController @Inject() (
 
   def viewEditRecordForm(editSetId: String, recordId: String): Action[AnyContent] = Action.async {
     implicit request: Request[AnyContent] =>
-      withUserAsync { user =>
-        logger.info(s"The edit set id is $editSetId for record id $recordId")
-        findEditSet(editSetId).flatMap {
-          case Right(editSet) =>
-            findEditSetRecord(editSetId, recordId).map {
-              case Right(record) =>
-                val recordPreparedForDisplay = prepareForDisplay(record)
-                val recordForm = bindFormFromRecordForDisplay(recordPreparedForDisplay)
-                Ok(generateEditSetRecordEditView(user, editSet, recordPreparedForDisplay, recordForm))
-              case Left(_) => NotFound(s"Edit Set Record [$recordId] for Edit Set [$editSetId] was not found")
-            }
-          case Left(_) => NotFound(s"Edit Set [$editSetId] was not found")
-        }
-      }
+      logger.info(s"The edit set id is $editSetId for record id $recordId")
+      generateResultForView(editSetId, recordId, view)
   }
 
-  def submit(editSetId: String, recordId: String): Action[AnyContent] = Action.async {
+  def submit(editSetId: String, editSetRecordId: String): Action[AnyContent] = Action.async {
     implicit request: Request[AnyContent] =>
-      withUserAsync { user =>
-        findEditSet(editSetId).flatMap {
-          case Right(editSet) =>
-            findEditSetRecord(editSetId, recordId).flatMap { recordOutcome =>
-              logger.info(s"The edit set id is $editSetId for record id $recordId")
-              recordOutcome.flatMap(getSubmitAction) match {
-                case Right(Save(editSetRecord, values)) => submit(editSetId, editSetRecord, values)
-                case Right(Discard) => Redirect(controllers.routes.EditSetRecordController.discard(editSetId, recordId))
-                case Right(CalculateDates(record))    => calculateDates(user, editSet, record)
-                case Right(AddAnotherCreator(record)) => addAnotherCreator(user, editSet, record)
-                case Right(RemoveLastCreator(record)) => removeLastCreator(user, editSet, record)
-                case Left(FormValidationFailed(formWithErrors, record)) =>
-                  BadRequest(generateEditSetRecordEditView(user, editSet, record, formWithErrors))
-                case Left(EditSetNotFound(missingEditSetId)) =>
-                  BadRequest(s"Edit Set with ID [$missingEditSetId] not found")
-                case Left(EditSetRecordNotFound(missingOci)) => BadRequest(s"Record with $missingOci not found")
-                case Left(InvalidAction(badAction))          => BadRequest(s"$badAction is not allowed action")
-                case Left(MissingAction)                     => BadRequest("This action is not allowed")
-              }
-            }
-          case Left(_) => BadRequest(s"Edit Set [$editSetId] was not found")
-        }
-      }
+      logger.info(s"The edit set id is $editSetId for record id $editSetRecordId")
+      generateResultForSubmission(editSetId, editSetRecordId, submit)
   }
 
-  private def submit(
+  def save(editSetId: String, editSetRecordId: String): Action[AnyContent] = Action.async {
+    implicit request: Request[AnyContent] => generateResultForView(editSetId, editSetRecordId, generateSaveView)
+  }
+
+  def discard(editSetId: String, editSetRecordId: String): Action[AnyContent] = Action.async {
+    implicit request: Request[AnyContent] => generateResultForView(editSetId, editSetRecordId, generateDiscardView)
+  }
+
+  private def updateEditSetRecord(
     editSetId: String,
     editSetRecord: EditSetRecord,
     editSetRecordFormValues: EditSetRecordFormValues
@@ -119,54 +94,125 @@ class EditSetRecordController @Inject() (
         Redirect(controllers.routes.EditSetRecordController.save(editSetId, editSetRecord.oci))
       }
 
-  def save(editSetId: String, oci: String): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
-    withUserAsync { user =>
-      findEditSet(editSetId).flatMap {
-        case Right(editSet) =>
-          findEditSetRecord(editSetId, oci).map {
-            case Right(editSetRecord) => generateSaveView(user, editSet, editSetRecord)
-            case Left(_) => NotFound(s"Edit Set Record [$editSetId] for Edit Set [$editSetId] was not found")
-          }
-        case Left(_) => NotFound(s"Edit Set [$editSetId] was not found")
-      }
-    }
+  private def view(user: User, editSet: EditSet, editSetRecord: EditSetRecord)(implicit
+    request: Request[AnyContent]
+  ): Future[Result] = {
+    val recordPreparedForDisplay = prepareForDisplay(editSetRecord)
+    Future.successful(
+      Ok(
+        generateEditSetRecordEditView(
+          user,
+          editSet,
+          recordPreparedForDisplay,
+          bindFormFromRecordForDisplay(recordPreparedForDisplay)
+        )
+      )
+    )
   }
 
-  def discard(editSetId: String, oci: String): Action[AnyContent] = Action.async {
-    implicit request: Request[AnyContent] =>
-      withUserAsync { user =>
-        findEditSet(editSetId).flatMap {
-          case Right(editSet) =>
-            findEditSetRecord(editSetId, oci).map {
-              case Right(editSetRecord) => generateDiscardView(user, editSet, editSetRecord)
-              case Left(_) => NotFound(s"Edit Set Record [$editSetId] for Edit Set [$editSetId] was not found")
-            }
-          case Left(_) => NotFound(s"Edit Set [$editSetId] was not found")
-        }
-      }
-  }
+  private def submit(user: User, editSet: EditSet, editSetRecord: EditSetRecord)(implicit
+    request: Request[AnyContent]
+  ): Future[Result] =
+    getSubmitAction(editSetRecord) match {
+      case Right(Save(editSetRecord, values)) => updateEditSetRecord(editSet.id, editSetRecord, values)
+      case Right(Discard) => Redirect(controllers.routes.EditSetRecordController.discard(editSet.id, editSetRecord.oci))
+      case Right(CalculateDates(record))    => calculateDates(user, editSet, record)
+      case Right(AddAnotherCreator(record)) => addAnotherCreator(user, editSet, record)
+      case Right(RemoveLastCreator(record)) => removeLastCreator(user, editSet, record)
+      case Left(FormValidationFailed(formWithErrors, record)) =>
+        BadRequest(generateEditSetRecordEditView(user, editSet, record, formWithErrors))
+      case Left(EditSetNotFound(missingEditSetId)) =>
+        BadRequest(s"Edit Set with ID [$missingEditSetId] not found")
+      case Left(EditSetRecordNotFound(missingOci)) => BadRequest(s"Record with $missingOci not found")
+      case Left(InvalidAction(badAction))          => BadRequest(s"$badAction is not allowed action")
+      case Left(MissingAction)                     => BadRequest("This action is not allowed")
+    }
+
+  private def generateResult(
+    editSetId: String,
+    editSetRecordId: String,
+    onSuccess: (User, EditSet, EditSetRecord) => Future[Result],
+    onUnknownEditSet: String => Future[Result],
+    onUnknownEditSetRecord: (String, String) => Future[Result]
+  )(implicit request: Request[AnyContent]): Future[Result] =
+    withUserAsync { user =>
+      (for {
+        editSetFindOutcome       <- findEditSet(editSetId)
+        editSetRecordFindOutcome <- findEditSetRecord(editSetId, editSetRecordId)
+      } yield (editSetFindOutcome, editSetRecordFindOutcome) match {
+        case (Right(editSet), Right(editSetRecord)) => onSuccess(user, editSet, editSetRecord)
+        case (Left(_), _)                           => onUnknownEditSet(editSetId)
+        case (_, Left(_))                           => onUnknownEditSetRecord(editSetId, editSetRecordId)
+      }).flatten
+    }
+
+  private def generateResultForView(
+    editSetId: String,
+    editSetRecordId: String,
+    onSuccess: (User, EditSet, EditSetRecord) => Future[Result]
+  )(implicit request: Request[AnyContent]): Future[Result] =
+    generateResult(
+      editSetId,
+      editSetRecordId,
+      onSuccess,
+      notFoundDueToUnknownEditSet,
+      notFoundDueToUnknownEditSetRecord
+    )
+
+  private def generateResultForSubmission(
+    editSetId: String,
+    editSetRecordId: String,
+    onSuccess: (User, EditSet, EditSetRecord) => Future[Result]
+  )(implicit request: Request[AnyContent]): Future[Result] =
+    generateResult(
+      editSetId,
+      editSetRecordId,
+      onSuccess,
+      badRequestDueToUnknownEditSet,
+      badRequestDueToUnknownEditSetRecord
+    )
+
+  private def notFoundDueToUnknownEditSet(editSetId: String): Future[Result] =
+    Future.successful(NotFound(generateMessageForUnknownEditSet(editSetId)))
+
+  private def notFoundDueToUnknownEditSetRecord(editSetId: String, editSetRecordId: String): Future[Result] =
+    Future.successful(NotFound(generateMessageForUnknownEditSetRecord(editSetId, editSetRecordId)))
+
+  private def badRequestDueToUnknownEditSet(editSetId: String): Future[Result] =
+    Future.successful(NotFound(generateMessageForUnknownEditSet(editSetId)))
+
+  private def badRequestDueToUnknownEditSetRecord(editSetId: String, editSetRecordId: String): Future[Result] =
+    Future.successful(NotFound(generateMessageForUnknownEditSetRecord(editSetId, editSetRecordId)))
+
+  private def generateMessageForUnknownEditSet(editSetId: String): String = s"Edit Set [$editSetId] was not found"
+
+  private def generateMessageForUnknownEditSetRecord(editSetId: String, editSetRecordId: String): String =
+    s"Edit Set Record [$editSetRecordId] for Edit Set [$editSetId] was not found"
 
   private def generateDiscardView(user: User, editSet: EditSet, editSetRecord: EditSetRecord)(implicit
     messages: Messages
-  ): Result = {
+  ): Future[Result] = {
     val title = resolvedMessage(MessageKeys.title)
     val heading = resolvedMessage(MessageKeys.heading, editSetRecord.ccr)
     val message = resolvedMessage(MessageKeys.buttonDiscard)
     val recordType = editSetRecord.recordType
     logger.info(s"Discard changes for record id ${editSetRecord.oci} edit set id ${editSet.id} ")
-    Ok(editSetRecordEditDiscard(user, editSet.name, title, heading, editSetRecord.oci, message, recordType))
+    Future.successful(
+      Ok(editSetRecordEditDiscard(user, editSet.name, title, heading, editSetRecord.oci, message, recordType))
+    )
   }
 
   private def generateSaveView(user: User, editSet: EditSet, editSetRecord: EditSetRecord)(implicit
     messages: Messages
-  ) = {
-    val title = resolvedMessage(MessageKeys.title)
-    val heading = resolvedMessage(MessageKeys.heading, editSetRecord.ccr)
-    val message = resolvedMessage(MessageKeys.buttonSave)
-    val recordType = editSetRecord.recordType
-    logger.info(s"Save changes for record id ${editSetRecord.oci} edit set id ${editSet.id}")
-    Ok(editSetRecordEditSave(user, editSet.name, title, heading, editSetRecord.oci, message, recordType))
-  }
+  ): Future[Result] =
+    Future.successful {
+      val title = resolvedMessage(MessageKeys.title)
+      val heading = resolvedMessage(MessageKeys.heading, editSetRecord.ccr)
+      val message = resolvedMessage(MessageKeys.buttonSave)
+      val recordType = editSetRecord.recordType
+      logger.info(s"Save changes for record id ${editSetRecord.oci} edit set id ${editSet.id}")
+      Ok(editSetRecordEditSave(user, editSet.name, title, heading, editSetRecord.oci, message, recordType))
+    }
 
   private def addAnotherCreator(user: User, editSet: EditSet, editSetRecord: EditSetRecord)(implicit
     request: Request[AnyContent]

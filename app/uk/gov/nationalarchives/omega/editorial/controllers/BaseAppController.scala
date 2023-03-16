@@ -42,7 +42,7 @@ abstract class BaseAppController(
 
   import BaseAppController._
 
-  implicit def resultToFutureResult(result: Result): Future[Result] = Future(result)
+  implicit def resultToFutureResult(result: Result): Future[Result] = Future.successful(result)
 
   def findEditSet(id: String): Future[Outcome[EditSet]] =
     editSetService
