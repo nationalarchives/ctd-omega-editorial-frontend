@@ -25,10 +25,10 @@ jobs:
           java-version: 8
       - name: Checkout
         uses: actions/checkout@v2
-          # - name: Run unit tests
-          #   run: sbt -v +test
+      - name: Run unit tests
+        run: sbt -v +test
       - name: Install docker (on macos, only)
-        run: brew install podman && brew install docker-compose && podman machine init && podman machine start && alias docker podman
+        run: brew install docker && brew install docker-compose && colima start && docker --version
         if: ${{ matrix.os == 'macos-latest' }}
       - name: Start docker compose
         run: docker-compose up -d && docker-compose ps
