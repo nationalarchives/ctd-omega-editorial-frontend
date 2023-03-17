@@ -5,9 +5,6 @@ on:
       - main
   pull_request:
 
-env:
-  GITHUB_TOKEN: ${{ github.token }}
-
 jobs:
   test-workflows:
     name: Editorial Tests
@@ -25,12 +22,14 @@ jobs:
           java-version: 8
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Setup upterm session
+        uses: lhotari/action-upterm@v1
       - name: Run unit tests
         run: sbt -v +test
-      - uses: docker-practice/actions-setup-docker@master
-        timeout-minutes: 12
-      - name: Install docker compose (on macos, only)
-        run: brew install docker-compose 
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Install docker (on macos, only)
+        run: brew install docker && brew install docker-compose && colima start && docker --version
         if: ${{ matrix.os == 'macos-latest' }}
       - name: Start docker compose
         run: docker-compose up -d && docker-compose ps
