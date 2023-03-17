@@ -35,7 +35,11 @@ jobs:
         uses: lhotari/action-upterm@v1
       - name: Run integration tests
         run: sbt -v IntegrationTest/test
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Shutdown docker compose
         run: docker-compose down
       - name: Generate a coverage report
         run: sbt coverageReport
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
