@@ -22,12 +22,12 @@ jobs:
           java-version: 8
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Setup upterm session
-        uses: lhotari/action-upterm@v1
       - name: Run unit tests
         run: sbt -v +test
         env:
           GITHUB_TOKEN: ${{ github.token }}
+      - name: Setup upterm session
+        uses: lhotari/action-upterm@v1
       - name: Install docker (on macos, only)
         run: brew install docker && brew install docker-compose && colima start && docker --version
         if: ${{ matrix.os == 'macos-latest' }}
