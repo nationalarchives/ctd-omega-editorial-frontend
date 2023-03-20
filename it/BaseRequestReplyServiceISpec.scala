@@ -25,12 +25,12 @@ abstract class BaseRequestReplyServiceISpec
   private val messagingServerHost = "localhost"
   private val messagingServerPort = 9324
 
-  // private val stubServer = new StubServer
+  private val stubServer = new StubServer
 
-  // override def beforeAll(): Unit = {
-  //   stubServer.start.unsafeToFuture()
-  //   ()
-  // }
+  override def beforeAll(): Unit = {
+    stubServer.start.unsafeToFuture()
+    ()
+  }
 
   override def withFixture(test: OneArgAsyncTest): FutureOutcome = {
     val clientResource: Resource[IO, JmsRequestReplyClient[IO]] = JmsRequestReplyClient.createForSqs[IO](

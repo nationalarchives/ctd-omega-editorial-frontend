@@ -199,6 +199,9 @@ Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
 // This will prevent the version conflict with Twirl, when running coverage.
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
 
+
+IntegrationTest / parallelExecution := false
+
 // This will include coverage generation for both unit and integration tests.
 coverageEnabled := true
 
