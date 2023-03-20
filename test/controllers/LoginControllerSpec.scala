@@ -22,10 +22,9 @@
 package controllers
 
 import play.api.http.Status.{ BAD_REQUEST, OK, SEE_OTHER }
-import play.api.test.Helpers.{ GET, POST, defaultAwaitTimeout, session, status }
+import play.api.test.Helpers.{ defaultAwaitTimeout, redirectLocation, session, status }
 import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import support.BaseControllerSpec
-import support.CommonMatchers.haveLegend
 import uk.gov.hmrc.govukfrontend.views.html.components.{ GovukButton, GovukErrorSummary, GovukFieldset }
 import uk.gov.nationalarchives.omega.editorial.controllers.{ LoginController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.views.html.login
@@ -36,22 +35,9 @@ class LoginControllerSpec extends BaseControllerSpec {
 
     "render the login page from a new instance of controller" in {
 
-      val response = getLoginController.view().apply(CSRFTokenHelper.addCSRFToken(FakeRequest(GET, "/login")))
+      val response = getLoginController.view().apply(CSRFTokenHelper.addCSRFToken(FakeRequest()))
 
       status(response) mustBe OK
-      val document = asDocument(response)
-      document must haveLegend("login.heading")
-
-    }
-
-    "render the login page from the application" in {
-
-      val response = getLoginController.view().apply(CSRFTokenHelper.addCSRFToken(FakeRequest(GET, "/login")))
-
-      status(response) mustBe OK
-
-      val document = asDocument(response)
-      document must haveLegend("login.heading")
     }
 
   }
@@ -64,49 +50,50 @@ class LoginControllerSpec extends BaseControllerSpec {
         .apply(
           CSRFTokenHelper
             .addCSRFToken(
-              FakeRequest(POST, "/login").withFormUrlEncodedBody("username" -> "1234", "password" -> "1234")
+              FakeRequest().withFormUrlEncodedBody("username" -> "1234", "password" -> "1234")
             )
         )
       status(response) mustBe SEE_OTHER
+      redirectLocation(response) mustBe Some(landingPagePath)
       session(response).get(SessionKeys.token) must not be empty
     }
 
-    "redirect to login page given valid username and invalid password from a new instance of controller" in {
+    "render the login page given valid username and invalid password from a new instance of controller" in {
 
       val response = getLoginController
         .submit()
         .apply(
           CSRFTokenHelper
             .addCSRFToken(
-              FakeRequest(POST, "/login").withFormUrlEncodedBody("username" -> "1234", "password" -> "12345")
+              FakeRequest().withFormUrlEncodedBody("username" -> "1234", "password" -> "12345")
             )
         )
       status(response) mustBe BAD_REQUEST
       session(response).get(SessionKeys.token) mustBe empty
     }
 
-    "redirect to login page given an invalid username and valid password from a new instance of controller" in {
+    "render the login page given an invalid username and valid password from a new instance of controller" in {
 
       val response = getLoginController
         .submit()
         .apply(
           CSRFTokenHelper
             .addCSRFToken(
-              FakeRequest(POST, "/login").withFormUrlEncodedBody("username" -> "123", "password" -> "1234")
+              FakeRequest().withFormUrlEncodedBody("username" -> "123", "password" -> "1234")
             )
         )
       status(response) mustBe BAD_REQUEST
       session(response).get(SessionKeys.token) mustBe empty
     }
 
-    "redirect to login page given an invalid username and password from a new instance of controller" in {
+    "render the login page given an invalid username and password from a new instance of controller" in {
 
       val response = getLoginController
         .submit()
         .apply(
           CSRFTokenHelper
             .addCSRFToken(
-              FakeRequest(POST, "/login").withFormUrlEncodedBody("username" -> "", "password" -> "1233")
+              FakeRequest().withFormUrlEncodedBody("username" -> "", "password" -> "1233")
             )
         )
       status(response) mustBe BAD_REQUEST

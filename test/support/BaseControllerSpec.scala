@@ -21,18 +21,11 @@
 
 package support
 
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import play.api.mvc.Result
-import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
-
-import scala.concurrent.Future
 
 class BaseControllerSpec extends UnitTest {
 
   val validSessionToken: String = Session.generateToken("1234")
   val invalidSessionToken: String = Session.generateToken("invalid-user")
-  def asDocument(html: String): Document = Jsoup.parse(html)
-  def asDocument(resultFuture: Future[Result]): Document = asDocument(contentAsString(resultFuture))
+  val landingPagePath: String = "/edit-set/1"
 }
