@@ -27,4 +27,5 @@ class BaseControllerSpec extends UnitTest {
 
   val validSessionToken: String = Session.generateToken("1234")
   val invalidSessionToken: String = Session.generateToken("invalid-user")
+  val landingPagePath: String = "/edit-set/1"
 }
