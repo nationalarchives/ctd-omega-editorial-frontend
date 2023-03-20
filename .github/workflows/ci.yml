@@ -26,13 +26,11 @@ jobs:
         run: sbt -v +test
         env:
           GITHUB_TOKEN: ${{ github.token }}
-      - name: Setup upterm session
-        uses: lhotari/action-upterm@v1
       - name: Install docker (on macos, only)
         run: brew install docker && brew install docker-compose && colima start && docker --version
         if: ${{ matrix.os == 'macos-latest' }}
       - name: Start docker compose
-        run: docker-compose up -d && docker-compose ps
+        run: docker-compose up -d && docker-compose ps && sleep 10
       - name: Run integration tests
         run: sbt -v IntegrationTest/test
         env:
@@ -43,4 +41,3 @@ jobs:
         run: sbt coverageReport
         env:
           GITHUB_TOKEN: ${{ github.token }}
-
