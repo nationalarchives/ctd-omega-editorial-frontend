@@ -24,6 +24,7 @@ package support
 import cats.effect.IO
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
 import uk.gov.nationalarchives.omega.editorial.models._
+import uk.gov.nationalarchives.omega.editorial.services.jms.StubData
 
 object TestApiConnector extends ApiConnector(null, null) with ApiConnectorMonitoring with StubData {
 

@@ -21,7 +21,8 @@
 
 package support
 
-import uk.gov.nationalarchives.omega.editorial.models.{ StubData, UpdateEditSetRecord }
+import uk.gov.nationalarchives.omega.editorial.models.UpdateEditSetRecord
+import uk.gov.nationalarchives.omega.editorial.services.jms.StubData
 import uk.gov.nationalarchives.omega.editorial.support.{ DateParser, TimeProvider }
 
 trait ModelSupport extends StubData {

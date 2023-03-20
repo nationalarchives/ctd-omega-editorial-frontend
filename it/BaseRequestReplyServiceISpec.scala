@@ -7,8 +7,7 @@ import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jFactory
 import uk.gov.nationalarchives.omega.editorial.config.{ HostBrokerEndpoint, UsernamePasswordCredentials }
 import uk.gov.nationalarchives.omega.editorial.connectors.{ JmsRequestReplyClient, RequestMessage, RequestReplyHandler }
-import uk.gov.nationalarchives.omega.editorial.models.StubData
-import uk.gov.nationalarchives.omega.editorial.services.jms.StubServer
+import uk.gov.nationalarchives.omega.editorial.services.jms.{ StubData, StubServer }
 
 import scala.concurrent.duration.{ FiniteDuration, SECONDS }
 

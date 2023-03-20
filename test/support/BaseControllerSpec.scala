@@ -21,8 +21,8 @@
 
 package support
 
-import uk.gov.nationalarchives.omega.editorial.models.StubData
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
+import uk.gov.nationalarchives.omega.editorial.services.jms.StubData
 
 class BaseControllerSpec extends UnitTest with StubData {
 
