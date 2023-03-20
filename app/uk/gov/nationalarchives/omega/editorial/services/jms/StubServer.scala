@@ -70,6 +70,7 @@ class StubServer {
                AckAction.send(message, responseQueryName)
              }
            })
+      _ <- Resource.eval(logger.info("stopping StubServer"))
     } yield consumer
 
     consumerResource.useForever
