@@ -82,6 +82,7 @@ class StubServer {
     for {
       requestMessageId <- responseBuilder.jmsMessageId(jmsMessage)
       _                <- logger.info(s"got a message with ID $requestMessageId")
+      _                <- logger.info(jmsMessage.toString)
       responseText     <- responseBuilder.createResponseText(jmsMessage)
       responseMessage  <- messageFactory.makeTextMessage(responseText)
       _ = responseMessage.setJMSCorrelationId(requestMessageId)
