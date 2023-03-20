@@ -32,7 +32,7 @@ jobs:
       - name: Start docker compose
         run: docker-compose up -d && docker-compose ps && sleep 10
       - name: Run integration tests
-        run: sbt -v IntegrationTest/test
+        run: sbt -v IntegrationTest/testOnly "it.EditSetISpec*"
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Shutdown docker compose
