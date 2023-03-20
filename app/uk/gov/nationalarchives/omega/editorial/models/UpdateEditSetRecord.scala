@@ -22,11 +22,44 @@
 package uk.gov.nationalarchives.omega.editorial.models
 
 import play.api.libs.json.{ Format, Json }
+import uk.gov.nationalarchives.omega.editorial.models.UpdateEditSetRecord.Fields
 
-import java.time.LocalDateTime
+import java.time.{ LocalDate, LocalDateTime }
 
-case class UpdateEditSetRecord(editSetOci: String, recordOci: String, timestamp: LocalDateTime)
+case class UpdateEditSetRecord(editSetOci: String, recordOci: String, timestamp: LocalDateTime, fields: Fields)
 
 object UpdateEditSetRecord {
+
   implicit val format: Format[UpdateEditSetRecord] = Json.format[UpdateEditSetRecord]
+
+  case class Fields(
+    description: String,
+    coveringDates: String,
+    formerReferenceDepartment: String,
+    formerReferencePro: String,
+    startDate: LocalDate,
+    endDate: LocalDate,
+    legalStatusId: String,
+    placeOfDepositID: String,
+    note: String,
+    background: String,
+    custodialHistory: String,
+    relatedMaterial: Seq[Fields.MaterialReference],
+    separatedMaterial: Seq[Fields.MaterialReference],
+    creatorIDs: Seq[String]
+  )
+
+  object Fields {
+
+    implicit val format: Format[Fields] = Json.format[Fields]
+
+    case class MaterialReference(linkHref: Option[String], linkText: Option[String], description: Option[String])
+
+    object MaterialReference {
+
+      implicit val format: Format[MaterialReference] = Json.format[MaterialReference]
+
+    }
+  }
+
 }

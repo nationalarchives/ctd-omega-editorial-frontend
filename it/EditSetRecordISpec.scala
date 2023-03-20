@@ -5,27 +5,24 @@ import play.api.libs.ws.{ WSCookie, WSResponse }
 import play.api.test.Helpers.{ await, defaultAwaitTimeout }
 import support.CommonMatchers._
 import support.ExpectedValues._
-import uk.gov.nationalarchives.omega.editorial.editSetRecords.{ editSetRecordMap, restoreOriginalRecords }
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, MaterialReference, PhysicalRecord }
+import uk.gov.nationalarchives.omega.editorial.models._
+
+import java.time.{ LocalDate, Month }
 
 class EditSetRecordISpec extends BaseISpec {
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    restoreOriginalRecords()
-  }
-
-  private val idOfExistingEditSet = "1" // We only support one, for the moment.
-  private val ociOfExistingRecord: String = "COAL.2022.V1RJW.P"
 
   "the page for the Edit Set Record" must {
     "behave as expected" when {
       "viewed" when {
         "not logged in" in {
 
-          val response = getEditSetRecordEditPageWhileLoggedOut()
+          val response = getEditSetRecordEditPageWhileLoggedOut(idOfExistingEditSet, ociOfExistingRecord)
 
           assertRedirection(response, "/login")
+
+          assertNoCallMadeToGetEditSet()
+          assertNoCallMadeToGetEditSetRecord()
+          assertNoCallMadeToUpdateEditSetRecord()
 
         }
         "session cookie isn't valid" in {
@@ -34,27 +31,39 @@ class EditSetRecordISpec extends BaseISpec {
 
           assertRedirection(response, "/login")
 
+          assertNoCallMadeToGetEditSet()
+          assertNoCallMadeToGetEditSetRecord()
+          assertNoCallMadeToUpdateEditSetRecord()
+
         }
         "the record's data is completely valid, ensuring" that {
           "all ids conform to the w3c recommendations" in {
 
-            val response = getEditSetRecordEditPageWhileLoggedIn()
+            val response = getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, ociOfExistingRecord)
 
             response.status mustBe OK
             asDocument(response) must haveAllLowerCaseIds
 
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
+
           }
           "all class names conform to the w3c recommendations" in {
 
-            val response = getEditSetRecordEditPageWhileLoggedIn()
+            val response = getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, ociOfExistingRecord)
 
             response.status mustBe OK
             asDocument(response) must haveAllLowerCssClassNames
 
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
+
           }
           "all sections appear in the expected order" in {
 
-            val response = getEditSetRecordEditPageWhileLoggedIn()
+            val response = getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, ociOfExistingRecord)
 
             response.status mustBe OK
             asDocument(response) must haveSectionsInCorrectOrder(
@@ -73,6 +82,10 @@ class EditSetRecordISpec extends BaseISpec {
               "Related material",
               "Separated material"
             )
+
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
 
           }
           "the form is filled out correctly" in {
@@ -155,6 +168,10 @@ class EditSetRecordISpec extends BaseISpec {
               )
             )
 
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
+
           }
         }
         "the record's data is valid except" that {
@@ -178,6 +195,10 @@ class EditSetRecordISpec extends BaseISpec {
                   )
                 )
             )
+
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertNoCallMadeToUpdateEditSetRecord()
 
           }
           "the single creator ID is unrecognised" in {
@@ -204,6 +225,10 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertNoCallMadeToUpdateEditSetRecord()
+
           }
           "no creator ID was previously selected" in {
 
@@ -229,7 +254,17 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertNoCallMadeToUpdateEditSetRecord()
+
           }
+        }
+        "the Edit Set ID is not recognised" in {
+          pending // TODO: Need to implement error response queue
+        }
+        "the Edit Set Record ID is not recognised" in {
+          pending // TODO: Need to implement error response queue
         }
       }
       "saving changes" when {
@@ -259,6 +294,10 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertNoCallMadeToUpdateEditSetRecord()
+
           }
           "is of an invalid format" in {
 
@@ -284,6 +323,10 @@ class EditSetRecordISpec extends BaseISpec {
                   errorMessageForStartDate = Some("Start date is not a valid date")
                 )
             )
+
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertNoCallMadeToUpdateEditSetRecord()
 
           }
           "isn't a real date" in {
@@ -311,6 +354,10 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertNoCallMadeToUpdateEditSetRecord()
+
           }
           "has a leading zero" when {
             "in day" in {
@@ -326,13 +373,18 @@ class EditSetRecordISpec extends BaseISpec {
 
               val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
-              assertRedirection(submissionResponse, "/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+              assertRedirection(
+                submissionResponse,
+                s"/edit-set/$idOfExistingEditSet/record/$editSetRecordOci/edit/save"
+              )
 
-              assertPageAsExpected(
-                getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-                OK,
-                generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                  .copy(startDate = ExpectedDate("2", "1", "1962"))
+              assertCallMadeToGetEditSet(idOfExistingEditSet)
+              assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+              val updateEditSetRecordForRecord = generateUpdateEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+              assertCallMadeToUpdateEditSetRecord(
+                updateEditSetRecordForRecord.copy(fields =
+                  updateEditSetRecordForRecord.fields.copy(startDate = LocalDate.of(1962, Month.JANUARY, 2))
+                )
               )
 
             }
@@ -349,13 +401,18 @@ class EditSetRecordISpec extends BaseISpec {
 
               val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
-              assertRedirection(submissionResponse, "/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+              assertRedirection(
+                submissionResponse,
+                s"/edit-set/$idOfExistingEditSet/record/$editSetRecordOci/edit/save"
+              )
 
-              assertPageAsExpected(
-                getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-                OK,
-                generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                  .copy(startDate = ExpectedDate("1", "2", "1962"))
+              assertCallMadeToGetEditSet(idOfExistingEditSet)
+              assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+              val updateEditSetRecordForRecord = generateUpdateEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+              assertCallMadeToUpdateEditSetRecord(
+                updateEditSetRecordForRecord.copy(fields =
+                  updateEditSetRecordForRecord.fields.copy(startDate = LocalDate.of(1962, Month.FEBRUARY, 1))
+                )
               )
 
             }
@@ -372,13 +429,18 @@ class EditSetRecordISpec extends BaseISpec {
 
               val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
-              assertRedirection(submissionResponse, "/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+              assertRedirection(
+                submissionResponse,
+                s"/edit-set/$idOfExistingEditSet/record/$editSetRecordOci/edit/save"
+              )
 
-              assertPageAsExpected(
-                getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-                OK,
-                generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                  .copy(startDate = ExpectedDate("1", "1", "962"))
+              assertCallMadeToGetEditSet(idOfExistingEditSet)
+              assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+              val updateEditSetRecordForRecord = generateUpdateEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+              assertCallMadeToUpdateEditSetRecord(
+                updateEditSetRecordForRecord.copy(fields =
+                  updateEditSetRecordForRecord.fields.copy(startDate = LocalDate.of(962, Month.JANUARY, 1))
+                )
               )
 
             }
@@ -411,6 +473,10 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
+
           }
           "is of an invalid format" in {
 
@@ -437,6 +503,10 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
+
           }
           "isn't a real date" in {
 
@@ -462,6 +532,10 @@ class EditSetRecordISpec extends BaseISpec {
                   errorMessageForEndDate = Some("End date is not a valid date")
                 )
             )
+
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
 
           }
           "is before start date" in {
@@ -493,6 +567,10 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
+
           }
           "has a leading zero" when {
             "in day" in {
@@ -508,13 +586,18 @@ class EditSetRecordISpec extends BaseISpec {
 
               val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
-              assertRedirection(submissionResponse, "/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+              assertRedirection(
+                submissionResponse,
+                s"/edit-set/$idOfExistingEditSet/record/$editSetRecordOci/edit/save"
+              )
 
-              assertPageAsExpected(
-                getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-                OK,
-                generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                  .copy(endDate = ExpectedDate("3", "12", "1962"))
+              assertCallMadeToGetEditSet(idOfExistingEditSet)
+              assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+              val updateEditSetRecordForRecord = generateUpdateEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+              assertCallMadeToUpdateEditSetRecord(
+                updateEditSetRecordForRecord.copy(fields =
+                  updateEditSetRecordForRecord.fields.copy(endDate = LocalDate.of(1962, Month.DECEMBER, 3))
+                )
               )
 
             }
@@ -531,13 +614,18 @@ class EditSetRecordISpec extends BaseISpec {
 
               val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
-              assertRedirection(submissionResponse, "/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+              assertRedirection(
+                submissionResponse,
+                s"/edit-set/$idOfExistingEditSet/record/$editSetRecordOci/edit/save"
+              )
 
-              assertPageAsExpected(
-                getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-                OK,
-                generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                  .copy(endDate = ExpectedDate("1", "9", "1962"))
+              assertCallMadeToGetEditSet(idOfExistingEditSet)
+              assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+              val updateEditSetRecordForRecord = generateUpdateEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+              assertCallMadeToUpdateEditSetRecord(
+                updateEditSetRecordForRecord.copy(fields =
+                  updateEditSetRecordForRecord.fields.copy(endDate = LocalDate.of(1962, Month.SEPTEMBER, 1))
+                )
               )
 
             }
@@ -557,13 +645,21 @@ class EditSetRecordISpec extends BaseISpec {
 
               val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
-              assertRedirection(submissionResponse, "/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+              assertRedirection(
+                submissionResponse,
+                s"/edit-set/$idOfExistingEditSet/record/$editSetRecordOci/edit/save"
+              )
 
-              assertPageAsExpected(
-                getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-                OK,
-                generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                  .copy(startDate = ExpectedDate("1", "1", "962"), endDate = ExpectedDate("31", "12", "962"))
+              assertCallMadeToGetEditSet(idOfExistingEditSet)
+              assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+              val updateEditSetRecordForRecord = generateUpdateEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+              assertCallMadeToUpdateEditSetRecord(
+                updateEditSetRecordForRecord.copy(fields =
+                  updateEditSetRecordForRecord.fields.copy(
+                    startDate = LocalDate.of(962, Month.JANUARY, 1),
+                    endDate = LocalDate.of(962, Month.DECEMBER, 31)
+                  )
+                )
               )
 
             }
@@ -601,6 +697,10 @@ class EditSetRecordISpec extends BaseISpec {
               )
           )
 
+          assertCallMadeToGetEditSet(idOfExistingEditSet)
+          assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+          assertNoCallMadeToUpdateEditSetRecord()
+
         }
         "the covering dates" when {
           "are invalid" in {
@@ -625,6 +725,10 @@ class EditSetRecordISpec extends BaseISpec {
                 errorMessageForCoveringsDates = Some("Covering date format is not valid")
               )
             )
+
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
 
           }
           "are too long" in {
@@ -654,6 +758,10 @@ class EditSetRecordISpec extends BaseISpec {
               )
             )
 
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
+
           }
           "is empty" in {
 
@@ -679,6 +787,10 @@ class EditSetRecordISpec extends BaseISpec {
                   errorMessageForCoveringsDates = Some("Enter the covering dates")
                 )
             )
+
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
 
           }
         }
@@ -709,6 +821,10 @@ class EditSetRecordISpec extends BaseISpec {
               )
             )
 
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
+
           }
           "isn't recognised" in {
 
@@ -737,6 +853,10 @@ class EditSetRecordISpec extends BaseISpec {
               )
             )
 
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
+
           }
         }
         "the legal status" when {
@@ -761,6 +881,10 @@ class EditSetRecordISpec extends BaseISpec {
               )
             )
 
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
+
           }
           "is unrecognised" in {
 
@@ -773,14 +897,17 @@ class EditSetRecordISpec extends BaseISpec {
 
             val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
-            assertRedirection(submissionResponse, "/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+            assertRedirection(submissionResponse, s"/edit-set/$idOfExistingEditSet/record/$editSetRecordOci/edit/save")
 
-            val getRecordResult = getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci)
-            assertPageAsExpected(
-              getRecordResult,
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(legalStatusID = "")
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            val updateEditSetRecordForRecord = generateUpdateEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertCallMadeToUpdateEditSetRecord(
+              updateEditSetRecordForRecord.copy(fields =
+                updateEditSetRecordForRecord.fields.copy(
+                  legalStatusId = "ref.10"
+                )
+              )
             )
 
           }
@@ -809,6 +936,10 @@ class EditSetRecordISpec extends BaseISpec {
               )
             )
 
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
+
           }
           "is blank" in {
 
@@ -821,13 +952,17 @@ class EditSetRecordISpec extends BaseISpec {
 
             val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
-            assertRedirection(submissionResponse, "/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+            assertRedirection(submissionResponse, s"/edit-set/$idOfExistingEditSet/record/$editSetRecordOci/edit/save")
 
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(note = "")
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            val updateEditSetRecordForRecord = generateUpdateEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertCallMadeToUpdateEditSetRecord(
+              updateEditSetRecordForRecord.copy(fields =
+                updateEditSetRecordForRecord.fields.copy(
+                  note = ""
+                )
+              )
             )
 
           }
@@ -862,6 +997,10 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
+
           }
           "is blank" in {
 
@@ -874,13 +1013,17 @@ class EditSetRecordISpec extends BaseISpec {
 
             val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
-            assertRedirection(submissionResponse, "/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+            assertRedirection(submissionResponse, s"/edit-set/$idOfExistingEditSet/record/$editSetRecordOci/edit/save")
 
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(background = "")
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            val updateEditSetRecordForRecord = generateUpdateEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertCallMadeToUpdateEditSetRecord(
+              updateEditSetRecordForRecord.copy(fields =
+                updateEditSetRecordForRecord.fields.copy(
+                  background = ""
+                )
+              )
             )
 
           }
@@ -913,6 +1056,10 @@ class EditSetRecordISpec extends BaseISpec {
               )
             )
 
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
+
           }
           "is blank" in {
 
@@ -925,13 +1072,17 @@ class EditSetRecordISpec extends BaseISpec {
 
             val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
-            assertRedirection(submissionResponse, "/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+            assertRedirection(submissionResponse, s"/edit-set/$idOfExistingEditSet/record/$editSetRecordOci/edit/save")
 
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(custodialHistory = "")
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            val updateEditSetRecordForRecord = generateUpdateEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertCallMadeToUpdateEditSetRecord(
+              updateEditSetRecordForRecord.copy(fields =
+                updateEditSetRecordForRecord.fields.copy(
+                  custodialHistory = ""
+                )
+              )
             )
 
           }
@@ -946,13 +1097,16 @@ class EditSetRecordISpec extends BaseISpec {
 
             val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
-            assertRedirection(submissionResponse, "/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
-
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(custodialHistory = "")
+            assertRedirection(submissionResponse, s"/edit-set/$idOfExistingEditSet/record/$editSetRecordOci/edit/save")
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            val updateEditSetRecordForRecord = generateUpdateEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertCallMadeToUpdateEditSetRecord(
+              updateEditSetRecordForRecord.copy(fields =
+                updateEditSetRecordForRecord.fields.copy(
+                  custodialHistory = "   "
+                )
+              )
             )
 
           }
@@ -1000,6 +1154,10 @@ class EditSetRecordISpec extends BaseISpec {
               )
           )
 
+          assertCallMadeToGetEditSet(idOfExistingEditSet)
+          assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+          assertNoCallMadeToUpdateEditSetRecord()
+
         }
         "multiple creators have been selected" in {
 
@@ -1013,27 +1171,15 @@ class EditSetRecordISpec extends BaseISpec {
 
           val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
-          assertRedirection(submissionResponse, "/edit-set/1/record/COAL.2022.V4RJW.P/edit/save")
+          assertRedirection(submissionResponse, s"/edit-set/$idOfExistingEditSet/record/$editSetRecordOci/edit/save")
 
-          assertPageAsExpected(
-            getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-            OK,
-            generateExpectedEditRecordPageFromRecord(editSetRecordOci).copy(
-              optionsForCreators = Seq(
-                Seq(
-                  ExpectedSelectOption("", "Select creator", disabled = true),
-                  ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)", selected = true),
-                  ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                  ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                  ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                ),
-                Seq(
-                  ExpectedSelectOption("", "Select creator", disabled = true),
-                  ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                  ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                  ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                  ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                )
+          assertCallMadeToGetEditSet(idOfExistingEditSet)
+          assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+          val updateEditSetRecordForRecord = generateUpdateEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+          assertCallMadeToUpdateEditSetRecord(
+            updateEditSetRecordForRecord.copy(fields =
+              updateEditSetRecordForRecord.fields.copy(
+                creatorIDs = Seq("48N", "46F")
               )
             )
           )
@@ -1050,29 +1196,17 @@ class EditSetRecordISpec extends BaseISpec {
                 "creator-ids[2]" -> ""
               )
 
-          val response = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
+          val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
-          assertRedirection(response, "/edit-set/1/record/COAL.2022.V4RJW.P/edit/save")
+          assertRedirection(submissionResponse, s"/edit-set/$idOfExistingEditSet/record/$editSetRecordOci/edit/save")
 
-          assertPageAsExpected(
-            getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-            OK,
-            generateExpectedEditRecordPageFromRecord(editSetRecordOci).copy(
-              optionsForCreators = Seq(
-                Seq(
-                  ExpectedSelectOption("", "Select creator", disabled = true),
-                  ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)", selected = true),
-                  ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                  ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                  ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                ),
-                Seq(
-                  ExpectedSelectOption("", "Select creator", disabled = true),
-                  ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                  ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                  ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                  ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                )
+          assertCallMadeToGetEditSet(idOfExistingEditSet)
+          assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+          val updateEditSetRecordForRecord = generateUpdateEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+          assertCallMadeToUpdateEditSetRecord(
+            updateEditSetRecordForRecord.copy(fields =
+              updateEditSetRecordForRecord.fields.copy(
+                creatorIDs = Seq("48N", "46F")
               )
             )
           )
@@ -1089,39 +1223,19 @@ class EditSetRecordISpec extends BaseISpec {
                 "creator-ids[2]" -> "46F"
               )
 
-          val response = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
+          val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
-          assertRedirection(response, "/edit-set/1/record/COAL.2022.V4RJW.P/edit/save")
+          assertRedirection(submissionResponse, s"/edit-set/$idOfExistingEditSet/record/$editSetRecordOci/edit/save")
 
-          assertPageAsExpected(
-            getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-            OK,
-            generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-              .copy(
-                optionsForCreators = Seq(
-                  Seq(
-                    ExpectedSelectOption("", "Select creator", disabled = true),
-                    ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)", selected = true),
-                    ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                    ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                    ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                  ),
-                  Seq(
-                    ExpectedSelectOption("", "Select creator", disabled = true),
-                    ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                    ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                    ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                    ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                  ),
-                  Seq(
-                    ExpectedSelectOption("", "Select creator", disabled = true),
-                    ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                    ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                    ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                    ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                  )
-                )
+          assertCallMadeToGetEditSet(idOfExistingEditSet)
+          assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+          val updateEditSetRecordForRecord = generateUpdateEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+          assertCallMadeToUpdateEditSetRecord(
+            updateEditSetRecordForRecord.copy(fields =
+              updateEditSetRecordForRecord.fields.copy(
+                creatorIDs = Seq("48N", "46F", "46F")
               )
+            )
           )
 
         }
@@ -1152,6 +1266,10 @@ class EditSetRecordISpec extends BaseISpec {
               )
             )
 
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
+
           }
           "all spaces" in {
 
@@ -1162,15 +1280,18 @@ class EditSetRecordISpec extends BaseISpec {
                   "scope-and-content" -> "   "
                 )
 
-            val response = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
+            val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
-            assertRedirection(response, "/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+            assertRedirection(submissionResponse, s"/edit-set/$idOfExistingEditSet/record/$editSetRecordOci/edit/save")
 
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci).copy(
-                scopeAndContent = ""
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            val updateEditSetRecordForRecord = generateUpdateEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertCallMadeToUpdateEditSetRecord(
+              updateEditSetRecordForRecord.copy(fields =
+                updateEditSetRecordForRecord.fields.copy(
+                  description = "   "
+                )
               )
             )
 
@@ -1202,6 +1323,10 @@ class EditSetRecordISpec extends BaseISpec {
               )
             )
 
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
+
           }
         }
         "former reference department" when {
@@ -1214,15 +1339,19 @@ class EditSetRecordISpec extends BaseISpec {
                   "former-reference-department" -> ""
                 )
 
-            val response = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
+            val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
-            assertRedirection(response, "/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+            assertRedirection(submissionResponse, s"/edit-set/$idOfExistingEditSet/record/$editSetRecordOci/edit/save")
 
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(formerReferenceDepartment = "")
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            val updateEditSetRecordForRecord = generateUpdateEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertCallMadeToUpdateEditSetRecord(
+              updateEditSetRecordForRecord.copy(fields =
+                updateEditSetRecordForRecord.fields.copy(
+                  formerReferenceDepartment = ""
+                )
+              )
             )
 
           }
@@ -1235,15 +1364,19 @@ class EditSetRecordISpec extends BaseISpec {
                   "former-reference-department" -> "   "
                 )
 
-            val response = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
+            val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
-            assertRedirection(response, "/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+            assertRedirection(submissionResponse, s"/edit-set/$idOfExistingEditSet/record/$editSetRecordOci/edit/save")
 
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(formerReferenceDepartment = "   ")
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            val updateEditSetRecordForRecord = generateUpdateEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertCallMadeToUpdateEditSetRecord(
+              updateEditSetRecordForRecord.copy(fields =
+                updateEditSetRecordForRecord.fields.copy(
+                  formerReferenceDepartment = "   "
+                )
+              )
             )
 
           }
@@ -1276,6 +1409,10 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
+
           }
         }
         "former reference pro" when {
@@ -1288,15 +1425,19 @@ class EditSetRecordISpec extends BaseISpec {
                   "former-reference-pro" -> ""
                 )
 
-            val response = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
+            val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
-            assertRedirection(response, "/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+            assertRedirection(submissionResponse, s"/edit-set/$idOfExistingEditSet/record/$editSetRecordOci/edit/save")
 
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(formerReferencePro = "")
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            val updateEditSetRecordForRecord = generateUpdateEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertCallMadeToUpdateEditSetRecord(
+              updateEditSetRecordForRecord.copy(fields =
+                updateEditSetRecordForRecord.fields.copy(
+                  formerReferencePro = ""
+                )
+              )
             )
 
           }
@@ -1309,15 +1450,19 @@ class EditSetRecordISpec extends BaseISpec {
                   "former-reference-pro" -> "   "
                 )
 
-            val response = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
+            val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
-            assertRedirection(response, "/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
+            assertRedirection(submissionResponse, s"/edit-set/$idOfExistingEditSet/record/$editSetRecordOci/edit/save")
 
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(formerReferencePro = "   ")
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            val updateEditSetRecordForRecord = generateUpdateEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertCallMadeToUpdateEditSetRecord(
+              updateEditSetRecordForRecord.copy(fields =
+                updateEditSetRecordForRecord.fields.copy(
+                  formerReferencePro = "   "
+                )
+              )
             )
 
           }
@@ -1350,6 +1495,10 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
+
           }
         }
         "all fields are provided and valid" in {
@@ -1380,6 +1529,29 @@ class EditSetRecordISpec extends BaseISpec {
 
           assertRedirection(submissionResponse, "/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
 
+          assertCallMadeToGetEditSet(idOfExistingEditSet)
+          assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+          val updateEditSetRecordForRecord = generateUpdateEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+          assertCallMadeToUpdateEditSetRecord(
+            updateEditSetRecordForRecord.copy(fields =
+              updateEditSetRecordForRecord.fields.copy(
+                description =
+                  "The Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
+                coveringDates = "1960",
+                formerReferenceDepartment = "Photographs",
+                formerReferencePro = "CAB 172",
+                startDate = LocalDate.of(1960, Month.APRIL, 2),
+                endDate = LocalDate.of(1960, Month.OCTOBER, 26),
+                legalStatusId = "ref.2",
+                note = "A brief note about COAL.2022.V1RJW.P.",
+                background = "The photo was taken by a daughter of one of the coal miners who used them.",
+                custodialHistory = "These files originally created by successor or predecessor departments for COAL",
+                placeOfDepositID = "3",
+                creatorIDs = Seq("46F", "8R6")
+              )
+            )
+          )
+
           assertPageAsExpected(
             getEditSetRecordSavePage(idOfExistingEditSet, editSetRecordOci),
             OK,
@@ -1394,20 +1566,27 @@ class EditSetRecordISpec extends BaseISpec {
             )
           )
 
-          assertPageAsExpected(
-            getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-            OK,
-            generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-          )
-
         }
         "fields are provided and valid without record type suffix" in {
 
           val editSetRecordOci = "COAL.2022.V2RJW"
           val values = valuesFromRecord(editSetRecordOci) ++ Map("place-of-deposit-id" -> "3")
+
           val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
           assertRedirection(submissionResponse, s"/edit-set/1/record/$editSetRecordOci/edit/save")
+
+          assertCallMadeToGetEditSet(idOfExistingEditSet)
+          assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+          val updateEditSetRecordForRecord = generateUpdateEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+          assertCallMadeToUpdateEditSetRecord(
+            updateEditSetRecordForRecord.copy(fields =
+              updateEditSetRecordForRecord.fields.copy(
+                placeOfDepositID = "3"
+              )
+            )
+          )
+
           assertPageAsExpected(
             getEditSetRecordSavePage(idOfExistingEditSet, editSetRecordOci),
             OK,
@@ -1420,12 +1599,6 @@ class EditSetRecordISpec extends BaseISpec {
               backLinkLabel = "Back to edit set (COAL 80 Sample)",
               backLinkHref = "/edit-set/1"
             )
-          )
-
-          assertPageAsExpected(
-            getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-            OK,
-            generateExpectedEditRecordPageFromRecord(editSetRecordOci)
           )
 
         }
@@ -1457,15 +1630,9 @@ class EditSetRecordISpec extends BaseISpec {
             )
           )
 
-          assertPageAsExpected(
-            getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-            OK,
-            generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-              .copy(
-                scopeAndContent =
-                  "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)"
-              )
-          )
+          assertCallMadeToGetEditSet(idOfExistingEditSet)
+          assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+          assertNoCallMadeToUpdateEditSetRecord()
 
         }
         "all fields are unchanged" in {
@@ -1491,11 +1658,9 @@ class EditSetRecordISpec extends BaseISpec {
             )
           )
 
-          assertPageAsExpected(
-            getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-            OK,
-            generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-          )
+          assertCallMadeToGetEditSet(idOfExistingEditSet)
+          assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+          assertNoCallMadeToUpdateEditSetRecord()
 
         }
 
@@ -1522,11 +1687,9 @@ class EditSetRecordISpec extends BaseISpec {
             )
           )
 
-          assertPageAsExpected(
-            getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-            OK,
-            generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-          )
+          assertCallMadeToGetEditSet(idOfExistingEditSet)
+          assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+          assertNoCallMadeToUpdateEditSetRecord()
 
         }
       }
@@ -1584,22 +1747,9 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
-                    )
-                  )
-                )
-            )
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertNoCallMadeToUpdateEditSetRecord()
 
           }
           "keep that same selection, but already have an empty slot" in {
@@ -1628,10 +1778,10 @@ class EditSetRecordISpec extends BaseISpec {
                 "creator-ids[1]" -> ""
               )
 
-            val response = submitAddingAnotherCreatorSlot(idOfExistingEditSet, editSetRecordOci, values)
+            val submissionResponse = submitAddingAnotherCreatorSlot(idOfExistingEditSet, editSetRecordOci, values)
 
             assertPageAsExpected(
-              response,
+              submissionResponse,
               OK,
               generateExpectedEditRecordPageFromRecord(editSetRecordOci)
                 .copy(optionsForCreators =
@@ -1654,22 +1804,9 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
-                    )
-                  )
-                )
-            )
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertNoCallMadeToUpdateEditSetRecord()
 
           }
           "clear that selection" in {
@@ -1697,10 +1834,10 @@ class EditSetRecordISpec extends BaseISpec {
                 "creator-ids[0]" -> ""
               )
 
-            val response = submitAddingAnotherCreatorSlot(idOfExistingEditSet, editSetRecordOci, values)
+            val submissionResponse = submitAddingAnotherCreatorSlot(idOfExistingEditSet, editSetRecordOci, values)
 
             assertPageAsExpected(
-              response,
+              submissionResponse,
               OK,
               generateExpectedEditRecordPageFromRecord(editSetRecordOci)
                 .copy(optionsForCreators =
@@ -1716,22 +1853,9 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
-                    )
-                  )
-                )
-            )
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertNoCallMadeToUpdateEditSetRecord()
 
           }
           "change that selection" in {
@@ -1759,10 +1883,10 @@ class EditSetRecordISpec extends BaseISpec {
                 "creator-ids[0]" -> "92W"
               )
 
-            val response = submitAddingAnotherCreatorSlot(idOfExistingEditSet, editSetRecordOci, values)
+            val submissionResponse = submitAddingAnotherCreatorSlot(idOfExistingEditSet, editSetRecordOci, values)
 
             assertPageAsExpected(
-              response,
+              submissionResponse,
               OK,
               generateExpectedEditRecordPageFromRecord(editSetRecordOci)
                 .copy(optionsForCreators =
@@ -1785,22 +1909,9 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
-                    )
-                  )
-                )
-            )
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertNoCallMadeToUpdateEditSetRecord()
 
           }
         }
@@ -1843,10 +1954,10 @@ class EditSetRecordISpec extends BaseISpec {
                   "creator-ids[1]" -> "92W"
                 )
 
-            val response = submitAddingAnotherCreatorSlot(idOfExistingEditSet, editSetRecordOci, values)
+            val submissionResponse = submitAddingAnotherCreatorSlot(idOfExistingEditSet, editSetRecordOci, values)
 
             assertPageAsExpected(
-              response,
+              submissionResponse,
               OK,
               generateExpectedEditRecordPageFromRecord(editSetRecordOci)
                 .copy(optionsForCreators =
@@ -1880,33 +1991,9 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(
-                        "48N",
-                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
-                        selected = true
-                      ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
-            )
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertNoCallMadeToUpdateEditSetRecord()
 
           }
           "(including duplicates) and we keep those selections" in {
@@ -1999,40 +2086,9 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(
-                        "48N",
-                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
-                        selected = true
-                      ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
-            )
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertNoCallMadeToUpdateEditSetRecord()
 
           }
           "but we change those selections" in {
@@ -2124,40 +2180,9 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(
-                        "48N",
-                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
-                        selected = true
-                      ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
-            )
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertNoCallMadeToUpdateEditSetRecord()
 
           }
         }
@@ -2225,33 +2250,9 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(
-                        "48N",
-                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
-                        selected = true
-                      ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
-            )
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
 
           }
           "we change the first selection" in {
@@ -2311,33 +2312,9 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(
-                        "48N",
-                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
-                        selected = true
-                      ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
-            )
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
 
           }
           "we blank out the first" in {
@@ -2397,34 +2374,9 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
-            getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci).status mustBe OK
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(
-                        "48N",
-                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
-                        selected = true
-                      ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
-            )
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+            assertNoCallMadeToUpdateEditSetRecord()
 
           }
         }
@@ -2505,40 +2457,9 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(
-                        "48N",
-                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
-                        selected = true
-                      ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
-                    )
-                  )
-                )
-            )
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertNoCallMadeToUpdateEditSetRecord()
 
           }
           "we change the first two selections" in {
@@ -2617,40 +2538,9 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(
-                        "48N",
-                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
-                        selected = true
-                      ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
-                    )
-                  )
-                )
-            )
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertNoCallMadeToUpdateEditSetRecord()
 
           }
           "we remove two in a row" in {
@@ -2755,40 +2645,9 @@ class EditSetRecordISpec extends BaseISpec {
                 )
             )
 
-            assertPageAsExpected(
-              getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-              OK,
-              generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(
-                        "48N",
-                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
-                        selected = true
-                      ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
-                    )
-                  )
-                )
-            )
+            assertCallMadeToGetEditSet(idOfExistingEditSet)
+            assertCallMadeToGetEditSetRecord(idOfExistingEditSet, editSetRecordOci)
+            assertNoCallMadeToUpdateEditSetRecord()
 
           }
         }
@@ -2818,12 +2677,9 @@ class EditSetRecordISpec extends BaseISpec {
             )
           )
 
-          assertPageAsExpected(
-            getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-            OK,
-            generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-              .copy(coveringDates = "1962")
-          )
+          assertCallMadeToGetEditSet(idOfExistingEditSet)
+          assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+          assertNoCallMadeToUpdateEditSetRecord()
 
         }
         "all spaces" in {
@@ -2850,12 +2706,9 @@ class EditSetRecordISpec extends BaseISpec {
             )
           )
 
-          assertPageAsExpected(
-            getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-            OK,
-            generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-              .copy(coveringDates = "1962")
-          )
+          assertCallMadeToGetEditSet(idOfExistingEditSet)
+          assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+          assertNoCallMadeToUpdateEditSetRecord()
 
         }
         "of an invalid format" in {
@@ -2881,12 +2734,9 @@ class EditSetRecordISpec extends BaseISpec {
             )
           )
 
-          assertPageAsExpected(
-            getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-            OK,
-            generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-              .copy(coveringDates = "1962")
-          )
+          assertCallMadeToGetEditSet(idOfExistingEditSet)
+          assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+          assertNoCallMadeToUpdateEditSetRecord()
 
         }
         "containing a non-existent date" in {
@@ -2912,12 +2762,9 @@ class EditSetRecordISpec extends BaseISpec {
             )
           )
 
-          assertPageAsExpected(
-            getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-            OK,
-            generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-              .copy(coveringDates = "1962")
-          )
+          assertCallMadeToGetEditSet(idOfExistingEditSet)
+          assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+          assertNoCallMadeToUpdateEditSetRecord()
 
         }
         "it covers period of the switchover" in {
@@ -2942,12 +2789,9 @@ class EditSetRecordISpec extends BaseISpec {
               )
           )
 
-          assertPageAsExpected(
-            getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-            OK,
-            generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-              .copy(coveringDates = "1962")
-          )
+          assertCallMadeToGetEditSet(idOfExistingEditSet)
+          assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+          assertNoCallMadeToUpdateEditSetRecord()
 
         }
         "covers period after the switchover" in {
@@ -2971,12 +2815,9 @@ class EditSetRecordISpec extends BaseISpec {
             )
           )
 
-          assertPageAsExpected(
-            getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-            OK,
-            generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-              .copy(coveringDates = "1962")
-          )
+          assertCallMadeToGetEditSet(idOfExistingEditSet)
+          assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+          assertNoCallMadeToUpdateEditSetRecord()
 
         }
         "covers multiple ranges" in {
@@ -3001,28 +2842,20 @@ class EditSetRecordISpec extends BaseISpec {
               )
           )
 
-          assertPageAsExpected(
-            getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci),
-            OK,
-            generateExpectedEditRecordPageFromRecord(editSetRecordOci)
-              .copy(coveringDates = "1962")
-          )
+          assertCallMadeToGetEditSet(idOfExistingEditSet)
+          assertCallMadeToGetEditSetRecord(idOfExistingEditSet, ociOfExistingRecord)
+          assertNoCallMadeToUpdateEditSetRecord()
 
         }
+
       }
     }
   }
 
-  private def getEditSetRecordEditPageWhileLoggedOut(
-    editSetId: String = idOfExistingEditSet,
-    editSetRecordOci: String = ociOfExistingRecord
-  ): WSResponse =
+  private def getEditSetRecordEditPageWhileLoggedOut(editSetId: String, editSetRecordOci: String): WSResponse =
     getEditSetRecordEditPage(editSetId, editSetRecordOci, None)
 
-  private def getEditSetRecordEditPageWhileLoggedIn(
-    editSetId: String = idOfExistingEditSet,
-    editSetRecordOci: String = ociOfExistingRecord
-  ): WSResponse =
+  private def getEditSetRecordEditPageWhileLoggedIn(editSetId: String, editSetRecordOci: String): WSResponse =
     getEditSetRecordEditPage(editSetId, editSetRecordOci, Some(loginForSessionCookie()))
 
   private def getEditSetRecordEditPage(
@@ -3058,9 +2891,6 @@ class EditSetRecordISpec extends BaseISpec {
     val url = baseUrl.addCookies(loginForSessionCookie())
     await(url.get())
   }
-
-  private def getExpectedEditSetRecord(oci: String): EditSetRecord =
-    editSetRecordMap.getOrElse(oci, fail(s"Unable to get record for OCI [$oci]"))
 
   private def generateExpectedEditRecordPageFromRecord(oci: String): ExpectedEditRecordEditPage = {
     val editSetRecord = getExpectedEditSetRecord(oci)
@@ -3415,6 +3245,7 @@ class EditSetRecordISpec extends BaseISpec {
     ) ++ mapOfCreatorIDs
 
   }
+
 }
 
 object EditSetRecordISpec {

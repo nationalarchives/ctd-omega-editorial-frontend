@@ -30,13 +30,11 @@ import play.api.test._
 import play.twirl.api.Html
 import support.BaseControllerSpec
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetController, SessionKeys }
-import uk.gov.nationalarchives.omega.editorial.editSetRecords.restoreOriginalRecords
-import uk.gov.nationalarchives.omega.editorial.editSets.getEditSet
 import uk.gov.nationalarchives.omega.editorial.models.User
 import uk.gov.nationalarchives.omega.editorial.services.Direction.{ Ascending, Descending }
 import uk.gov.nationalarchives.omega.editorial.services.EditSetEntryRowOrder.{ CCROrder, CoveringDatesOrder, ScopeAndContentOrder }
 import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination.EditSetPage
-import uk.gov.nationalarchives.omega.editorial.services.{ EditSetEntryRowOrder, EditSetService }
+import uk.gov.nationalarchives.omega.editorial.services.{ EditSetEntryRowOrder, EditSetRecordService, EditSetService }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -46,22 +44,21 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * For more information, see https://www.playframework.com/documentation/latest/ScalaTestingWithScalaTest
   */
 class EditSetControllerSpec extends BaseControllerSpec {
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    restoreOriginalRecords()
-  }
 
   "EditSetController GET /edit-set/{id}" should {
 
     "render the edit set page from a new instance of controller" in {
+      val editSetId = "1"
       val mockEditSet = mock[editSet]
       val mockEditSetService = mock[EditSetService]
+      val mockEditSetRecordService = mock[EditSetRecordService]
       val controller = new EditSetController(
         Helpers.stubMessagesControllerComponents(),
         mockEditSetService,
+        mockEditSetRecordService,
         mockEditSet
       )
-      when(mockEditSetService.get("1")).thenReturn(IO.pure(getEditSet()))
+      when(mockEditSetService.get(editSetId)).thenReturn(IO.pure(getEditSet(editSetId)))
       when(
         mockEditSet(any[User], anyString(), anyString(), any[EditSetPage], any[EditSetEntryRowOrder])(
           any[Messages],
@@ -82,9 +79,11 @@ class EditSetControllerSpec extends BaseControllerSpec {
     "redirect to the login page from the application when requested with invalid session token" in {
       val mockEditSet = mock[editSet]
       val mockEditSetService = mock[EditSetService]
+      val mockEditSetRecordService = mock[EditSetRecordService]
       val controller = new EditSetController(
         Helpers.stubMessagesControllerComponents(),
         mockEditSetService,
+        mockEditSetRecordService,
         mockEditSet
       )
       val editSet = controller
@@ -101,15 +100,18 @@ class EditSetControllerSpec extends BaseControllerSpec {
     "order records" when {
 
       def orderingRequest(mockEditSet: editSet, field: String, direction: String, offset: Int = 1) = {
+        val editSetId = "1"
         val request = FakeRequest(GET, s"/edit-set/1?field=$field&direction=$direction&offset=$offset")
           .withSession(SessionKeys.token -> validSessionToken)
         val mockEditSetService = mock[EditSetService]
+        val mockEditSetRecordService = mock[EditSetRecordService]
         val controller = new EditSetController(
           Helpers.stubMessagesControllerComponents(),
           mockEditSetService,
+          mockEditSetRecordService,
           mockEditSet
         )
-        when(mockEditSetService.get("1")).thenReturn(IO.pure(getEditSet()))
+        when(mockEditSetService.get(editSetId)).thenReturn(IO.pure(getEditSet(editSetId)))
         when(
           mockEditSet(any[User], anyString, anyString, any[EditSetPage], any[EditSetEntryRowOrder])(
             any[Messages],

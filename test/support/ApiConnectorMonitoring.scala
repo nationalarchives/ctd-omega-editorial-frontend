@@ -21,12 +21,32 @@
 
 package support
 
-import uk.gov.nationalarchives.omega.editorial.models.session.Session
-import uk.gov.nationalarchives.omega.editorial.services.jms.StubData
+import uk.gov.nationalarchives.omega.editorial.models.{ GetEditSet, GetEditSetRecord, UpdateEditSetRecord }
 
-class BaseControllerSpec extends UnitTest with StubData {
+trait ApiConnectorMonitoring {
 
-  val validSessionToken: String = Session.generateToken("1234")
-  val invalidSessionToken: String = Session.generateToken("invalid-user")
-  val landingPagePath: String = "/edit-set/1"
+  private var lastSentGetEditSet: Option[GetEditSet] = None
+  private var lastSentGetEditSetRecord: Option[GetEditSetRecord] = None
+  private var lastSentUpdateEditSetRecord: Option[UpdateEditSetRecord] = None
+
+  def record(getEditSetRequest: GetEditSet): Unit =
+    lastSentGetEditSet = Option(getEditSetRequest)
+
+  def record(getEditSetRecordRequest: GetEditSetRecord): Unit =
+    lastSentGetEditSetRecord = Option(getEditSetRecordRequest)
+
+  def record(updateEditSetRecordRequest: UpdateEditSetRecord): Unit =
+    lastSentUpdateEditSetRecord = Option(updateEditSetRecordRequest)
+
+  def getLastSentGetEditSetRequest(): Option[GetEditSet] = lastSentGetEditSet
+
+  def getLastSentGetEditSetRecordRequest(): Option[GetEditSetRecord] = lastSentGetEditSetRecord
+
+  def getLastSentUpdateEditSetRecordRequest(): Option[UpdateEditSetRecord] = lastSentUpdateEditSetRecord
+
+  def reset(): Unit = {
+    lastSentGetEditSet = None
+    lastSentGetEditSetRecord = None
+    lastSentUpdateEditSetRecord = None
+  }
 }
