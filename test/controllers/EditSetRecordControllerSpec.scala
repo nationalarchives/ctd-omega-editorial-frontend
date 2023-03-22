@@ -1025,6 +1025,8 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
         "legal status doesn't exist" in new Fixture {
 
+          // TODO: Should this pass? It's consistent with other cases of an unrecognised reference, like place of deposit.
+
           val editSetId = "1"
           val editSetRecordId = "COAL.2022.V1RJW.P"
           val values: Map[String, String] =
@@ -1057,9 +1059,9 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
           val editSetId = "1"
           val editSetRecordId = "COAL.2022.V1RJW.P"
-          val blankScopeAndContentToFailValidation = ""
+          val blankCoveringDatesToFailValidation = ""
           val values: Map[String, String] =
-            valuesFromRecord(editSetRecordId) ++ Map("coveringDates" -> blankScopeAndContentToFailValidation)
+            valuesFromRecord(editSetRecordId) ++ Map("coveringDates" -> blankCoveringDatesToFailValidation)
           val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
           givenEditSetExists(editSetId, returnedEditSet)
           val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
