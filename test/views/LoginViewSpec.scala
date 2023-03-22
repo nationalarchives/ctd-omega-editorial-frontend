@@ -48,6 +48,8 @@ class LoginViewSpec extends BaseViewSpec {
       val document = asDocument(loginHtml)
       document must haveTitle("login.title")
       document must haveLegend("login.heading")
+      document must haveUsername("")
+      document must havePassword("")
     }
 
     "render the header" in {
@@ -56,7 +58,8 @@ class LoginViewSpec extends BaseViewSpec {
       val document = asDocument(page)
       document must haveHeaderTitle("header.title")
       document must not(haveVisibleLogoutLink)
-
+      document must haveUsername("")
+      document must havePassword("")
     }
 
     "render multiple errors when no username and password given" in {
@@ -98,6 +101,8 @@ class LoginViewSpec extends BaseViewSpec {
       document must haveSummaryErrorTitle("error.summary.title")
       document must haveSummaryErrorMessages(ExpectedSummaryErrorMessage("Enter a username", "username"))
       document must haveErrorMessageForUsername("Enter a username")
+      document must haveUsername("")
+      document must havePassword("")
     }
 
     "render an error when no password given" in {
@@ -109,6 +114,8 @@ class LoginViewSpec extends BaseViewSpec {
       document must haveSummaryErrorTitle("error.summary.title")
       document must haveSummaryErrorMessages(ExpectedSummaryErrorMessage("Enter a password", "password"))
       document must haveErrorMessageForPassword("Enter a password")
+      document must haveUsername("11")
+      document must havePassword("")
     }
   }
 
