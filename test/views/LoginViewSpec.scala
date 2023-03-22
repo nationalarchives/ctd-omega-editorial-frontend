@@ -25,6 +25,7 @@ import play.api.data.{ Form, FormError }
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers.stubMessagesApi
 import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
+import play.twirl.api.HtmlFormat
 import support.BaseViewSpec
 import support.CommonMatchers._
 import support.ExpectedValues.ExpectedSummaryErrorMessage
@@ -42,11 +43,7 @@ class LoginViewSpec extends BaseViewSpec {
   "Login Html" should {
     "render the given title and heading" in {
       val credentialsForm: Form[Credentials] = getCredentialsForm("", "")
-      val loginHtml =
-        getLoginView(credentialsForm)(
-          Helpers.stubMessages(),
-          CSRFTokenHelper.addCSRFToken(FakeRequest())
-        )
+      val loginHtml = getLoginView(credentialsForm)
 
       val document = asDocument(loginHtml)
       document must haveTitle("login.title")
@@ -55,11 +52,7 @@ class LoginViewSpec extends BaseViewSpec {
 
     "render the header" in {
       val credentialsForm: Form[Credentials] = getCredentialsForm("", "")
-      val page = getLoginView(credentialsForm)(
-        Helpers.stubMessages(messagesApi),
-        CSRFTokenHelper.addCSRFToken(FakeRequest())
-      )
-
+      val page = getLoginView(credentialsForm)
       val document = asDocument(page)
       document must haveHeaderTitle("header.title")
       document must not(haveVisibleLogoutLink)
@@ -70,8 +63,7 @@ class LoginViewSpec extends BaseViewSpec {
       val userForm: Form[Credentials] = getCredentialsForm("", "")
         .withError(FormError("username", "Enter a username"))
         .withError(FormError("password", "Enter a password"))
-      val loginHtml =
-        getLoginView(userForm)(Helpers.stubMessages(messagesApi), CSRFTokenHelper.addCSRFToken(FakeRequest()))
+      val loginHtml = getLoginView(userForm)
       val document = asDocument(loginHtml)
       document must haveSummaryErrorMessages(
         ExpectedSummaryErrorMessage("Enter a username", "username"),
@@ -79,32 +71,28 @@ class LoginViewSpec extends BaseViewSpec {
       )
       document must haveErrorMessageForUsername("Enter a username")
       document must haveErrorMessageForPassword("Enter a password")
+      document must haveUsername("")
+      document must havePassword("")
     }
 
     "render an error given an incorrect username and/or password " in {
       val credentialsForm: Form[Credentials] = getCredentialsForm("11", "22")
         .withError(FormError("username", "Username and/or password is incorrect."))
-      val loginHtml =
-        getLoginView(credentialsForm)(
-          Helpers.stubMessages(messagesApi),
-          CSRFTokenHelper.addCSRFToken(FakeRequest())
-        )
+      val loginHtml = getLoginView(credentialsForm)
 
       val document = asDocument(loginHtml)
       document must haveSummaryErrorTitle("error.summary.title")
       document must haveSummaryErrorMessages(
         ExpectedSummaryErrorMessage("Username and/or password is incorrect.", "username")
       )
+      document must haveUsername("11")
+      document must havePassword("")
     }
 
     "render an error when no username given" in {
       val credentialsForm: Form[Credentials] = getCredentialsForm("", "22")
         .withError(FormError("username", "Enter a username"))
-      val loginHtml =
-        getLoginView(credentialsForm)(
-          Helpers.stubMessages(messagesApi),
-          CSRFTokenHelper.addCSRFToken(FakeRequest())
-        )
+      val loginHtml = getLoginView(credentialsForm)
 
       val document = asDocument(loginHtml)
       document must haveSummaryErrorTitle("error.summary.title")
@@ -115,11 +103,7 @@ class LoginViewSpec extends BaseViewSpec {
     "render an error when no password given" in {
       val credentialsForm: Form[Credentials] = getCredentialsForm("11", "")
         .withError(FormError("password", "Enter a password"))
-      val loginHtml =
-        getLoginView(credentialsForm)(
-          Helpers.stubMessages(messagesApi),
-          CSRFTokenHelper.addCSRFToken(FakeRequest())
-        )
+      val loginHtml = getLoginView(credentialsForm)
 
       val document = asDocument(loginHtml)
       document must haveSummaryErrorTitle("error.summary.title")
@@ -128,8 +112,11 @@ class LoginViewSpec extends BaseViewSpec {
     }
   }
 
-  private def getLoginView: login =
-    new login(new GovukFieldset, new GovukButton, new GovukErrorSummary)
+  private def getLoginView(credentials: Form[Credentials]): HtmlFormat.Appendable =
+    new login(new GovukFieldset, new GovukButton, new GovukErrorSummary)(credentials)(
+      Helpers.stubMessages(messagesApi),
+      CSRFTokenHelper.addCSRFToken(FakeRequest())
+    )
 
   private def getCredentialsForm(username: String, password: String): Form[Credentials] =
     CredentialsFormProvider()(FakeRequest(), messagesApi)
