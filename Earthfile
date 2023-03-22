@@ -1,7 +1,8 @@
 VERSION 0.7
-FROM earthly/dind:alpine
+FROM earthly/dind:ubuntu
 WORKDIR /ctd-omega-services
-RUN apk add openjdk11 bash wget libsass
+RUN apt-get -y update
+RUN apt-get -y install openjdk-11-jdk bash wget libsass-dev
 
 sbt:
     #Scala
@@ -14,10 +15,9 @@ sbt:
     RUN wget -qO - "https://github.com/sbt/sbt/releases/download/v$sbt_version/sbt-$sbt_version.tgz" >/tmp/sbt.tgz
     RUN tar xzf /tmp/sbt.tgz -C "$sbt_home" --strip-components=1
     RUN ln -sv "$sbt_home"/bin/sbt /usr/bin/
-    RUN apk --no-cache add curl
 
     # This triggers a bunch of useful downloads.
-    RUN sbt sbtVersion
+    RUN sbt -v sbtVersion
 
 project-files:
     FROM +sbt
