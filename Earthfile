@@ -24,12 +24,8 @@ project-files:
     COPY build.sbt ./
     COPY .scalafmt.conf ./
     COPY elasticmq.conf ./
-    #COPY src/it/resources/bulk_corp_body_data.json ./
     COPY project project
-    # Run sbt for caching purposes.
-    #RUN --push --secret GITHUB_TOKEN
     RUN --push --secret GITHUB_TOKEN touch a.scala && sbt compile && rm a.scala
-    #SAVE IMAGE --push earthly/examples:integration-project-files
 
 integration-test:
     FROM +project-files
@@ -40,7 +36,6 @@ integration-test:
     COPY it it
     RUN mkdir -pv /var/opt/ctd-omega-services
     COPY docker-compose.yml ./
-    #RUN --push --secret GITHUB_TOKEN
     WITH DOCKER --compose docker-compose.yml
        RUN --secret GITHUB_TOKEN sbt clean compile it:test
     END
