@@ -172,48 +172,49 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             )
 
           }
-        }
-        "doesn't exist" in new Fixture {
+          "doesn't exist" in new Fixture {
 
-          val editSetId = "1"
-          val editSetRecordId = "COAL.2022.V1RJW.P"
-          val values: Map[String, String] =
-            valuesFromRecord(editSetRecordId) ++ Map(
-              FieldNames.startDateDay   -> "29",
-              FieldNames.startDateMonth -> "2",
-              FieldNames.startDateYear  -> "2022",
-              FieldNames.endDateDay     -> "31",
-              FieldNames.endDateMonth   -> "10",
-              FieldNames.endDateYear    -> "2022"
+            val editSetId = "1"
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(
+                FieldNames.startDateDay   -> "29",
+                FieldNames.startDateMonth -> "2",
+                FieldNames.startDateYear  -> "2022",
+                FieldNames.endDateDay     -> "31",
+                FieldNames.endDateMonth   -> "10",
+                FieldNames.endDateYear    -> "2022"
+              )
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
+
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
+
+            status(result) mustBe BAD_REQUEST
+            assertEditViewForm(
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(
+                  startDateDay = "29",
+                  startDateMonth = "2",
+                  startDateYear = "2022",
+                  endDateDay = "31",
+                  endDateMonth = "10",
+                  endDateYear = "2022"
+                ),
+              returnedEditSetRecord,
+              Seq(FormError(FieldNames.startDateDay, MessageKeys.startDateInvalid))
             )
-          val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
-          givenEditSetExists(editSetId, returnedEditSet)
-          val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
-          givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-          givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
-          givenLegalStatusesExist()
-          givenPlacesOfDepositsExist()
-          givenCreatorsExist()
-          givenEditViewIsGenerated(returnedEditSetRecord)
 
-          val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
-
-          status(result) mustBe BAD_REQUEST
-          assertEditViewForm(
-            editSetRecordFormValuesFromRecord(editSetRecordId)
-              .copy(
-                startDateDay = "29",
-                startDateMonth = "2",
-                startDateYear = "2022",
-                endDateDay = "31",
-                endDateMonth = "10",
-                endDateYear = "2022"
-              ),
-            returnedEditSetRecord,
-            Seq(FormError(FieldNames.startDateDay, MessageKeys.startDateInvalid))
-          )
-
+          }
         }
+
         "end date" when {
           "is empty" in new Fixture {
 
@@ -586,29 +587,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
           }
 
-          "value doesn't exist" in new Fixture {
-
-            val editSetId = "1"
-            val editSetRecordId = "COAL.2022.V1RJW.P"
-            val values: Map[String, String] =
-              valuesFromRecord(editSetRecordId) ++ Map(FieldNames.legalStatusID -> "ref.10")
-            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
-            givenEditSetExists(editSetId, returnedEditSet)
-            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
-            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
-            givenEditSetRecordIsSuccessfullyUpdated(
-              editSetId,
-              editSetRecordId,
-              editSetRecordFormValuesFromRecord(editSetRecordId)
-                .copy(legalStatusID = "ref.10")
-            )
-
-            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
-
-            assertRedirectionToSavePage(result, editSetId, editSetRecordId)
-
-          }
         }
         "note" when {
           "is too long" in new Fixture {
@@ -1043,6 +1021,30 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             assertRedirectionToSavePage(result, editSetId, editSetRecordId)
 
           }
+        }
+
+        "legal status doesn't exist" in new Fixture {
+
+          val editSetId = "1"
+          val editSetRecordId = "COAL.2022.V1RJW.P"
+          val values: Map[String, String] =
+            valuesFromRecord(editSetRecordId) ++ Map(FieldNames.legalStatusID -> "ref.10")
+          val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+          givenEditSetExists(editSetId, returnedEditSet)
+          val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+          givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+          givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+          givenEditSetRecordIsSuccessfullyUpdated(
+            editSetId,
+            editSetRecordId,
+            editSetRecordFormValuesFromRecord(editSetRecordId)
+              .copy(legalStatusID = "ref.10")
+          )
+
+          val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
+
+          assertRedirectionToSavePage(result, editSetId, editSetRecordId)
+
         }
 
       }
