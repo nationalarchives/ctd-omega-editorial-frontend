@@ -21,643 +21,269 @@
 
 package controllers
 
-import controllers.EditSetRecordControllerSpec.ExpectedEditRecordPage
-import org.jsoup.nodes.Document
-import org.scalatest.compatible.Assertion
+import cats.effect.IO
+import org.mockito.ArgumentMatchers
+import org.mockito.captor.Captor._
+import org.mockito.captor.{ ArgCaptor, Captor }
+import org.mockito.stubbing.ScalaOngoingStubbing
+import org.scalatest.Assertion
+import play.api.data.{ Form, FormError }
 import play.api.http.Status.OK
+import play.api.i18n.Messages
 import play.api.mvc._
-import play.api.test.Helpers._
-import play.api.test.{ CSRFTokenHelper, FakeRequest }
-import support.BaseSpec
-import support.CommonMatchers._
-import support.ExpectedValues._
-import uk.gov.nationalarchives.omega.editorial.controllers.EditSetRecordController.FieldNames
+import play.api.test.Helpers.{ status, _ }
+import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
+import play.twirl.api.HtmlFormat
+import support.BaseControllerSpec
+import uk.gov.nationalarchives.omega.editorial.controllers.EditSetRecordController.{ FieldNames, MessageKeys }
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetRecordController, SessionKeys }
-import uk.gov.nationalarchives.omega.editorial.models.{ MaterialReference, PhysicalRecord }
+import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
+import uk.gov.nationalarchives.omega.editorial.models._
+import uk.gov.nationalarchives.omega.editorial.services.{ EditSetRecordService, EditSetService, ReferenceDataService }
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
-import java.time.{ LocalDate, Month }
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class EditSetRecordControllerSpec extends BaseSpec {
+class EditSetRecordControllerSpec extends BaseControllerSpec {
 
-  "EditSetRecordController GET /edit-set/{id}/record/{recordId}/edit" should {
+  /** As these mocks are within a fixture, they will all be managed; for instance, a check will be made against missed
+    * or unnecessary stubbing. This will give a clearer picture of the usage of dependencies.
+    */
+  private trait Fixture {
 
-    "render the edit set page from a new instance of controller" in {
-      val defaultLang = play.api.i18n.Lang.defaultLang.code
-      val messages: Map[String, Map[String, String]] =
-        Map(defaultLang -> Map("edit-set.record.edit.heading" -> "TNA reference: COAL 80/80/1"))
-      val mockMessagesApi = stubMessagesApi(messages)
-      val editSetRecordEditInstance = inject[editSetRecordEdit]
-      val editSetRecordEditDiscardInstance = inject[editSetRecordEditDiscard]
-      val editSetRecordEditSaveInstance = inject[editSetRecordEditSave]
-      val stub = stubControllerComponents()
-      val controller = new EditSetRecordController(
-        DefaultMessagesControllerComponents(
-          new DefaultMessagesActionBuilderImpl(stubBodyParser(AnyContentAsEmpty), mockMessagesApi)(
-            stub.executionContext
-          ),
-          DefaultActionBuilder(stub.actionBuilder.parser)(stub.executionContext),
-          stub.parsers,
-          mockMessagesApi,
-          stub.langs,
-          stub.fileMimeTypes,
-          stub.executionContext
-        ),
-        testReferenceDataService,
+    implicit val editSetService: EditSetService = mock[EditSetService]
+    implicit val editSetRecordService: EditSetRecordService = mock[EditSetRecordService]
+    implicit val referenceDataService: ReferenceDataService = mock[ReferenceDataService]
+    implicit val editSetRecordEditView: editSetRecordEdit = mock[editSetRecordEdit]
+    implicit val editSetRecordDiscardView: editSetRecordEditDiscard = mock[editSetRecordEditDiscard]
+    implicit val editSetRecordSaveView: editSetRecordEditSave = mock[editSetRecordEditSave]
+
+    implicit lazy val controller: EditSetRecordController =
+      new EditSetRecordController(
+        Helpers.stubMessagesControllerComponents(),
+        referenceDataService,
         editSetService,
         editSetRecordService,
-        editSetRecordEditInstance,
-        editSetRecordEditDiscardInstance,
-        editSetRecordEditSaveInstance
+        editSetRecordEditView,
+        editSetRecordDiscardView,
+        editSetRecordSaveView
       )
-      val editRecordPage = controller
-        .viewEditRecordForm("1", "COAL.2022.V1RJW.P")
-        .apply(
-          CSRFTokenHelper.addCSRFToken(
-            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
-              .withSession(SessionKeys.token -> validSessionToken)
-          )
-        )
 
-      status(editRecordPage) mustBe OK
-      contentType(editRecordPage) mustBe Some("text/html")
-      val document = asDocument(editRecordPage)
-      document must haveHeading("TNA reference: COAL 80/80/1")
-    }
-
-    "render the edit set page from the application" in {
-      val controller = inject[EditSetRecordController]
-      val editRecordPage = controller
-        .viewEditRecordForm("1", "COAL.2022.V1RJW.P")
-        .apply(
-          CSRFTokenHelper.addCSRFToken(
-            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
-              .withSession(SessionKeys.token -> validSessionToken)
-          )
-        )
-
-      status(editRecordPage) mustBe OK
-      contentType(editRecordPage) mustBe Some("text/html")
-      val document = asDocument(editRecordPage)
-      document must haveHeading("TNA reference: COAL 80/80/1")
-    }
-
-    "render the edit set record page from the router" when {
-      "all ids in the document conform to w3c reccomendations" in {
-        val request =
-          CSRFTokenHelper.addCSRFToken(
-            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit").withSession(
-              SessionKeys.token -> validSessionToken
-            )
-          )
-
-        val editRecordPage = route(app, request).get
-
-        status(editRecordPage) mustBe OK
-        asDocument(editRecordPage) must haveAllLowerCaseIds
-      }
-
-      "all class names in the document conform to w3c reccomendations" in {
-        val request =
-          CSRFTokenHelper.addCSRFToken(
-            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit").withSession(
-              SessionKeys.token -> validSessionToken
-            )
-          )
-
-        val editRecordPage = route(app, request).get
-
-        status(editRecordPage) mustBe OK
-        asDocument(editRecordPage) must haveAllLowerCssClassNames
-      }
-
-      "All form sections appear in the correct order" in {
-        val request =
-          CSRFTokenHelper.addCSRFToken(
-            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit").withSession(
-              SessionKeys.token -> validSessionToken
-            )
-          )
-
-        val editRecordPage = route(app, request).get
-
-        status(editRecordPage) mustBe OK
-        asDocument(editRecordPage) must haveSectionsInCorrectOrder(
-          "Scope and content",
-          "Creator",
-          "Covering dates",
-          "Start date",
-          "End date",
-          "Former reference (Department) (optional)",
-          "Former reference (PRO) (optional)",
-          "Legal Status",
-          "Custodial History (optional)",
-          "Held by",
-          "Note (optional)",
-          "Administrative / biographical background (optional)",
-          "Related material",
-          "Separated material"
-        )
-      }
-
-      "all data is valid" in {
-        val request =
-          CSRFTokenHelper.addCSRFToken(
-            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit").withSession(
-              SessionKeys.token -> validSessionToken
-            )
-          )
-
-        val editRecordPage = route(app, request).get
-
-        status(editRecordPage) mustBe OK
-        assertPageAsExpected(
-          asDocument(editRecordPage),
-          ExpectedEditRecordPage(
-            title = "Edit record",
-            heading = "TNA reference: COAL 80/80/1",
-            subHeading = "PAC-ID: COAL.2022.V1RJW.P Physical Record",
-            legend = "Intellectual properties",
-            classicCatalogueRef = "COAL 80/80/1",
-            omegaCatalogueId = "COAL.2022.V1RJW.P",
-            scopeAndContent =
-              "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
-            coveringDates = "1962",
-            formerReferenceDepartment = "MR 193 (9)",
-            formerReferencePro = "MPS 4/1",
-            startDate = ExpectedDate("1", "1", "1962"),
-            endDate = ExpectedDate("31", "12", "1962"),
-            legalStatusID = "ref.1",
-            note = "A note about COAL.2022.V1RJW.P.",
-            background = "Photo was taken by a daughter of one of the coal miners who used them.",
-            optionsForPlaceOfDepositID = Seq(
-              ExpectedSelectOption("", "Select where this record is held", disabled = true),
-              ExpectedSelectOption("1", "The National Archives, Kew", selected = true),
-              ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
-              ExpectedSelectOption("3", "British Library, National Sound Archive")
-            ),
-            optionsForCreators = Seq(
-              Seq(
-                ExpectedSelectOption("", "Select creator", disabled = true),
-                ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)", selected = true),
-                ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-              ),
-              Seq(
-                ExpectedSelectOption("", "Select creator", disabled = true),
-                ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-              )
-            ),
-            separatedMaterial = Seq(
-              ExpectedMaterial(
-                linkHref = Some("#;"),
-                linkText = Some("COAL 80/80/5")
-              ),
-              ExpectedMaterial(
-                linkHref = Some("#;"),
-                linkText = Some("COAL 80/80/6")
-              ),
-              ExpectedMaterial(
-                linkHref = Some("#;"),
-                linkText = Some("COAL 80/80/7")
-              )
-            ),
-            relatedMaterial = Seq(
-              ExpectedMaterial(
-                description =
-                  Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-              ),
-              ExpectedMaterial(
-                linkHref = Some("#;"),
-                linkText = Some("COAL 80/80/3")
-              ),
-              ExpectedMaterial(
-                linkHref = Some("#;"),
-                linkText = Some("COAL 80/80/2"),
-                description =
-                  Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-              )
-            ),
-            custodialHistory = "Files originally created by successor or predecessor departments for COAL"
-          )
-        )
-      }
-      "all data is valid, except that the place of deposit is unrecognised" in {
-        val request =
-          FakeRequest(GET, "/edit-set/1/record/COAL.2022.V3RJW.P/edit").withSession(
-            SessionKeys.token -> validSessionToken
-          )
-        val editRecordPage = route(app, request).get
-
-        status(editRecordPage) mustBe OK
-        contentType(editRecordPage) mustBe Some("text/html")
-        assertPageAsExpected(
-          asDocument(editRecordPage),
-          ExpectedEditRecordPage(
-            title = "Edit record",
-            heading = "TNA reference: COAL 80/80/3",
-            subHeading = "PAC-ID: COAL.2022.V3RJW.P Physical Record",
-            legend = "Intellectual properties",
-            classicCatalogueRef = "COAL 80/80/3",
-            omegaCatalogueId = "COAL.2022.V3RJW.P",
-            scopeAndContent =
-              "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (C)",
-            coveringDates = "1964",
-            formerReferenceDepartment = "",
-            formerReferencePro = "",
-            startDate = ExpectedDate("1", "1", "1964"),
-            endDate = ExpectedDate("31", "12", "1964"),
-            legalStatusID = "",
-            note = "",
-            background = "Photo was taken by a son of one of the coal miners who used them.",
-            optionsForPlaceOfDepositID = Seq(
-              ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
-              ExpectedSelectOption("1", "The National Archives, Kew"),
-              ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
-              ExpectedSelectOption("3", "British Library, National Sound Archive")
-            ),
-            optionsForCreators = Seq(
-              Seq(
-                ExpectedSelectOption("", "Select creator", disabled = true),
-                ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
-              ),
-              Seq(
-                ExpectedSelectOption("", "Select creator", disabled = true),
-                ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-              ),
-              Seq(
-                ExpectedSelectOption("", "Select creator", disabled = true),
-                ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
-              )
-            ),
-            custodialHistory = "",
-            relatedMaterial = Seq.empty
-          )
-        )
-      }
-      "all data is valid, except that the one creator ID is unrecognised" in {
-        val request =
-          FakeRequest(GET, "/edit-set/1/record/COAL.2022.V10RJW.P/edit").withSession(
-            SessionKeys.token -> validSessionToken
-          )
-        val editRecordPage = route(app, request).get
-
-        status(editRecordPage) mustBe OK
-        contentType(editRecordPage) mustBe Some("text/html")
-        assertPageAsExpected(
-          asDocument(editRecordPage),
-          ExpectedEditRecordPage(
-            title = "Edit record",
-            heading = "TNA reference: COAL 80/80/10",
-            subHeading = "PAC-ID: COAL.2022.V10RJW.P Physical Record",
-            legend = "Intellectual properties",
-            classicCatalogueRef = "COAL 80/80/10",
-            omegaCatalogueId = "COAL.2022.V10RJW.P",
-            scopeAndContent =
-              "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (J)",
-            coveringDates = "1973",
-            formerReferenceDepartment = "",
-            formerReferencePro = "",
-            startDate = ExpectedDate("1", "1", "1973"),
-            endDate = ExpectedDate("31", "12", "1973"),
-            legalStatusID = "ref.1",
-            note = "",
-            background = "",
-            optionsForPlaceOfDepositID = Seq(
-              ExpectedSelectOption("", "Select where this record is held", disabled = true),
-              ExpectedSelectOption("1", "The National Archives, Kew", selected = true),
-              ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
-              ExpectedSelectOption("3", "British Library, National Sound Archive")
-            ),
-            optionsForCreators = Seq(
-              Seq(
-                ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-              )
-            ),
-            custodialHistory = "",
-            relatedMaterial = Seq.empty,
-            separatedMaterial = Seq(
-              ExpectedMaterial(description =
-                Some("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths.")
-              )
-            )
-          )
-        )
-      }
-
-      "all data is valid, except that no creator ID was previously selected" in {
-        val request =
-          FakeRequest(GET, "/edit-set/1/record/COAL.2022.V4RJW.P/edit").withSession(
-            SessionKeys.token -> validSessionToken
-          )
-        val editRecordPage = route(app, request).get
-
-        status(editRecordPage) mustBe OK
-        contentType(editRecordPage) mustBe Some("text/html")
-        assertPageAsExpected(
-          asDocument(editRecordPage),
-          ExpectedEditRecordPage(
-            title = "Edit record",
-            heading = "TNA reference: COAL 80/80/4",
-            subHeading = "PAC-ID: COAL.2022.V4RJW.P Physical Record",
-            legend = "Intellectual properties",
-            classicCatalogueRef = "COAL 80/80/4",
-            omegaCatalogueId = "COAL.2022.V4RJW.P",
-            scopeAndContent =
-              "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (D)",
-            coveringDates = "1961",
-            formerReferenceDepartment = "",
-            formerReferencePro = "CAB 172",
-            startDate = ExpectedDate("1", "1", "1961"),
-            endDate = ExpectedDate("31", "12", "1961"),
-            legalStatusID = "ref.1",
-            note = "",
-            background = "",
-            optionsForPlaceOfDepositID = Seq(
-              ExpectedSelectOption("", "Select where this record is held", disabled = true),
-              ExpectedSelectOption("1", "The National Archives, Kew", selected = true),
-              ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
-              ExpectedSelectOption("3", "British Library, National Sound Archive")
-            ),
-            optionsForCreators = Seq(
-              Seq(
-                ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-              )
-            ),
-            custodialHistory = "",
-            relatedMaterial = Seq.empty,
-            separatedMaterial = Seq.empty
-          )
-        )
-      }
-      "all data is valid with no record type suffix" in {
-        val editSetId = "1"
-        val oci = "COAL.2022.V2RJW"
-        val getRecordResult = getRecordForEditingWhileLoggedIn(editSetId, oci)
-        assertPageAsExpected(
-          asDocument(getRecordResult),
-          generateExpectedEditRecordPageFromRecord(oci).copy(
-            subHeading = s"PAC-ID: $oci"
-          )
-        )
-
-        assertCallMadeToGetEditSet(editSetId)
-        assertCallMadeToGetEditSetRecord(editSetId, oci)
-        assertNoCallMadeToUpdateEditSetRecord()
-
-      }
-    }
-
-    "redirect to the login page from the application when requested with invalid session token" in {
-      val controller = inject[EditSetRecordController]
-      val editRecordPage = controller
-        .viewEditRecordForm("1", "COAL.2022.V1RJW.P")
-        .apply(
-          CSRFTokenHelper.addCSRFToken(
-            FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
-              .withSession(SessionKeys.token -> invalidSessionToken)
-          )
-        )
-
-      status(editRecordPage) mustBe SEE_OTHER
-      redirectLocation(editRecordPage) mustBe Some("/login")
-
-      assertNoCallMadeToGetEditSet()
-      assertNoCallMadeToGetEditSetRecord()
-      assertNoCallMadeToUpdateEditSetRecord()
-
-    }
-
-    "redirect to the login page from the router when requested with invalid session token" in {
-      val request =
-        FakeRequest(GET, "/edit-set/1/record/COAL.2022.V1RJW.P/edit").withSession(
-          SessionKeys.token -> invalidSessionToken
-        )
-      val editRecordPage = route(app, request).get
-
-      status(editRecordPage) mustBe SEE_OTHER
-      redirectLocation(editRecordPage) mustBe Some("/login")
-
-      assertNoCallMadeToGetEditSet()
-      assertNoCallMadeToGetEditSetRecord()
-      assertNoCallMadeToUpdateEditSetRecord()
-    }
   }
-  "EditSetRecordController POST /edit-set/{id}/record/{recordId}/edit" should {
-    "when the action is to save the record" when {
 
+  "When viewing" when {
+    "when requested with an invalid session token" in new Fixture {
+
+      val editSetId = "1"
+      val editSetRecordId = "COAL.2022.V1RJW.P"
+
+      val result: Future[Result] = viewWhileLoggedOut(editSetId, editSetRecordId)
+
+      assertRedirectionToLoginPage(result)
+
+    }
+    "when requested with a valid session token" in new Fixture {
+
+      val editSetId = "1"
+      val editSetRecordId = "COAL.2022.V1RJW.P"
+      val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+      givenEditSetExists(editSetId, returnedEditSet)
+      val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+      givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+      givenCreatorIdsArePrepared(returnedEditSetRecord)
+      givenPlaceOfDepositIsPrepared(returnedEditSetRecord)
+      givenLegalStatusesExist()
+      givenPlacesOfDepositsExist()
+      givenCreatorsExist()
+      givenEditViewIsGenerated(returnedEditSetRecord)
+
+      val result: Future[Result] = viewWhileLoggedIn(editSetId, editSetRecordId)
+
+      status(result) mustBe OK
+      assertEditViewForm(editSetRecordFormValuesFromRecord(editSetRecordId), returnedEditSetRecord, Seq.empty)
+
+    }
+
+  }
+  "When submitting" when {
+    "intending to save the record" should {
       "fail" when {
-        "and yet preserve the CCR" when {
-          "there are errors" in {
-
-            val editSetId = "1"
-            val blankScopeAndContentToFailValidation = ""
-            val oci = "COAL.2022.V1RJW.P"
-            val values = valuesFromRecord(oci) ++ Map(
-              FieldNames.scopeAndContent -> blankScopeAndContentToFailValidation
-            )
-
-            val result = submitWhileLoggedIn("save", editSetId, oci, values)
-
-            status(result) mustBe BAD_REQUEST
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(
-                  omegaCatalogueId = oci,
-                  scopeAndContent = blankScopeAndContentToFailValidation,
-                  summaryErrorMessages = Seq(
-                    ExpectedSummaryErrorMessage("Enter the scope and content", FieldNames.scopeAndContent)
-                  )
-                )
-            )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
-
-          }
-        }
         "start date" when {
-          "is empty" in {
+          "is empty" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values =
-              valuesFromRecord(oci) ++ Map(
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(
                 FieldNames.startDateDay   -> "",
                 FieldNames.startDateMonth -> "",
                 FieldNames.startDateYear  -> ""
               )
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("save", editSetId, oci, values)
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe BAD_REQUEST
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci).copy(
-                startDate = ExpectedDate("", "", ""),
-                summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", FieldNames.startDateDay)),
-                errorMessageForStartDate = Some("Start date is not a valid date")
-              )
+            assertEditViewForm(
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(startDateDay = "", startDateMonth = "", startDateYear = ""),
+              returnedEditSetRecord,
+              Seq(FormError(FieldNames.startDateDay, MessageKeys.startDateInvalid))
             )
 
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
-
           }
-          "is of an invalid format" in {
+          "is of an invalid format" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values =
-              valuesFromRecord(oci) ++ Map(
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(
                 FieldNames.startDateDay   -> "XX",
                 FieldNames.startDateMonth -> "11",
                 FieldNames.startDateYear  -> "1960"
               )
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("save", editSetId, oci, values)
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe BAD_REQUEST
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci).copy(
-                startDate = ExpectedDate("XX", "11", "1960"),
-                summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", FieldNames.startDateDay)),
-                errorMessageForStartDate = Some("Start date is not a valid date")
-              )
+            assertEditViewForm(
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(startDateDay = "XX", startDateMonth = "11", startDateYear = "1960"),
+              returnedEditSetRecord,
+              Seq(FormError(FieldNames.startDateDay, MessageKeys.startDateInvalid))
             )
 
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
+          }
+          "doesn't exist" in new Fixture {
+
+            val editSetId = "1"
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(
+                FieldNames.startDateDay   -> "29",
+                FieldNames.startDateMonth -> "2",
+                FieldNames.startDateYear  -> "2022",
+                FieldNames.endDateDay     -> "31",
+                FieldNames.endDateMonth   -> "10",
+                FieldNames.endDateYear    -> "2022"
+              )
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
+
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
+
+            status(result) mustBe BAD_REQUEST
+            assertEditViewForm(
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(
+                  startDateDay = "29",
+                  startDateMonth = "2",
+                  startDateYear = "2022",
+                  endDateDay = "31",
+                  endDateMonth = "10",
+                  endDateYear = "2022"
+                ),
+              returnedEditSetRecord,
+              Seq(FormError(FieldNames.startDateDay, MessageKeys.startDateInvalid))
+            )
 
           }
         }
-        "doesn't exist" in {
 
-          val editSetId = "1"
-          val oci = "COAL.2022.V1RJW.P"
-          val values =
-            valuesFromRecord(oci) ++ Map(
-              FieldNames.startDateDay   -> "29",
-              FieldNames.startDateMonth -> "2",
-              FieldNames.startDateYear  -> "2022",
-              FieldNames.endDateDay     -> "31",
-              FieldNames.endDateMonth   -> "10",
-              FieldNames.endDateYear    -> "2022"
-            )
-
-          val result = submitWhileLoggedIn("save", editSetId, oci, values)
-
-          status(result) mustBe BAD_REQUEST
-          assertPageAsExpected(
-            asDocument(result),
-            generateExpectedEditRecordPageFromRecord(oci).copy(
-              startDate = ExpectedDate("29", "2", "2022"),
-              endDate = ExpectedDate("31", "10", "2022"),
-              summaryErrorMessages =
-                Seq(ExpectedSummaryErrorMessage("Start date is not a valid date", FieldNames.startDateDay)),
-              errorMessageForStartDate = Some("Start date is not a valid date")
-            )
-          )
-
-          assertCallMadeToGetEditSet(editSetId)
-          assertCallMadeToGetEditSetRecord(editSetId, oci)
-          assertNoCallMadeToUpdateEditSetRecord()
-
-        }
         "end date" when {
-          "is empty" in {
+          "is empty" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values =
-              valuesFromRecord(oci) ++ Map(
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(
                 FieldNames.endDateDay   -> "",
                 FieldNames.endDateMonth -> "",
                 FieldNames.endDateYear  -> ""
               )
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("save", editSetId, oci, values)
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe BAD_REQUEST
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci).copy(
-                endDate = ExpectedDate("", "", ""),
-                summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("End date is not a valid date", FieldNames.endDateDay)),
-                errorMessageForEndDate = Some("End date is not a valid date")
-              )
+            assertEditViewForm(
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(endDateDay = "", endDateMonth = "", endDateYear = ""),
+              returnedEditSetRecord,
+              Seq(FormError(FieldNames.endDateDay, MessageKeys.endDateInvalid))
             )
 
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
-
           }
-          "is of an invalid format" in {
+          "is of an invalid format" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values =
-              valuesFromRecord(oci) ++ Map(
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(
                 FieldNames.endDateDay   -> "XX",
                 FieldNames.endDateMonth -> "12",
                 FieldNames.endDateYear  -> "2000"
               )
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("save", editSetId, oci, values)
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe BAD_REQUEST
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci).copy(
-                endDate = ExpectedDate("XX", "12", "2000"),
-                summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("End date is not a valid date", FieldNames.endDateDay)),
-                errorMessageForEndDate = Some("End date is not a valid date")
-              )
+            assertEditViewForm(
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(endDateDay = "XX", endDateMonth = "12", endDateYear = "2000"),
+              returnedEditSetRecord,
+              Seq(FormError(FieldNames.endDateDay, MessageKeys.endDateInvalid))
             )
 
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
-
           }
-          "doesn't exist" in {
+          "doesn't exist" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values =
-              valuesFromRecord(oci) ++ Map(
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(
                 FieldNames.startDateDay   -> "1",
                 FieldNames.startDateMonth -> "2",
                 FieldNames.startDateYear  -> "2022",
@@ -665,32 +291,40 @@ class EditSetRecordControllerSpec extends BaseSpec {
                 FieldNames.endDateMonth   -> "2",
                 FieldNames.endDateYear    -> "2022"
               )
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("save", editSetId, oci, values)
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe BAD_REQUEST
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci).copy(
-                startDate = ExpectedDate("1", "2", "2022"),
-                endDate = ExpectedDate("29", "2", "2022"),
-                summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("End date is not a valid date", FieldNames.endDateDay)),
-                errorMessageForEndDate = Some("End date is not a valid date")
-              )
+            assertEditViewForm(
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(
+                  startDateDay = "1",
+                  startDateMonth = "2",
+                  startDateYear = "2022",
+                  endDateDay = "29",
+                  endDateMonth = "2",
+                  endDateYear = "2022"
+                ),
+              returnedEditSetRecord,
+              Seq(FormError(FieldNames.endDateDay, MessageKeys.endDateInvalid))
             )
 
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
-
           }
-          "is before start date" in {
+          "is before start date" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values =
-              valuesFromRecord(oci) ++ Map(
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(
                 FieldNames.startDateDay   -> "12",
                 FieldNames.startDateMonth -> "10",
                 FieldNames.startDateYear  -> "2020",
@@ -698,33 +332,41 @@ class EditSetRecordControllerSpec extends BaseSpec {
                 FieldNames.endDateMonth   -> "10",
                 FieldNames.endDateYear    -> "2020"
               )
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("save", editSetId, oci, values)
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe BAD_REQUEST
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci).copy(
-                startDate = ExpectedDate("12", "10", "2020"),
-                endDate = ExpectedDate("11", "10", "2020"),
-                summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("End date cannot precede start date", FieldNames.endDateDay)),
-                errorMessageForEndDate = Some("End date cannot precede start date")
-              )
+            assertEditViewForm(
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(
+                  startDateDay = "12",
+                  startDateMonth = "10",
+                  startDateYear = "2020",
+                  endDateDay = "11",
+                  endDateMonth = "10",
+                  endDateYear = "2020"
+                ),
+              returnedEditSetRecord,
+              Seq(FormError(FieldNames.endDateDay, MessageKeys.endDateBeforeStartDate))
             )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
 
           }
         }
-        "neither start date nor end date is valid" in {
+        "neither start date nor end date is valid" in new Fixture {
 
           val editSetId = "1"
-          val oci = "COAL.2022.V1RJW.P"
-          val values =
-            valuesFromRecord(oci) ++ Map(
+          val editSetRecordId = "COAL.2022.V1RJW.P"
+          val values: Map[String, String] =
+            valuesFromRecord(editSetRecordId) ++ Map(
               FieldNames.startDateDay   -> "12",
               FieldNames.startDateMonth -> "14",
               FieldNames.startDateYear  -> "2020",
@@ -732,810 +374,679 @@ class EditSetRecordControllerSpec extends BaseSpec {
               FieldNames.endDateMonth   -> "12",
               FieldNames.endDateYear    -> "2020"
             )
+          val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+          givenEditSetExists(editSetId, returnedEditSet)
+          val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+          givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+          givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+          givenLegalStatusesExist()
+          givenPlacesOfDepositsExist()
+          givenCreatorsExist()
+          givenEditViewIsGenerated(returnedEditSetRecord)
 
-          val result = submitWhileLoggedIn("save", editSetId, oci, values)
+          val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
 
           status(result) mustBe BAD_REQUEST
-          assertPageAsExpected(
-            asDocument(result),
-            generateExpectedEditRecordPageFromRecord(oci).copy(
-              startDate = ExpectedDate("12", "14", "2020"),
-              endDate = ExpectedDate("42", "12", "2020"),
-              summaryErrorMessages = Seq(
-                ExpectedSummaryErrorMessage("Start date is not a valid date", FieldNames.startDateDay),
-                ExpectedSummaryErrorMessage("End date is not a valid date", FieldNames.endDateDay)
+          assertEditViewForm(
+            editSetRecordFormValuesFromRecord(editSetRecordId)
+              .copy(
+                startDateDay = "12",
+                startDateMonth = "14",
+                startDateYear = "2020",
+                endDateDay = "42",
+                endDateMonth = "12",
+                endDateYear = "2020"
               ),
-              errorMessageForStartDate = Some("Start date is not a valid date"),
-              errorMessageForEndDate = Some("End date is not a valid date")
+            returnedEditSetRecord,
+            Seq(
+              FormError(FieldNames.startDateDay, MessageKeys.startDateInvalid),
+              FormError(FieldNames.endDateDay, MessageKeys.endDateInvalid)
             )
           )
 
-          assertCallMadeToGetEditSet(editSetId)
-          assertCallMadeToGetEditSetRecord(editSetId, oci)
-          assertNoCallMadeToUpdateEditSetRecord()
-
         }
         "covering date" when {
-          "is invalid" in {
+          "is invalid" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values =
-              valuesFromRecord(oci) ++ Map(
-                FieldNames.coveringDates -> "Oct 1 2004"
-              )
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(FieldNames.coveringDates -> "Oct 1 2004")
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("save", editSetId, oci, values)
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe BAD_REQUEST
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci).copy(
-                coveringDates = "Oct 1 2004",
-                summaryErrorMessages = Seq(
-                  ExpectedSummaryErrorMessage("Covering date format is not valid", FieldNames.coveringDates)
-                ),
-                errorMessageForCoveringsDates = Some("Covering date format is not valid")
-              )
+            assertEditViewForm(
+              returnedEditSetRecord,
+              Seq(FormError(FieldNames.coveringDates, MessageKeys.coveringDatesUnparseable))
             )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
-
           }
-          "is too long" in {
+          "is too long" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val gapDateTooLong = (1 to 100).map(_ => "2004 Oct 1").mkString(";")
-            val values =
-              valuesFromRecord(oci) ++ Map(
-                FieldNames.coveringDates -> gapDateTooLong
-              )
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val gapDateTooLong: String = (1 to 100).map(_ => "2004 Oct 1").mkString(";")
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(FieldNames.coveringDates -> gapDateTooLong)
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("save", editSetId, oci, values)
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe BAD_REQUEST
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci).copy(
-                coveringDates = gapDateTooLong,
-                summaryErrorMessages = Seq(
-                  ExpectedSummaryErrorMessage(
-                    "Covering date too long, maximum length 255 characters",
-                    FieldNames.coveringDates
-                  )
-                ),
-                errorMessageForCoveringsDates = Some("Covering date too long, maximum length 255 characters")
-              )
+            assertEditViewForm(
+              returnedEditSetRecord,
+              Seq(FormError(FieldNames.coveringDates, MessageKeys.coveringDatesTooLong))
             )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
-
           }
-          "is empty; showing error correctly" in {
+          "is empty" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values =
-              valuesFromRecord(oci) ++ Map(
-                FieldNames.coveringDates -> "  "
-              )
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(FieldNames.coveringDates -> "  ")
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("save", editSetId, oci, values)
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe BAD_REQUEST
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci).copy(
-                coveringDates = "  ",
-                summaryErrorMessages = Seq(
-                  ExpectedSummaryErrorMessage("Enter the covering dates", FieldNames.coveringDates),
-                  ExpectedSummaryErrorMessage("Covering date format is not valid", FieldNames.coveringDates)
-                ),
-                errorMessageForCoveringsDates = Some("Enter the covering dates")
+            assertEditViewForm(
+              returnedEditSetRecord,
+              Seq(
+                FormError(FieldNames.coveringDates, List(MessageKeys.coveringDatesMissing)),
+                FormError(FieldNames.coveringDates, List(MessageKeys.coveringDatesUnparseable))
               )
             )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
 
           }
         }
 
         "place of deposit" when {
-          "isn't selected" in {
+          "isn't selected" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values =
-              valuesFromRecord(oci) ++ Map(
-                FieldNames.placeOfDepositID -> ""
-              )
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(FieldNames.placeOfDepositID -> "")
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("save", editSetId, oci, values)
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe BAD_REQUEST
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci).copy(
-                optionsForPlaceOfDepositID = Seq(
-                  ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
-                ),
-                summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("You must choose an option", FieldNames.placeOfDepositID)),
-                errorMessageForPlaceOfDeposit = Some("You must choose an option")
-              )
+            assertEditViewForm(
+              returnedEditSetRecord,
+              Seq(FormError(FieldNames.placeOfDepositID, List(MessageKeys.placeOfDepositMissingOrInvalid)))
             )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
 
           }
-          "is absent" in {
+          "is absent" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values = valuesFromRecord(oci) - FieldNames.placeOfDepositID
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] = valuesFromRecord(editSetRecordId) - FieldNames.placeOfDepositID
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("save", editSetId, oci, values)
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe BAD_REQUEST
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci).copy(
-                optionsForPlaceOfDepositID = Seq(
-                  ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
-                ),
-                summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("You must choose an option", FieldNames.placeOfDepositID)),
-                errorMessageForPlaceOfDeposit = Some("You must choose an option")
-              )
+            assertEditViewForm(
+              returnedEditSetRecord,
+              Seq(FormError(FieldNames.placeOfDepositID, List(MessageKeys.placeOfDepositMissingOrInvalid)))
             )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
 
           }
-          "isn't recognised" in {
+          "isn't recognised" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values =
-              valuesFromRecord(oci) ++ Map(FieldNames.placeOfDepositID -> "6")
-            val result = submitWhileLoggedIn("save", editSetId, oci, values)
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(FieldNames.placeOfDepositID -> "6")
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsNotRecognised("6")
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
+
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe BAD_REQUEST
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci).copy(
-                optionsForPlaceOfDepositID = Seq(
-                  ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
-                ),
-                summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("You must choose an option", FieldNames.placeOfDepositID)),
-                errorMessageForPlaceOfDeposit = Some("You must choose an option")
-              )
+            assertEditViewForm(
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(placeOfDepositID = "6"),
+              returnedEditSetRecord,
+              Seq(FormError(FieldNames.placeOfDepositID, List(MessageKeys.placeOfDepositMissingOrInvalid)))
             )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
 
           }
         }
         "legal status" when {
-          "is not selected" in {
+          "is not selected" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values =
-              valuesFromRecord(oci) ++ Map(
-                FieldNames.legalStatusID -> ""
-              )
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(FieldNames.legalStatusID -> "")
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("save", editSetId, oci, values)
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe BAD_REQUEST
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci).copy(
-                legalStatusID = "",
-                summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("You must choose an option", FieldNames.legalStatusID)),
-                errorMessageForLegalStatus = Some("You must choose an option")
-              )
+            assertEditViewForm(
+              returnedEditSetRecord,
+              Seq(FormError(FieldNames.legalStatusID, List(MessageKeys.legalStatusMissing)))
             )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
 
           }
 
-          "value doesn't exist" in {
-
-            val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values =
-              valuesFromRecord(oci) ++ Map(
-                FieldNames.legalStatusID -> "ref.10"
-              )
-
-            val result = submitWhileLoggedIn("save", editSetId, oci, values)
-
-            redirectLocation(result) mustBe Some(s"/edit-set/$editSetId/record/$oci/edit/save")
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            val updateEditSetRecordForRecord = generateUpdateEditSetRecord(editSetId, oci)
-            assertCallMadeToUpdateEditSetRecord(
-              updateEditSetRecordForRecord.copy(
-                fields = updateEditSetRecordForRecord.fields.copy(legalStatusId = "ref.10")
-              )
-            )
-          }
         }
         "note" when {
-          "is too long" in {
+          "is too long" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val excessivelyLongNote = "Something about something else." * 100
-            val values =
-              valuesFromRecord(oci) ++ Map(
-                FieldNames.note -> excessivelyLongNote
-              )
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val excessivelyLongNote: String = "Something about something else." * 100
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(FieldNames.note -> excessivelyLongNote)
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("save", editSetId, oci, values)
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe BAD_REQUEST
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci).copy(
-                note = excessivelyLongNote,
-                summaryErrorMessages =
-                  Seq(ExpectedSummaryErrorMessage("Note too long, maximum length 1000 characters", FieldNames.note)),
-                errorMessageForNote = Some("Note too long, maximum length 1000 characters")
-              )
-            )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
+            assertEditViewForm(returnedEditSetRecord, Seq(FormError(FieldNames.note, List(MessageKeys.noteTooLong))))
 
           }
         }
         "background" when {
-          "is too long" in {
+          "is too long" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val excessivelyLongBackground = "Something about one of the people." * 400
-            val values =
-              valuesFromRecord(oci) ++ Map(
-                FieldNames.background -> excessivelyLongBackground
-              )
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val excessivelyLongBackground: String = "Something about one of the people." * 400
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(FieldNames.background -> excessivelyLongBackground)
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("save", editSetId, oci, values)
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe BAD_REQUEST
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci).copy(
-                background = excessivelyLongBackground,
-                summaryErrorMessages = Seq(
-                  ExpectedSummaryErrorMessage(
-                    "Administrative / biographical background too long, maximum length 8000 characters",
-                    FieldNames.background
-                  )
-                ),
-                errorMessageForBackground =
-                  Some("Administrative / biographical background too long, maximum length 8000 characters")
-              )
+            assertEditViewForm(
+              returnedEditSetRecord,
+              Seq(FormError(FieldNames.background, List(MessageKeys.backgroundTooLong)))
             )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
-
           }
         }
 
         "custodial history" when {
-          "is too long" in {
+          "is too long" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val custodialHistoryTooLong =
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val custodialHistoryTooLong: String =
               "Files originally created by successor or predecessor departments for COAL" * 100
-            val values =
-              valuesFromRecord(oci) ++ Map(
-                FieldNames.custodialHistory -> custodialHistoryTooLong
-              )
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(FieldNames.custodialHistory -> custodialHistoryTooLong)
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("save", editSetId, oci, values)
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe BAD_REQUEST
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci).copy(
-                custodialHistory = custodialHistoryTooLong,
-                summaryErrorMessages = Seq(
-                  ExpectedSummaryErrorMessage(
-                    "Custodial history too long, maximum length 1000 characters",
-                    FieldNames.custodialHistory
-                  )
-                ),
-                errorMessageForCustodialHistory = Some("Custodial history too long, maximum length 1000 characters")
-              )
+            assertEditViewForm(
+              returnedEditSetRecord,
+              Seq(FormError(FieldNames.custodialHistory, List(MessageKeys.custodialHistoryTooLong)))
             )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
 
           }
         }
-        "no creator has been selected" in {
+        "no creator has been selected" in new Fixture {
 
           val editSetId = "1"
-          val oci = "COAL.2022.V1RJW.P"
-          val values =
-            valuesFromRecord(oci) ++ Map(
+          val editSetRecordId = "COAL.2022.V1RJW.P"
+          val values: Map[String, String] =
+            valuesFromRecord(editSetRecordId) ++ Map(
               s"${FieldNames.creatorIDs}[0]" -> "",
               s"${FieldNames.creatorIDs}[1]" -> ""
             )
+          val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+          givenEditSetExists(editSetId, returnedEditSet)
+          val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+          givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+          givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+          givenLegalStatusesExist()
+          givenPlacesOfDepositsExist()
+          givenCreatorsExist()
+          givenEditViewIsGenerated(returnedEditSetRecord)
 
-          val result = submitWhileLoggedIn("save", editSetId, oci, values)
+          val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
 
           status(result) mustBe BAD_REQUEST
-          assertPageAsExpected(
-            asDocument(result),
-            generateExpectedEditRecordPageFromRecord(oci).copy(
-              optionsForCreators = Seq(
-                Seq(
-                  ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                  ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                  ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                  ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                  ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                ),
-                Seq(
-                  ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                  ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                  ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                  ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                  ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                )
-              ),
-              summaryErrorMessages = Seq(
-                ExpectedSummaryErrorMessage(
-                  "You must select at least one creator",
-                  "creator-id-0"
-                )
-              ),
-              errorMessageForCreator = Some("You must select at least one creator")
-            )
+          assertEditViewForm(
+            editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("", "")),
+            returnedEditSetRecord,
+            Seq(FormError("creator-id-0", List(MessageKeys.creatorMissing)))
           )
-
-          assertCallMadeToGetEditSet(editSetId)
-          assertCallMadeToGetEditSetRecord(editSetId, oci)
-          assertNoCallMadeToUpdateEditSetRecord()
 
         }
       }
-      "successful" when {
-        "redirect to result page from a new instance of controller" in {
-          val messages: Map[String, Map[String, String]] =
-            Map("en" -> Map("edit-set.record.edit.heading" -> "TNA reference: COAL 80/80/1"))
-          val mockMessagesApi = stubMessagesApi(messages)
-          val editSetRecordEditInstance = inject[editSetRecordEdit]
-          val editSetRecordEditDiscardInstance = inject[editSetRecordEditDiscard]
-          val editSetRecordEditSaveInstance = inject[editSetRecordEditSave]
-          val stub = stubControllerComponents()
-          val controller = new EditSetRecordController(
-            DefaultMessagesControllerComponents(
-              new DefaultMessagesActionBuilderImpl(stubBodyParser(AnyContentAsEmpty), mockMessagesApi)(
-                stub.executionContext
-              ),
-              DefaultActionBuilder(stub.actionBuilder.parser)(stub.executionContext),
-              stub.parsers,
-              mockMessagesApi,
-              stub.langs,
-              stub.fileMimeTypes,
-              stub.executionContext
-            ),
-            testReferenceDataService,
-            editSetService,
-            editSetRecordService,
-            editSetRecordEditInstance,
-            editSetRecordEditDiscardInstance,
-            editSetRecordEditSaveInstance
+      "succeed" when {
+        "all is valid" in new Fixture {
+
+          val editSetId = "1"
+          val editSetRecordId = "COAL.2022.V1RJW.P"
+          val values: Map[String, String] = valuesFromRecord(editSetRecordId)
+          val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+          givenEditSetExists(editSetId, returnedEditSet)
+          val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+          givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+          givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+          givenEditSetRecordIsSuccessfullyUpdated(
+            editSetId,
+            editSetRecordId,
+            editSetRecordFormValuesFromRecord(editSetRecordId)
           )
 
-          val editSetId = "1"
-          val oci = "COAL.2022.V1RJW.P"
-          val values =
-            valuesFromRecord(oci) ++ Map(
-              "action" -> "save"
-            )
+          val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
 
-          val editRecordPage = controller
-            .submit(editSetId, oci)
-            .apply(
-              CSRFTokenHelper
-                .addCSRFToken(
-                  FakeRequest(POST, s"/edit-set/$editSetId/record/$oci/edit")
-                    .withFormUrlEncodedBody(values.toSeq: _*)
-                    .withSession(SessionKeys.token -> validSessionToken)
-                )
-            )
-
-          status(editRecordPage) mustBe SEE_OTHER
-          redirectLocation(editRecordPage) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
-
-          assertCallMadeToGetEditSet(editSetId)
-          assertCallMadeToGetEditSetRecord(editSetId, oci)
-          val updateEditSetRecordForRecord = generateUpdateEditSetRecord(editSetId, oci)
-          assertCallMadeToUpdateEditSetRecord(updateEditSetRecordForRecord)
+          assertRedirectionToSavePage(result, editSetId, editSetRecordId)
 
         }
 
-        "redirect to result page of the application" in {
-          val controller = inject[EditSetRecordController]
-          val editSetId = "1"
-          val oci = "COAL.2022.V1RJW.P"
-          val values = valuesFromRecord(oci) ++ Map(
-            "action" -> "save"
-          )
-          val editRecordPage = controller
-            .submit("1", oci)
-            .apply(
-              CSRFTokenHelper.addCSRFToken(
-                FakeRequest(POST, "/edit-set/1/record/COAL.2022.V1RJW.P/edit")
-                  .withFormUrlEncodedBody(values.toSeq: _*)
-                  .withSession(SessionKeys.token -> validSessionToken)
-              )
-            )
-
-          status(editRecordPage) mustBe SEE_OTHER
-          redirectLocation(editRecordPage) mustBe Some(s"/edit-set/$editSetId/record/$oci/edit/save")
-
-          assertCallMadeToGetEditSet(editSetId)
-          assertCallMadeToGetEditSetRecord(editSetId, oci)
-          val updateEditSetRecordForRecord = generateUpdateEditSetRecord(editSetId, oci)
-          assertCallMadeToUpdateEditSetRecord(updateEditSetRecordForRecord)
-
-        }
-
-        "redirect to result page from the router" when {
-
-          "all fields are provided" in {
+        "redirect to the save page" when {
+          "the 'note' field is blank" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values = valuesFromRecord(oci)
-            val editRecordPageResponse = submitWhileLoggedIn("save", editSetId, oci, values)
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(FieldNames.note -> "")
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenEditSetRecordIsSuccessfullyUpdated(
+              editSetId,
+              editSetRecordId,
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(note = "")
+            )
 
-            status(editRecordPageResponse) mustBe SEE_OTHER
-            redirectLocation(editRecordPageResponse) mustBe Some(s"/edit-set/$editSetId/record/$oci/edit/save")
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
 
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            val updateEditSetRecordForRecord = generateUpdateEditSetRecord(editSetId, oci)
-            assertCallMadeToUpdateEditSetRecord(updateEditSetRecordForRecord)
+            assertRedirectionToSavePage(result, editSetId, editSetRecordId)
 
           }
 
-          "the 'note' field is blank" in {
+          "the 'custodial history' field is blank" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V12RJW.P"
-            val values =
-              valuesFromRecord(oci) ++ Map(
-                FieldNames.note -> ""
-              )
-
-            val editRecordPageResponse = submitWhileLoggedIn("save", editSetId, oci, values)
-
-            status(editRecordPageResponse) mustBe SEE_OTHER
-            redirectLocation(editRecordPageResponse) mustBe Some(s"/edit-set/$editSetId/record/$oci/edit/save")
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            val updateEditSetRecordForRecord = generateUpdateEditSetRecord(editSetId, oci)
-            assertCallMadeToUpdateEditSetRecord(
-              updateEditSetRecordForRecord.copy(
-                fields = updateEditSetRecordForRecord.fields.copy(note = "")
-              )
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(FieldNames.custodialHistory -> "")
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenEditSetRecordIsSuccessfullyUpdated(
+              editSetId,
+              editSetRecordId,
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(custodialHistory = "")
             )
+
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
+
+            assertRedirectionToSavePage(result, editSetId, editSetRecordId)
 
           }
-
-          "the 'custodial history' field is blank" in {
-
-            val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values =
-              valuesFromRecord(oci) ++ Map(
-                FieldNames.custodialHistory -> ""
-              )
-
-            val editRecordPageResponse = submitWhileLoggedIn("save", editSetId, oci, values)
-
-            status(editRecordPageResponse) mustBe SEE_OTHER
-            redirectLocation(editRecordPageResponse) mustBe Some("/edit-set/1/record/COAL.2022.V1RJW.P/edit/save")
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            val updateEditSetRecordForRecord = generateUpdateEditSetRecord(editSetId, oci)
-            assertCallMadeToUpdateEditSetRecord(
-              updateEditSetRecordForRecord.copy(
-                fields = updateEditSetRecordForRecord.fields.copy(custodialHistory = "")
-              )
-            )
-
-          }
-          "the 'background' field is blank" in {
+          "the 'background' field is blank" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values =
-              valuesFromRecord(oci) ++ Map(
-                FieldNames.background -> ""
-              )
-
-            val editRecordPageResponse = submitWhileLoggedIn("save", editSetId, oci, values)
-
-            status(editRecordPageResponse) mustBe SEE_OTHER
-            redirectLocation(editRecordPageResponse) mustBe Some(s"/edit-set/$editSetId/record/$oci/edit/save")
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            val updateEditSetRecordForRecord = generateUpdateEditSetRecord(editSetId, oci)
-            assertCallMadeToUpdateEditSetRecord(
-              updateEditSetRecordForRecord.copy(fields = updateEditSetRecordForRecord.fields.copy(background = ""))
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(FieldNames.background -> "")
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenEditSetRecordIsSuccessfullyUpdated(
+              editSetId,
+              editSetRecordId,
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(background = "")
             )
+
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
+
+            assertRedirectionToSavePage(result, editSetId, editSetRecordId)
 
           }
         }
-        "multiple creators have been selected" in {
+        "multiple creators have been selected" in new Fixture {
 
           val editSetId = "1"
-          val oci = "COAL.2022.V4RJW.P"
-          val values = valuesFromRecord(oci) ++ Map(
+          val editSetRecordId = "COAL.2022.V1RJW.P"
+          val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
             s"${FieldNames.creatorIDs}[0]" -> "48N",
             s"${FieldNames.creatorIDs}[1]" -> "46F"
           )
-
-          val editRecordPageResponse = submitWhileLoggedIn("save", editSetId, oci, values)
-
-          status(editRecordPageResponse) mustBe SEE_OTHER
-          redirectLocation(editRecordPageResponse) mustBe Some(s"/edit-set/$editSetId/record/$oci/edit/save")
-
-          assertCallMadeToGetEditSet(editSetId)
-          assertCallMadeToGetEditSetRecord(editSetId, oci)
-          val updateEditSetRecordForRecord = generateUpdateEditSetRecord(editSetId, oci)
-          assertCallMadeToUpdateEditSetRecord(
-            updateEditSetRecordForRecord.copy(
-              fields = updateEditSetRecordForRecord.fields.copy(creatorIDs = Seq("48N", "46F"))
-            )
+          val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+          givenEditSetExists(editSetId, returnedEditSet)
+          val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+          givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+          givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+          givenEditSetRecordIsSuccessfullyUpdated(
+            editSetId,
+            editSetRecordId,
+            editSetRecordFormValuesFromRecord(editSetRecordId)
+              .copy(creatorIDs = Seq("48N", "46F"))
           )
 
+          val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
+
+          assertRedirectionToSavePage(result, editSetId, editSetRecordId)
+
         }
-        "multiple creators have been selected, as one empty selection" in {
+        "multiple creators have been selected, as one empty selection" in new Fixture {
 
           val editSetId = "1"
-          val oci = "COAL.2022.V4RJW.P"
-          val values = valuesFromRecord(oci) ++ Map(
+          val editSetRecordId = "COAL.2022.V1RJW.P"
+          val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
             s"${FieldNames.creatorIDs}[0]" -> "48N",
             s"${FieldNames.creatorIDs}[1]" -> "46F",
             s"${FieldNames.creatorIDs}[2]" -> ""
           )
-          val editRecordPageResponse = submitWhileLoggedIn("save", editSetId, oci, values)
-
-          status(editRecordPageResponse) mustBe SEE_OTHER
-          redirectLocation(editRecordPageResponse) mustBe Some(s"/edit-set/$editSetId/record/$oci/edit/save")
-
-          assertCallMadeToGetEditSet(editSetId)
-          assertCallMadeToGetEditSetRecord(editSetId, oci)
-          val updateEditSetRecordForRecord = generateUpdateEditSetRecord(editSetId, oci)
-          assertCallMadeToUpdateEditSetRecord(
-            updateEditSetRecordForRecord.copy(
-              fields = updateEditSetRecordForRecord.fields.copy(creatorIDs = Seq("48N", "46F"))
-            )
+          val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+          givenEditSetExists(editSetId, returnedEditSet)
+          val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+          givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+          givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+          givenEditSetRecordIsSuccessfullyUpdated(
+            editSetId,
+            editSetRecordId,
+            editSetRecordFormValuesFromRecord(editSetRecordId)
+              .copy(creatorIDs = Seq("48N", "46F", ""))
           )
 
+          val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
+
+          assertRedirectionToSavePage(result, editSetId, editSetRecordId)
+
         }
-        "multiple creators have been selected, including duplicates" in {
+        "multiple creators have been selected, including duplicates" in new Fixture {
 
           val editSetId = "1"
-          val oci = "COAL.2022.V4RJW.P"
-          val values = valuesFromRecord(oci) ++ Map(
+          val editSetRecordId = "COAL.2022.V1RJW.P"
+          val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
             s"${FieldNames.creatorIDs}[0]" -> "48N",
             s"${FieldNames.creatorIDs}[1]" -> "46F",
             s"${FieldNames.creatorIDs}[2]" -> "46F"
           )
-          val editRecordPageResponse = submitWhileLoggedIn("save", editSetId, oci, values)
-
-          status(editRecordPageResponse) mustBe SEE_OTHER
-          redirectLocation(editRecordPageResponse) mustBe Some(s"/edit-set/$editSetId/record/$oci/edit/save")
-
-          assertCallMadeToGetEditSet(editSetId)
-          assertCallMadeToGetEditSetRecord(editSetId, oci)
-          val updateEditSetRecordForRecord = generateUpdateEditSetRecord(editSetId, oci)
-          assertCallMadeToUpdateEditSetRecord(
-            updateEditSetRecordForRecord.copy(
-              fields = updateEditSetRecordForRecord.fields.copy(creatorIDs = Seq("48N", "46F", "46F"))
-            )
+          val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+          givenEditSetExists(editSetId, returnedEditSet)
+          val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+          givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+          givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+          givenEditSetRecordIsSuccessfullyUpdated(
+            editSetId,
+            editSetRecordId,
+            editSetRecordFormValuesFromRecord(editSetRecordId)
+              .copy(creatorIDs = Seq("48N", "46F", "46F"))
           )
+
+          val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
+
+          assertRedirectionToSavePage(result, editSetId, editSetRecordId)
 
         }
 
         "start date has a leading zero" when {
-          "in day" in {
+          "in day" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values =
-              valuesFromRecord(oci) ++ Map(
-                FieldNames.startDateDay -> "01"
-              )
-            val editRecordPageResponse = submitWhileLoggedIn("save", editSetId, oci, values)
-
-            status(editRecordPageResponse) mustBe SEE_OTHER
-            redirectLocation(editRecordPageResponse) mustBe Some(s"/edit-set/$editSetId/record/$oci/edit/save")
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            val updateEditSetRecordForRecord = generateUpdateEditSetRecord(editSetId, oci)
-            assertCallMadeToUpdateEditSetRecord(
-              updateEditSetRecordForRecord.copy(
-                fields = updateEditSetRecordForRecord.fields.copy(startDate = LocalDate.of(1962, Month.JANUARY, 1))
-              )
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(FieldNames.startDateDay -> "01")
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenEditSetRecordIsSuccessfullyUpdated(
+              editSetId,
+              editSetRecordId,
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(startDateDay = "01")
             )
+
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
+
+            assertRedirectionToSavePage(result, editSetId, editSetRecordId)
 
           }
 
-          "in month" in {
+          "in month" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values =
-              valuesFromRecord(oci) ++ Map(
-                FieldNames.startDateMonth -> "01"
-              )
-            val editRecordPageResponse = submitWhileLoggedIn("save", editSetId, oci, values)
-
-            status(editRecordPageResponse) mustBe SEE_OTHER
-            redirectLocation(editRecordPageResponse) mustBe Some(s"/edit-set/$editSetId/record/$oci/edit/save")
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            val updateEditSetRecordForRecord = generateUpdateEditSetRecord(editSetId, oci)
-            assertCallMadeToUpdateEditSetRecord(
-              updateEditSetRecordForRecord.copy(
-                fields = updateEditSetRecordForRecord.fields.copy(startDate = LocalDate.of(1962, Month.JANUARY, 1))
-              )
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(FieldNames.startDateMonth -> "01")
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenEditSetRecordIsSuccessfullyUpdated(
+              editSetId,
+              editSetRecordId,
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(startDateMonth = "01")
             )
+
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
+
+            assertRedirectionToSavePage(result, editSetId, editSetRecordId)
+
           }
 
-          "in year" in {
+          "in year" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values =
-              valuesFromRecord(oci) ++ Map(
-                FieldNames.startDateYear -> "0962"
-              )
-            val editRecordPageResponse = submitWhileLoggedIn("save", "1", oci, values)
-
-            status(editRecordPageResponse) mustBe SEE_OTHER
-            redirectLocation(editRecordPageResponse) mustBe Some(s"/edit-set/$editSetId/record/$oci/edit/save")
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            val updateEditSetRecordForRecord = generateUpdateEditSetRecord(editSetId, oci)
-            assertCallMadeToUpdateEditSetRecord(
-              updateEditSetRecordForRecord.copy(
-                fields = updateEditSetRecordForRecord.fields.copy(startDate = LocalDate.of(962, Month.JANUARY, 1))
-              )
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(FieldNames.startDateYear -> "0962")
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenEditSetRecordIsSuccessfullyUpdated(
+              editSetId,
+              editSetRecordId,
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(startDateYear = "0962")
             )
+
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
+
+            assertRedirectionToSavePage(result, editSetId, editSetRecordId)
 
           }
         }
         "end date has a leading zero" when {
-          "in day" in {
+          "in day" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values =
-              valuesFromRecord(oci) ++ Map(
-                FieldNames.endDateDay -> "03"
-              )
-            val editRecordPageResponse = submitWhileLoggedIn("save", editSetId, oci, values)
-
-            status(editRecordPageResponse) mustBe SEE_OTHER
-            redirectLocation(editRecordPageResponse) mustBe Some(s"/edit-set/$editSetId/record/$oci/edit/save")
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            val updateEditSetRecordForRecord = generateUpdateEditSetRecord(editSetId, oci)
-            assertCallMadeToUpdateEditSetRecord(
-              updateEditSetRecordForRecord.copy(
-                fields = updateEditSetRecordForRecord.fields.copy(endDate = LocalDate.of(1962, Month.DECEMBER, 3))
-              )
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(FieldNames.endDateDay -> "03")
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenEditSetRecordIsSuccessfullyUpdated(
+              editSetId,
+              editSetRecordId,
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(endDateDay = "03")
             )
+
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
+
+            assertRedirectionToSavePage(result, editSetId, editSetRecordId)
 
           }
 
-          "in month" in {
+          "in month" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values =
-              valuesFromRecord(oci) ++ Map(
-                FieldNames.endDateMonth -> "01"
-              )
-            val editRecordPageResponse = submitWhileLoggedIn("save", editSetId, oci, values)
-
-            status(editRecordPageResponse) mustBe SEE_OTHER
-            redirectLocation(editRecordPageResponse) mustBe Some(s"/edit-set/$editSetId/record/$oci/edit/save")
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            val updateEditSetRecordForRecord = generateUpdateEditSetRecord(editSetId, oci)
-            assertCallMadeToUpdateEditSetRecord(
-              updateEditSetRecordForRecord.copy(
-                fields = updateEditSetRecordForRecord.fields.copy(endDate = LocalDate.of(1962, Month.JANUARY, 31))
-              )
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(FieldNames.endDateMonth -> "01")
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenEditSetRecordIsSuccessfullyUpdated(
+              editSetId,
+              editSetRecordId,
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(endDateMonth = "01")
             )
+
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
+
+            assertRedirectionToSavePage(result, editSetId, editSetRecordId)
 
           }
 
-          "in year" in {
+          "in year" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values =
-              valuesFromRecord(oci) ++ Map(
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(
                 FieldNames.startDateYear -> "962",
                 FieldNames.endDateYear   -> "0962"
               )
-            val editRecordPageResponse = submitWhileLoggedIn("save", editSetId, oci, values)
-
-            status(editRecordPageResponse) mustBe SEE_OTHER
-            redirectLocation(editRecordPageResponse) mustBe Some(s"/edit-set/$editSetId/record/$oci/edit/save")
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            val updateEditSetRecordForRecord = generateUpdateEditSetRecord(editSetId, oci)
-            assertCallMadeToUpdateEditSetRecord(
-              updateEditSetRecordForRecord.copy(
-                fields = updateEditSetRecordForRecord.fields.copy(
-                  startDate = LocalDate.of(962, Month.JANUARY, 1),
-                  endDate = LocalDate.of(962, Month.DECEMBER, 31)
-                )
-              )
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenEditSetRecordIsSuccessfullyUpdated(
+              editSetId,
+              editSetRecordId,
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(startDateYear = "962", endDateYear = "0962")
             )
 
+            val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
+
+            assertRedirectionToSavePage(result, editSetId, editSetRecordId)
+
           }
+        }
+
+        "legal status doesn't exist" in new Fixture {
+
+          // TODO: Should this pass? It's consistent with other cases of an unrecognised reference, like place of deposit.
+
+          val editSetId = "1"
+          val editSetRecordId = "COAL.2022.V1RJW.P"
+          val values: Map[String, String] =
+            valuesFromRecord(editSetRecordId) ++ Map(FieldNames.legalStatusID -> "ref.10")
+          val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+          givenEditSetExists(editSetId, returnedEditSet)
+          val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+          givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+          givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+          givenEditSetRecordIsSuccessfullyUpdated(
+            editSetId,
+            editSetRecordId,
+            editSetRecordFormValuesFromRecord(editSetRecordId)
+              .copy(legalStatusID = "ref.10")
+          )
+
+          val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
+
+          assertRedirectionToSavePage(result, editSetId, editSetRecordId)
+
         }
 
       }
@@ -1544,24 +1055,21 @@ class EditSetRecordControllerSpec extends BaseSpec {
     "when the action is to discard all changes" when {
 
       "successful" when {
-        "even if the validation fails" in {
+        "even if the validation fails" in new Fixture {
 
           val editSetId = "1"
-          val oci = "COAL.2022.V1RJW.P"
-          val blankScopeAndContentToFailValidation = ""
-          val values =
-            valuesFromRecord(oci) ++ Map(
-              "coveringDates" -> blankScopeAndContentToFailValidation
-            )
+          val editSetRecordId = "COAL.2022.V1RJW.P"
+          val blankCoveringDatesToFailValidation = ""
+          val values: Map[String, String] =
+            valuesFromRecord(editSetRecordId) ++ Map("coveringDates" -> blankCoveringDatesToFailValidation)
+          val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+          givenEditSetExists(editSetId, returnedEditSet)
+          val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+          givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
 
-          val result = submitWhileLoggedIn("discard", editSetId, oci, values)
+          val result: Future[Result] = submitToDiscardWhileLoggedIn(editSetId, editSetRecordId, values)
 
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(s"/edit-set/$editSetId/record/$oci/edit/discard")
-
-          assertCallMadeToGetEditSet(editSetId)
-          assertCallMadeToGetEditSetRecord(editSetId, oci)
-          assertNoCallMadeToUpdateEditSetRecord()
+          assertRedirectionToDiscardPage(result, editSetId, editSetRecordId)
 
         }
       }
@@ -1570,169 +1078,155 @@ class EditSetRecordControllerSpec extends BaseSpec {
     "when the action is to calculate the start and end dates from the covering dates" when {
 
       "failure" when {
-        "blank" in {
+        "blank" in new Fixture {
 
           val editSetId = "1"
-          val oci = "COAL.2022.V1RJW.P"
-          val values =
-            valuesFromRecord(oci) ++ Map(
-              FieldNames.coveringDates -> "   "
-            )
+          val editSetRecordId = "COAL.2022.V1RJW.P"
+          val values: Map[String, String] =
+            valuesFromRecord(editSetRecordId) ++ Map(FieldNames.coveringDates -> "   ")
+          val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+          givenEditSetExists(editSetId, returnedEditSet)
+          val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+          givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+          givenLegalStatusesExist()
+          givenPlacesOfDepositsExist()
+          givenCreatorsExist()
+          givenEditViewIsGenerated(returnedEditSetRecord)
 
-          val result = submitWhileLoggedIn("calculateDates", editSetId, oci, values)
+          val result: Future[Result] = submitToCalculateDatesWhileLoggedIn(editSetId, editSetRecordId, values)
 
           status(result) mustBe BAD_REQUEST
-          assertPageAsExpected(
-            asDocument(result),
-            generateExpectedEditRecordPageFromRecord(oci).copy(
-              coveringDates = "   ",
-              summaryErrorMessages = Seq(
-                ExpectedSummaryErrorMessage("Enter the covering dates", FieldNames.coveringDates),
-                ExpectedSummaryErrorMessage("Covering date format is not valid", FieldNames.coveringDates)
-              ),
-              errorMessageForCoveringsDates = Some("Enter the covering dates")
+          assertEditViewForm(
+            returnedEditSetRecord,
+            Seq(
+              FormError(FieldNames.coveringDates, List(MessageKeys.coveringDatesMissing)),
+              FormError(FieldNames.coveringDates, List(MessageKeys.coveringDatesUnparseable))
             )
           )
-
-          assertCallMadeToGetEditSet(editSetId)
-          assertCallMadeToGetEditSetRecord(editSetId, oci)
-          assertNoCallMadeToUpdateEditSetRecord()
 
         }
-        "invalid format" in {
+        "invalid format" in new Fixture {
 
           val editSetId = "1"
-          val oci = "COAL.2022.V1RJW.P"
-          val values =
-            valuesFromRecord(oci) ++ Map(
-              FieldNames.coveringDates -> "1270s"
-            )
+          val editSetRecordId = "COAL.2022.V1RJW.P"
+          val values: Map[String, String] =
+            valuesFromRecord(editSetRecordId) ++ Map(FieldNames.coveringDates -> "1270s")
+          val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+          givenEditSetExists(editSetId, returnedEditSet)
+          val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+          givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+          givenLegalStatusesExist()
+          givenPlacesOfDepositsExist()
+          givenCreatorsExist()
+          givenEditViewIsGenerated(returnedEditSetRecord)
 
-          val result = submitWhileLoggedIn("calculateDates", editSetId, oci, values)
+          val result: Future[Result] = submitToCalculateDatesWhileLoggedIn(editSetId, editSetRecordId, values)
 
           status(result) mustBe BAD_REQUEST
-          assertPageAsExpected(
-            asDocument(result),
-            generateExpectedEditRecordPageFromRecord(oci).copy(
-              coveringDates = "1270s",
-              summaryErrorMessages = Seq(
-                ExpectedSummaryErrorMessage("Covering date format is not valid", FieldNames.coveringDates)
-              ),
-              errorMessageForCoveringsDates = Some("Covering date format is not valid")
-            )
+          assertEditViewForm(
+            returnedEditSetRecord,
+            Seq(FormError(FieldNames.coveringDates, List(MessageKeys.coveringDatesUnparseable)))
           )
-
-          assertCallMadeToGetEditSet(editSetId)
-          assertCallMadeToGetEditSetRecord(editSetId, oci)
-          assertNoCallMadeToUpdateEditSetRecord()
 
         }
-        "contains a non-existent date" in {
+        "contains a non-existent date" in new Fixture {
 
           val editSetId = "1"
-          val oci = "COAL.2022.V1RJW.P"
-          val values =
-            valuesFromRecord(oci) ++ Map(
-              FieldNames.coveringDates -> "2022 Feb 1-2022 Feb 29"
-            )
+          val editSetRecordId = "COAL.2022.V1RJW.P"
+          val values: Map[String, String] =
+            valuesFromRecord(editSetRecordId) ++ Map(FieldNames.coveringDates -> "2022 Feb 1-2022 Feb 29")
+          val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+          givenEditSetExists(editSetId, returnedEditSet)
+          val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+          givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+          givenLegalStatusesExist()
+          givenPlacesOfDepositsExist()
+          givenCreatorsExist()
+          givenEditViewIsGenerated(returnedEditSetRecord)
 
-          val result = submitWhileLoggedIn("calculateDates", editSetId, oci, values)
+          val result: Future[Result] = submitToCalculateDatesWhileLoggedIn(editSetId, editSetRecordId, values)
 
           status(result) mustBe BAD_REQUEST
-          assertPageAsExpected(
-            asDocument(result),
-            generateExpectedEditRecordPageFromRecord(oci).copy(
-              coveringDates = "2022 Feb 1-2022 Feb 29",
-              summaryErrorMessages = Seq(
-                ExpectedSummaryErrorMessage("Covering date format is not valid", FieldNames.coveringDates)
-              ),
-              errorMessageForCoveringsDates = Some("Covering date format is not valid")
-            )
+          assertEditViewForm(
+            returnedEditSetRecord,
+            Seq(FormError(FieldNames.coveringDates, List(MessageKeys.coveringDatesUnparseable)))
           )
-
-          assertCallMadeToGetEditSet(editSetId)
-          assertCallMadeToGetEditSetRecord(editSetId, oci)
-          assertNoCallMadeToUpdateEditSetRecord()
-
         }
       }
       "successful" when {
-        "covers period of the switchover" in {
+        "covers period of the switchover" in new Fixture {
 
           val editSetId = "1"
-          val oci = "COAL.2022.V1RJW.P"
-          val values =
-            valuesFromRecord(oci) ++ Map(
-              FieldNames.coveringDates -> "1752 Aug 1-1752 Sept 12"
-            )
+          val editSetRecordId = "COAL.2022.V1RJW.P"
+          val values: Map[String, String] =
+            valuesFromRecord(editSetRecordId) ++ Map(FieldNames.coveringDates -> "1752 Aug 1-1752 Sept 12")
+          val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+          givenEditSetExists(editSetId, returnedEditSet)
+          val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+          givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+          givenLegalStatusesExist()
+          givenPlacesOfDepositsExist()
+          givenCreatorsExist()
+          givenEditViewIsGenerated(returnedEditSetRecord)
 
-          val result = submitWhileLoggedIn("calculateDates", editSetId, oci, values)
+          val result: Future[Result] = submitToCalculateDatesWhileLoggedIn(editSetId, editSetRecordId, values)
 
           status(result) mustBe OK
-          assertPageAsExpected(
-            asDocument(result),
-            generateExpectedEditRecordPageFromRecord(oci).copy(
-              coveringDates = "1752 Aug 1-1752 Sept 12",
-              startDate = ExpectedDate("1", "8", "1752"),
-              endDate = ExpectedDate("12", "9", "1752")
-            )
+          assertEditViewForm(
+            editSetRecordFormValuesFromRecord(editSetRecordId).copy(coveringDates = "1752 Aug 1-1752 Sept 12"),
+            returnedEditSetRecord,
+            Seq.empty
           )
-
-          assertCallMadeToGetEditSet(editSetId)
-          assertCallMadeToGetEditSetRecord(editSetId, oci)
-          assertNoCallMadeToUpdateEditSetRecord()
 
         }
-        "covers period after the switchover" in {
+        "covers period after the switchover" in new Fixture {
 
           val editSetId = "1"
-          val oci = "COAL.2022.V1RJW.P"
-          val values =
-            valuesFromRecord(oci) ++ Map(
-              FieldNames.coveringDates -> "1984 Dec"
-            )
+          val editSetRecordId = "COAL.2022.V1RJW.P"
+          val values: Map[String, String] =
+            valuesFromRecord(editSetRecordId) ++ Map(FieldNames.coveringDates -> "1984 Dec")
+          val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+          givenEditSetExists(editSetId, returnedEditSet)
+          val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+          givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+          givenLegalStatusesExist()
+          givenPlacesOfDepositsExist()
+          givenCreatorsExist()
+          givenEditViewIsGenerated(returnedEditSetRecord)
 
-          val result = submitWhileLoggedIn("calculateDates", editSetId, oci, values)
+          val result: Future[Result] = submitToCalculateDatesWhileLoggedIn(editSetId, editSetRecordId, values)
 
           status(result) mustBe OK
-          assertPageAsExpected(
-            asDocument(result),
-            generateExpectedEditRecordPageFromRecord(oci).copy(
-              coveringDates = "1984 Dec",
-              startDate = ExpectedDate("1", "12", "1984"),
-              endDate = ExpectedDate("31", "12", "1984")
-            )
+          assertEditViewForm(
+            editSetRecordFormValuesFromRecord(editSetRecordId).copy(coveringDates = "1984 Dec"),
+            returnedEditSetRecord,
+            Seq.empty
           )
-
-          assertCallMadeToGetEditSet(editSetId)
-          assertCallMadeToGetEditSetRecord(editSetId, oci)
-          assertNoCallMadeToUpdateEditSetRecord()
 
         }
-        "covers multiple ranges" in {
+        "covers multiple ranges" in new Fixture {
 
           val editSetId = "1"
-          val oci = "COAL.2022.V1RJW.P"
-          val values =
-            valuesFromRecord(oci) ++ Map(
-              FieldNames.coveringDates -> "1868; 1890-1902; 1933"
-            )
+          val editSetRecordId = "COAL.2022.V1RJW.P"
+          val values: Map[String, String] =
+            valuesFromRecord(editSetRecordId) ++ Map(FieldNames.coveringDates -> "1868; 1890-1902; 1933")
+          val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+          givenEditSetExists(editSetId, returnedEditSet)
+          val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+          givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+          givenLegalStatusesExist()
+          givenPlacesOfDepositsExist()
+          givenCreatorsExist()
+          givenEditViewIsGenerated(returnedEditSetRecord)
 
-          val result = submitWhileLoggedIn("calculateDates", editSetId, oci, values)
+          val result: Future[Result] = submitToCalculateDatesWhileLoggedIn(editSetId, editSetRecordId, values)
 
           status(result) mustBe OK
-          assertPageAsExpected(
-            asDocument(result),
-            generateExpectedEditRecordPageFromRecord(oci).copy(
-              coveringDates = "1868; 1890-1902; 1933",
-              startDate = ExpectedDate("1", "1", "1868"),
-              endDate = ExpectedDate("31", "12", "1933")
-            )
+          assertEditViewForm(
+            editSetRecordFormValuesFromRecord(editSetRecordId).copy(coveringDates = "1868; 1890-1902; 1933"),
+            returnedEditSetRecord,
+            Seq.empty
           )
-
-          assertCallMadeToGetEditSet(editSetId)
-          assertCallMadeToGetEditSetRecord(editSetId, oci)
-          assertNoCallMadeToUpdateEditSetRecord()
 
         }
       }
@@ -1742,512 +1236,205 @@ class EditSetRecordControllerSpec extends BaseSpec {
     "when the action is to add another selection 'slot' for a creator" when {
       "successful" when {
         "a single creator had been previously assigned and we" when {
-          "keep that same selection" in {
+          "keep that same selection" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V11RJW.P"
+            val editSetRecordId = "COAL.2022.V11RJW.P"
+            val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            editSetRecord.creatorIDs mustBe Seq("8R6")
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(s"${FieldNames.creatorIDs}[0]" -> "8R6")
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val getRecordResultBeforehand = getRecordForEditingWhileLoggedIn(editSetId, oci)
+            val result: Future[Result] = submitToAddAnotherCreatorWhileLoggedIn(editSetId, editSetRecordId, values)
 
-            status(getRecordResultBeforehand) mustBe OK
-            assertPageAsExpected(
-              asDocument(getRecordResultBeforehand),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
-                    )
-                  )
-                )
+            status(result) mustBe OK
+            assertEditViewForm(
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("8R6")),
+              returnedEditSetRecord,
+              Seq.empty
             )
-
-            val submissionValues = valuesFromRecord(oci) ++ Map(
-              s"${FieldNames.creatorIDs}[0]" -> "8R6"
-            )
-
-            val submissionResult = submitWhileLoggedIn("addAnotherCreator", "1", oci, submissionValues)
-
-            status(submissionResult) mustBe OK
-            assertPageAsExpected(
-              asDocument(submissionResult),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
-            )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
 
           }
-          "keep that same selection, but already have an empty slot" in {
+          "keep that same selection, but already have an empty slot" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V11RJW.P"
-
-            val getRecordResultBeforehand = getRecordForEditingWhileLoggedIn(editSetId, oci)
-
-            status(getRecordResultBeforehand) mustBe OK
-            assertPageAsExpected(
-              asDocument(getRecordResultBeforehand),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
-                    )
-                  )
-                )
-            )
-
-            val submissionValues = valuesFromRecord(oci) ++ Map(
+            val editSetRecordId = "COAL.2022.V11RJW.P"
+            val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            editSetRecord.creatorIDs mustBe Seq("8R6")
+            val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
               s"${FieldNames.creatorIDs}[0]" -> "8R6",
               s"${FieldNames.creatorIDs}[1]" -> ""
             )
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val submissionResult = submitWhileLoggedIn("addAnotherCreator", "1", oci, submissionValues)
+            val result: Future[Result] = submitToAddAnotherCreatorWhileLoggedIn(editSetId, editSetRecordId, values)
 
-            status(submissionResult) mustBe OK
-            assertPageAsExpected(
-              asDocument(submissionResult),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
+            status(result) mustBe OK
+            assertEditViewForm(
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("8R6")),
+              returnedEditSetRecord,
+              Seq.empty
             )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
 
           }
-          "clear that selection" in {
+          "clear that selection" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V11RJW.P"
+            val editSetRecordId = "COAL.2022.V11RJW.P"
+            val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            editSetRecord.creatorIDs mustBe Seq("8R6")
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(s"${FieldNames.creatorIDs}[0]" -> "")
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val getRecordResultBeforehand = getRecordForEditingWhileLoggedIn(editSetId, oci)
+            val result: Future[Result] = submitToAddAnotherCreatorWhileLoggedIn(editSetId, editSetRecordId, values)
 
-            status(getRecordResultBeforehand) mustBe OK
-            assertPageAsExpected(
-              asDocument(getRecordResultBeforehand),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
-                    )
-                  )
-                )
+            status(result) mustBe OK
+            assertEditViewForm(
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("8R6")),
+              returnedEditSetRecord,
+              Seq.empty
             )
-
-            val submissionValues = valuesFromRecord(oci) ++ Map(
-              s"${FieldNames.creatorIDs}[0]" -> ""
-            )
-
-            val submissionResult = submitWhileLoggedIn("addAnotherCreator", editSetId, oci, submissionValues)
-
-            status(submissionResult) mustBe OK
-            assertPageAsExpected(
-              asDocument(submissionResult),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(
-                  optionsForCreators = Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
-            )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
 
           }
-          "change that selection" in {
+          "change that selection" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V11RJW.P"
+            val editSetRecordId = "COAL.2022.V11RJW.P"
+            val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            editSetRecord.creatorIDs mustBe Seq("8R6")
+            val values: Map[String, String] =
+              valuesFromRecord(editSetRecordId) ++ Map(s"${FieldNames.creatorIDs}[0]" -> "92W")
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val getRecordResultBeforehand = getRecordForEditingWhileLoggedIn(editSetId, oci)
+            val result: Future[Result] = submitToAddAnotherCreatorWhileLoggedIn(editSetId, editSetRecordId, values)
 
-            status(getRecordResultBeforehand) mustBe OK
-            assertPageAsExpected(
-              asDocument(getRecordResultBeforehand),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
-                    )
-                  )
-                )
+            status(result) mustBe OK
+            assertEditViewForm(
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("8R6")),
+              returnedEditSetRecord,
+              Seq.empty
             )
-
-            val submissionValues = valuesFromRecord(oci) ++ Map(
-              s"${FieldNames.creatorIDs}[0]" -> "92W"
-            )
-
-            val submissionResult = submitWhileLoggedIn("addAnotherCreator", editSetId, oci, submissionValues)
-
-            status(submissionResult) mustBe OK
-            assertPageAsExpected(
-              asDocument(submissionResult),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(
-                  optionsForCreators = Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
-            )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
 
           }
         }
         "the record had multiple creators assigned" when {
-          "and we keep those selections" in {
+          "and we keep those selections" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V7RJW.P"
-
-            val getRecordResultBeforehand = getRecordForEditingWhileLoggedIn(editSetId, oci)
-
-            status(getRecordResultBeforehand) mustBe OK
-            assertPageAsExpected(
-              asDocument(getRecordResultBeforehand),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(
-                        "48N",
-                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
-                        selected = true
-                      ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
-            )
-
-            val submissionValues = valuesFromRecord(oci) ++ Map(
+            val editSetRecordId = "COAL.2022.V7RJW.P"
+            val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            editSetRecord.creatorIDs mustBe Seq("48N", "92W")
+            val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
               s"${FieldNames.creatorIDs}[0]" -> "48N",
               s"${FieldNames.creatorIDs}[1]" -> "92W"
             )
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("addAnotherCreator", editSetId, oci, submissionValues)
+            val result: Future[Result] = submitToAddAnotherCreatorWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe OK
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(
-                  optionsForCreators = Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(
-                        "48N",
-                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
-                        selected = true
-                      ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
+            assertEditViewForm(
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("48N", "92W")),
+              returnedEditSetRecord,
+              Seq.empty
             )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
 
           }
-          "(including duplicates) and keep those selections" in {
+          "(including duplicates) and keep those selections" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V5RJW.P"
-
-            val getRecordResultBeforehand = getRecordForEditingWhileLoggedIn(editSetId, oci)
-
-            status(getRecordResultBeforehand) mustBe OK
-            assertPageAsExpected(
-              asDocument(getRecordResultBeforehand),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(
-                        "48N",
-                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
-                        selected = true
-                      ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
-            )
-
-            val submissionValues = valuesFromRecord(oci) ++ Map(
+            val editSetRecordId = "COAL.2022.V5RJW.P"
+            val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            editSetRecord.creatorIDs mustBe Seq("46F", "48N", "46F")
+            val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
               s"${FieldNames.creatorIDs}[0]" -> "46F",
               s"${FieldNames.creatorIDs}[1]" -> "48N",
               s"${FieldNames.creatorIDs}[2]" -> "46F"
             )
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("addAnotherCreator", editSetId, oci, submissionValues)
+            val result: Future[Result] = submitToAddAnotherCreatorWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe OK
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(
-                  optionsForCreators = Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(
-                        "48N",
-                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
-                        selected = true
-                      ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
+            assertEditViewForm(
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("46F", "48N", "46F")),
+              returnedEditSetRecord,
+              Seq.empty
             )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
 
           }
-          "but we change those selections" in {
+          "but we change those selections" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V5RJW.P"
-
-            val getRecordResultBeforehand = getRecordForEditingWhileLoggedIn(editSetId, oci)
-
-            status(getRecordResultBeforehand) mustBe OK
-            assertPageAsExpected(
-              asDocument(getRecordResultBeforehand),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(optionsForCreators =
-                  Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(
-                        "48N",
-                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
-                        selected = true
-                      ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
-            )
-
-            val submissionValues = valuesFromRecord(oci) ++ Map(
+            val editSetRecordId = "COAL.2022.V5RJW.P"
+            val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            editSetRecord.creatorIDs mustBe Seq("46F", "48N", "46F")
+            val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
               s"${FieldNames.creatorIDs}[0]" -> "8R6",
               s"${FieldNames.creatorIDs}[1]" -> "92W",
               s"${FieldNames.creatorIDs}[2]" -> "48N"
             )
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("addAnotherCreator", editSetId, oci, submissionValues)
+            val result: Future[Result] = submitToAddAnotherCreatorWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe OK
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(
-                  optionsForCreators = Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(
-                        "48N",
-                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
-                        selected = true
-                      ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
+            assertEditViewForm(
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("46F", "48N", "46F")),
+              returnedEditSetRecord,
+              Seq.empty
             )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
 
           }
 
@@ -2259,270 +1446,154 @@ class EditSetRecordControllerSpec extends BaseSpec {
 
       "successful" when {
         "we have two selections and" when {
-          "we leave the first selection unchanged" in {
+          "we leave the first selection unchanged" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values = valuesFromRecord(oci) ++ Map(
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            editSetRecord.creatorIDs mustBe Seq("48N", "92W")
+            val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
               s"${FieldNames.creatorIDs}[0]" -> "48N",
-              s"${FieldNames.creatorIDs}[1]" -> "92W"
+              s"${FieldNames.creatorIDs}[1]" -> "8R6"
             )
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("removeLastCreator", editSetId, oci, values)
+            val result: Future[Result] = submitToAddAnotherCreatorWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe OK
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(
-                  optionsForCreators = Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(
-                        "48N",
-                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
-                        selected = true
-                      ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
+            assertEditViewForm(
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("48N", "92W")),
+              returnedEditSetRecord,
+              Seq.empty
             )
 
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
-
           }
-          "we change the first selection" in {
+          "we change the first selection" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values = valuesFromRecord(oci) ++ Map(
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            editSetRecord.creatorIDs mustBe Seq("48N", "92W")
+            val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
               s"${FieldNames.creatorIDs}[0]" -> "46F",
               s"${FieldNames.creatorIDs}[1]" -> "92W"
             )
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("removeLastCreator", editSetId, oci, values)
+            val result: Future[Result] = submitToAddAnotherCreatorWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe OK
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(
-                  optionsForCreators = Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
+            assertEditViewForm(
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("48N", "92W")),
+              returnedEditSetRecord,
+              Seq.empty
             )
 
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
-
           }
-          "we blank out the first" in {
+          "we blank out the first" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V1RJW.P"
-            val values = valuesFromRecord(oci) ++ Map(
+            val editSetRecordId = "COAL.2022.V1RJW.P"
+            val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            editSetRecord.creatorIDs mustBe Seq("48N", "92W")
+            val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
               s"${FieldNames.creatorIDs}[0]" -> "",
               s"${FieldNames.creatorIDs}[1]" -> "92W"
             )
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("removeLastCreator", editSetId, oci, values)
+            val result: Future[Result] = submitToRemoveLastCreatorWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe OK
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(
-                  optionsForCreators = Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
+            assertEditViewForm(
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("", "92W")),
+              returnedEditSetRecord,
+              Seq.empty
             )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
 
           }
 
         }
         "we have three selections and" when {
-          "we leave the first two selection unchanged" in {
+          "we leave the first two selection unchanged" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V8RJW.P"
-            val values = valuesFromRecord(oci) ++ Map(
+            val editSetRecordId = "COAL.2022.V8RJW.P"
+            val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            editSetRecord.creatorIDs mustBe Seq("48N", "46F", "8R6")
+            val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
               s"${FieldNames.creatorIDs}[0]" -> "48N",
               s"${FieldNames.creatorIDs}[1]" -> "46F",
-              s"${FieldNames.creatorIDs}[2]" -> "8R6"
+              s"${FieldNames.creatorIDs}[2]" -> "92W"
             )
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("removeLastCreator", editSetId, oci, values)
+            val result: Future[Result] = submitToRemoveLastCreatorWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe OK
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(
-                  optionsForCreators = Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(
-                        "48N",
-                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
-                        selected = true
-                      ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
+            assertEditViewForm(
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("48N", "46F", "92W")),
+              returnedEditSetRecord,
+              Seq.empty
             )
 
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
-
           }
-          "we change the first two selections" in {
+          "we change the first two selections" in new Fixture {
 
             val editSetId = "1"
-            val oci = "COAL.2022.V8RJW.P"
-            val values = valuesFromRecord(oci) ++ Map(
+            val editSetRecordId = "COAL.2022.V8RJW.P"
+            val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            editSetRecord.creatorIDs mustBe Seq("48N", "46F", "8R6")
+            val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
               s"${FieldNames.creatorIDs}[0]" -> "92W",
               s"${FieldNames.creatorIDs}[1]" -> "48N",
               s"${FieldNames.creatorIDs}[2]" -> "8R6"
             )
+            val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
+            givenEditSetExists(editSetId, returnedEditSet)
+            val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
+            givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
+            givenLegalStatusesExist()
+            givenPlacesOfDepositsExist()
+            givenCreatorsExist()
+            givenEditViewIsGenerated(returnedEditSetRecord)
 
-            val result = submitWhileLoggedIn("removeLastCreator", editSetId, oci, values)
+            val result: Future[Result] = submitToRemoveLastCreatorWhileLoggedIn(editSetId, editSetRecordId, values)
 
             status(result) mustBe OK
-            assertPageAsExpected(
-              asDocument(result),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(
-                  optionsForCreators = Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(
-                        "48N",
-                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
-                        selected = true
-                      ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
+            assertEditViewForm(
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("92W", "48N", "8R6")),
+              returnedEditSetRecord,
+              Seq.empty
             )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
-
-          }
-          "we remove two in a row" in {
-
-            val editSetId = "1"
-            val oci = "COAL.2022.V8RJW.P"
-            val valuesForFirstRemoval = valuesFromRecord(oci) ++ Map(
-              s"${FieldNames.creatorIDs}[0]" -> "92W",
-              s"${FieldNames.creatorIDs}[1]" -> "48N",
-              s"${FieldNames.creatorIDs}[2]" -> "8R6"
-            )
-
-            val resultAfterFirstRemoval =
-              submitWhileLoggedIn("removeLastCreator", editSetId, oci, valuesForFirstRemoval)
-
-            status(resultAfterFirstRemoval) mustBe OK
-            assertPageAsExpected(
-              asDocument(resultAfterFirstRemoval),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(
-                  optionsForCreators = Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    ),
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(
-                        "48N",
-                        "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
-                        selected = true
-                      ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
-            )
-
-            val valuesForSecondRemoval = (valuesFromRecord(oci) - s"${FieldNames.creatorIDs}[2]") ++ Map(
-              s"${FieldNames.creatorIDs}[0]" -> "92W",
-              s"${FieldNames.creatorIDs}[1]" -> "48N"
-            )
-
-            val resultAfterSecondRemoval = submitWhileLoggedIn("removeLastCreator", "1", oci, valuesForSecondRemoval)
-
-            status(resultAfterSecondRemoval) mustBe OK
-            assertPageAsExpected(
-              asDocument(resultAfterSecondRemoval),
-              generateExpectedEditRecordPageFromRecord(oci)
-                .copy(
-                  optionsForCreators = Seq(
-                    Seq(
-                      ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-                    )
-                  )
-                )
-            )
-
-            assertCallMadeToGetEditSet(editSetId)
-            assertCallMadeToGetEditSetRecord(editSetId, oci)
-            assertNoCallMadeToUpdateEditSetRecord()
 
           }
         }
@@ -2530,97 +1601,8 @@ class EditSetRecordControllerSpec extends BaseSpec {
     }
   }
 
-  private def assertPageAsExpected(document: Document, expectedEditRecordPage: ExpectedEditRecordPage): Assertion = {
-    document must haveTitle(expectedEditRecordPage.title)
-    document must haveHeading(expectedEditRecordPage.heading)
-    document must haveSubHeading(expectedEditRecordPage.subHeading)
-    document must haveLegend(expectedEditRecordPage.legend)
-    document must haveClassicCatalogueRef(expectedEditRecordPage.classicCatalogueRef)
-    document must haveOmegaCatalogueId(expectedEditRecordPage.omegaCatalogueId)
-    document must haveScopeAndContent(expectedEditRecordPage.scopeAndContent)
-    document must haveCoveringDates(expectedEditRecordPage.coveringDates)
-    document must haveFormerReferenceDepartment(expectedEditRecordPage.formerReferenceDepartment)
-    document must haveFormerReferencePro(expectedEditRecordPage.formerReferencePro)
-    document must haveStartDateDay(expectedEditRecordPage.startDate.day)
-    document must haveStartDateMonth(expectedEditRecordPage.startDate.month)
-    document must haveStartDateYear(expectedEditRecordPage.startDate.year)
-    document must haveEndDateDay(expectedEditRecordPage.endDate.day)
-    document must haveEndDateMonth(expectedEditRecordPage.endDate.month)
-    document must haveEndDateYear(expectedEditRecordPage.endDate.year)
-    document must haveLegalStatus(expectedEditRecordPage.legalStatusID)
-    document must haveSelectionForPlaceOfDeposit(expectedEditRecordPage.optionsForPlaceOfDepositID)
-
-    document must haveNumberOfSelectionsForCreator(expectedEditRecordPage.optionsForCreators.size)
-    expectedEditRecordPage.optionsForCreators.zipWithIndex.foreach { case (expectedSelectOptions, index) =>
-      document must haveSelectionForCreator(index, expectedSelectOptions)
-    }
-
-    document must haveNote(expectedEditRecordPage.note)
-    document must haveRelatedMaterial(expectedEditRecordPage.relatedMaterial: _*)
-    document must haveSeparatedMaterial(expectedEditRecordPage.separatedMaterial: _*)
-    document must haveBackground(expectedEditRecordPage.background)
-    document must haveCustodialHistory(expectedEditRecordPage.custodialHistory)
-
-    document must haveVisibleLogoutLink
-    document must haveLogoutLinkLabel("Sign out")
-    document must haveLogoutLink
-    document must haveActionButtons("save", "Save changes", 2)
-    document must haveActionButtons("discard", "Discard changes", 2)
-
-    if (expectedEditRecordPage.summaryErrorMessages.nonEmpty) {
-      document must haveSummaryErrorMessages(expectedEditRecordPage.summaryErrorMessages: _*)
-    } else {
-      document must haveNoSummaryErrorMessages
-    }
-
-    expectedEditRecordPage.errorMessageForStartDate match {
-      case Some(expectedErrorMessage) => document must haveErrorMessageForStartDate(expectedErrorMessage)
-      case None                       => document must haveNoErrorMessageForStartDate
-    }
-
-    expectedEditRecordPage.errorMessageForEndDate match {
-      case Some(expectedErrorMessage) => document must haveErrorMessageForEndDate(expectedErrorMessage)
-      case None                       => document must haveNoErrorMessageForEndDate
-    }
-
-    expectedEditRecordPage.errorMessageForCoveringsDates match {
-      case Some(expectedErrorMessage) => document must haveErrorMessageForCoveringDates(expectedErrorMessage)
-      case None                       => document must haveNoErrorMessageForCoveringDates
-    }
-
-    expectedEditRecordPage.errorMessageForLegalStatus match {
-      case Some(expectedErrorMessage) => document must haveErrorMessageForLegalStatus(expectedErrorMessage)
-      case None                       => document must haveNoErrorMessageForLegalStatus
-    }
-
-    expectedEditRecordPage.errorMessageForPlaceOfDeposit match {
-      case Some(expectedErrorMessage) => document must haveErrorMessageForPlaceOfDeposit(expectedErrorMessage)
-      case None                       => document must haveNoErrorMessageForPlaceOfDeposit
-    }
-
-    expectedEditRecordPage.errorMessageForNote match {
-      case Some(expectedErrorMessage) => document must haveErrorMessageForNote(expectedErrorMessage)
-      case None                       => document must haveNoErrorMessageForNote
-    }
-
-    expectedEditRecordPage.errorMessageForBackground match {
-      case Some(expectedErrorMessage) => document must haveErrorMessageForBackground(expectedErrorMessage)
-      case None                       => document must haveNoErrorMessageForBackground
-    }
-
-    expectedEditRecordPage.errorMessageForCustodialHistory match {
-      case Some(expectedErrorMessage) => document must haveErrorMessageForCustodialHistory(expectedErrorMessage)
-      case None                       => document must haveNoErrorMessageForCustodialHistory
-    }
-
-    expectedEditRecordPage.errorMessageForCreator match {
-      case Some(expectedErrorMessage) => document must haveErrorMessageForCreator(expectedErrorMessage)
-      case None                       => document must haveNoErrorMessageForCreator
-    }
-  }
-
-  private def valuesFromRecord(oci: String): Map[String, String] = {
-    val editSetRecord = getExpectedEditSetRecord(oci)
+  private def valuesFromRecord(editSetRecordId: String): Map[String, String] = {
+    val editSetRecord = getExpectedEditSetRecord(editSetRecordId)
     val mapOfCreatorIDs = editSetRecord.creatorIDs.zipWithIndex.map { case (creatorId, index) =>
       val key = s"${FieldNames.creatorIDs}[$index]"
       (key, creatorId)
@@ -2646,137 +1628,241 @@ class EditSetRecordControllerSpec extends BaseSpec {
 
   }
 
+  private def editSetRecordFormValuesFromRecord(editSetRecordId: String): EditSetRecordFormValues = {
+    val editSetRecord = getExpectedEditSetRecord(editSetRecordId)
+    EditSetRecordFormValues(
+      scopeAndContent = editSetRecord.scopeAndContent,
+      coveringDates = editSetRecord.coveringDates,
+      formerReferenceDepartment = editSetRecord.formerReferenceDepartment,
+      formerReferencePro = editSetRecord.formerReferencePro,
+      startDateDay = editSetRecord.startDateDay,
+      startDateMonth = editSetRecord.startDateMonth,
+      startDateYear = editSetRecord.startDateYear,
+      endDateDay = editSetRecord.endDateDay,
+      endDateMonth = editSetRecord.endDateMonth,
+      endDateYear = editSetRecord.endDateYear,
+      legalStatusID = editSetRecord.legalStatusID,
+      placeOfDepositID = editSetRecord.placeOfDepositID,
+      note = editSetRecord.note,
+      background = editSetRecord.background,
+      custodialHistory = editSetRecord.custodialHistory,
+      creatorIDs = editSetRecord.creatorIDs
+    )
+  }
+
+  private def viewWhileLoggedIn(editSetId: String, editSetRecordId: String)(implicit
+    editSetRecordController: EditSetRecordController
+  ): Future[Result] =
+    editSetRecordController
+      .viewEditRecordForm(editSetId, editSetRecordId)
+      .apply(
+        CSRFTokenHelper.addCSRFToken(
+          FakeRequest()
+            .withSession(SessionKeys.token -> validSessionToken)
+        )
+      )
+
+  private def viewWhileLoggedOut(editSetId: String, editSetRecordId: String)(implicit
+    editSetRecordController: EditSetRecordController
+  ): Future[Result] =
+    editSetRecordController
+      .viewEditRecordForm(editSetId, editSetRecordId)
+      .apply(FakeRequest())
+
+  private def submitToSaveWhileLoggedIn(
+    editSetId: String,
+    editSetRecordId: String,
+    values: Map[String, String]
+  )(implicit editSetRecordController: EditSetRecordController): Future[Result] =
+    submitWhileLoggedIn("save", editSetId, editSetRecordId, values)
+
+  private def submitToDiscardWhileLoggedIn(
+    editSetId: String,
+    editSetRecordId: String,
+    values: Map[String, String]
+  )(implicit editSetRecordController: EditSetRecordController): Future[Result] =
+    submitWhileLoggedIn("discard", editSetId, editSetRecordId, values)
+
+  private def submitToAddAnotherCreatorWhileLoggedIn(
+    editSetId: String,
+    editSetRecordId: String,
+    values: Map[String, String]
+  )(implicit editSetRecordController: EditSetRecordController): Future[Result] =
+    submitWhileLoggedIn("addAnotherCreator", editSetId, editSetRecordId, values)
+
+  private def submitToRemoveLastCreatorWhileLoggedIn(
+    editSetId: String,
+    editSetRecordId: String,
+    values: Map[String, String]
+  )(implicit editSetRecordController: EditSetRecordController): Future[Result] =
+    submitWhileLoggedIn("removeLastCreator", editSetId, editSetRecordId, values)
+
+  private def submitToCalculateDatesWhileLoggedIn(
+    editSetId: String,
+    editSetRecordId: String,
+    values: Map[String, String]
+  )(implicit editSetRecordController: EditSetRecordController): Future[Result] =
+    submitWhileLoggedIn("calculateDates", editSetId, editSetRecordId, values)
+
   private def submitWhileLoggedIn(
     action: String,
     editSetId: String,
     recordId: String,
     values: Map[String, String]
-  ): Future[Result] = {
-    val request = CSRFTokenHelper.addCSRFToken(
-      FakeRequest(POST, s"/edit-set/$editSetId/record/$recordId/edit")
-        .withFormUrlEncodedBody((values ++ Map("action" -> action)).toSeq: _*)
-        .withSession(SessionKeys.token -> validSessionToken)
-    )
-    route(app, request).get
-  }
-
-  private def generateExpectedEditRecordPageFromRecord(oci: String): ExpectedEditRecordPage = {
-    val editSetRecord = getExpectedEditSetRecord(oci)
-    val messages: Map[String, String] =
-      Map("edit-set.record.edit.type.physical" -> "Physical Record")
-    ExpectedEditRecordPage(
-      title = "Edit record",
-      heading = s"TNA reference: ${editSetRecord.ccr}",
-      subHeading = s"PAC-ID: ${editSetRecord.oci} ${editSetRecord.recordType match {
-          case Some(PhysicalRecord) => messages("edit-set.record.edit.type.physical")
-          case _                    => ""
-        }}",
-      legend = "Intellectual properties",
-      classicCatalogueRef = editSetRecord.ccr,
-      omegaCatalogueId = editSetRecord.oci,
-      scopeAndContent = editSetRecord.scopeAndContent,
-      coveringDates = editSetRecord.coveringDates,
-      formerReferenceDepartment = editSetRecord.formerReferenceDepartment,
-      formerReferencePro = editSetRecord.formerReferencePro,
-      startDate = ExpectedDate(editSetRecord.startDateDay, editSetRecord.startDateMonth, editSetRecord.startDateYear),
-      endDate = ExpectedDate(editSetRecord.endDateDay, editSetRecord.endDateMonth, editSetRecord.endDateYear),
-      legalStatusID = editSetRecord.legalStatusID,
-      note = editSetRecord.note,
-      background = editSetRecord.background,
-      optionsForPlaceOfDepositID = Seq(
-        ExpectedSelectOption("", "Select where this record is held", disabled = true),
-        ExpectedSelectOption("1", "The National Archives, Kew", selected = true),
-        ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
-        ExpectedSelectOption("3", "British Library, National Sound Archive")
-      ).map(expectedSelectedOption =>
-        expectedSelectedOption.copy(selected = expectedSelectedOption.value == editSetRecord.placeOfDepositID)
-      ),
-      optionsForCreators = {
-        val recognisedCreatorIds = editSetRecord.creatorIDs.filter(creatorId => allCreators.exists(_.id == creatorId))
-        val correctedCreatorIds = if (recognisedCreatorIds.nonEmpty) recognisedCreatorIds else Seq("")
-        correctedCreatorIds
-          .map(creatorId =>
-            Seq(
-              ExpectedSelectOption("", "Select creator", disabled = true),
-              ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-              ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-              ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-              ExpectedSelectOption("8R6", "Queen Anne's Bounty")
-            ).map(expectedSelectedOption =>
-              expectedSelectedOption.copy(selected = expectedSelectedOption.value == creatorId)
-            )
-          )
-      },
-      relatedMaterial = editSetRecord.relatedMaterial.map {
-        case MaterialReference.LinkAndDescription(linkHref, linkText, description) =>
-          ExpectedMaterial(linkHref = Some(linkHref), linkText = Some(linkText), description = Some(description))
-        case MaterialReference.LinkOnly(linkHref, linkText) =>
-          ExpectedMaterial(linkHref = Some(linkHref), linkText = Some(linkText))
-        case MaterialReference.DescriptionOnly(description) => ExpectedMaterial(description = Some(description))
-      },
-      separatedMaterial = editSetRecord.separatedMaterial.map {
-        case MaterialReference.LinkAndDescription(linkHref, linkText, description) =>
-          ExpectedMaterial(
-            linkHref = Some(linkHref),
-            linkText = Some(linkText),
-            description = Some(description)
-          )
-        case MaterialReference.LinkOnly(linkHref, linkText) =>
-          ExpectedMaterial(linkHref = Some(linkHref), linkText = Some(linkText))
-        case MaterialReference.DescriptionOnly(description) =>
-          ExpectedMaterial(description = Some(description))
-      },
-      custodialHistory = editSetRecord.custodialHistory
-    )
-
-  }
-
-  private def getRecordForEditingWhileLoggedIn(editSetId: String, recordId: String): Future[Result] =
-    getWhileLoggedIn(s"/edit-set/$editSetId/record/$recordId/edit")
-
-  private def getWhileLoggedIn(location: String): Future[Result] = {
-    val request =
-      FakeRequest(GET, location).withSession(
-        SessionKeys.token -> validSessionToken
+  )(implicit editSetRecordController: EditSetRecordController): Future[Result] =
+    editSetRecordController
+      .submit(editSetId, recordId)
+      .apply(
+        CSRFTokenHelper.addCSRFToken(
+          FakeRequest()
+            .withFormUrlEncodedBody((values ++ Map("action" -> action)).toSeq: _*)
+            .withSession(SessionKeys.token -> validSessionToken)
+        )
       )
-    route(app, request).get
+
+  private def givenEditSetExists(
+    editSetId: String,
+    returnedEditSet: EditSet
+  )(implicit editSetService: EditSetService): ScalaOngoingStubbing[IO[Option[EditSet]]] =
+    when(editSetService.get(editSetId))
+      .thenReturn(IO.pure(Option(returnedEditSet)))
+
+  private def givenEditSetRecordExists(
+    editSetId: String,
+    editSetRecordId: String,
+    returnedEditSetRecord: EditSetRecord
+  )(implicit editSetRecordService: EditSetRecordService): ScalaOngoingStubbing[IO[Option[EditSetRecord]]] =
+    when(editSetRecordService.get(editSetId, editSetRecordId))
+      .thenReturn(IO.pure(Option(returnedEditSetRecord)))
+
+  private def givenCreatorIdsArePrepared(expectedEditSetRecord: EditSetRecord)(implicit
+    editSetRecordService: EditSetRecordService
+  ): ScalaOngoingStubbing[EditSetRecord] =
+    when(editSetRecordService.prepareCreatorIDs(expectedEditSetRecord)).thenReturn(expectedEditSetRecord)
+
+  private def givenPlaceOfDepositIsPrepared(expectedEditSetRecord: EditSetRecord)(implicit
+    editSetRecordService: EditSetRecordService
+  ): ScalaOngoingStubbing[EditSetRecord] =
+    when(editSetRecordService.preparePlaceOfDeposit(expectedEditSetRecord)).thenReturn(expectedEditSetRecord)
+
+  /** The actual list has no relevance to these tests.
+    */
+  private def givenLegalStatusesExist(returnedLegalStatuses: Seq[LegalStatus] = Seq.empty)(implicit
+    referenceDataService: ReferenceDataService
+  ): ScalaOngoingStubbing[Seq[LegalStatus]] =
+    when(referenceDataService.getLegalStatuses).thenReturn(returnedLegalStatuses)
+
+  /** The actual list has no relevance to these tests.
+    */
+  private def givenPlacesOfDepositsExist(returnedPlacesOfDeposit: Seq[PlaceOfDeposit] = Seq.empty)(implicit
+    referenceDataService: ReferenceDataService
+  ): ScalaOngoingStubbing[Seq[PlaceOfDeposit]] =
+    when(referenceDataService.getPlacesOfDeposit).thenReturn(returnedPlacesOfDeposit)
+
+  /** The actual list has no relevance to these tests.
+    */
+  private def givenCreatorsExist(returnedCreators: Seq[Creator] = Seq.empty)(implicit
+    referenceDataService: ReferenceDataService
+  ): ScalaOngoingStubbing[Seq[Creator]] =
+    when(referenceDataService.getCreators).thenReturn(returnedCreators)
+
+  private def givenPlaceOfDepositIdIsRecognised(
+    expectedPlaceOfDepositId: String
+  )(implicit referenceDataService: ReferenceDataService): ScalaOngoingStubbing[Boolean] =
+    when(referenceDataService.isPlaceOfDepositRecognised(expectedPlaceOfDepositId))
+      .thenReturn(true)
+
+  private def givenPlaceOfDepositIdIsNotRecognised(
+    expectedPlaceOfDepositId: String
+  )(implicit referenceDataService: ReferenceDataService): ScalaOngoingStubbing[Boolean] =
+    when(referenceDataService.isPlaceOfDepositRecognised(expectedPlaceOfDepositId))
+      .thenReturn(false)
+
+  def givenEditViewIsGenerated(editSetRecord: EditSetRecord)(implicit
+    editSetRecordEditView: editSetRecordEdit
+  ): ScalaOngoingStubbing[HtmlFormat.Appendable] =
+    when(
+      editSetRecordEditView.apply(
+        user = any[User],
+        editSetName = any[String],
+        title = any[String],
+        record = ArgumentMatchers.eq(editSetRecord),
+        legalStatusReferenceData = ArgumentMatchers.eq(Seq.empty),
+        placesOfDeposit = ArgumentMatchers.eq(Seq.empty),
+        creators = ArgumentMatchers.eq(Seq.empty),
+        editSetRecordForm = any[Form[EditSetRecordFormValues]]
+      )(any[Messages], any[Request[AnyContent]])
+    ).thenReturn(HtmlFormat.raw(""))
+
+  def verifyEditViewGeneration(editSetRecord: EditSetRecord)(implicit
+    editSetRecordEditView: editSetRecordEdit
+  ): Form[EditSetRecordFormValues] = {
+    val formCaptor: Captor[Form[EditSetRecordFormValues]] = ArgCaptor[Form[EditSetRecordFormValues]]
+    verify(editSetRecordEditView).apply(
+      user = any[User],
+      editSetName = any[String],
+      title = any[String],
+      record = ArgumentMatchers.eq(editSetRecord),
+      legalStatusReferenceData = ArgumentMatchers.eq(Seq.empty),
+      placesOfDeposit = ArgumentMatchers.eq(Seq.empty),
+      creators = ArgumentMatchers.eq(Seq.empty),
+      editSetRecordForm = formCaptor.capture
+    )(any[Messages], any[Request[AnyContent]])
+    formCaptor.value
   }
 
-}
+  def givenEditSetRecordIsSuccessfullyUpdated(
+    editSetId: String,
+    editSetRecordId: String,
+    editSetRecordFormValues: EditSetRecordFormValues
+  )(implicit editSetRecordService: EditSetRecordService): ScalaOngoingStubbing[IO[UpdateResponseStatus]] =
+    when(editSetRecordService.updateEditSetRecord(editSetId, editSetRecordId, editSetRecordFormValues))
+      .thenReturn(IO.pure(UpdateResponseStatus("success", "")))
 
-object EditSetRecordControllerSpec {
+  private def assertRedirectionToSavePage(
+    result: Future[Result],
+    editSetId: String,
+    editSetRecordId: String
+  ): Assertion = {
+    status(result) mustBe SEE_OTHER
+    redirectLocation(result) mustBe Some(s"/edit-set/$editSetId/record/$editSetRecordId/edit/save")
+  }
 
-  case class ExpectedEditRecordPage(
-    title: String,
-    heading: String,
-    subHeading: String,
-    legend: String,
-    classicCatalogueRef: String,
-    omegaCatalogueId: String,
-    scopeAndContent: String,
-    coveringDates: String,
-    formerReferenceDepartment: String,
-    formerReferencePro: String,
-    startDate: ExpectedDate,
-    endDate: ExpectedDate,
-    legalStatusID: String,
-    note: String,
-    background: String,
-    custodialHistory: String,
-    optionsForPlaceOfDepositID: Seq[ExpectedSelectOption],
-    optionsForCreators: Seq[Seq[ExpectedSelectOption]],
-    relatedMaterial: Seq[ExpectedMaterial] = Seq.empty,
-    separatedMaterial: Seq[ExpectedMaterial] = Seq.empty,
-    summaryErrorMessages: Seq[ExpectedSummaryErrorMessage] = Seq.empty,
-    errorMessageForStartDate: Option[String] = None,
-    errorMessageForEndDate: Option[String] = None,
-    errorMessageForCoveringsDates: Option[String] = None,
-    errorMessageForLegalStatus: Option[String] = None,
-    errorMessageForPlaceOfDeposit: Option[String] = None,
-    errorMessageForNote: Option[String] = None,
-    errorMessageForBackground: Option[String] = None,
-    errorMessageForCustodialHistory: Option[String] = None,
-    errorMessageForCreator: Option[String] = None
-  )
+  private def assertRedirectionToDiscardPage(
+    result: Future[Result],
+    editSetId: String,
+    editSetRecordId: String
+  ): Assertion = {
+    status(result) mustBe SEE_OTHER
+    redirectLocation(result) mustBe Some(s"/edit-set/$editSetId/record/$editSetRecordId/edit/discard")
+  }
+
+  private def assertRedirectionToLoginPage(result: Future[Result]): Assertion = {
+    status(result) mustBe SEE_OTHER
+    redirectLocation(result) mustBe Some("/login")
+  }
+
+  private def assertEditViewForm(
+    editSetRecordFormValues: EditSetRecordFormValues,
+    editSetRecord: EditSetRecord,
+    errors: Seq[FormError]
+  )(implicit
+    editSetRecordEditView: editSetRecordEdit
+  ): Assertion = {
+    val viewForm: Form[EditSetRecordFormValues] = verifyEditViewGeneration(editSetRecord)
+    viewForm.value mustBe Option(editSetRecordFormValues)
+    viewForm.errors mustBe errors
+  }
+
+  private def assertEditViewForm(
+    editSetRecord: EditSetRecord,
+    errors: Seq[FormError]
+  )(implicit
+    editSetRecordEditView: editSetRecordEdit
+  ): Assertion = {
+    val viewForm: Form[EditSetRecordFormValues] = verifyEditViewGeneration(editSetRecord)
+    viewForm.value mustBe empty
+    viewForm.errors mustBe errors
+  }
 
 }
