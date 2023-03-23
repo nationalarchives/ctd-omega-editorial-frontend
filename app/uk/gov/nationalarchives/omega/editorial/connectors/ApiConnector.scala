@@ -26,11 +26,13 @@ import cats.effect.unsafe.implicits.global
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import play.api.inject.ApplicationLifecycle
-import play.api.libs.json.{ Json, Reads }
+import play.api.libs.json.{Json, Reads}
 import uk.gov.nationalarchives.omega.editorial.config.Config
 import uk.gov.nationalarchives.omega.editorial.models._
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.Future
+import scala.concurrent.duration.{FiniteDuration, SECONDS}
 
 @Singleton
 class ApiConnector @Inject() (
@@ -76,7 +78,8 @@ class ApiConnector @Inject() (
 
   private def registerStopHook(): IO[Unit] = IO.delay {
     lifecycle.addStopHook { () =>
-      closer.unsafeToFuture()
+      closer.unsafeRunTimed(FiniteDuration(1, SECONDS))
+      Future.successful()
     }
   }
 

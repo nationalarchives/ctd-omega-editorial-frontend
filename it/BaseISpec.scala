@@ -70,10 +70,6 @@ abstract class BaseISpec
         stubServer.start.unsafeToFuture()
     }
 
-  override def withFixture(test: NoArgTest): Outcome = {
-    super.withFixture(test)
-  }
-
   override def newAppForTest(testData: TestData): Application =  {
 
     val config = Config(HostBrokerEndpoint(messagingServerHost, messagingServerPort), UsernamePasswordCredentials("?","?"))
