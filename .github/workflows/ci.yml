@@ -27,7 +27,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Install docker (on macos, only)
-        run: brew install docker && brew install docker-compose && colima start && docker --version && earthly/earthly/earthly && earthly bootstrap
+        run: brew install docker && brew install docker-compose && colima start && docker --version && earthly && earthly bootstrap
         if: ${{ matrix.os == 'macos-latest' }}
       - name: Start docker compose
         run: docker-compose up -d && docker-compose ps
