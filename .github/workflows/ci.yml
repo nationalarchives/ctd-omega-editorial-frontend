@@ -35,7 +35,7 @@ jobs:
       - name: Start docker compose
         run: docker-compose up -d && docker-compose ps
       - name: Run integration tests
-        run: earthly -P --secret GITHUB_TOKEN="$GITHUB_TOKEN" +integration-test
+        run: ./earthly -P --secret GITHUB_TOKEN="$GITHUB_TOKEN" +integration-test
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Shutdown docker compose
