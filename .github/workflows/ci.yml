@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Run unit tests
         run: sbt -v +test
-        with:
+        env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Install docker (on macos, only)
         run: brew install docker && brew install docker-compose && colima start && docker --version && earthly/earthly/earthly && earthly bootstrap
@@ -33,11 +33,11 @@ jobs:
         run: docker-compose up -d && docker-compose ps
       - name: Run integration tests
         run: earthly -P --secret GITHUB_TOKEN="$GITHUB_TOKEN" +integration-test
-        with:
+        env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Shutdown docker compose
         run: docker-compose down
       - name: Generate a coverage report
         run: sbt coverageReport
-        with:
+        env:
           GITHUB_TOKEN: ${{ github.token }}
