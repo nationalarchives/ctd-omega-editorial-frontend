@@ -30,7 +30,7 @@ jobs:
         run: brew install docker && brew install docker-compose && colima start && docker --version 
         if: ${{ matrix.os == 'macos-latest' }}
       - name: Install earthly (on macos, only)
-        run: wget -O earthly 'https://github.com/earthly/earthly/releases/download/v0.7.2/earthly-darwin-amd64'
+        run: wget -O earthly 'https://github.com/earthly/earthly/releases/download/v0.7.2/earthly-darwin-amd64' && chmod +x ./earthly
         if: ${{ matrix.os == 'macos-latest' }}
       - name: Start docker compose
         run: docker-compose up -d && docker-compose ps
