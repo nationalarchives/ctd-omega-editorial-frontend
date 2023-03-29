@@ -18,6 +18,7 @@ sbt:
 
     # This triggers a bunch of useful downloads.
     RUN sbt -v sbtVersion
+    RUN false
 
 project-files:
     FROM +sbt
