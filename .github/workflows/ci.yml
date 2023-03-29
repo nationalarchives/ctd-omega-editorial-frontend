@@ -5,9 +5,6 @@ on:
       - main
   pull_request:
 
-env:
-  GITHUB_TOKEN: ${{ github.token }}
-
 jobs:
   test-workflows:
     name: Editorial Tests
@@ -15,17 +12,21 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        jdk: [1.8]
+        jdk: [8]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Setup JDK
-        uses: actions/setup-java@v2
-        with:
-          distribution: zulu
-          java-version: 8
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Setup JDK ${{ matrix.jdk }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.jdk }}
+      - name: Setup upterm session
+        uses: lhotari/action-upterm@v1
       - name: Run unit tests
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: sbt -v +test
       - name: Install docker (on macos, only)
         run: brew install docker && brew install docker-compose && colima start && docker --version
