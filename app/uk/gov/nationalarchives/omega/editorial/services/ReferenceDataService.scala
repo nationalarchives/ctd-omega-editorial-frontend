@@ -21,9 +21,15 @@
 
 package uk.gov.nationalarchives.omega.editorial.services
 
+import cats.effect.IO
+import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
 import uk.gov.nationalarchives.omega.editorial.models._
+import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 
-class ReferenceDataService {
+import javax.inject.{ Inject, Singleton }
+
+@Singleton
+class ReferenceDataService @Inject() (apiConnector: ApiConnector, timeProvider: TimeProvider) {
 
   def getCorporateBodies: Seq[CorporateBody] = Seq(
     CorporateBody("RR6", "100th (Gordon Highlanders) Regiment of Foot", Some(1794), Some(1794)),
@@ -264,11 +270,8 @@ class ReferenceDataService {
   def getCreators: Seq[Creator] =
     (getCorporateBodies.flatMap(Creator.from) ++ getPersons.flatMap(Creator.from)).sortBy(_.name)
 
-  def getPlacesOfDeposit: Seq[PlaceOfDeposit] = Seq(
-    PlaceOfDeposit("1", "The National Archives, Kew"),
-    PlaceOfDeposit("2", "British Museum, Department of Libraries and Archives"),
-    PlaceOfDeposit("3", "British Library, National Sound Archive")
-  )
+  def getPlacesOfDeposit(): IO[Seq[PlaceOfDeposit]] =
+    apiConnector.getPlacesOfDeposit(GetPlacesOfDeposit(timestamp = timeProvider.now()))
 
   def getLegalStatuses: Seq[LegalStatus] = Seq(
     LegalStatus("ref.1", "Public Record(s)"),
@@ -276,9 +279,6 @@ class ReferenceDataService {
     LegalStatus("ref.3", "Public Records unless otherwise Stated"),
     LegalStatus("ref.4", "Welsh Public Record(s)")
   )
-
-  def isPlaceOfDepositRecognised(placeOfDeposit: String): Boolean =
-    getPlacesOfDeposit.map(_.id).contains(placeOfDeposit)
 
   def isCreatorRecognised(creatorID: String): Boolean =
     creatorID.trim.nonEmpty && getCreators.exists(_.id == creatorID)

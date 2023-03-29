@@ -42,14 +42,6 @@ class EditSetRecordService @Inject() (
   def get(editSetOci: String, recordOci: String): IO[Option[EditSetRecord]] =
     apiConnector.getEditSetRecord(GetEditSetRecord(editSetOci, recordOci, timeProvider.now()))
 
-  def preparePlaceOfDeposit(editSetRecord: EditSetRecord): EditSetRecord = {
-    val correctedValue =
-      if (referenceDataService.isPlaceOfDepositRecognised(editSetRecord.placeOfDepositID))
-        editSetRecord.placeOfDepositID
-      else ""
-    editSetRecord.copy(placeOfDepositID = correctedValue)
-  }
-
   def prepareCreatorIDs(editSetRecord: EditSetRecord): EditSetRecord =
     editSetRecord.copy(creatorIDs = editSetRecord.creatorIDs.filter(referenceDataService.isCreatorRecognised))
 

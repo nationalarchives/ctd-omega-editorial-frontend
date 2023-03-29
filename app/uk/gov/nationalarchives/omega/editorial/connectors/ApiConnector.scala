@@ -69,6 +69,11 @@ class ApiConnector @Inject() (
       handle(SID.UpdateEditSetRecord, requestBody).flatMap(parse[UpdateResponseStatus])
   }
 
+  def getPlacesOfDeposit(getPlacesOfDeposit: GetPlacesOfDeposit): IO[Seq[PlaceOfDeposit]] =
+    logger.info(s"Requesting all of the places of deposit") *>
+      handle(SID.GetPlacesOfDeposit, Json.stringify(Json.toJson(getPlacesOfDeposit)))
+        .flatMap(parse[Seq[PlaceOfDeposit]])
+
   private def createClientAndCloser: IO[(JmsRequestReplyClient[IO], IO[Unit])] =
     registerStopHook() *>
       logger.info(s"Attempting to subscribe to $replyQueueName...") *>
@@ -103,9 +108,13 @@ object ApiConnector {
   }
 
   object SID {
+
     case object GetEditSet extends SID("OSGEES001")
     case object GetEditSetRecord extends SID("OSGESR001")
     case object UpdateEditSetRecord extends SID("OSUESR001")
+    // TODO: The real SID will be provided by Adam once he figures out the schema.
+    case object GetPlacesOfDeposit extends SID("OSGPOD001")
+
   }
 
   private case class CannotParseEditSetResponse(response: String) extends Exception(

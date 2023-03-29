@@ -21,10 +21,15 @@
 
 package support
 
-import uk.gov.nationalarchives.omega.editorial.models.{ CorporateBody, LegalStatus, Person, PlaceOfDeposit }
+import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
+import uk.gov.nationalarchives.omega.editorial.models.{ CorporateBody, LegalStatus, Person }
 import uk.gov.nationalarchives.omega.editorial.services.ReferenceDataService
+import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 
-class TestReferenceDataService extends ReferenceDataService {
+import javax.inject.Inject
+
+class TestReferenceDataService @Inject() (apiConnector: ApiConnector, timeProvider: TimeProvider)
+    extends ReferenceDataService(apiConnector, timeProvider) {
 
   override def getCorporateBodies: Seq[CorporateBody] =
     Seq(
@@ -36,13 +41,6 @@ class TestReferenceDataService extends ReferenceDataService {
     Person("46F", "Fawkes, Guy", None, Some(1570), Some(1606)),
     Person("48N", "Baden-Powell, Lady Olave St Clair", None, Some(1889), Some(1977))
   )
-
-  override def getPlacesOfDeposit: Seq[PlaceOfDeposit] =
-    Seq(
-      PlaceOfDeposit("1", "The National Archives, Kew"),
-      PlaceOfDeposit("2", "British Museum, Department of Libraries and Archives"),
-      PlaceOfDeposit("3", "British Library, National Sound Archive")
-    )
 
   override def getLegalStatuses: Seq[LegalStatus] = Seq(
     LegalStatus("ref.1", "Public Record(s)"),

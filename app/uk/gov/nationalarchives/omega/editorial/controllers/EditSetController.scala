@@ -21,13 +21,14 @@
 
 package uk.gov.nationalarchives.omega.editorial.controllers
 
+import cats.effect.IO
+import cats.effect.unsafe.implicits.global
 import play.api.mvc._
 import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.services.{ EditSetEntryRowOrder, EditSetPagination, EditSetRecordService, EditSetService }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
 
 import javax.inject._
-import scala.concurrent.{ ExecutionContext, Future }
 
 /** This controller creates an `Action` to handle HTTP requests to the application's home page.
   */
@@ -37,8 +38,7 @@ class EditSetController @Inject() (
   editSetService: EditSetService,
   editSetRecordService: EditSetRecordService,
   editSet: editSet
-)(implicit ec: ExecutionContext)
-    extends BaseAppController(messagesControllerComponents, editSetService, editSetRecordService) {
+) extends BaseAppController(messagesControllerComponents, editSetService, editSetRecordService) {
   import EditSetController._
 
   /** Create an Action for the edit set page.
@@ -52,9 +52,8 @@ class EditSetController @Inject() (
         field     <- queryStringValue(request, fieldKey)
         direction <- queryStringValue(request, orderDirectionKey)
       } yield EditSetEntryRowOrder.fromNames(field, direction)
-
       generateEditSetView(id, user, ordering.getOrElse(EditSetEntryRowOrder.defaultOrder))
-    }
+    }.unsafeToFuture()
   }
 
   private def queryStringValue(request: Request[AnyContent], key: String): Option[String] =
@@ -62,7 +61,7 @@ class EditSetController @Inject() (
 
   private def generateEditSetView(id: String, user: User, editSetEntryRowOrder: EditSetEntryRowOrder)(implicit
     request: Request[AnyContent]
-  ): Future[Result] =
+  ): IO[Result] =
     findEditSet(id).flatMap {
       case Right(currentEditSet) =>
         val pageNumber = queryStringValue(request, offsetKey).map(_.toInt).getOrElse(1)

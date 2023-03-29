@@ -52,7 +52,11 @@ class BaseSpec
   val testReferenceDataService: TestReferenceDataService = app.injector.instanceOf[TestReferenceDataService]
   val editSetRecordService: EditSetRecordService = app.injector.instanceOf[EditSetRecordService]
   val editSetService: EditSetService = app.injector.instanceOf[EditSetService]
-  val allPlacesOfDeposits: Seq[PlaceOfDeposit] = testReferenceDataService.getPlacesOfDeposit
+  val allPlacesOfDeposit: Seq[PlaceOfDeposit] = Seq(
+    PlaceOfDeposit("1", "The National Archives, Kew"),
+    PlaceOfDeposit("2", "British Museum, Department of Libraries and Archives"),
+    PlaceOfDeposit("3", "British Library, National Sound Archive")
+  )
   val allCreators: Seq[Creator] = testReferenceDataService.getCreators
   val validSessionToken: String = Session.generateToken("1234")
   val invalidSessionToken: String = Session.generateToken("invalid-user")

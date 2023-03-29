@@ -42,10 +42,15 @@ import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.services.{ EditSetRecordService, EditSetService, ReferenceDataService }
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class EditSetRecordControllerSpec extends BaseControllerSpec {
+
+  private val placesOfDeposit: Seq[PlaceOfDeposit] = Seq(
+    PlaceOfDeposit("1", "The National Archives, Kew"),
+    PlaceOfDeposit("2", "British Museum, Department of Libraries and Archives"),
+    PlaceOfDeposit("3", "British Library, National Sound Archive")
+  )
 
   /** As these mocks are within a fixture, they will all be managed; for instance, a check will be made against missed
     * or unnecessary stubbing. This will give a clearer picture of the usage of dependencies.
@@ -92,7 +97,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
       val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
       givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
       givenCreatorIdsArePrepared(returnedEditSetRecord)
-      givenPlaceOfDepositIsPrepared(returnedEditSetRecord)
       givenLegalStatusesExist()
       givenPlacesOfDepositsExist()
       givenCreatorsExist()
@@ -124,7 +128,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
             givenLegalStatusesExist()
             givenPlacesOfDepositsExist()
             givenCreatorsExist()
@@ -155,7 +158,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
             givenLegalStatusesExist()
             givenPlacesOfDepositsExist()
             givenCreatorsExist()
@@ -189,7 +191,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
             givenLegalStatusesExist()
             givenPlacesOfDepositsExist()
             givenCreatorsExist()
@@ -230,7 +231,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
             givenLegalStatusesExist()
             givenPlacesOfDepositsExist()
             givenCreatorsExist()
@@ -261,7 +261,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
             givenLegalStatusesExist()
             givenPlacesOfDepositsExist()
             givenCreatorsExist()
@@ -295,7 +294,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
             givenLegalStatusesExist()
             givenPlacesOfDepositsExist()
             givenCreatorsExist()
@@ -336,7 +334,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
             givenLegalStatusesExist()
             givenPlacesOfDepositsExist()
             givenCreatorsExist()
@@ -378,7 +375,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
           givenEditSetExists(editSetId, returnedEditSet)
           val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
           givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-          givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
           givenLegalStatusesExist()
           givenPlacesOfDepositsExist()
           givenCreatorsExist()
@@ -416,7 +412,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
             givenLegalStatusesExist()
             givenPlacesOfDepositsExist()
             givenCreatorsExist()
@@ -441,7 +436,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
             givenLegalStatusesExist()
             givenPlacesOfDepositsExist()
             givenCreatorsExist()
@@ -465,7 +459,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
             givenLegalStatusesExist()
             givenPlacesOfDepositsExist()
             givenCreatorsExist()
@@ -543,7 +536,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsNotRecognised("6")
             givenLegalStatusesExist()
             givenPlacesOfDepositsExist()
             givenCreatorsExist()
@@ -571,7 +563,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
             givenLegalStatusesExist()
             givenPlacesOfDepositsExist()
             givenCreatorsExist()
@@ -600,7 +591,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
             givenLegalStatusesExist()
             givenPlacesOfDepositsExist()
             givenCreatorsExist()
@@ -625,7 +615,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
             givenLegalStatusesExist()
             givenPlacesOfDepositsExist()
             givenCreatorsExist()
@@ -654,7 +643,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
             givenLegalStatusesExist()
             givenPlacesOfDepositsExist()
             givenCreatorsExist()
@@ -683,7 +671,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
           givenEditSetExists(editSetId, returnedEditSet)
           val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
           givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-          givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
           givenLegalStatusesExist()
           givenPlacesOfDepositsExist()
           givenCreatorsExist()
@@ -710,7 +697,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
           givenEditSetExists(editSetId, returnedEditSet)
           val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
           givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-          givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+          givenPlacesOfDepositsExist()
           givenEditSetRecordIsSuccessfullyUpdated(
             editSetId,
             editSetRecordId,
@@ -734,7 +721,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenPlacesOfDepositsExist()
             givenEditSetRecordIsSuccessfullyUpdated(
               editSetId,
               editSetRecordId,
@@ -758,7 +745,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenPlacesOfDepositsExist()
             givenEditSetRecordIsSuccessfullyUpdated(
               editSetId,
               editSetRecordId,
@@ -781,7 +768,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenPlacesOfDepositsExist()
             givenEditSetRecordIsSuccessfullyUpdated(
               editSetId,
               editSetRecordId,
@@ -807,7 +794,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
           givenEditSetExists(editSetId, returnedEditSet)
           val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
           givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-          givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+          givenPlacesOfDepositsExist()
           givenEditSetRecordIsSuccessfullyUpdated(
             editSetId,
             editSetRecordId,
@@ -833,7 +820,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
           givenEditSetExists(editSetId, returnedEditSet)
           val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
           givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-          givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+          givenPlacesOfDepositsExist()
           givenEditSetRecordIsSuccessfullyUpdated(
             editSetId,
             editSetRecordId,
@@ -859,7 +846,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
           givenEditSetExists(editSetId, returnedEditSet)
           val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
           givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-          givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+          givenPlacesOfDepositsExist()
           givenEditSetRecordIsSuccessfullyUpdated(
             editSetId,
             editSetRecordId,
@@ -884,7 +871,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenPlacesOfDepositsExist()
             givenEditSetRecordIsSuccessfullyUpdated(
               editSetId,
               editSetRecordId,
@@ -908,7 +895,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenPlacesOfDepositsExist()
             givenEditSetRecordIsSuccessfullyUpdated(
               editSetId,
               editSetRecordId,
@@ -932,7 +919,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenPlacesOfDepositsExist()
             givenEditSetRecordIsSuccessfullyUpdated(
               editSetId,
               editSetRecordId,
@@ -957,7 +944,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenPlacesOfDepositsExist()
             givenEditSetRecordIsSuccessfullyUpdated(
               editSetId,
               editSetRecordId,
@@ -981,7 +968,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenPlacesOfDepositsExist()
             givenEditSetRecordIsSuccessfullyUpdated(
               editSetId,
               editSetRecordId,
@@ -1008,7 +995,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
             givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-            givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+            givenPlacesOfDepositsExist()
             givenEditSetRecordIsSuccessfullyUpdated(
               editSetId,
               editSetRecordId,
@@ -1035,7 +1022,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
           givenEditSetExists(editSetId, returnedEditSet)
           val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
           givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-          givenPlaceOfDepositIdIsRecognised(returnedEditSetRecord.placeOfDepositID)
+          givenPlacesOfDepositsExist()
           givenEditSetRecordIsSuccessfullyUpdated(
             editSetId,
             editSetRecordId,
@@ -1740,11 +1727,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
   ): ScalaOngoingStubbing[EditSetRecord] =
     when(editSetRecordService.prepareCreatorIDs(expectedEditSetRecord)).thenReturn(expectedEditSetRecord)
 
-  private def givenPlaceOfDepositIsPrepared(expectedEditSetRecord: EditSetRecord)(implicit
-    editSetRecordService: EditSetRecordService
-  ): ScalaOngoingStubbing[EditSetRecord] =
-    when(editSetRecordService.preparePlaceOfDeposit(expectedEditSetRecord)).thenReturn(expectedEditSetRecord)
-
   /** The actual list has no relevance to these tests.
     */
   private def givenLegalStatusesExist(returnedLegalStatuses: Seq[LegalStatus] = Seq.empty)(implicit
@@ -1754,10 +1736,10 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
   /** The actual list has no relevance to these tests.
     */
-  private def givenPlacesOfDepositsExist(returnedPlacesOfDeposit: Seq[PlaceOfDeposit] = Seq.empty)(implicit
+  private def givenPlacesOfDepositsExist()(implicit
     referenceDataService: ReferenceDataService
-  ): ScalaOngoingStubbing[Seq[PlaceOfDeposit]] =
-    when(referenceDataService.getPlacesOfDeposit).thenReturn(returnedPlacesOfDeposit)
+  ): ScalaOngoingStubbing[IO[Seq[PlaceOfDeposit]]] =
+    when(referenceDataService.getPlacesOfDeposit()).thenReturn(IO.pure(placesOfDeposit))
 
   /** The actual list has no relevance to these tests.
     */
@@ -1765,18 +1747,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
     referenceDataService: ReferenceDataService
   ): ScalaOngoingStubbing[Seq[Creator]] =
     when(referenceDataService.getCreators).thenReturn(returnedCreators)
-
-  private def givenPlaceOfDepositIdIsRecognised(
-    expectedPlaceOfDepositId: String
-  )(implicit referenceDataService: ReferenceDataService): ScalaOngoingStubbing[Boolean] =
-    when(referenceDataService.isPlaceOfDepositRecognised(expectedPlaceOfDepositId))
-      .thenReturn(true)
-
-  private def givenPlaceOfDepositIdIsNotRecognised(
-    expectedPlaceOfDepositId: String
-  )(implicit referenceDataService: ReferenceDataService): ScalaOngoingStubbing[Boolean] =
-    when(referenceDataService.isPlaceOfDepositRecognised(expectedPlaceOfDepositId))
-      .thenReturn(false)
 
   def givenEditViewIsGenerated(editSetRecord: EditSetRecord)(implicit
     editSetRecordEditView: editSetRecordEdit
@@ -1788,7 +1758,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
         title = any[String],
         record = ArgumentMatchers.eq(editSetRecord),
         legalStatusReferenceData = ArgumentMatchers.eq(Seq.empty),
-        placesOfDeposit = ArgumentMatchers.eq(Seq.empty),
+        placesOfDeposit = ArgumentMatchers.eq(placesOfDeposit),
         creators = ArgumentMatchers.eq(Seq.empty),
         editSetRecordForm = any[Form[EditSetRecordFormValues]]
       )(any[Messages], any[Request[AnyContent]])
@@ -1804,7 +1774,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
       title = any[String],
       record = ArgumentMatchers.eq(editSetRecord),
       legalStatusReferenceData = ArgumentMatchers.eq(Seq.empty),
-      placesOfDeposit = ArgumentMatchers.eq(Seq.empty),
+      placesOfDeposit = ArgumentMatchers.eq(placesOfDeposit),
       creators = ArgumentMatchers.eq(Seq.empty),
       editSetRecordForm = formCaptor.capture
     )(any[Messages], any[Request[AnyContent]])
