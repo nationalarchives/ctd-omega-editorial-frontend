@@ -5,6 +5,9 @@ on:
       - main
   pull_request:
 
+env:
+  GITHUB_TOKEN: ${{ github.token }}
+
 jobs:
   test-workflows:
     name: Editorial Tests
@@ -24,20 +27,14 @@ jobs:
         uses: actions/checkout@v2
       - name: Run unit tests
         run: sbt -v +test
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
       - name: Install docker (on macos, only)
         run: brew install docker && brew install docker-compose && colima start && docker --version
         if: ${{ matrix.os == 'macos-latest' }}
       - name: Start docker compose
-        run: docker-compose up -d && docker-compose ps && sleep 10
+        run: docker-compose up -d && docker-compose ps
       - name: Run integration tests
-        run: sbt -v "IntegrationTest/testOnly EditSetISpec*"
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+        run: sbt -v IntegrationTest/test
       - name: Shutdown docker compose
         run: docker-compose down
       - name: Generate a coverage report
         run: sbt coverageReport
-        env:
-          GITHUB_TOKEN: ${{ github.token }}

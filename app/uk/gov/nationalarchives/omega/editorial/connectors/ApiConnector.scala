@@ -23,52 +23,50 @@ package uk.gov.nationalarchives.omega.editorial.connectors
 
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
-import javax.inject.{ Inject, Singleton }
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import play.api.inject.ApplicationLifecycle
 import play.api.libs.json.{ Json, Reads }
-
-import uk.gov.nationalarchives.omega.editorial.models._
-import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 import uk.gov.nationalarchives.omega.editorial.config.Config
+import uk.gov.nationalarchives.omega.editorial.models._
+
+import javax.inject.{ Inject, Singleton }
 
 @Singleton
 class ApiConnector @Inject() (
   config: Config,
-  timeProvider: TimeProvider,
   lifecycle: ApplicationLifecycle
 ) {
   import ApiConnector._
 
   private implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jLogger.getLogger[IO]
-
   private val requestQueueName = "request-general"
   private val replyQueueName = "omega-editorial-web-application-instance-1"
-
   private lazy val (client, closer): (JmsRequestReplyClient[IO], IO[Unit]) = createClientAndCloser.unsafeRunSync()
   private lazy val handler: RequestReplyHandler = RequestReplyHandler(client)
 
-  def getEditSet(id: String): IO[EditSet] = {
-    val now = timeProvider.now()
-    val requestBody = Json.stringify(Json.toJson(GetEditSet(id, now)))
-
-    logger.info(s"Requesting edit set $id...") *>
-      handle(SID.GetEditSet, requestBody).flatMap(parse[EditSet])
+  def getEditSet(getEditSet: GetEditSet): IO[Option[EditSet]] = {
+    val requestBody = Json.stringify(Json.toJson(getEditSet))
+    logger.info(s"Requesting edit set ${getEditSet.oci}...") *>
+      handle(SID.GetEditSet, requestBody)
+        .flatMap(parse[EditSet])
+        .redeem(_ => None, Some.apply)
   }
 
-  def getEditSetRecord(editSetOci: String, recordOci: String): IO[Option[EditSetRecord]] = {
-    val now = timeProvider.now()
-    val requestBody = Json.stringify(
-      Json.toJson(
-        GetEditSetRecord(editSetOci, recordOci, now)
-      )
-    )
+  def getEditSetRecord(getEditSetRecord: GetEditSetRecord): IO[Option[EditSetRecord]] = {
+    val requestBody = Json.stringify(Json.toJson(getEditSetRecord))
+    logger.info(s"Requesting record ${getEditSetRecord.recordOci} from edit set ${getEditSetRecord.editSetOci}") *>
+      handle(SID.GetEditSetRecord, requestBody)
+        .flatMap(parse[EditSetRecord])
+        .redeem(_ => None, Some.apply)
+  }
 
-    logger.info(s"Requesting record $recordOci from edit set $editSetOci")
-    handle(SID.GetEditSetRecord, requestBody)
-      .flatMap(parse[EditSetRecord])
-      .redeem(_ => None, Some.apply)
+  def updateEditSetRecord(updateEditSetRecord: UpdateEditSetRecord): IO[UpdateResponseStatus] = {
+    val requestBody = Json.stringify(Json.toJson(updateEditSetRecord))
+    logger.info(
+      s"Requesting update of edit set record ${updateEditSetRecord.recordOci}: \n${pprint.apply(updateEditSetRecord)}\n"
+    ) *>
+      handle(SID.UpdateEditSetRecord, requestBody).flatMap(parse[UpdateResponseStatus])
   }
 
   private def createClientAndCloser: IO[(JmsRequestReplyClient[IO], IO[Unit])] =
@@ -110,7 +108,7 @@ object ApiConnector {
     case object UpdateEditSetRecord extends SID("OSUESR001")
   }
 
-  case class CannotParseEditSetResponse(response: String) extends Exception(
+  private case class CannotParseEditSetResponse(response: String) extends Exception(
         s"""can't parse edit set, got:
            |$response
            |""".stripMargin

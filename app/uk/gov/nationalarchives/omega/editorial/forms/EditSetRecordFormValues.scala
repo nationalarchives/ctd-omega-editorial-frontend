@@ -44,29 +44,6 @@ case class EditSetRecordFormValues(
 
 object EditSetRecordFormValues {
 
-  def modifyEditSetRecordWithFormValues(
-    editSetRecord: EditSetRecord,
-    formValues: EditSetRecordFormValues
-  ): EditSetRecord =
-    editSetRecord.copy(
-      scopeAndContent = formValues.scopeAndContent,
-      coveringDates = formValues.coveringDates,
-      formerReferenceDepartment = formValues.formerReferenceDepartment,
-      formerReferencePro = formValues.formerReferencePro,
-      startDateDay = String.valueOf(formValues.startDateDay.toInt),
-      startDateMonth = String.valueOf(formValues.startDateMonth.toInt),
-      startDateYear = String.valueOf(formValues.startDateYear.toInt),
-      endDateDay = String.valueOf(formValues.endDateDay.toInt),
-      endDateMonth = String.valueOf(formValues.endDateMonth.toInt),
-      endDateYear = String.valueOf(formValues.endDateYear.toInt),
-      legalStatusID = formValues.legalStatusID,
-      placeOfDepositID = formValues.placeOfDepositID,
-      note = formValues.note,
-      background = formValues.background,
-      custodialHistory = formValues.custodialHistory,
-      creatorIDs = formValues.creatorIDs
-    )
-
   def populateForm(editSetRecord: EditSetRecord): EditSetRecordFormValues =
     EditSetRecordFormValues(
       scopeAndContent = editSetRecord.scopeAndContent,

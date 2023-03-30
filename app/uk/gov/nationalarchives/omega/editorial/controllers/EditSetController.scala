@@ -21,13 +21,9 @@
 
 package uk.gov.nationalarchives.omega.editorial.controllers
 
-import cats.effect.unsafe.implicits.global
-import play.api.i18n.I18nSupport
 import play.api.mvc._
-import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
 import uk.gov.nationalarchives.omega.editorial.models._
-import uk.gov.nationalarchives.omega.editorial.services.{ EditSetEntryRowOrder, EditSetPagination, EditSetService }
-import uk.gov.nationalarchives.omega.editorial.support.{ FormSupport, MessageSupport }
+import uk.gov.nationalarchives.omega.editorial.services.{ EditSetEntryRowOrder, EditSetPagination, EditSetRecordService, EditSetService }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
 
 import javax.inject._
@@ -39,10 +35,10 @@ import scala.concurrent.{ ExecutionContext, Future }
 class EditSetController @Inject() (
   messagesControllerComponents: MessagesControllerComponents,
   editSetService: EditSetService,
+  editSetRecordService: EditSetRecordService,
   editSet: editSet
 )(implicit ec: ExecutionContext)
-    extends MessagesAbstractController(messagesControllerComponents) with I18nSupport with Secured with FormSupport
-    with MessageSupport {
+    extends BaseAppController(messagesControllerComponents, editSetService, editSetRecordService) {
   import EditSetController._
 
   /** Create an Action for the edit set page.
@@ -67,27 +63,30 @@ class EditSetController @Inject() (
   private def generateEditSetView(id: String, user: User, editSetEntryRowOrder: EditSetEntryRowOrder)(implicit
     request: Request[AnyContent]
   ): Future[Result] =
-    editSetService.get(id).unsafeToFuture().map { currentEditSet =>
-      val pageNumber = queryStringValue(request, offsetKey).map(_.toInt).getOrElse(1)
-      val sortedEntries = currentEditSet.entries.sorted(editSetEntryRowOrder.currentOrdering)
+    findEditSet(id).flatMap {
+      case Right(currentEditSet) =>
+        val pageNumber = queryStringValue(request, offsetKey).map(_.toInt).getOrElse(1)
+        val sortedEntries = currentEditSet.entries.sorted(editSetEntryRowOrder.currentOrdering)
 
-      val editSetPage = new EditSetPagination(
-        id = id,
-        rowOrder = editSetEntryRowOrder,
-        nextText = resolveMessage("edit-set.pagination.next"),
-        previousText = resolveMessage("edit-set.pagination.previous")
-      ).makeEditSetPage(sortedEntries, pageNumber)
+        val editSetPage = new EditSetPagination(
+          id = id,
+          rowOrder = editSetEntryRowOrder,
+          nextText = resolveMessage("edit-set.pagination.next"),
+          previousText = resolveMessage("edit-set.pagination.previous")
+        ).makeEditSetPage(sortedEntries, pageNumber)
 
-      val title = resolveMessage("edit-set.title", editSetPage.pageNumber, editSetPage.totalPages)
-      val heading: String = resolveMessage(
-        "edit-set.heading",
-        currentEditSet.name,
-        editSetPage.numberOfFirstEntry.toString,
-        editSetPage.numberOfLastEntry.toString,
-        editSetPage.totalNumberOfEntries.toString
-      )
-      Ok(editSet(user, title, heading, editSetPage, editSetEntryRowOrder))
+        val title = resolveMessage("edit-set.title", editSetPage.pageNumber, editSetPage.totalPages)
+        val heading: String = resolveMessage(
+          "edit-set.heading",
+          currentEditSet.name,
+          editSetPage.numberOfFirstEntry.toString,
+          editSetPage.numberOfLastEntry.toString,
+          editSetPage.totalNumberOfEntries.toString
+        )
+        Ok(editSet(user, title, heading, editSetPage, editSetEntryRowOrder))
+      case Left(_) => NotFound
     }
+
 }
 
 object EditSetController {

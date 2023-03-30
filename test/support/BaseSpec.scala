@@ -24,8 +24,8 @@ package support
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import org.scalatestplus.play.PlaySpec
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -35,8 +35,8 @@ import play.api.test.Injecting
 import play.twirl.api.Content
 import uk.gov.nationalarchives.omega.editorial.config.{ Config, HostBrokerEndpoint, UsernamePasswordCredentials }
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
+import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
-import uk.gov.nationalarchives.omega.editorial.models.{ Creator, PlaceOfDeposit, User }
 import uk.gov.nationalarchives.omega.editorial.modules.StartupModule
 import uk.gov.nationalarchives.omega.editorial.services.{ EditSetRecordService, EditSetService, ReferenceDataService }
 import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
@@ -44,7 +44,9 @@ import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 import java.time.{ LocalDateTime, Month }
 import scala.concurrent.Future
 
-class BaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with BeforeAndAfterEach {
+class BaseSpec
+    extends PlaySpec with GuiceOneAppPerSuite with Injecting with BeforeAndAfterEach with ModelSupport
+    with ApiConnectorAssertions {
 
   val user: User = User("dummy user")
   val testReferenceDataService: TestReferenceDataService = app.injector.instanceOf[TestReferenceDataService]
@@ -54,12 +56,19 @@ class BaseSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with Bef
   val allCreators: Seq[Creator] = testReferenceDataService.getCreators
   val validSessionToken: String = Session.generateToken("1234")
   val invalidSessionToken: String = Session.generateToken("invalid-user")
+  implicit val apiConnectorMonitoring: ApiConnectorMonitoring = TestApiConnector
+  lazy implicit val testTimeProvider: TimeProvider = () => LocalDateTime.of(2023, Month.FEBRUARY, 28, 1, 1, 1)
+  implicit val executionContext: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
 
-  private lazy val testTimeProvider: TimeProvider = () => LocalDateTime.of(2023, Month.FEBRUARY, 28, 1, 1, 1)
   private lazy val testConfig: Config = Config(
     broker = HostBrokerEndpoint("not.a.real.host", 0),
     credentials = UsernamePasswordCredentials("?", "?")
   )
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    TestApiConnector.reset()
+  }
 
   override def fakeApplication(): Application =
     GuiceApplicationBuilder()

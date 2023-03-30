@@ -682,7 +682,13 @@ object CommonMatchers {
     singleValueMatcher(
       s"an error message for $fieldName",
       expectedValue,
-      removeInvisibleErrorMessagePrefix(document.select(valueSelector).text().replace("Error: ", ""))
+      removeInvisibleErrorMessagePrefix(
+        document
+          .select(valueSelector)
+          .text()
+          .replace("Error: ", "")
+          .replace("login.hidden.error ", "")
+      )
     )
 
   private def noneIfEmpty(input: String): Option[String] =

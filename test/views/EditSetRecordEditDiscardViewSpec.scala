@@ -21,75 +21,64 @@
 
 package views
 
-import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.test.Helpers
-import play.twirl.api.Html
 import support.BaseViewSpec
 import support.CommonMatchers._
 import uk.gov.hmrc.govukfrontend.views.html.components.GovukNotificationBanner
 import uk.gov.nationalarchives.omega.editorial.models.PhysicalRecord
-import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEditSave
+import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEditDiscard
 
-class EditSetRecordEditSaveSpec extends BaseViewSpec {
+class EditSetRecordEditDiscardViewSpec extends BaseViewSpec {
 
-  "Edit set record edit save Html" should {
-    "render the given title and heading with save changes message" in {
-      implicit val messages: Messages = Helpers.stubMessages()
+  implicit lazy val messages: Messages = Helpers.stubMessages()
+  lazy val banner = new GovukNotificationBanner
+  lazy val editSetRecordEditDiscardInstance = new editSetRecordEditDiscard(banner)
 
-      val editSetRecordEditSaveInstance = getEditSetRecordEditSaveInstance
-      val title = "EditRecordTitleTest"
-      val editSetName = "COAL 80 Sample"
-      val heading = "EditRecordHeadingTest"
-      val saveChanges = "Your changes have been saved."
-      val oci = "EditRecordOciTest"
+  "Edit set record edit discard Html" should {
 
-      val confirmationEditSetRecordEditHtml: Html =
-        editSetRecordEditSaveInstance(user, editSetName, title, heading, oci, saveChanges, Some(PhysicalRecord))
-
+    "render the given title and heading with discard changes message" in {
+      val confirmationEditSetRecordEditHtml = editSetRecordEditDiscardInstance(
+        user = user,
+        editSetName = "COAL 80 Sample",
+        title = "EditRecordTitleTest",
+        heading = "EditRecordHeadingTest",
+        oci = "EditRecordOciTest",
+        message = "Any changes have been discarded. Showing last saved version.",
+        recordType = Some(PhysicalRecord)
+      )
       val document = asDocument(confirmationEditSetRecordEditHtml)
+
       document must haveTitle("EditRecordTitleTest")
       document must haveNotificationBannerContents(
         Seq(
-          "Your changes have been saved.",
+          "Any changes have been discarded. Showing last saved version.",
           "EditRecordHeadingTest",
           "edit-set.record.edit.id",
           "placeholder.series-national-coal-board"
         )
       )
       document must haveBackLink("/edit-set/1/record/EditRecordOciTest/edit", "edit-set.record.save.back")
-
     }
 
     "render the header" in {
-
-      val document = generateDocument()
-      document must haveHeaderTitle("header.title")
-      document must haveVisibleLogoutLink
-      document must haveLogoutLinkLabel("header.logout")
-      document must haveLogoutLink
-
-    }
-
-  }
-
-  private def generateDocument(): Document = {
-    implicit val messages: Messages = Helpers.stubMessages()
-    val editSetRecordEditSaveInstance = getEditSetRecordEditSaveInstance
-    asDocument(
-      editSetRecordEditSaveInstance(
+      val confirmationEditSetRecordEditHtml = editSetRecordEditDiscardInstance(
         user = user,
         editSetName = "COAL 80 Sample",
         title = "EditRecordTitleTest",
         heading = "EditRecordHeadingTest",
         oci = "EditRecordOciTest",
-        message = "Your changes have been saved.",
-        Some(PhysicalRecord)
+        message = "Any changes have been discarded. Showing last saved version.",
+        recordType = Some(PhysicalRecord)
       )
-    )
-  }
+      val document = asDocument(confirmationEditSetRecordEditHtml)
 
-  private def getEditSetRecordEditSaveInstance: editSetRecordEditSave =
-    new editSetRecordEditSave(new GovukNotificationBanner)
+      document must haveHeaderTitle("header.title")
+      document must haveVisibleLogoutLink
+      document must haveLogoutLinkLabel("header.logout")
+      document must haveLogoutLink
+    }
+
+  }
 
 }

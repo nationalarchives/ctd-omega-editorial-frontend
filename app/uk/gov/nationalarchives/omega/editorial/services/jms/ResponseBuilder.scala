@@ -21,19 +21,16 @@
 
 package uk.gov.nationalarchives.omega.editorial.services.jms
 
-import cats.implicits._
 import cats.MonadError
+import cats.implicits._
 import jms4s.jms.JmsMessage
 import org.typelevel.log4cats.Logger
 import play.api.libs.json.{ Json, Reads }
-
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector.SID
-import uk.gov.nationalarchives.omega.editorial.editSetRecords.getEditSetRecordByOCI
-import uk.gov.nationalarchives.omega.editorial.editSets
 import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.services.jms.ResponseBuilder.ME
 
-class ResponseBuilder[F[_] : ME : Logger] {
+class ResponseBuilder[F[_] : ME : Logger] extends StubData {
   import ResponseBuilder._
 
   private val me = MonadError[F, Throwable]
@@ -48,38 +45,42 @@ class ResponseBuilder[F[_] : ME : Logger] {
   def createResponseText(jmsMessage: JmsMessage): F[String] =
     jmsMessage.getStringProperty(sidHeaderKey) match {
       case Some(sidValue) if SID.GetEditSet.matches(sidValue) =>
-        handleGetEditSet(jmsMessage, sidValue)
+        handleGetEditSet(jmsMessage)
       case Some(sidValue) if SID.GetEditSetRecord.matches(sidValue) =>
         handleGetEditSetRecord(jmsMessage)
       case Some(sidValue) if SID.UpdateEditSetRecord.matches(sidValue) =>
         handleUpdateEditSetRecord(jmsMessage)
-      case unknown =>
+      case Some(unknown) =>
         onUnhandledCase(s"SID is unrecognised: [$unknown]")
+      case None =>
+        onUnhandledCase(s"No SID provided")
     }
 
-  private def handleGetEditSet(jmsMessage: JmsMessage, sidValue: String): F[String] =
-    logger.info(s"got a message with sid header '$sidValue', trying to parse payload") *>
-      getEditSet(jmsMessage).flatMap { editSet =>
-        logger.info("parsed payload, creating edit set response") *>
-          me.pure(Json.toJson(editSet).toString)
-      }
+  private def handleGetEditSet(jmsMessage: JmsMessage): F[String] =
+    asGetEditSetRequest(jmsMessage).flatMap(getEditSetRequest =>
+      getEditSet(getEditSetRequest.oci)
+        .map(editSetRecord => me.pure(Json.toJson(editSetRecord).toString))
+        .getOrElse(onUnknownEditSet(getEditSetRequest.oci))
+    )
 
   private def handleGetEditSetRecord(jmsMessage: JmsMessage): F[String] =
     asGetEditSetRecordRequest(jmsMessage).flatMap(getEditSetRecordRequest =>
-      getEditSetRecordByOCI(getEditSetRecordRequest.recordOci)
+      getEditSetRecord(getEditSetRecordRequest.recordOci)
         .map(editSetRecord => me.pure(Json.toJson(editSetRecord).toString))
         .getOrElse(onUnknownEditSetRecord(getEditSetRecordRequest.editSetOci, getEditSetRecordRequest.recordOci))
     )
 
   private def handleUpdateEditSetRecord(jmsMessage: JmsMessage): F[String] =
     asUpdateEditSetRecordRequest(jmsMessage).flatMap(updateEditSetRecordRequest =>
-      getEditSetRecordByOCI(updateEditSetRecordRequest.recordOci)
+      getEditSetRecord(updateEditSetRecordRequest.recordOci)
         .map(editSetRecord =>
           me.pure(Json.toJson(updateEditSetRecord(editSetRecord, updateEditSetRecordRequest)).toString)
         )
         .getOrElse(onUnknownEditSetRecord(updateEditSetRecordRequest.editSetOci, updateEditSetRecordRequest.recordOci))
     )
 
+  /** Note that we do not actually update the record, anymore.
+    */
   private def updateEditSetRecord(
     editSetRecord: EditSetRecord,
     updateEditSetRecord: UpdateEditSetRecord
@@ -87,6 +88,11 @@ class ResponseBuilder[F[_] : ME : Logger] {
     logger.info(s"Attempting to update Edit Set Record with request [$updateEditSetRecord] ...")
     UpdateResponseStatus("success", s"Successfully updated record with OCI [${editSetRecord.oci}]")
   }
+
+  private def onUnknownEditSet(editSetOci: String): F[String] =
+    onUnhandledCase(
+      s"Unable to find Edit Set with OCI [$editSetOci]"
+    )
 
   private def onUnknownEditSetRecord(editSetOci: String, recordOci: String): F[String] =
     onUnhandledCase(
@@ -98,12 +104,8 @@ class ResponseBuilder[F[_] : ME : Logger] {
       new NotImplementedError(s"We don't yet handle this case: $errorMessage")
     )
 
-  private def getEditSet(jmsMessage: JmsMessage): F[EditSet] =
-    for {
-      messageText <- messageText(jmsMessage)
-      // TODO We'll need to get the OCI from the GetEditSet eventuly
-      _ <- parse[GetEditSet](messageText)
-    } yield editSets.editSet1
+  private def asGetEditSetRequest(jmsMessage: JmsMessage): F[GetEditSet] =
+    messageText(jmsMessage).flatMap(parse[GetEditSet])
 
   private def asGetEditSetRecordRequest(jmsMessage: JmsMessage): F[GetEditSetRecord] =
     messageText(jmsMessage).flatMap(parse[GetEditSetRecord])
@@ -128,7 +130,7 @@ object ResponseBuilder {
 
   sealed abstract class StubServerError extends Throwable
 
-  final case object MissingJMSID extends StubServerError
+  private final case object MissingJMSID extends StubServerError
   private final case class NotATextMessage(err: Throwable) extends StubServerError
   private final case class CannotParse(txt: String) extends StubServerError
 

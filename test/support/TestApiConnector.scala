@@ -22,21 +22,28 @@
 package support
 
 import cats.effect.IO
-
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetRecord }
-import uk.gov.nationalarchives.omega.editorial.{ editSetRecords, editSets }
+import uk.gov.nationalarchives.omega.editorial.models._
+import uk.gov.nationalarchives.omega.editorial.services.jms.StubData
 
-object TestApiConnector extends ApiConnector(null, null, null) {
+object TestApiConnector extends ApiConnector(null, null) with ApiConnectorMonitoring with StubData {
 
-  override def getEditSet(id: String): IO[EditSet] =
+  override def getEditSet(getEditSetRequest: GetEditSet): IO[Option[EditSet]] =
     IO.pure {
-      editSets.editSet1
+      record(getEditSetRequest)
+      getEditSet(getEditSetRequest.oci)
     }
 
-  override def getEditSetRecord(editSetOci: String, recordOci: String): IO[Option[EditSetRecord]] =
+  override def getEditSetRecord(getEditSetRecordRequest: GetEditSetRecord): IO[Option[EditSetRecord]] =
     IO.pure {
-      editSetRecords.getEditSetRecordByOCI(recordOci)
+      record(getEditSetRecordRequest)
+      getEditSetRecord(getEditSetRecordRequest.recordOci)
+    }
+
+  override def updateEditSetRecord(updateEditSetRecord: UpdateEditSetRecord): IO[UpdateResponseStatus] =
+    IO.pure {
+      record(updateEditSetRecord)
+      UpdateResponseStatus(s"success", s"Successfully updated record with OCI [${updateEditSetRecord.recordOci}]")
     }
 
 }

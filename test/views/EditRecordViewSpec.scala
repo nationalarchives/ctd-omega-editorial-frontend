@@ -26,15 +26,16 @@ import play.api.data.Forms.{ mapping, seq, text }
 import play.api.data.{ Form, FormError }
 import play.api.test.{ CSRFTokenHelper, FakeRequest, Helpers }
 import play.twirl.api.Html
-import support.BaseSpec
+import support.BaseViewSpec
 import support.CommonMatchers._
-import support.ExpectedValues.ExpectedSummaryErrorMessage
+import support.ExpectedValues.{ ExpectedSelectOption, ExpectedSummaryErrorMessage }
+import uk.gov.hmrc.govukfrontend.views.html.components.{ GovukButton, GovukErrorMessage, GovukErrorSummary, GovukFieldset, GovukHint, GovukInput, GovukLabel, GovukSelect, GovukTextarea }
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetRecordController.FieldNames
 import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, LegalStatus, MaterialReference }
+import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.views.html.editSetRecordEdit
 
-class EditRecordViewSpec extends BaseSpec {
+class EditRecordViewSpec extends BaseViewSpec {
 
   private val emptyForm: Form[EditSetRecordFormValues] = Form(
     mapping(
@@ -57,13 +58,22 @@ class EditRecordViewSpec extends BaseSpec {
     )(EditSetRecordFormValues.apply)(EditSetRecordFormValues.unapply)
   )
 
-  val legalStatusReferenceData =
+  private val legalStatusReferenceData =
     Seq(
       LegalStatus("ref.1", "Public Record(s)"),
       LegalStatus("ref.2", "Not Public Records"),
       LegalStatus("ref.3", "Public Records unless otherwise Stated"),
       LegalStatus("ref.4", "Welsh Public Record(s)")
     )
+
+  private val allPlacesOfDeposits =
+    Seq(
+      PlaceOfDeposit("1", "The National Archives, Kew"),
+      PlaceOfDeposit("2", "British Museum, Department of Libraries and Archives"),
+      PlaceOfDeposit("3", "British Library, National Sound Archive")
+    )
+
+  private val allCreators: Seq[Creator] = Seq.empty
 
   val editSetRecord = EditSetRecord(
     ccr = "COAL 80/80/1",
@@ -162,10 +172,18 @@ class EditRecordViewSpec extends BaseSpec {
       document must haveActionButtons("discard", "edit-set.record.discard.button", 2)
       document must haveLegend("edit-set.record.edit.legend")
       document must haveLegalStatus("ref.1")
+      document must haveSelectionForPlaceOfDeposit(
+        Seq(
+          ExpectedSelectOption("", "edit-set.record.error.place-of-deposit-id", disabled = true),
+          ExpectedSelectOption("1", "The National Archives, Kew"),
+          ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
+          ExpectedSelectOption("3", "British Library, National Sound Archive", selected = true)
+        )
+      )
 
     }
     "render an error given no scope and content" in {
-      val editSetRecordEditInstance = inject[editSetRecordEdit]
+      val editSetRecordEditInstance = getEditRecordInstance
       val title = "EditRecordTitleTest"
       val editSetName = "COAL 80 Sample"
       val filledForm = emptyForm
@@ -198,7 +216,7 @@ class EditRecordViewSpec extends BaseSpec {
     }
 
     "render an error when given scope and content is more than 8000 characters" in {
-      val editSetRecordEditInstance = inject[editSetRecordEdit]
+      val editSetRecordEditInstance = getEditRecordInstance
       val title = "EditRecordTitleTest"
       val editSetName = "COAL 80 Sample"
       val filledForm = emptyForm
@@ -240,7 +258,7 @@ class EditRecordViewSpec extends BaseSpec {
     }
 
     "render an error when given former reference department is more than 255 characters" in {
-      val editSetRecordEditInstance = inject[editSetRecordEdit]
+      val editSetRecordEditInstance = getEditRecordInstance
       val title = "EditRecordTitleTest"
       val editSetName = "COAL 80 Sample"
       val filledForm = emptyForm
@@ -290,7 +308,7 @@ class EditRecordViewSpec extends BaseSpec {
       )
     }
     "render an error when no legal status is selected" in {
-      val editSetRecordEditInstance = inject[editSetRecordEdit]
+      val editSetRecordEditInstance = getEditRecordInstance
 
       val title = "EditRecordTitleTest"
       val editSetName = "COAL 80 Sample"
@@ -321,7 +339,7 @@ class EditRecordViewSpec extends BaseSpec {
     }
 
     "render an error when given former reference pro is more than 255 characters" in {
-      val editSetRecordEditInstance = inject[editSetRecordEdit]
+      val editSetRecordEditInstance = getEditRecordInstance
       val title = "EditRecordTitleTest"
       val editSetName = "COAL 80 Sample"
       val filledForm = emptyForm
@@ -372,7 +390,7 @@ class EditRecordViewSpec extends BaseSpec {
     }
 
     "render an error when given invalid covering dates" in {
-      val editSetRecordEditInstance = inject[editSetRecordEdit]
+      val editSetRecordEditInstance = getEditRecordInstance
 
       val title = "EditRecordTitleTest"
       val editSetName = "COAL 80 Sample"
@@ -470,7 +488,7 @@ class EditRecordViewSpec extends BaseSpec {
   }
 
   private def generateDocument(title: String = "", form: Form[EditSetRecordFormValues]): Document = {
-    val editSetRecordEditInstance: editSetRecordEdit = inject[editSetRecordEdit]
+    val editSetRecordEditInstance: editSetRecordEdit = getEditRecordInstance
     asDocument(
       editSetRecordEditInstance(
         user = user,
@@ -487,5 +505,16 @@ class EditRecordViewSpec extends BaseSpec {
       )
     )
   }
+
+  private def getEditRecordInstance: editSetRecordEdit =
+    new editSetRecordEdit(
+      new GovukButton,
+      new GovukInput(new GovukErrorMessage, new GovukHint, new GovukLabel),
+      new GovukTextarea(new GovukErrorMessage, new GovukHint, new GovukLabel),
+      new GovukFieldset,
+      new GovukErrorSummary,
+      new GovukSelect(new GovukErrorMessage, new GovukHint, new GovukLabel),
+      new GovukLabel
+    )
 
 }
