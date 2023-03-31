@@ -128,7 +128,6 @@ class EditSetRecordController @Inject() (
       case Left(EditSetRecordNotFound(missingOci)) => BadRequest(s"Record with $missingOci not found")
       case Left(InvalidAction(badAction))          => BadRequest(s"$badAction is not allowed action")
       case Left(MissingAction)                     => BadRequest("This action is not allowed")
-      case Left(anotherError) => InternalServerError(s"Error occurred: [$anotherError]") // TODO: Untested
     }
 
   private def generateResult(
