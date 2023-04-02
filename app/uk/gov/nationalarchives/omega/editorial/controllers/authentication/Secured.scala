@@ -21,6 +21,7 @@
 
 package uk.gov.nationalarchives.omega.editorial.controllers.authentication
 
+import cats.effect.IO
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
 import uk.gov.nationalarchives.omega.editorial.controllers.{ SessionKeys, routes }
@@ -28,7 +29,6 @@ import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.models.{ Credentials, User }
 
 import java.time.{ LocalDateTime, ZoneOffset }
-import scala.concurrent.Future
 
 trait Secured {
 
@@ -40,13 +40,13 @@ trait Secured {
       }
       .getOrElse(Redirect(routes.LoginController.view()))
 
-  def withUserAsync(block: User => Future[Result])(implicit request: Request[AnyContent]): Future[Result] =
+  def withUserAsync(block: User => IO[Result])(implicit request: Request[AnyContent]): IO[Result] =
     extractUser(request)
       .map { credentials =>
         val user = User(credentials.username)
         block(user)
       }
-      .getOrElse(Future.successful(Redirect(routes.LoginController.view())))
+      .getOrElse(IO.pure(Redirect(routes.LoginController.view())))
 
   private def extractUser(req: RequestHeader): Option[Credentials] =
     req.session

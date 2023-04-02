@@ -21,7 +21,7 @@
 
 package uk.gov.nationalarchives.omega.editorial.controllers
 
-import cats.effect.unsafe.implicits.global
+import cats.effect.IO
 import play.api.i18n.{ I18nSupport, Lang }
 import play.api.mvc.{ MessagesAbstractController, MessagesControllerComponents, Result }
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
@@ -29,31 +29,27 @@ import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetRecord }
 import uk.gov.nationalarchives.omega.editorial.services.{ EditSetRecordService, EditSetService }
 import uk.gov.nationalarchives.omega.editorial.support.{ FormSupport, MessageSupport }
 
-import scala.concurrent.{ ExecutionContext, Future }
-
 abstract class BaseAppController(
   messagesControllerComponents: MessagesControllerComponents,
   editSetService: EditSetService,
   editSetRecordService: EditSetRecordService
-)(implicit
-  ec: ExecutionContext
 ) extends MessagesAbstractController(messagesControllerComponents) with I18nSupport with Secured with FormSupport
     with MessageSupport {
 
   import BaseAppController._
 
-  implicit def resultToFutureResult(result: Result): Future[Result] = Future.successful(result)
+  implicit def resultToIOResult(result: Result): IO[Result] = IO.pure(result)
 
-  def findEditSet(id: String): Future[Outcome[EditSet]] =
+  implicit def outcomeToIOOutcome[T](outcome: Outcome[T]): IO[Outcome[T]] = IO.pure(outcome)
+
+  def findEditSet(id: String): IO[Outcome[EditSet]] =
     editSetService
       .get(id)
-      .unsafeToFuture()
       .map(_.toRight(EditSetNotFound(id)))
 
-  def findEditSetRecord(editSetOci: String, recordOci: String): Future[Outcome[EditSetRecord]] =
+  def findEditSetRecord(editSetOci: String, recordOci: String): IO[Outcome[EditSetRecord]] =
     editSetRecordService
       .get(editSetOci, recordOci)
-      .unsafeToFuture()
       .map(_.toRight(EditSetRecordNotFound(recordOci)))
 
   def resolvedMessage(key: String, args: String*): String = messagesApi(key, args: _*)(Lang("en"))

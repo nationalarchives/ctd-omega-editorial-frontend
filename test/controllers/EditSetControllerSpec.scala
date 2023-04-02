@@ -37,8 +37,6 @@ import uk.gov.nationalarchives.omega.editorial.services.EditSetPagination.EditSe
 import uk.gov.nationalarchives.omega.editorial.services.{ EditSetEntryRowOrder, EditSetRecordService, EditSetService }
 import uk.gov.nationalarchives.omega.editorial.views.html.editSet
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 /** Add your spec here. You can mock out a whole application including requests, plugins etc.
   *
   * For more information, see https://www.playframework.com/documentation/latest/ScalaTestingWithScalaTest

@@ -22,7 +22,7 @@
 package uk.gov.nationalarchives.omega.editorial.services.jms
 
 import uk.gov.nationalarchives.omega.editorial.models.MaterialReference.{ DescriptionOnly, LinkAndDescription, LinkOnly }
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry, EditSetRecord }
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetEntry, EditSetRecord, PlaceOfDeposit }
 
 trait StubData {
 
@@ -453,4 +453,9 @@ trait StubData {
     getEditSetRecord(id)
       .getOrElse(throw new RuntimeException(s"Unknown Edit Set Record [$id]"))
 
+  def getPlacesOfDeposit(): Seq[PlaceOfDeposit] = Seq(
+    PlaceOfDeposit("1", "The National Archives, Kew"),
+    PlaceOfDeposit("2", "British Museum, Department of Libraries and Archives"),
+    PlaceOfDeposit("3", "British Library, National Sound Archive")
+  )
 }

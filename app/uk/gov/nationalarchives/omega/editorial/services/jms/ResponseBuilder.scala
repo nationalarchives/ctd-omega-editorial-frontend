@@ -25,7 +25,7 @@ import cats.MonadError
 import cats.implicits._
 import jms4s.jms.JmsMessage
 import org.typelevel.log4cats.Logger
-import play.api.libs.json.{ Json, Reads }
+import play.api.libs.json.{ Json, Reads, Writes }
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector.SID
 import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.services.jms.ResponseBuilder.ME
@@ -50,6 +50,8 @@ class ResponseBuilder[F[_] : ME : Logger] extends StubData {
         handleGetEditSetRecord(jmsMessage)
       case Some(sidValue) if SID.UpdateEditSetRecord.matches(sidValue) =>
         handleUpdateEditSetRecord(jmsMessage)
+      case Some(sidValue) if SID.GetPlacesOfDeposit.matches(sidValue) =>
+        handleGetPlacesOfDeposit(jmsMessage)
       case Some(unknown) =>
         onUnhandledCase(s"SID is unrecognised: [$unknown]")
       case None =>
@@ -57,27 +59,31 @@ class ResponseBuilder[F[_] : ME : Logger] extends StubData {
     }
 
   private def handleGetEditSet(jmsMessage: JmsMessage): F[String] =
-    asGetEditSetRequest(jmsMessage).flatMap(getEditSetRequest =>
+    parse[GetEditSet](jmsMessage).flatMap(getEditSetRequest =>
       getEditSet(getEditSetRequest.oci)
-        .map(editSetRecord => me.pure(Json.toJson(editSetRecord).toString))
+        .map(editSetRecord => asJsonString(editSetRecord))
         .getOrElse(onUnknownEditSet(getEditSetRequest.oci))
     )
 
   private def handleGetEditSetRecord(jmsMessage: JmsMessage): F[String] =
-    asGetEditSetRecordRequest(jmsMessage).flatMap(getEditSetRecordRequest =>
+    parse[GetEditSetRecord](jmsMessage).flatMap(getEditSetRecordRequest =>
       getEditSetRecord(getEditSetRecordRequest.recordOci)
-        .map(editSetRecord => me.pure(Json.toJson(editSetRecord).toString))
+        .map(editSetRecord => asJsonString(editSetRecord))
         .getOrElse(onUnknownEditSetRecord(getEditSetRecordRequest.editSetOci, getEditSetRecordRequest.recordOci))
     )
 
   private def handleUpdateEditSetRecord(jmsMessage: JmsMessage): F[String] =
-    asUpdateEditSetRecordRequest(jmsMessage).flatMap(updateEditSetRecordRequest =>
+    parse[UpdateEditSetRecord](jmsMessage).flatMap(updateEditSetRecordRequest =>
       getEditSetRecord(updateEditSetRecordRequest.recordOci)
-        .map(editSetRecord =>
-          me.pure(Json.toJson(updateEditSetRecord(editSetRecord, updateEditSetRecordRequest)).toString)
-        )
+        .map(editSetRecord => asJsonString(updateEditSetRecord(editSetRecord, updateEditSetRecordRequest)))
         .getOrElse(onUnknownEditSetRecord(updateEditSetRecordRequest.editSetOci, updateEditSetRecordRequest.recordOci))
     )
+
+  private def handleGetPlacesOfDeposit(jmsMessage: JmsMessage): F[String] =
+    parse[GetPlacesOfDeposit](jmsMessage)
+      .flatMap(_ => asJsonString(getPlacesOfDeposit()))
+
+  private def asJsonString[T : Writes](entity: T): F[String] = me.pure(Json.toJson(entity).toString)
 
   /** Note that we do not actually update the record, anymore.
     */
@@ -104,14 +110,8 @@ class ResponseBuilder[F[_] : ME : Logger] extends StubData {
       new NotImplementedError(s"We don't yet handle this case: $errorMessage")
     )
 
-  private def asGetEditSetRequest(jmsMessage: JmsMessage): F[GetEditSet] =
-    messageText(jmsMessage).flatMap(parse[GetEditSet])
-
-  private def asGetEditSetRecordRequest(jmsMessage: JmsMessage): F[GetEditSetRecord] =
-    messageText(jmsMessage).flatMap(parse[GetEditSetRecord])
-
-  private def asUpdateEditSetRecordRequest(jmsMessage: JmsMessage): F[UpdateEditSetRecord] =
-    messageText(jmsMessage).flatMap(parse[UpdateEditSetRecord])
+  private def parse[T : Reads](jmsMessage: JmsMessage): F[T] =
+    messageText(jmsMessage).flatMap(parse[T])
 
   private def messageText(jmsMessage: JmsMessage): F[String] =
     jmsMessage.asTextF[F].adaptError(err => NotATextMessage(err))

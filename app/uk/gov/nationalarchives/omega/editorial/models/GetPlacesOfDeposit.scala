@@ -23,10 +23,12 @@ package uk.gov.nationalarchives.omega.editorial.models
 
 import play.api.libs.json.{ Format, Json }
 
-case class PlaceOfDeposit(id: String, name: String)
+import java.time.LocalDateTime
 
-object PlaceOfDeposit {
+case class GetPlacesOfDeposit(timestamp: LocalDateTime)
 
-  implicit val format: Format[PlaceOfDeposit] = Json.format[PlaceOfDeposit]
+object GetPlacesOfDeposit {
+
+  implicit val format: Format[GetPlacesOfDeposit] = Json.format[GetPlacesOfDeposit]
 
 }
