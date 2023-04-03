@@ -50,7 +50,7 @@ class ResponseBuilder[F[_] : ME : Logger] extends StubData {
         handleGetEditSetRecord(jmsMessage)
       case Some(sidValue) if SID.UpdateEditSetRecord.matches(sidValue) =>
         handleUpdateEditSetRecord(jmsMessage)
-      case Some(sidValue) if SID.GetLegalStatusSummary.matches(sidValue) =>
+      case Some(sidValue) if SID.GetLegalStatuses.matches(sidValue) =>
         handleGetLegalStatuses(jmsMessage)
       case Some(sidValue) if SID.GetPlacesOfDeposit.matches(sidValue) =>
         handleGetPlacesOfDeposit(jmsMessage)

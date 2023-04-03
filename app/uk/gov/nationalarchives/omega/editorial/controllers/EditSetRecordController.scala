@@ -55,7 +55,6 @@ class EditSetRecordController @Inject() (
 ) extends BaseAppController(messagesControllerComponents, editSetService, editRecordSetService) {
 
   private val logger: Logger = Logger(this.getClass)
-  //  private lazy val legalStatuses: Seq[LegalStatus] = referenceDataService.getLegalStatuses
   private lazy val creators: Seq[Creator] = referenceDataService.getCreators
 
   def viewEditRecordForm(editSetId: String, recordId: String): Action[AnyContent] = Action.async {

@@ -22,7 +22,7 @@
 package support
 
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
-import uk.gov.nationalarchives.omega.editorial.models.{ CorporateBody, LegalStatus, Person }
+import uk.gov.nationalarchives.omega.editorial.models.{ CorporateBody, Person }
 import uk.gov.nationalarchives.omega.editorial.services.ReferenceDataService
 import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 
