@@ -52,6 +52,8 @@ class ResponseBuilder[F[_] : ME : Logger] extends StubData {
         handleUpdateEditSetRecord(jmsMessage)
       case Some(sidValue) if SID.GetPlacesOfDeposit.matches(sidValue) =>
         handleGetPlacesOfDeposit(jmsMessage)
+      case Some(sidValue) if SID.GetCreators.matches(sidValue) =>
+        handleGetCreator(jmsMessage)
       case Some(unknown) =>
         onUnhandledCase(s"SID is unrecognised: [$unknown]")
       case None =>
@@ -82,6 +84,10 @@ class ResponseBuilder[F[_] : ME : Logger] extends StubData {
   private def handleGetPlacesOfDeposit(jmsMessage: JmsMessage): F[String] =
     parse[GetPlacesOfDeposit](jmsMessage)
       .flatMap(_ => asJsonString(getPlacesOfDeposit()))
+
+  private def handleGetCreator(jmsMessage: JmsMessage): F[String] =
+    parse[GetCreators](jmsMessage)
+      .flatMap(_ => asJsonString(getCreators()))
 
   private def asJsonString[T : Writes](entity: T): F[String] = me.pure(Json.toJson(entity).toString)
 

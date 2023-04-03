@@ -21,19 +21,28 @@
 
 package uk.gov.nationalarchives.omega.editorial.models
 
-import uk.gov.nationalarchives.omega.editorial.models.Creator.{ CreatorType, CreatorTypeCorporateBody, CreatorTypePerson }
+import enumeratum._
+import play.api.libs.json.{ Format, Json }
 
-case class Creator(creatorType: CreatorType, id: String, name: String, startYear: Option[Int], endYear: Option[Int]) {
+import uk.gov.nationalarchives.omega.editorial.models.Creator.CreatorType
+
+case class Creator(
+  creatorType: CreatorType,
+  id: String,
+  name: String,
+  startYear: Option[Int],
+  endYear: Option[Int]
+) {
 
   val displayedName = {
     val dateDisplay = (creatorType, startYear, endYear) match {
-      case (CreatorTypeCorporateBody, Some(startYear), Some(endYear)) => s" ($startYear - $endYear)"
-      case (CreatorTypeCorporateBody, Some(startYear), None)          => s" ($startYear - )"
-      case (CreatorTypeCorporateBody, None, Some(endYear))            => s" ( - $endYear)"
-      case (CreatorTypePerson, Some(startYear), Some(endYear))        => s" (b.$startYear - d.$endYear)"
-      case (CreatorTypePerson, Some(startYear), None)                 => s" (b.$startYear - )"
-      case (CreatorTypePerson, None, Some(endYear))                   => s" ( - d.$endYear)"
-      case (_, None, None)                                            => ""
+      case (CreatorType.CorporateBody, Some(startYear), Some(endYear)) => s" ($startYear - $endYear)"
+      case (CreatorType.CorporateBody, Some(startYear), None)          => s" ($startYear - )"
+      case (CreatorType.CorporateBody, None, Some(endYear))            => s" ( - $endYear)"
+      case (CreatorType.Person, Some(startYear), Some(endYear))        => s" (b.$startYear - d.$endYear)"
+      case (CreatorType.Person, Some(startYear), None)                 => s" (b.$startYear - )"
+      case (CreatorType.Person, None, Some(endYear))                   => s" ( - d.$endYear)"
+      case (_, None, None)                                             => ""
     }
     s"$name$dateDisplay"
   }
@@ -42,22 +51,29 @@ case class Creator(creatorType: CreatorType, id: String, name: String, startYear
 
 object Creator {
 
-  sealed trait CreatorType
+  implicit val format: Format[Creator] = Json.format[Creator]
 
-  object CreatorTypeCorporateBody extends CreatorType
-  object CreatorTypePerson extends CreatorType
+  sealed trait CreatorType extends EnumEntry
+  object CreatorType extends Enum[CreatorType] with PlayJsonEnum[CreatorType] {
+
+    val values = findValues
+
+    object CorporateBody extends CreatorType
+    object Person extends CreatorType
+
+  }
 
   def from(person: Person): Option[Creator] =
-    Option(Creator(CreatorTypePerson, person.id, person.name, person.yearOfBirth, person.yearOfDeath))
+    Option(Creator(CreatorType.Person, person.id, person.name, person.yearOfBirth, person.yearOfDeath))
       .filter(hasMandatoryFields)
       .map { creator =>
-        Creator(CreatorTypePerson, creator.id, getNameWithTitleIfPresent(person), creator.startYear, creator.endYear)
+        Creator(CreatorType.Person, creator.id, getNameWithTitleIfPresent(person), creator.startYear, creator.endYear)
       }
 
   def from(corporateBody: CorporateBody): Option[Creator] =
     Option(
       Creator(
-        CreatorTypeCorporateBody,
+        CreatorType.CorporateBody,
         corporateBody.id,
         corporateBody.name,
         corporateBody.startingYear,

@@ -149,6 +149,8 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
       "org.typelevel"          %% "log4cats-core"                 % "2.5.0",
       "org.typelevel"          %% "log4cats-slf4j"                % "2.5.0",
       "org.webjars.npm"         % "govuk-frontend"                % "4.3.1",
+      "com.beachape"           %% "enumeratum-play-json"          % "1.7.2",
+      "com.beachape"           %% "enumeratum"                    % "1.7.2",
       "uk.gov.hmrc"            %% "play-frontend-hmrc"            % "6.2.0-play-28",
       "com.lihaoyi"            %% "pprint"                        % "0.8.1",
       "org.scalatestplus.play" %% "scalatestplus-play"            % "5.1.0"  % Test,

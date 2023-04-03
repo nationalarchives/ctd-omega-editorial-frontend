@@ -74,6 +74,11 @@ class ApiConnector @Inject() (
       handle(SID.GetPlacesOfDeposit, Json.stringify(Json.toJson(getPlacesOfDeposit)))
         .flatMap(parse[Seq[PlaceOfDeposit]])
 
+  def getCreators(getCreators: GetCreators): IO[Seq[Creator]] =
+    logger.info(s"Requesting all of the places of deposit") *>
+      handle(SID.GetCreators, Json.stringify(Json.toJson(getCreators)))
+        .flatMap(parse[Seq[Creator]])
+
   private def createClientAndCloser: IO[(JmsRequestReplyClient[IO], IO[Unit])] =
     registerStopHook() *>
       logger.info(s"Attempting to subscribe to $replyQueueName...") *>
@@ -114,6 +119,8 @@ object ApiConnector {
     case object UpdateEditSetRecord extends SID("OSUESR001")
     // TODO: The real SID will be provided by Adam once he figures out the schema.
     case object GetPlacesOfDeposit extends SID("OSGPOD001")
+    // TODO: The real SID will be provided by Adam once he figures out the schema.
+    case object GetCreators extends SID("OSGCRE001")
 
   }
 
