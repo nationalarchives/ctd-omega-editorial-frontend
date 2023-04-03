@@ -273,12 +273,8 @@ class ReferenceDataService @Inject() (apiConnector: ApiConnector, timeProvider: 
   def getPlacesOfDeposit(): IO[Seq[PlaceOfDeposit]] =
     apiConnector.getPlacesOfDeposit(GetPlacesOfDeposit(timestamp = timeProvider.now()))
 
-  def getLegalStatuses: Seq[LegalStatus] = Seq(
-    LegalStatus("ref.1", "Public Record(s)"),
-    LegalStatus("ref.2", "Not Public Records"),
-    LegalStatus("ref.3", "Public Records unless otherwise Stated"),
-    LegalStatus("ref.4", "Welsh Public Record(s)")
-  )
+  def getLegalStatuses: IO[Seq[LegalStatus]] =
+    apiConnector.getLegalStatusesSummary(GetLegalStatuses(timeProvider.now()))
 
   def isCreatorRecognised(creatorID: String): Boolean =
     creatorID.trim.nonEmpty && getCreators.exists(_.id == creatorID)

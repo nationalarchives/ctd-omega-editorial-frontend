@@ -19,27 +19,14 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package support
+package uk.gov.nationalarchives.omega.editorial.models
 
-import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
-import uk.gov.nationalarchives.omega.editorial.models.{ CorporateBody, LegalStatus, Person }
-import uk.gov.nationalarchives.omega.editorial.services.ReferenceDataService
-import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
+import play.api.libs.json.{ Format, Json }
 
-import javax.inject.Inject
+import java.time.LocalDateTime
 
-class TestReferenceDataService @Inject() (apiConnector: ApiConnector, timeProvider: TimeProvider)
-    extends ReferenceDataService(apiConnector, timeProvider) {
+case class GetLegalStatuses(timestamp: LocalDateTime)
 
-  override def getCorporateBodies: Seq[CorporateBody] =
-    Seq(
-      CorporateBody("92W", "Joint Milk Quality Committee", Some(1948), Some(1948)),
-      CorporateBody("8R6", "Queen Anne's Bounty", None, None)
-    )
-
-  override def getPersons: Seq[Person] = Seq(
-    Person("46F", "Fawkes, Guy", None, Some(1570), Some(1606)),
-    Person("48N", "Baden-Powell, Lady Olave St Clair", None, Some(1889), Some(1977))
-  )
-
+object GetLegalStatuses {
+  implicit val format: Format[GetLegalStatuses] = Json.format[GetLegalStatuses]
 }

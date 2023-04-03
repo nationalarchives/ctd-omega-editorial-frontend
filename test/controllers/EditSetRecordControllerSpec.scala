@@ -1731,8 +1731,8 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
     */
   private def givenLegalStatusesExist(returnedLegalStatuses: Seq[LegalStatus] = Seq.empty)(implicit
     referenceDataService: ReferenceDataService
-  ): ScalaOngoingStubbing[Seq[LegalStatus]] =
-    when(referenceDataService.getLegalStatuses).thenReturn(returnedLegalStatuses)
+  ): ScalaOngoingStubbing[IO[Seq[LegalStatus]]] =
+    when(referenceDataService.getLegalStatuses).thenReturn(IO.pure(returnedLegalStatuses))
 
   /** The actual list has no relevance to these tests.
     */
