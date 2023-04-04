@@ -22,7 +22,7 @@
 package support
 
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
-import uk.gov.nationalarchives.omega.editorial.models.{ CorporateBody, LegalStatus, Person }
+import uk.gov.nationalarchives.omega.editorial.models.{ CorporateBody, Person }
 import uk.gov.nationalarchives.omega.editorial.services.ReferenceDataService
 import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 
@@ -42,10 +42,4 @@ class TestReferenceDataService @Inject() (apiConnector: ApiConnector, timeProvid
     Person("48N", "Baden-Powell, Lady Olave St Clair", None, Some(1889), Some(1977))
   )
 
-  override def getLegalStatuses: Seq[LegalStatus] = Seq(
-    LegalStatus("ref.1", "Public Record(s)"),
-    LegalStatus("ref.2", "Not Public Records"),
-    LegalStatus("ref.3", "Public Records unless otherwise Stated"),
-    LegalStatus("ref.4", "Welsh Public Record(s)")
-  )
 }

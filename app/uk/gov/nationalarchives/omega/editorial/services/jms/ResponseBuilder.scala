@@ -50,6 +50,8 @@ class ResponseBuilder[F[_] : ME : Logger] extends StubData {
         handleGetEditSetRecord(jmsMessage)
       case Some(sidValue) if SID.UpdateEditSetRecord.matches(sidValue) =>
         handleUpdateEditSetRecord(jmsMessage)
+      case Some(sidValue) if SID.GetLegalStatuses.matches(sidValue) =>
+        handleGetLegalStatuses(jmsMessage)
       case Some(sidValue) if SID.GetPlacesOfDeposit.matches(sidValue) =>
         handleGetPlacesOfDeposit(jmsMessage)
       case Some(unknown) =>
@@ -79,9 +81,13 @@ class ResponseBuilder[F[_] : ME : Logger] extends StubData {
         .getOrElse(onUnknownEditSetRecord(updateEditSetRecordRequest.editSetOci, updateEditSetRecordRequest.recordOci))
     )
 
+  private def handleGetLegalStatuses(jmsMessage: JmsMessage): F[String] =
+    parse[GetLegalStatuses](jmsMessage)
+      .flatMap(_ => asJsonString(getLegalStatuses))
+
   private def handleGetPlacesOfDeposit(jmsMessage: JmsMessage): F[String] =
     parse[GetPlacesOfDeposit](jmsMessage)
-      .flatMap(_ => asJsonString(getPlacesOfDeposit()))
+      .flatMap(_ => asJsonString(getPlacesOfDeposit))
 
   private def asJsonString[T : Writes](entity: T): F[String] = me.pure(Json.toJson(entity).toString)
 
