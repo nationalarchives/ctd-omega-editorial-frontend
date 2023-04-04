@@ -38,7 +38,7 @@ import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
 import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.modules.StartupModule
-import uk.gov.nationalarchives.omega.editorial.services.{ EditSetRecordService, EditSetService, ReferenceDataService }
+import uk.gov.nationalarchives.omega.editorial.services.{ EditSetRecordService, EditSetService }
 import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 
 import java.time.{ LocalDateTime, Month }
@@ -49,7 +49,6 @@ class BaseSpec
     with ApiConnectorAssertions {
 
   val user: User = User("dummy user")
-  val testReferenceDataService: TestReferenceDataService = app.injector.instanceOf[TestReferenceDataService]
   val editSetRecordService: EditSetRecordService = app.injector.instanceOf[EditSetRecordService]
   val editSetService: EditSetService = app.injector.instanceOf[EditSetService]
   val legalStatuses: Seq[LegalStatus] = Seq(
@@ -93,7 +92,6 @@ class BaseSpec
     GuiceApplicationBuilder()
       .disable[StartupModule]
       .bindings(
-        bind[ReferenceDataService].to[TestReferenceDataService],
         bind[ApiConnector].toInstance(TestApiConnector),
         bind[TimeProvider].toInstance(testTimeProvider),
         bind[Config].toInstance(testConfig)
