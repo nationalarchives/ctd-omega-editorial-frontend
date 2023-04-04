@@ -23,8 +23,10 @@ package uk.gov.nationalarchives.omega.editorial.models
 
 import play.api.libs.json.{ Format, Json }
 
-case class LegalStatus(uri: String, label: String)
+import java.time.LocalDateTime
 
-object LegalStatus {
-  implicit val format: Format[LegalStatus] = Json.format[LegalStatus]
+case class GetLegalStatuses(timestamp: LocalDateTime)
+
+object GetLegalStatuses {
+  implicit val format: Format[GetLegalStatuses] = Json.format[GetLegalStatuses]
 }

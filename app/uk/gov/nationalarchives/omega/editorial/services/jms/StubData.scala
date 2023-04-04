@@ -460,6 +460,13 @@ trait StubData {
     getEditSetRecord(id)
       .getOrElse(throw new RuntimeException(s"Unknown Edit Set Record [$id]"))
 
+  def getLegalStatuses(): Seq[LegalStatus] = Seq(
+    LegalStatus("ref.1", "Public Record(s)"),
+    LegalStatus("ref.2", "Not Public Records"),
+    LegalStatus("ref.3", "Public Records unless otherwise Stated"),
+    LegalStatus("ref.4", "Welsh Public Record(s)")
+  )
+
   def getPlacesOfDeposit(): Seq[PlaceOfDeposit] = Seq(
     PlaceOfDeposit("1", "The National Archives, Kew"),
     PlaceOfDeposit("2", "British Museum, Department of Libraries and Archives"),

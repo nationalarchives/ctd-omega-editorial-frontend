@@ -46,6 +46,13 @@ import scala.concurrent.Future
 
 class EditSetRecordControllerSpec extends BaseControllerSpec {
 
+  private val legalStatuses: Seq[LegalStatus] = Seq(
+    LegalStatus("ref.1", "Public Record(s)"),
+    LegalStatus("ref.2", "Not Public Records"),
+    LegalStatus("ref.3", "Public Records unless otherwise Stated"),
+    LegalStatus("ref.4", "Welsh Public Record(s)")
+  )
+
   private val placesOfDeposit: Seq[PlaceOfDeposit] = Seq(
     PlaceOfDeposit("1", "The National Archives, Kew"),
     PlaceOfDeposit("2", "British Museum, Department of Libraries and Archives"),
@@ -1729,15 +1736,13 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
       editSetRecordService.prepareCreatorIDs(any[Seq[Creator]], ArgumentMatchers.eq(expectedEditSetRecord))
     ).thenReturn(expectedEditSetRecord)
 
-  /** The actual list has no relevance to these tests.
+  /** The actual list has no relevance to these tests, at least until we validate the legal status ID upon submission.
     */
-  private def givenLegalStatusesExist(returnedLegalStatuses: Seq[LegalStatus] = Seq.empty)(implicit
+  private def givenLegalStatusesExist()(implicit
     referenceDataService: ReferenceDataService
-  ): ScalaOngoingStubbing[Seq[LegalStatus]] =
-    when(referenceDataService.getLegalStatuses).thenReturn(returnedLegalStatuses)
+  ): ScalaOngoingStubbing[IO[Seq[LegalStatus]]] =
+    when(referenceDataService.getLegalStatuses).thenReturn(IO.pure(legalStatuses))
 
-  /** The actual list has no relevance to these tests.
-    */
   private def givenPlacesOfDepositsExist()(implicit
     referenceDataService: ReferenceDataService
   ): ScalaOngoingStubbing[IO[Seq[PlaceOfDeposit]]] =
@@ -1759,7 +1764,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
         editSetName = any[String],
         title = any[String],
         record = ArgumentMatchers.eq(editSetRecord),
-        legalStatusReferenceData = ArgumentMatchers.eq(Seq.empty),
+        legalStatusReferenceData = ArgumentMatchers.eq(legalStatuses),
         placesOfDeposit = ArgumentMatchers.eq(placesOfDeposit),
         creators = ArgumentMatchers.eq(Seq.empty),
         editSetRecordForm = any[Form[EditSetRecordFormValues]]
@@ -1775,7 +1780,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
       editSetName = any[String],
       title = any[String],
       record = ArgumentMatchers.eq(editSetRecord),
-      legalStatusReferenceData = ArgumentMatchers.eq(Seq.empty),
+      legalStatusReferenceData = ArgumentMatchers.eq(legalStatuses),
       placesOfDeposit = ArgumentMatchers.eq(placesOfDeposit),
       creators = ArgumentMatchers.eq(Seq.empty),
       editSetRecordForm = formCaptor.capture

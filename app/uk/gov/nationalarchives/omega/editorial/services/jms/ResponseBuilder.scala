@@ -54,6 +54,8 @@ class ResponseBuilder @Inject() (stubData: StubData) {
         handleGetEditSetRecord(jmsMessage)
       case Some(sidValue) if SID.UpdateEditSetRecord.matches(sidValue) =>
         handleUpdateEditSetRecord(jmsMessage)
+      case Some(sidValue) if SID.GetLegalStatuses.matches(sidValue) =>
+        handleGetLegalStatuses(jmsMessage)
       case Some(sidValue) if SID.GetPlacesOfDeposit.matches(sidValue) =>
         handleGetPlacesOfDeposit(jmsMessage)
       case Some(sidValue) if SID.GetPersons.matches(sidValue) =>
@@ -93,6 +95,10 @@ class ResponseBuilder @Inject() (stubData: StubData) {
   private def handleGetPlacesOfDeposit(jmsMessage: JmsMessage): IO[String] =
     parse[GetPlacesOfDeposit](jmsMessage)
       .flatMap(_ => asJsonString(stubData.getPlacesOfDeposit()))
+
+  private def handleGetLegalStatuses(jmsMessage: JmsMessage): IO[String] =
+    parse[GetLegalStatuses](jmsMessage)
+      .flatMap(_ => asJsonString(stubData.getLegalStatuses()))
 
   private def handleGetPersons(jmsMessage: JmsMessage): IO[String] =
     parse[GetPersons](jmsMessage)

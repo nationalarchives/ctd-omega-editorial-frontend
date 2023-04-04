@@ -22,7 +22,7 @@
 package support
 
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
-import uk.gov.nationalarchives.omega.editorial.models.LegalStatus
+import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.services.ReferenceDataService
 import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 
@@ -37,4 +37,16 @@ class TestReferenceDataService @Inject() (apiConnector: ApiConnector, timeProvid
     LegalStatus("ref.3", "Public Records unless otherwise Stated"),
     LegalStatus("ref.4", "Welsh Public Record(s)")
   )
+
+  override def getCorporateBodies: Seq[CorporateBody] =
+    Seq(
+      CorporateBody("92W", "Joint Milk Quality Committee", Some(1948), Some(1948)),
+      CorporateBody("8R6", "Queen Anne's Bounty", None, None)
+    )
+
+  override def getPersons: Seq[Person] = Seq(
+    Person("46F", "Fawkes, Guy", None, Some(1570), Some(1606)),
+    Person("48N", "Baden-Powell, Lady Olave St Clair", None, Some(1889), Some(1977))
+  )
+
 }
