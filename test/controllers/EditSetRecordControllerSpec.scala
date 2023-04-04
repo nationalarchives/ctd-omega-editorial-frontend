@@ -39,6 +39,7 @@ import uk.gov.nationalarchives.omega.editorial.controllers.EditSetRecordControll
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetRecordController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
 import uk.gov.nationalarchives.omega.editorial.models._
+import uk.gov.nationalarchives.omega.editorial.models.Creator.CreatorType
 import uk.gov.nationalarchives.omega.editorial.services.{ EditSetRecordService, EditSetService, ReferenceDataService }
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
@@ -58,6 +59,8 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
     PlaceOfDeposit("2", "British Museum, Department of Libraries and Archives"),
     PlaceOfDeposit("3", "British Library, National Sound Archive")
   )
+
+  private val creators: Seq[Creator] = getPersons().flatMap(Creator.from) ++ getCorporateBodies().flatMap(Creator.from)
 
   /** As these mocks are within a fixture, they will all be managed; for instance, a check will be made against missed
     * or unnecessary stubbing. This will give a clearer picture of the usage of dependencies.
@@ -1750,10 +1753,10 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
   /** The actual list has no relevance to these tests.
     */
-  private def givenCreatorsExist(returnedCreators: Seq[Creator] = Seq.empty)(implicit
+  private def givenCreatorsExist()(implicit
     referenceDataService: ReferenceDataService
   ): ScalaOngoingStubbing[IO[Seq[Creator]]] =
-    when(referenceDataService.getCreators()).thenReturn(IO.pure(returnedCreators))
+    when(referenceDataService.getCreators()).thenReturn(IO.pure(creators))
 
   def givenEditViewIsGenerated(editSetRecord: EditSetRecord)(implicit
     editSetRecordEditView: editSetRecordEdit
@@ -1766,7 +1769,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
         record = ArgumentMatchers.eq(editSetRecord),
         legalStatusReferenceData = ArgumentMatchers.eq(legalStatuses),
         placesOfDeposit = ArgumentMatchers.eq(placesOfDeposit),
-        creators = ArgumentMatchers.eq(Seq.empty),
+        creators = ArgumentMatchers.eq(creators),
         editSetRecordForm = any[Form[EditSetRecordFormValues]]
       )(any[Messages], any[Request[AnyContent]])
     ).thenReturn(HtmlFormat.raw(""))
@@ -1782,7 +1785,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
       record = ArgumentMatchers.eq(editSetRecord),
       legalStatusReferenceData = ArgumentMatchers.eq(legalStatuses),
       placesOfDeposit = ArgumentMatchers.eq(placesOfDeposit),
-      creators = ArgumentMatchers.eq(Seq.empty),
+      creators = ArgumentMatchers.eq(creators),
       editSetRecordForm = formCaptor.capture
     )(any[Messages], any[Request[AnyContent]])
     formCaptor.value

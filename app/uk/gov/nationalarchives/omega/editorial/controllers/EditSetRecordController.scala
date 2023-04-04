@@ -429,7 +429,7 @@ class EditSetRecordController @Inject() (
     creators: Seq[Creator]
   ): EditSetRecord =
     Seq[EditSetRecord.Transformer](
-      record => editRecordSetService.prepareCreatorIDs(creators, record),
+      record => prepareCreatorIDs(creators, record),
       preparePlaceOfDeposit(placesOfDeposit)
     ).foldLeft(originalEditSetRecord)((editSetRecord, transformer) => transformer(editSetRecord))
 
@@ -541,11 +541,20 @@ class EditSetRecordController @Inject() (
       else ""
     editSetRecord.copy(placeOfDepositID = correctedValue)
   }
+
+  private def prepareCreatorIDs(creators: Seq[Creator], editSetRecord: EditSetRecord): EditSetRecord =
+    editSetRecord.copy(creatorIDs = editSetRecord.creatorIDs.filter { id =>
+      isCreatorRecognised(creators, id)
+    })
+
+  private def isCreatorRecognised(creators: Seq[Creator], creatorID: String): Boolean =
+    creatorID.trim.nonEmpty && creators.exists(_.id == creatorID)
 }
 
 object EditSetRecordController {
 
   private val noSelectionForPlaceOfDeposit = ""
+  sealed abstract class InternalEditSetRecordControllerError
 
   private sealed abstract class SubmitAction
 

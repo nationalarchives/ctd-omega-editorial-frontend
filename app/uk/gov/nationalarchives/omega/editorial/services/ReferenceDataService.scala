@@ -43,6 +43,4 @@ class ReferenceDataService @Inject() (apiConnector: ApiConnector, timeProvider: 
   def getLegalStatuses: IO[Seq[LegalStatus]] =
     apiConnector.getLegalStatuses(GetLegalStatuses(timeProvider.now()))
 
-  def isCreatorRecognised(creators: Seq[Creator], creatorID: String): Boolean =
-    creatorID.trim.nonEmpty && creators.exists(_.id == creatorID)
 }

@@ -44,7 +44,7 @@ class EditSetRecordService @Inject() (
 
   def prepareCreatorIDs(creators: Seq[Creator], editSetRecord: EditSetRecord): EditSetRecord =
     editSetRecord.copy(creatorIDs = editSetRecord.creatorIDs.filter { id =>
-      referenceDataService.isCreatorRecognised(creators, id)
+      isCreatorRecognised(creators, id)
     })
 
   def updateEditSetRecord(
@@ -53,6 +53,9 @@ class EditSetRecordService @Inject() (
     values: EditSetRecordFormValues
   ): IO[UpdateResponseStatus] =
     apiConnector.updateEditSetRecord(asUpdateEditSetRecord(editSetId, recordId, values))
+
+  def isCreatorRecognised(creators: Seq[Creator], creatorID: String): Boolean =
+    creatorID.trim.nonEmpty && creators.exists(_.id == creatorID)
 
   private def asUpdateEditSetRecord(
     editSetId: String,

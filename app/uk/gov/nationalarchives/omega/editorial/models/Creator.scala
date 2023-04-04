@@ -21,9 +21,6 @@
 
 package uk.gov.nationalarchives.omega.editorial.models
 
-import enumeratum._
-import play.api.libs.json.{ Format, Json }
-
 import uk.gov.nationalarchives.omega.editorial.models.Creator.CreatorType
 
 case class Creator(
@@ -51,16 +48,10 @@ case class Creator(
 
 object Creator {
 
-  implicit val format: Format[Creator] = Json.format[Creator]
-
-  sealed trait CreatorType extends EnumEntry
-  object CreatorType extends Enum[CreatorType] with PlayJsonEnum[CreatorType] {
-
-    val values = findValues
-
+  sealed trait CreatorType
+  object CreatorType {
     object CorporateBody extends CreatorType
     object Person extends CreatorType
-
   }
 
   def from(person: Person): Option[Creator] =
