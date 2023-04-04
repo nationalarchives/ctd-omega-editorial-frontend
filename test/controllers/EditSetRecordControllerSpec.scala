@@ -1725,7 +1725,9 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
   private def givenCreatorIdsArePrepared(expectedEditSetRecord: EditSetRecord)(implicit
     editSetRecordService: EditSetRecordService
   ): ScalaOngoingStubbing[EditSetRecord] =
-    when(editSetRecordService.prepareCreatorIDs(expectedEditSetRecord)).thenReturn(expectedEditSetRecord)
+    when(
+      editSetRecordService.prepareCreatorIDs(any[Seq[Creator]], ArgumentMatchers.eq(expectedEditSetRecord))
+    ).thenReturn(expectedEditSetRecord)
 
   /** The actual list has no relevance to these tests.
     */
@@ -1745,8 +1747,8 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
     */
   private def givenCreatorsExist(returnedCreators: Seq[Creator] = Seq.empty)(implicit
     referenceDataService: ReferenceDataService
-  ): ScalaOngoingStubbing[Seq[Creator]] =
-    when(referenceDataService.getCreators).thenReturn(returnedCreators)
+  ): ScalaOngoingStubbing[IO[Seq[Creator]]] =
+    when(referenceDataService.getCreators()).thenReturn(IO.pure(returnedCreators))
 
   def givenEditViewIsGenerated(editSetRecord: EditSetRecord)(implicit
     editSetRecordEditView: editSetRecordEdit

@@ -267,8 +267,11 @@ class ReferenceDataService @Inject() (apiConnector: ApiConnector, timeProvider: 
     Person("3GY", "Victoria, ", Some("Queen of Great Britain and Ireland"), Some(1819), Some(1901))
   )
 
-  def getCreators: Seq[Creator] =
-    (getCorporateBodies.flatMap(Creator.from) ++ getPersons.flatMap(Creator.from)).sortBy(_.name)
+  def getCreators(): IO[Seq[Creator]] =
+    for {
+      persons         <- apiConnector.getPersons(GetPersons(timestamp = timeProvider.now()))
+      corporateBodies <- apiConnector.getCorporateBodies(GetCorporateBodies(timestamp = timeProvider.now()))
+    } yield persons.flatMap(Creator.from) ++ corporateBodies.flatMap(Creator.from)
 
   def getPlacesOfDeposit(): IO[Seq[PlaceOfDeposit]] =
     apiConnector.getPlacesOfDeposit(GetPlacesOfDeposit(timestamp = timeProvider.now()))
@@ -280,6 +283,6 @@ class ReferenceDataService @Inject() (apiConnector: ApiConnector, timeProvider: 
     LegalStatus("ref.4", "Welsh Public Record(s)")
   )
 
-  def isCreatorRecognised(creatorID: String): Boolean =
-    creatorID.trim.nonEmpty && getCreators.exists(_.id == creatorID)
+  def isCreatorRecognised(creators: Seq[Creator], creatorID: String): Boolean =
+    creatorID.trim.nonEmpty && creators.exists(_.id == creatorID)
 }

@@ -25,10 +25,10 @@ import play.api.libs.json.{ Format, Json }
 
 import java.time.LocalDateTime
 
-case class GetCreators(timestamp: LocalDateTime)
+case class GetCorporateBodies(timestamp: LocalDateTime)
 
-object GetCreators {
+object GetCorporateBodies {
 
-  implicit val format: Format[GetCreators] = Json.format[GetCreators]
+  implicit val format: Format[GetCorporateBodies] = Json.format[GetCorporateBodies]
 
 }

@@ -56,7 +56,6 @@ class EditSetRecordController @Inject() (
 
   private val logger: Logger = Logger(this.getClass)
   private lazy val legalStatuses: Seq[LegalStatus] = referenceDataService.getLegalStatuses
-  private lazy val creators: Seq[Creator] = referenceDataService.getCreators
 
   def viewEditRecordForm(editSetId: String, recordId: String): Action[AnyContent] = Action.async {
     implicit request: Request[AnyContent] =>
@@ -96,14 +95,18 @@ class EditSetRecordController @Inject() (
   private def view(user: User, editSet: EditSet, editSetRecord: EditSetRecord)(implicit
     request: Request[AnyContent]
   ): IO[Result] =
-    referenceDataService.getPlacesOfDeposit().map { placesOfDeposit =>
-      val editSetRecordPreparedForDisplay = prepareForDisplay(editSetRecord, placesOfDeposit)
+    for {
+      placesOfDeposit <- referenceDataService.getPlacesOfDeposit()
+      creators        <- referenceDataService.getCreators()
+    } yield {
+      val editSetRecordPreparedForDisplay = prepareForDisplay(editSetRecord, placesOfDeposit, creators)
       Ok(
         generateEditSetRecordEditView(
           user,
           editSet,
           editSetRecordPreparedForDisplay,
           placesOfDeposit,
+          creators,
           bindFormFromRecordForDisplay(editSetRecordPreparedForDisplay)
         )
       )
@@ -120,9 +123,12 @@ class EditSetRecordController @Inject() (
       case Right(AddAnotherCreator(record)) => addAnotherCreator(user, editSet, record)
       case Right(RemoveLastCreator(record)) => removeLastCreator(user, editSet, record)
       case Left(FormValidationFailed(formWithErrors, record)) =>
-        referenceDataService.getPlacesOfDeposit().map { placesOfDeposit =>
-          BadRequest(generateEditSetRecordEditView(user, editSet, record, placesOfDeposit, formWithErrors))
-        }
+        for {
+          placesOfDeposit <- referenceDataService.getPlacesOfDeposit()
+          creators        <- referenceDataService.getCreators()
+        } yield BadRequest(
+          generateEditSetRecordEditView(user, editSet, record, placesOfDeposit, creators, formWithErrors)
+        )
       case Left(EditSetNotFound(missingEditSetId)) =>
         BadRequest(s"Edit Set with ID [$missingEditSetId] not found")
       case Left(EditSetRecordNotFound(missingOci)) => BadRequest(s"Record with $missingOci not found")
@@ -228,7 +234,10 @@ class EditSetRecordController @Inject() (
   )(implicit
     request: Request[AnyContent]
   ): IO[Result] =
-    referenceDataService.getPlacesOfDeposit().map { placesOfDeposit =>
+    for {
+      placesOfDeposit <- referenceDataService.getPlacesOfDeposit()
+      creators        <- referenceDataService.getCreators()
+    } yield {
       val selectedNonEmptyCreatorsFromRequest = filterRequestData { case (key, value) =>
         key.startsWith(FieldNames.creatorIDs) && value.trim.nonEmpty
       }
@@ -236,7 +245,7 @@ class EditSetRecordController @Inject() (
       val updatedCreatorRelatedData = selectedNonEmptyCreatorsFromRequest ++ Map(keyForNewCreator -> "")
       val formFromRecord = bindFormFromRecordForDisplay(editSetRecord)
       val updatedForm = formFromRecord.copy(data = formFromRecord.data ++ updatedCreatorRelatedData, errors = Seq.empty)
-      Ok(generateEditSetRecordEditView(user, editSet, editSetRecord, placesOfDeposit, updatedForm))
+      Ok(generateEditSetRecordEditView(user, editSet, editSetRecord, placesOfDeposit, creators, updatedForm))
     }
 
   private def filterRequestData(f: (String, String) => Boolean)(implicit request: Request[AnyContent]) =
@@ -252,7 +261,10 @@ class EditSetRecordController @Inject() (
   )(implicit
     request: Request[AnyContent]
   ): IO[Result] =
-    referenceDataService.getPlacesOfDeposit().map { placesOfDeposit =>
+    for {
+      placesOfDeposit <- referenceDataService.getPlacesOfDeposit()
+      creators        <- referenceDataService.getCreators()
+    } yield {
       val selectedCreatorsFromRequest = filterRequestData { case (key, _) =>
         key.startsWith(FieldNames.creatorIDs)
       }
@@ -260,13 +272,16 @@ class EditSetRecordController @Inject() (
       val formFromRecord = bindFormFromRequestForDisplay
       val updatedForm =
         formFromRecord.copy(data = formFromRecord.data ++ selectedCreatorsFromRequest - keyToRemove, errors = Seq.empty)
-      Ok(generateEditSetRecordEditView(user, editSet, editSetRecord, placesOfDeposit, updatedForm))
+      Ok(generateEditSetRecordEditView(user, editSet, editSetRecord, placesOfDeposit, creators, updatedForm))
     }
 
   private def calculateDates(user: User, editSet: EditSet, record: EditSetRecord)(implicit
     request: Request[AnyContent]
   ): IO[Result] =
-    referenceDataService.getPlacesOfDeposit().map { placesOfDeposit =>
+    for {
+      placesOfDeposit <- referenceDataService.getPlacesOfDeposit()
+      creators        <- referenceDataService.getCreators()
+    } yield {
       val originalForm: Form[EditSetRecordFormValues] = EditSetRecordFormValuesFormProvider().bindFromRequest()
       val errorsForCoveringDatesOnly = originalForm.errors(FieldNames.coveringDates)
       if (errorsForCoveringDatesOnly.isEmpty) {
@@ -278,6 +293,7 @@ class EditSetRecordController @Inject() (
                 editSet,
                 record,
                 placesOfDeposit,
+                creators,
                 formWithUpdatedDateFields(originalForm, singleDateRangeOpt)
               )
             )
@@ -288,6 +304,7 @@ class EditSetRecordController @Inject() (
                 editSet,
                 record,
                 placesOfDeposit,
+                creators,
                 formAfterCoveringDatesParseError(originalForm)
               )
             )
@@ -299,6 +316,7 @@ class EditSetRecordController @Inject() (
             editSet,
             record,
             placesOfDeposit,
+            creators,
             originalForm.copy(errors = errorsForCoveringDatesOnly)
           )
         )
@@ -379,10 +397,13 @@ class EditSetRecordController @Inject() (
 
   private def prepareForDisplay(
     originalEditSetRecord: EditSetRecord,
-    placesOfDeposit: Seq[PlaceOfDeposit]
+    placesOfDeposit: Seq[PlaceOfDeposit],
+    creators: Seq[Creator]
   ): EditSetRecord =
-    Seq[EditSetRecord.Transformer](editRecordSetService.prepareCreatorIDs, preparePlaceOfDeposit(placesOfDeposit))
-      .foldLeft(originalEditSetRecord)((editSetRecord, transformer) => transformer(editSetRecord))
+    Seq[EditSetRecord.Transformer](
+      record => editRecordSetService.prepareCreatorIDs(creators, record),
+      preparePlaceOfDeposit(placesOfDeposit)
+    ).foldLeft(originalEditSetRecord)((editSetRecord, transformer) => transformer(editSetRecord))
 
   private def bindFormFromRecordForDisplay(editSetRecord: EditSetRecord)(implicit
     request: Request[AnyContent]
@@ -408,6 +429,7 @@ class EditSetRecordController @Inject() (
     editSet: EditSet,
     editSetRecord: EditSetRecord,
     placesOfDeposit: Seq[PlaceOfDeposit],
+    creators: Seq[Creator],
     form: Form[EditSetRecordFormValues]
   )(implicit request: Request[AnyContent]): HtmlFormat.Appendable = {
     val title = resolvedMessage(MessageKeys.title)

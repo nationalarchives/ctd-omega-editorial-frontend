@@ -459,15 +459,16 @@ trait StubData {
     PlaceOfDeposit("3", "British Library, National Sound Archive")
   )
 
-  def getCreators(): Seq[Creator] =
-    Seq(
-      CorporateBody("RR6", "100th (Gordon Highlanders) Regiment of Foot", Some(1794), Some(1794)),
-      CorporateBody("S34", "1st Regiment of Foot or Royal Scots", Some(1812), Some(1812)),
-      CorporateBody("87K", "Abbotsbury Railway Company", Some(1877), Some(1877))
-    ).flatMap(Creator.from) ++ Seq(
-      Person("3RX", "Abbot, Charles", Some("2nd Baron Colchester"), Some(1798), Some(1867)),
-      Person("48N", "Baden-Powell, Lady Olave St Clair", None, Some(1889), Some(1977)),
-      Person("39K", "Cannon, John Francis Michael", None, Some(1930), None)
-    ).flatMap(Creator.from)
+  def getPersons(): Seq[Person] = Seq(
+    Person("3RX", "Abbot, Charles", Some("2nd Baron Colchester"), Some(1798), Some(1867)),
+    Person("48N", "Baden-Powell, Lady Olave St Clair", None, Some(1889), Some(1977)),
+    Person("39K", "Cannon, John Francis Michael", None, Some(1930), None)
+  )
+
+  def getCorporateBodies(): Seq[CorporateBody] = Seq(
+    CorporateBody("RR6", "100th (Gordon Highlanders) Regiment of Foot", Some(1794), Some(1794)),
+    CorporateBody("S34", "1st Regiment of Foot or Royal Scots", Some(1812), Some(1812)),
+    CorporateBody("87K", "Abbotsbury Railway Company", Some(1877), Some(1877))
+  )
 
 }

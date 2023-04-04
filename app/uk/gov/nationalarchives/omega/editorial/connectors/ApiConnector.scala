@@ -74,10 +74,15 @@ class ApiConnector @Inject() (
       handle(SID.GetPlacesOfDeposit, Json.stringify(Json.toJson(getPlacesOfDeposit)))
         .flatMap(parse[Seq[PlaceOfDeposit]])
 
-  def getCreators(getCreators: GetCreators): IO[Seq[Creator]] =
-    logger.info(s"Requesting all of the places of deposit") *>
-      handle(SID.GetCreators, Json.stringify(Json.toJson(getCreators)))
-        .flatMap(parse[Seq[Creator]])
+  def getPersons(getPersons: GetPersons): IO[Seq[Person]] =
+    logger.info(s"Requesting all of the persons") *>
+      handle(SID.GetPersons, Json.stringify(Json.toJson(getPersons)))
+        .flatMap(parse[Seq[Person]])
+
+  def getCorporateBodies(getCorporateBodies: GetCorporateBodies): IO[Seq[CorporateBody]] =
+    logger.info(s"Requesting all of the corporate bodies") *>
+      handle(SID.GetCorporateBodies, Json.stringify(Json.toJson(getCorporateBodies)))
+        .flatMap(parse[Seq[CorporateBody]])
 
   private def createClientAndCloser: IO[(JmsRequestReplyClient[IO], IO[Unit])] =
     registerStopHook() *>
@@ -119,8 +124,8 @@ object ApiConnector {
     case object UpdateEditSetRecord extends SID("OSUESR001")
     // TODO: The real SID will be provided by Adam once he figures out the schema.
     case object GetPlacesOfDeposit extends SID("OSGPOD001")
-    // TODO: The real SID will be provided by Adam once he figures out the schema.
-    case object GetCreators extends SID("OSGCRE001")
+    case object GetPersons extends SID("OSGPER001")
+    case object GetCorporateBodies extends SID("OSGCBY001")
 
   }
 
