@@ -8,11 +8,12 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.{ DefaultWSCookie, WSClient, WSCookie, WSResponse }
 import play.api.test.Helpers.{ await, defaultAwaitTimeout }
 import play.api.{ Application, inject }
-import support.{ ApiConnectorAssertions, ModelSupport, TestReferenceDataService }
+import support._
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
 import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.services.ReferenceDataService
 import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
+import uk.gov.nationalarchives.omega.editorial.services.jms._
 
 import java.time.{ LocalDateTime, Month }
 
@@ -36,17 +37,9 @@ abstract class BaseISpec
     secure = false,
     httpOnly = false
   )
-  val testReferenceDataService: TestReferenceDataService = app.injector.instanceOf[TestReferenceDataService]
-  val allCreators: Seq[Creator] = Seq(
-    CorporateBody("RR6", "100th (Gordon Highlanders) Regiment of Foot", Some(1794), Some(1794)),
-    CorporateBody("S34", "1st Regiment of Foot or Royal Scots", Some(1812), Some(1812)),
-    CorporateBody("87K", "Abbotsbury Railway Company", Some(1877), Some(1877))
-  ).flatMap(Creator.from) ++
-    Seq(
-      Person("3RX", "Abbot, Charles", Some("2nd Baron Colchester"), Some(1798), Some(1867)),
-      Person("48N", "Baden-Powell, Lady Olave St Clair", None, Some(1889), Some(1977)),
-      Person("39K", "Cannon, John Francis Michael", None, Some(1930), None)
-    ).flatMap(Creator.from)
+  val stubData = app.injector.instanceOf[StubDataImpl]
+  val allCreators: Seq[Creator] =
+    stubData.getPersons().flatMap(Creator.from) ++ stubData.getCorporateBodies().flatMap(Creator.from)
 
   private val playSessionCookieName = "PLAY_SESSION"
 
@@ -54,6 +47,7 @@ abstract class BaseISpec
     GuiceApplicationBuilder()
       .bindings(inject.bind[ReferenceDataService].to[TestReferenceDataService])
       .bindings(inject.bind[ApiConnector].to[MonitoredApiConnector])
+      .bindings(inject.bind[StubData].to[TestStubData])
       .overrides(inject.bind[TimeProvider].toInstance(testTimeProvider))
       .build()
 

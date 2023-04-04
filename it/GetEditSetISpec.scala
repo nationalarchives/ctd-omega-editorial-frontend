@@ -35,7 +35,7 @@ class GetEditSetISpec extends BaseRequestReplyServiceISpec {
       val editSetId = "1"
       val request =
         Json.stringify(Json.toJson(GetEditSet(oci = editSetId, LocalDateTime.of(2023, Month.FEBRUARY, 24, 8, 10))))
-      val expected = Json.stringify(Json.toJson(getExpectedEditSet(editSetId)))
+      val expected = Json.stringify(Json.toJson(stubData.getExpectedEditSet(editSetId)))
 
       val result = sendRequest(requestReplyHandler, request)
       result.asserting(_ mustBe expected)
@@ -45,7 +45,7 @@ class GetEditSetISpec extends BaseRequestReplyServiceISpec {
       val editSetId = "1"
       val request =
         Json.stringify(Json.toJson(GetEditSet(oci = editSetId, LocalDateTime.of(2023, Month.FEBRUARY, 24, 8, 10))))
-      val expected = Json.stringify(Json.toJson(getExpectedEditSet(editSetId)))
+      val expected = Json.stringify(Json.toJson(stubData.getExpectedEditSet(editSetId)))
 
       val result1 = sendRequest(requestReplyHandler, request)
       val result2 = sendRequest(requestReplyHandler, request)
@@ -58,7 +58,7 @@ class GetEditSetISpec extends BaseRequestReplyServiceISpec {
       val editSetId = "1"
       val request =
         Json.stringify(Json.toJson(GetEditSet(oci = editSetId, LocalDateTime.of(2023, Month.FEBRUARY, 24, 8, 10))))
-      val expected = Json.stringify(Json.toJson(getExpectedEditSet(editSetId)))
+      val expected = Json.stringify(Json.toJson(stubData.getExpectedEditSet(editSetId)))
 
       val result1 = sendRequest(requestReplyHandler, request)
       val result2 = sendRequest(requestReplyHandler, request)

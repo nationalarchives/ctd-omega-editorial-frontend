@@ -22,7 +22,6 @@
 package uk.gov.nationalarchives.omega.editorial.services.jms
 
 import cats.effect._
-import javax.inject.Singleton
 import jms4s.config.QueueName
 import jms4s.jms.JmsMessage
 import jms4s.jms.MessageFactory
@@ -34,13 +33,12 @@ import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 
 import scala.concurrent.duration.DurationInt
+import javax.inject.{ Inject, Singleton }
 
 @Singleton
-class StubServer {
+class StubServer @Inject() (responseBuilder: ResponseBuilder) {
 
   private implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jLogger.getLogger[IO]
-
-  private val responseBuilder = new ResponseBuilder[IO]
 
   private val requestQueueName = QueueName("request-general")
   private val responseQueryName = QueueName("omega-editorial-web-application-instance-1")
