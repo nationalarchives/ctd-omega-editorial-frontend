@@ -11,7 +11,6 @@ import play.api.{ Application, inject }
 import support._
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
 import uk.gov.nationalarchives.omega.editorial.models._
-import uk.gov.nationalarchives.omega.editorial.services.ReferenceDataService
 import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 import uk.gov.nationalarchives.omega.editorial.services.jms._
 
@@ -45,7 +44,6 @@ abstract class BaseISpec
 
   override def fakeApplication(): Application =
     GuiceApplicationBuilder()
-      .bindings(inject.bind[ReferenceDataService].to[TestReferenceDataService])
       .bindings(inject.bind[ApiConnector].to[MonitoredApiConnector])
       .bindings(inject.bind[StubData].to[TestStubData])
       .overrides(inject.bind[TimeProvider].toInstance(testTimeProvider))
