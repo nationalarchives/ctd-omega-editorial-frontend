@@ -25,7 +25,7 @@ import org.scalatest.matchers.must.Matchers._
 import org.scalatest.prop.TableDrivenPropertyChecks.forAll
 import org.scalatest.prop.Tables
 import org.scalatest.wordspec.AnyWordSpec
-import uk.gov.nationalarchives.omega.editorial.models.Creator.{ CreatorTypeCorporateBody, CreatorTypePerson }
+import uk.gov.nationalarchives.omega.editorial.models.Creator.CreatorType
 import uk.gov.nationalarchives.omega.editorial.models.{ CorporateBody, Creator, Person }
 
 class CreatorSpec extends AnyWordSpec {
@@ -35,7 +35,7 @@ class CreatorSpec extends AnyWordSpec {
       "all fields are present" in {
         Creator.from(CorporateBody("8WG", "Bee Husbandry Committee", Some(1959), Some(1964))) mustBe Some(
           Creator(
-            CreatorTypeCorporateBody,
+            CreatorType.CorporateBody,
             "8WG",
             "Bee Husbandry Committee",
             Some(1959),
@@ -47,7 +47,7 @@ class CreatorSpec extends AnyWordSpec {
       "only the mandatory fields are present" in {
         Creator.from(CorporateBody("9HC", "Dean of the Chapel Royal", None, None)) mustBe Some(
           Creator(
-            CreatorTypeCorporateBody,
+            CreatorType.CorporateBody,
             "9HC",
             "Dean of the Chapel Royal",
             None,
@@ -82,16 +82,16 @@ class CreatorSpec extends AnyWordSpec {
           Person("2QX", "Edward VII", Some("King of Great Britain and Ireland"), Some(1841), Some(1910))
         ) mustBe
           Some(
-            Creator(CreatorTypePerson, "2QX", "Edward VII, King of Great Britain and Ireland", Some(1841), Some(1910))
+            Creator(CreatorType.Person, "2QX", "Edward VII, King of Great Britain and Ireland", Some(1841), Some(1910))
           )
       }
       "all fields are present except a title" in {
         Creator.from(Person("46F", "Fawkes, Guy", None, Some(1570), Some(1606))) mustBe
-          Some(Creator(CreatorTypePerson, "46F", "Fawkes, Guy", Some(1570), Some(1606)))
+          Some(Creator(CreatorType.Person, "46F", "Fawkes, Guy", Some(1570), Some(1606)))
       }
       "only the mandatory fields are present" in {
         Creator.from(Person("4VF", "Old Pretender, The", None, None, None)) mustBe
-          Some(Creator(CreatorTypePerson, "4VF", "Old Pretender, The", None, None))
+          Some(Creator(CreatorType.Person, "4VF", "Old Pretender, The", None, None))
       }
     }
     "fail" when {
@@ -117,36 +117,36 @@ class CreatorSpec extends AnyWordSpec {
     Tables.Table(
       "Creator" -> "Expected Displayed Name",
       Creator(
-        CreatorTypeCorporateBody,
+        CreatorType.CorporateBody,
         "RR6",
         "100th (Gordon Highlanders) Regiment of Foot",
         Some(1794),
         Some(1894)
       ) -> "100th (Gordon Highlanders) Regiment of Foot (1794 - 1894)",
-      Creator(CreatorTypeCorporateBody, "JS8", "BBC", None, None) -> "BBC",
+      Creator(CreatorType.CorporateBody, "JS8", "BBC", None, None) -> "BBC",
       Creator(
-        CreatorTypeCorporateBody,
+        CreatorType.CorporateBody,
         "S2",
         "The National Archives",
         Some(2003),
         None
       ) -> "The National Archives (2003 - )",
       Creator(
-        CreatorTypePerson,
+        CreatorType.Person,
         "3FH",
         "Dainton, Sir Frederick Sydney",
         Some(1914),
         Some(1997)
       ) -> "Dainton, Sir Frederick Sydney (b.1914 - d.1997)",
       Creator(
-        CreatorTypePerson,
+        CreatorType.Person,
         "39K",
         "Cannon, John Francis Michael",
         Some(1930),
         None
-      )                                                                   -> "Cannon, John Francis Michael (b.1930 - )",
-      Creator(CreatorTypePerson, "4VF", "Old Pretender, The", None, None) -> "Old Pretender, The",
-      Creator(CreatorTypePerson, "XXY", "Jude, the Unborn", None, Some(1970)) -> "Jude, the Unborn ( - d.1970)"
+      ) -> "Cannon, John Francis Michael (b.1930 - )",
+      Creator(CreatorType.Person, "4VF", "Old Pretender, The", None, None)     -> "Old Pretender, The",
+      Creator(CreatorType.Person, "XXY", "Jude, the Unborn", None, Some(1970)) -> "Jude, the Unborn ( - d.1970)"
     )
   ) { (creator, expectedDisplayedName) =>
     s"display name for creator '${creator.id}' should be as expected" in {

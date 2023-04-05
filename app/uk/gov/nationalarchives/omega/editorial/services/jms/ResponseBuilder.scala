@@ -22,27 +22,31 @@
 package uk.gov.nationalarchives.omega.editorial.services.jms
 
 import cats.MonadError
+import cats.effect.IO
 import cats.implicits._
 import jms4s.jms.JmsMessage
-import org.typelevel.log4cats.Logger
 import play.api.libs.json.{ Json, Reads, Writes }
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector.SID
 import uk.gov.nationalarchives.omega.editorial.models._
-import uk.gov.nationalarchives.omega.editorial.services.jms.ResponseBuilder.ME
+import org.typelevel.log4cats.slf4j.Slf4jLogger
+import org.typelevel.log4cats.SelfAwareStructuredLogger
 
-class ResponseBuilder[F[_] : ME : Logger] extends StubData {
+import javax.inject.{ Inject, Singleton }
+
+@Singleton
+class ResponseBuilder @Inject() (stubData: StubData) {
   import ResponseBuilder._
 
-  private val me = MonadError[F, Throwable]
-  private val logger = Logger[F]
+  private val logger: SelfAwareStructuredLogger[IO] = Slf4jLogger.getLogger[IO]
+  private val me = MonadError[IO, Throwable]
 
-  def jmsMessageId(jmsMessage: JmsMessage): F[String] =
+  def jmsMessageId(jmsMessage: JmsMessage): IO[String] =
     me.fromOption(
       jmsMessage.getJMSMessageId,
       ifEmpty = MissingJMSID
     )
 
-  def createResponseText(jmsMessage: JmsMessage): F[String] =
+  def createResponseText(jmsMessage: JmsMessage): IO[String] =
     jmsMessage.getStringProperty(sidHeaderKey) match {
       case Some(sidValue) if SID.GetEditSet.matches(sidValue) =>
         handleGetEditSet(jmsMessage)
@@ -54,42 +58,57 @@ class ResponseBuilder[F[_] : ME : Logger] extends StubData {
         handleGetLegalStatuses(jmsMessage)
       case Some(sidValue) if SID.GetPlacesOfDeposit.matches(sidValue) =>
         handleGetPlacesOfDeposit(jmsMessage)
+      case Some(sidValue) if SID.GetPersons.matches(sidValue) =>
+        handleGetPersons(jmsMessage)
+      case Some(sidValue) if SID.GetCorporateBodies.matches(sidValue) =>
+        handleGetCorporateBodies(jmsMessage)
       case Some(unknown) =>
         onUnhandledCase(s"SID is unrecognised: [$unknown]")
       case None =>
         onUnhandledCase(s"No SID provided")
     }
 
-  private def handleGetEditSet(jmsMessage: JmsMessage): F[String] =
+  private def handleGetEditSet(jmsMessage: JmsMessage): IO[String] =
     parse[GetEditSet](jmsMessage).flatMap(getEditSetRequest =>
-      getEditSet(getEditSetRequest.oci)
+      stubData
+        .getEditSet(getEditSetRequest.oci)
         .map(editSetRecord => asJsonString(editSetRecord))
         .getOrElse(onUnknownEditSet(getEditSetRequest.oci))
     )
 
-  private def handleGetEditSetRecord(jmsMessage: JmsMessage): F[String] =
+  private def handleGetEditSetRecord(jmsMessage: JmsMessage): IO[String] =
     parse[GetEditSetRecord](jmsMessage).flatMap(getEditSetRecordRequest =>
-      getEditSetRecord(getEditSetRecordRequest.recordOci)
+      stubData
+        .getEditSetRecord(getEditSetRecordRequest.recordOci)
         .map(editSetRecord => asJsonString(editSetRecord))
         .getOrElse(onUnknownEditSetRecord(getEditSetRecordRequest.editSetOci, getEditSetRecordRequest.recordOci))
     )
 
-  private def handleUpdateEditSetRecord(jmsMessage: JmsMessage): F[String] =
+  private def handleUpdateEditSetRecord(jmsMessage: JmsMessage): IO[String] =
     parse[UpdateEditSetRecord](jmsMessage).flatMap(updateEditSetRecordRequest =>
-      getEditSetRecord(updateEditSetRecordRequest.recordOci)
+      stubData
+        .getEditSetRecord(updateEditSetRecordRequest.recordOci)
         .map(editSetRecord => asJsonString(updateEditSetRecord(editSetRecord, updateEditSetRecordRequest)))
         .getOrElse(onUnknownEditSetRecord(updateEditSetRecordRequest.editSetOci, updateEditSetRecordRequest.recordOci))
     )
 
-  private def handleGetLegalStatuses(jmsMessage: JmsMessage): F[String] =
-    parse[GetLegalStatuses](jmsMessage)
-      .flatMap(_ => asJsonString(getLegalStatuses))
-
-  private def handleGetPlacesOfDeposit(jmsMessage: JmsMessage): F[String] =
+  private def handleGetPlacesOfDeposit(jmsMessage: JmsMessage): IO[String] =
     parse[GetPlacesOfDeposit](jmsMessage)
-      .flatMap(_ => asJsonString(getPlacesOfDeposit))
+      .flatMap(_ => asJsonString(stubData.getPlacesOfDeposit()))
 
-  private def asJsonString[T : Writes](entity: T): F[String] = me.pure(Json.toJson(entity).toString)
+  private def handleGetLegalStatuses(jmsMessage: JmsMessage): IO[String] =
+    parse[GetLegalStatuses](jmsMessage)
+      .flatMap(_ => asJsonString(stubData.getLegalStatuses()))
+
+  private def handleGetPersons(jmsMessage: JmsMessage): IO[String] =
+    parse[GetPersons](jmsMessage)
+      .flatMap(_ => asJsonString(stubData.getPersons()))
+
+  private def handleGetCorporateBodies(jmsMessage: JmsMessage): IO[String] =
+    parse[GetCorporateBodies](jmsMessage)
+      .flatMap(_ => asJsonString(stubData.getCorporateBodies()))
+
+  private def asJsonString[T : Writes](entity: T): IO[String] = me.pure(Json.toJson(entity).toString)
 
   /** Note that we do not actually update the record, anymore.
     */
@@ -101,28 +120,28 @@ class ResponseBuilder[F[_] : ME : Logger] extends StubData {
     UpdateResponseStatus("success", s"Successfully updated record with OCI [${editSetRecord.oci}]")
   }
 
-  private def onUnknownEditSet(editSetOci: String): F[String] =
+  private def onUnknownEditSet(editSetOci: String): IO[String] =
     onUnhandledCase(
       s"Unable to find Edit Set with OCI [$editSetOci]"
     )
 
-  private def onUnknownEditSetRecord(editSetOci: String, recordOci: String): F[String] =
+  private def onUnknownEditSetRecord(editSetOci: String, recordOci: String): IO[String] =
     onUnhandledCase(
       s"Unable to find record for Edit Set with OCI [$editSetOci] and Record OCI [$recordOci]"
     )
 
-  private def onUnhandledCase(errorMessage: String): F[String] =
+  private def onUnhandledCase(errorMessage: String): IO[String] =
     logger.error(errorMessage) *> me.raiseError(
       new NotImplementedError(s"We don't yet handle this case: $errorMessage")
     )
 
-  private def parse[T : Reads](jmsMessage: JmsMessage): F[T] =
+  private def parse[T : Reads](jmsMessage: JmsMessage): IO[T] =
     messageText(jmsMessage).flatMap(parse[T])
 
-  private def messageText(jmsMessage: JmsMessage): F[String] =
-    jmsMessage.asTextF[F].adaptError(err => NotATextMessage(err))
+  private def messageText(jmsMessage: JmsMessage): IO[String] =
+    jmsMessage.asTextF[IO].adaptError(err => NotATextMessage(err))
 
-  private def parse[A : Reads](messageText: String): F[A] =
+  private def parse[A : Reads](messageText: String): IO[A] =
     me.fromOption(
       Json.parse(messageText).validate[A].asOpt,
       ifEmpty = CannotParse(messageText)
@@ -131,8 +150,6 @@ class ResponseBuilder[F[_] : ME : Logger] extends StubData {
 }
 
 object ResponseBuilder {
-
-  type ME[F[_]] = MonadError[F, Throwable]
 
   sealed abstract class StubServerError extends Throwable
 

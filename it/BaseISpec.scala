@@ -8,11 +8,11 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.{ DefaultWSCookie, WSClient, WSCookie, WSResponse }
 import play.api.test.Helpers.{ await, defaultAwaitTimeout }
 import play.api.{ Application, inject }
-import support.{ ApiConnectorAssertions, ModelSupport, TestReferenceDataService }
+import support._
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
-import uk.gov.nationalarchives.omega.editorial.models.Creator
-import uk.gov.nationalarchives.omega.editorial.services.ReferenceDataService
+import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
+import uk.gov.nationalarchives.omega.editorial.services.jms._
 
 import java.time.{ LocalDateTime, Month }
 
@@ -36,15 +36,16 @@ abstract class BaseISpec
     secure = false,
     httpOnly = false
   )
-  val testReferenceDataService: TestReferenceDataService = app.injector.instanceOf[TestReferenceDataService]
-  val allCreators: Seq[Creator] = testReferenceDataService.getCreators
+  val stubData = app.injector.instanceOf[StubDataImpl]
+  val allCreators: Seq[Creator] =
+    stubData.getPersons().flatMap(Creator.from) ++ stubData.getCorporateBodies().flatMap(Creator.from)
 
   private val playSessionCookieName = "PLAY_SESSION"
 
   override def fakeApplication(): Application =
     GuiceApplicationBuilder()
-      .bindings(inject.bind[ReferenceDataService].to[TestReferenceDataService])
       .bindings(inject.bind[ApiConnector].to[MonitoredApiConnector])
+      .bindings(inject.bind[StubData].to[TestStubData])
       .overrides(inject.bind[TimeProvider].toInstance(testTimeProvider))
       .build()
 

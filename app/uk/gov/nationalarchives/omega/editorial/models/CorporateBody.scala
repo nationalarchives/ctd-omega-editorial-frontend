@@ -21,4 +21,17 @@
 
 package uk.gov.nationalarchives.omega.editorial.models
 
-case class CorporateBody(id: String, name: String, startingYear: Option[Int] = None, endingYear: Option[Int] = None)
+import play.api.libs.json.{ Format, Json }
+
+case class CorporateBody(
+  id: String,
+  name: String,
+  startingYear: Option[Int] = None,
+  endingYear: Option[Int] = None
+)
+
+object CorporateBody {
+
+  implicit val format: Format[CorporateBody] = Json.format[CorporateBody]
+
+}

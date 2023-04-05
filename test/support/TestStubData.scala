@@ -19,20 +19,24 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.models
+package support
 
-import play.api.libs.json.{ Format, Json }
+import uk.gov.nationalarchives.omega.editorial.services.jms.StubData
+import uk.gov.nationalarchives.omega.editorial.models._
 
-case class Person(
-  id: String,
-  name: String,
-  title: Option[String],
-  yearOfBirth: Option[Int] = None,
-  yearOfDeath: Option[Int] = None
-)
+import javax.inject.Inject
 
-object Person {
+class TestStubData @Inject() extends StubData {
 
-  implicit val format: Format[Person] = Json.format[Person]
+  override def getCorporateBodies(): Seq[CorporateBody] =
+    Seq(
+      CorporateBody("92W", "Joint Milk Quality Committee", Some(1948), Some(1948)),
+      CorporateBody("8R6", "Queen Anne's Bounty", None, None)
+    )
+
+  override def getPersons(): Seq[Person] = Seq(
+    Person("48N", "Baden-Powell, Lady Olave St Clair", None, Some(1889), Some(1977)),
+    Person("46F", "Fawkes, Guy", None, Some(1570), Some(1606))
+  )
 
 }

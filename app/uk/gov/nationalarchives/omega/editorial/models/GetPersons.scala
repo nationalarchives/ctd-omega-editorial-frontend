@@ -23,16 +23,12 @@ package uk.gov.nationalarchives.omega.editorial.models
 
 import play.api.libs.json.{ Format, Json }
 
-case class Person(
-  id: String,
-  name: String,
-  title: Option[String],
-  yearOfBirth: Option[Int] = None,
-  yearOfDeath: Option[Int] = None
-)
+import java.time.LocalDateTime
 
-object Person {
+case class GetPersons(timestamp: LocalDateTime)
 
-  implicit val format: Format[Person] = Json.format[Person]
+object GetPersons {
+
+  implicit val format: Format[GetPersons] = Json.format[GetPersons]
 
 }

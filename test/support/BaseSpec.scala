@@ -36,9 +36,10 @@ import play.twirl.api.Content
 import uk.gov.nationalarchives.omega.editorial.config.{ Config, HostBrokerEndpoint, UsernamePasswordCredentials }
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
 import uk.gov.nationalarchives.omega.editorial.models._
+import uk.gov.nationalarchives.omega.editorial.models.Creator.CreatorType
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.modules.StartupModule
-import uk.gov.nationalarchives.omega.editorial.services.{ EditSetRecordService, EditSetService, ReferenceDataService }
+import uk.gov.nationalarchives.omega.editorial.services.{ EditSetRecordService, EditSetService }
 import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 
 import java.time.{ LocalDateTime, Month }
@@ -49,7 +50,6 @@ class BaseSpec
     with ApiConnectorAssertions {
 
   val user: User = User("dummy user")
-  val testReferenceDataService: TestReferenceDataService = app.injector.instanceOf[TestReferenceDataService]
   val editSetRecordService: EditSetRecordService = app.injector.instanceOf[EditSetRecordService]
   val editSetService: EditSetService = app.injector.instanceOf[EditSetService]
   val legalStatuses: Seq[LegalStatus] = Seq(
@@ -63,7 +63,14 @@ class BaseSpec
     PlaceOfDeposit("2", "British Museum, Department of Libraries and Archives"),
     PlaceOfDeposit("3", "British Library, National Sound Archive")
   )
-  val allCreators: Seq[Creator] = testReferenceDataService.getCreators
+  val allCreators: Seq[Creator] = Seq(
+    Creator(CreatorType.CorporateBody, "RR6", "100th (Gordon Highlanders) Regiment of Foot", Some(1794), Some(1794)),
+    Creator(CreatorType.CorporateBody, "S34", "1st Regiment of Foot or Royal Scots", Some(1812), Some(1812)),
+    Creator(CreatorType.CorporateBody, "87K", "Abbotsbury Railway Company", Some(1877), Some(1877)),
+    Creator(CreatorType.Person, "3RX", "Abbot, Charles, 2nd Baron Colchester", Some(1798), Some(1867)),
+    Creator(CreatorType.Person, "48N", "Baden-Powell, Lady Olave St Clair", Some(1889), Some(1977)),
+    Creator(CreatorType.Person, "39K", "Cannon, John Francis Michael", Some(1930), None)
+  )
   val validSessionToken: String = Session.generateToken("1234")
   val invalidSessionToken: String = Session.generateToken("invalid-user")
   implicit val apiConnectorMonitoring: ApiConnectorMonitoring = TestApiConnector
@@ -84,7 +91,6 @@ class BaseSpec
     GuiceApplicationBuilder()
       .disable[StartupModule]
       .bindings(
-        bind[ReferenceDataService].to[TestReferenceDataService],
         bind[ApiConnector].toInstance(TestApiConnector),
         bind[TimeProvider].toInstance(testTimeProvider),
         bind[Config].toInstance(testConfig)

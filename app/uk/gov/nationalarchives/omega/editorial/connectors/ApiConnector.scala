@@ -74,6 +74,16 @@ class ApiConnector @Inject() (
       handle(SID.GetPlacesOfDeposit, Json.stringify(Json.toJson(getPlacesOfDeposit)))
         .flatMap(parse[Seq[PlaceOfDeposit]])
 
+  def getPersons(getPersons: GetPersons): IO[Seq[Person]] =
+    logger.info(s"Requesting all of the persons") *>
+      handle(SID.GetPersons, Json.stringify(Json.toJson(getPersons)))
+        .flatMap(parse[Seq[Person]])
+
+  def getCorporateBodies(getCorporateBodies: GetCorporateBodies): IO[Seq[CorporateBody]] =
+    logger.info(s"Requesting all of the corporate bodies") *>
+      handle(SID.GetCorporateBodies, Json.stringify(Json.toJson(getCorporateBodies)))
+        .flatMap(parse[Seq[CorporateBody]])
+
   def getLegalStatuses(getLegalStatuses: GetLegalStatuses): IO[Seq[LegalStatus]] =
     logger.info(s"Requesting all of the legal status summary") *>
       handle(SID.GetLegalStatuses, Json.stringify(Json.toJson(getLegalStatuses)))
@@ -120,6 +130,8 @@ object ApiConnector {
     case object GetLegalStatuses extends SID("OSLISALS001")
     // TODO: The real SID will be provided by Adam once he figures out the schema.
     case object GetPlacesOfDeposit extends SID("OSGPOD001")
+    case object GetPersons extends SID("OSGPER001")
+    case object GetCorporateBodies extends SID("OSGCBY001")
 
   }
 

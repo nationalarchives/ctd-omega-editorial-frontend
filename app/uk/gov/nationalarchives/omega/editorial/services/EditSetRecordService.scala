@@ -25,7 +25,7 @@ import cats.effect.IO
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
 import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
 import uk.gov.nationalarchives.omega.editorial.models.UpdateEditSetRecord.Fields.MaterialReference
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSetRecord, GetEditSetRecord, UpdateEditSetRecord, UpdateResponseStatus }
+import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.support.{ DateParser, TimeProvider }
 
 import java.time.LocalDate
@@ -41,9 +41,6 @@ class EditSetRecordService @Inject() (
 
   def get(editSetOci: String, recordOci: String): IO[Option[EditSetRecord]] =
     apiConnector.getEditSetRecord(GetEditSetRecord(editSetOci, recordOci, timeProvider.now()))
-
-  def prepareCreatorIDs(editSetRecord: EditSetRecord): EditSetRecord =
-    editSetRecord.copy(creatorIDs = editSetRecord.creatorIDs.filter(referenceDataService.isCreatorRecognised))
 
   def updateEditSetRecord(
     editSetId: String,

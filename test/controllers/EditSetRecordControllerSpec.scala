@@ -59,6 +59,8 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
     PlaceOfDeposit("3", "British Library, National Sound Archive")
   )
 
+  private val creators: Seq[Creator] = getPersons().flatMap(Creator.from) ++ getCorporateBodies().flatMap(Creator.from)
+
   /** As these mocks are within a fixture, they will all be managed; for instance, a check will be made against missed
     * or unnecessary stubbing. This will give a clearer picture of the usage of dependencies.
     */
@@ -103,7 +105,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
       givenEditSetExists(editSetId, returnedEditSet)
       val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
       givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-      givenCreatorIdsArePrepared(returnedEditSetRecord)
       givenLegalStatusesExist()
       givenPlacesOfDepositsExist()
       givenCreatorsExist()
@@ -1729,11 +1730,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
     when(editSetRecordService.get(editSetId, editSetRecordId))
       .thenReturn(IO.pure(Option(returnedEditSetRecord)))
 
-  private def givenCreatorIdsArePrepared(expectedEditSetRecord: EditSetRecord)(implicit
-    editSetRecordService: EditSetRecordService
-  ): ScalaOngoingStubbing[EditSetRecord] =
-    when(editSetRecordService.prepareCreatorIDs(expectedEditSetRecord)).thenReturn(expectedEditSetRecord)
-
   /** The actual list has no relevance to these tests, at least until we validate the legal status ID upon submission.
     */
   private def givenLegalStatusesExist()(implicit
@@ -1748,10 +1744,10 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
   /** The actual list has no relevance to these tests.
     */
-  private def givenCreatorsExist(returnedCreators: Seq[Creator] = Seq.empty)(implicit
+  private def givenCreatorsExist()(implicit
     referenceDataService: ReferenceDataService
-  ): ScalaOngoingStubbing[Seq[Creator]] =
-    when(referenceDataService.getCreators).thenReturn(returnedCreators)
+  ): ScalaOngoingStubbing[IO[Seq[Creator]]] =
+    when(referenceDataService.getCreators()).thenReturn(IO.pure(creators))
 
   def givenEditViewIsGenerated(editSetRecord: EditSetRecord)(implicit
     editSetRecordEditView: editSetRecordEdit
@@ -1764,7 +1760,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
         record = ArgumentMatchers.eq(editSetRecord),
         legalStatusReferenceData = ArgumentMatchers.eq(legalStatuses),
         placesOfDeposit = ArgumentMatchers.eq(placesOfDeposit),
-        creators = ArgumentMatchers.eq(Seq.empty),
+        creators = ArgumentMatchers.eq(creators),
         editSetRecordForm = any[Form[EditSetRecordFormValues]]
       )(any[Messages], any[Request[AnyContent]])
     ).thenReturn(HtmlFormat.raw(""))
@@ -1780,7 +1776,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
       record = ArgumentMatchers.eq(editSetRecord),
       legalStatusReferenceData = ArgumentMatchers.eq(legalStatuses),
       placesOfDeposit = ArgumentMatchers.eq(placesOfDeposit),
-      creators = ArgumentMatchers.eq(Seq.empty),
+      creators = ArgumentMatchers.eq(creators),
       editSetRecordForm = formCaptor.capture
     )(any[Messages], any[Request[AnyContent]])
     formCaptor.value
