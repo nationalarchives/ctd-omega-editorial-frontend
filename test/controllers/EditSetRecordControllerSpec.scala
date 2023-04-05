@@ -39,7 +39,6 @@ import uk.gov.nationalarchives.omega.editorial.controllers.EditSetRecordControll
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetRecordController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
 import uk.gov.nationalarchives.omega.editorial.models._
-import uk.gov.nationalarchives.omega.editorial.models.Creator.CreatorType
 import uk.gov.nationalarchives.omega.editorial.services.{ EditSetRecordService, EditSetService, ReferenceDataService }
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
@@ -106,7 +105,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
       givenEditSetExists(editSetId, returnedEditSet)
       val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
       givenEditSetRecordExists(editSetId, editSetRecordId, returnedEditSetRecord)
-      givenCreatorIdsArePrepared(returnedEditSetRecord)
       givenLegalStatusesExist()
       givenPlacesOfDepositsExist()
       givenCreatorsExist()
@@ -1731,13 +1729,6 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
   )(implicit editSetRecordService: EditSetRecordService): ScalaOngoingStubbing[IO[Option[EditSetRecord]]] =
     when(editSetRecordService.get(editSetId, editSetRecordId))
       .thenReturn(IO.pure(Option(returnedEditSetRecord)))
-
-  private def givenCreatorIdsArePrepared(expectedEditSetRecord: EditSetRecord)(implicit
-    editSetRecordService: EditSetRecordService
-  ): ScalaOngoingStubbing[EditSetRecord] =
-    when(
-      editSetRecordService.prepareCreatorIDs(any[Seq[Creator]], ArgumentMatchers.eq(expectedEditSetRecord))
-    ).thenReturn(expectedEditSetRecord)
 
   /** The actual list has no relevance to these tests, at least until we validate the legal status ID upon submission.
     */

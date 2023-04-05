@@ -544,11 +544,8 @@ class EditSetRecordController @Inject() (
 
   private def prepareCreatorIDs(creators: Seq[Creator], editSetRecord: EditSetRecord): EditSetRecord =
     editSetRecord.copy(creatorIDs = editSetRecord.creatorIDs.filter { id =>
-      isCreatorRecognised(creators, id)
+      creators.exists(_.id == id)
     })
-
-  private def isCreatorRecognised(creators: Seq[Creator], creatorID: String): Boolean =
-    creatorID.trim.nonEmpty && creators.exists(_.id == creatorID)
 }
 
 object EditSetRecordController {

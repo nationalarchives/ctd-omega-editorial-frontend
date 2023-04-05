@@ -42,20 +42,12 @@ class EditSetRecordService @Inject() (
   def get(editSetOci: String, recordOci: String): IO[Option[EditSetRecord]] =
     apiConnector.getEditSetRecord(GetEditSetRecord(editSetOci, recordOci, timeProvider.now()))
 
-  def prepareCreatorIDs(creators: Seq[Creator], editSetRecord: EditSetRecord): EditSetRecord =
-    editSetRecord.copy(creatorIDs = editSetRecord.creatorIDs.filter { id =>
-      isCreatorRecognised(creators, id)
-    })
-
   def updateEditSetRecord(
     editSetId: String,
     recordId: String,
     values: EditSetRecordFormValues
   ): IO[UpdateResponseStatus] =
     apiConnector.updateEditSetRecord(asUpdateEditSetRecord(editSetId, recordId, values))
-
-  def isCreatorRecognised(creators: Seq[Creator], creatorID: String): Boolean =
-    creatorID.trim.nonEmpty && creators.exists(_.id == creatorID)
 
   private def asUpdateEditSetRecord(
     editSetId: String,
