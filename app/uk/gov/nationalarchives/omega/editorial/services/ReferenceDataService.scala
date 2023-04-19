@@ -22,25 +22,25 @@
 package uk.gov.nationalarchives.omega.editorial.services
 
 import cats.effect.IO
-import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
+import uk.gov.nationalarchives.omega.editorial.connectors.MessagingService
 import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 
 import javax.inject.{ Inject, Singleton }
 
 @Singleton
-class ReferenceDataService @Inject() (apiConnector: ApiConnector, timeProvider: TimeProvider) {
+class ReferenceDataService @Inject() (messagingService: MessagingService, timeProvider: TimeProvider) {
 
-  def getCreators(): IO[Seq[Creator]] =
+  def getCreators: IO[Seq[Creator]] =
     for {
-      persons         <- apiConnector.getPersons(GetPersons(timestamp = timeProvider.now()))
-      corporateBodies <- apiConnector.getCorporateBodies(GetCorporateBodies(timestamp = timeProvider.now()))
+      persons         <- messagingService.getPersons(GetPersons(timestamp = timeProvider.now()))
+      corporateBodies <- messagingService.getCorporateBodies(GetCorporateBodies(timestamp = timeProvider.now()))
     } yield persons.flatMap(Creator.from) ++ corporateBodies.flatMap(Creator.from)
 
-  def getPlacesOfDeposit(): IO[Seq[PlaceOfDeposit]] =
-    apiConnector.getPlacesOfDeposit(GetPlacesOfDeposit(timestamp = timeProvider.now()))
+  def getPlacesOfDeposit: IO[Seq[PlaceOfDeposit]] =
+    messagingService.getPlacesOfDeposit(GetPlacesOfDeposit(timestamp = timeProvider.now()))
 
   def getLegalStatuses: IO[Seq[LegalStatus]] =
-    apiConnector.getLegalStatuses(GetLegalStatuses(timeProvider.now()))
+    messagingService.getLegalStatuses(GetLegalStatuses(timeProvider.now()))
 
 }

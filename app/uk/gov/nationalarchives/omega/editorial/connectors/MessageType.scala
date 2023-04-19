@@ -19,31 +19,28 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package support
+package uk.gov.nationalarchives.omega.editorial.connectors
 
-import cats.effect.IO
-import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
-import uk.gov.nationalarchives.omega.editorial.models._
-import uk.gov.nationalarchives.omega.editorial.services.jms.StubData
+sealed abstract class MessageType(val value: String) {
 
-object TestApiConnector extends ApiConnector(null, null) with ApiConnectorMonitoring with StubData {
+  def matches(sid: String): Boolean =
+    sid.trim.equalsIgnoreCase(this.value)
 
-  override def getEditSet(getEditSetRequest: GetEditSet): IO[Option[EditSet]] =
-    IO.pure {
-      record(getEditSetRequest)
-      getEditSet(getEditSetRequest.oci)
-    }
+}
+object MessageType {
 
-  override def getEditSetRecord(getEditSetRecordRequest: GetEditSetRecord): IO[Option[EditSetRecord]] =
-    IO.pure {
-      record(getEditSetRecordRequest)
-      getEditSetRecord(getEditSetRecordRequest.recordOci)
-    }
+  case object GetEditSetType extends MessageType("OSGEES001")
 
-  override def updateEditSetRecord(updateEditSetRecord: UpdateEditSetRecord): IO[UpdateResponseStatus] =
-    IO.pure {
-      record(updateEditSetRecord)
-      UpdateResponseStatus(s"success", s"Successfully updated record with OCI [${updateEditSetRecord.recordOci}]")
-    }
+  case object GetEditSetRecordType extends MessageType("OSGESR001")
+
+  case object UpdateEditSetRecordType extends MessageType("OSUESR001")
+
+  case object GetLegalStatusesType extends MessageType("OSLISALS001")
+
+  case object GetPlacesOfDepositType extends MessageType("OSGPOD001")
+
+  case object GetPersonsType extends MessageType("OSGPER001")
+
+  case object GetCorporateBodiesType extends MessageType("OSGCBY001")
 
 }

@@ -1,7 +1,7 @@
 import cats.effect.unsafe.implicits.global
 import org.scalatest.prop.TableDrivenPropertyChecks.forAll
 import org.scalatest.prop.Tables.Table
-import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
+import uk.gov.nationalarchives.omega.editorial.connectors.MessagingService
 import uk.gov.nationalarchives.omega.editorial.models
 import uk.gov.nationalarchives.omega.editorial.models.{ GetEditSet, GetEditSetRecord, UpdateEditSetRecord, UpdateResponseStatus }
 
@@ -9,7 +9,7 @@ import java.time.{ LocalDate, LocalDateTime, Month }
 
 class ApiConnectorISpec extends BaseISpec {
 
-  lazy val apiConnector: ApiConnector = app.injector.instanceOf[ApiConnector]
+  lazy val messagingService: MessagingService = app.injector.instanceOf[MessagingService]
 
   "when a request for an edit set is made" must {
 
@@ -17,7 +17,7 @@ class ApiConnectorISpec extends BaseISpec {
 
     s"get an edit set for id: $idOfExistingEditSet" in {
       val editSetResponse =
-        apiConnector.getEditSet(getEditSetRequest).unsafeRunSync()
+        messagingService.getEditSet(getEditSetRequest).unsafeRunSync()
 
       editSetResponse mustBe getEditSet(idOfExistingEditSet)
     }
@@ -47,7 +47,7 @@ class ApiConnectorISpec extends BaseISpec {
 
     forAll(editSetRecordTable) { (oci, expectedResult) =>
       s"get an edit set record for oci: $oci" in {
-        apiConnector
+        messagingService
           .getEditSetRecord(GetEditSetRecord(idOfExistingEditSet, oci, testTimeProvider.now()))
           .unsafeRunSync() mustBe expectedResult
       }
@@ -56,7 +56,7 @@ class ApiConnectorISpec extends BaseISpec {
   }
   "when a request to update an Edit Set Record is made" in {
 
-    val response = apiConnector.updateEditSetRecord(
+    val response = messagingService.updateEditSetRecord(
       UpdateEditSetRecord(
         editSetOci = "1",
         recordOci = "COAL.2022.V1RJW.P",

@@ -10,7 +10,7 @@ class LoginISpec extends BaseISpec {
   "when viewed" must {
     "have the expected contents" in {
 
-      val response = getLoginPage()
+      val response = getLoginPage
 
       assertPage(
         response,
@@ -302,7 +302,7 @@ class LoginISpec extends BaseISpec {
   }
 
   private def submitFromLoginPage(values: Map[String, String]): WSResponse = {
-    val getLoginPageResponse = getLoginPage()
+    val getLoginPageResponse = getLoginPage
     val sessionCookie = getSessionCookie(getLoginPageResponse)
     val csrfTokenFromLoginPage = getCsrfToken(getLoginPageResponse)
     await(

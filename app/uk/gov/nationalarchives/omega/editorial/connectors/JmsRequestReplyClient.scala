@@ -21,27 +21,17 @@
 
 package uk.gov.nationalarchives.omega.editorial.connectors
 
-import cats.effect.implicits.genSpawnOps
-import cats.effect.kernel.Sync
-import cats.effect.{ Async, Resource }
-import jms4s.JmsAcknowledgerConsumer.AckAction
+import cats.effect.Async
+import jms4s.JmsProducer
 import jms4s.config.QueueName
-import jms4s.jms.{ JmsMessage, MessageFactory }
-import jms4s.sqs.simpleQueueService
-import jms4s.sqs.simpleQueueService.{ Credentials, DirectAddress, HTTP }
-import jms4s.{ JmsClient, JmsProducer }
+import jms4s.jms.JmsMessage
 import org.typelevel.log4cats.Logger
 import uk.gov.nationalarchives.omega.editorial.connectors.JmsRequestReplyClient.ReplyMessageHandler
-import uk.gov.nationalarchives.omega.editorial.config.{ HostBrokerEndpoint, UsernamePasswordCredentials }
+import uk.gov.nationalarchives.omega.editorial.connectors.messages.{ MessageProperties, ReplyMessage, RequestMessage }
 
-import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
-import scala.annotation.unused
-import scala.concurrent.duration.DurationInt
-import scala.util.{ Failure, Success }
-
-case class RequestMessage(body: String, sid: String)
-case class ReplyMessage(body: String)
+import javax.inject.Inject
+import scala.util.{ Failure, Success, Try }
 
 /** A JMS Request-Reply client.
   *
@@ -52,6 +42,7 @@ case class ReplyMessage(body: String)
   * @tparam F
   */
 
+@Inject()
 class JmsRequestReplyClient[F[_] : Async](
   requestMap: ConcurrentHashMap[String, ReplyMessageHandler[F]],
   producer: JmsProducer[F]
@@ -72,7 +63,7 @@ class JmsRequestReplyClient[F[_] : Async](
     val sender: F[Option[String]] = producer.send { messageFactory =>
       val jmsMessage: F[JmsMessage.JmsTextMessage] = messageFactory.makeTextMessage(jmsRequest.body)
       Async[F].map(jmsMessage)(jmsMessage =>
-        jmsMessage.setStringProperty("sid", jmsRequest.sid) match {
+        setProperties(jmsMessage, jmsRequest) match {
           case Success(_) => (jmsMessage, QueueName(requestQueue))
           case Failure(e) =>
             L.error(s"Failed to set SID due to ${e.getMessage}")
@@ -93,125 +84,16 @@ class JmsRequestReplyClient[F[_] : Async](
     }
   }
 
+  private def setProperties(jmsRequest: JmsMessage, requestMessage: RequestMessage): Try[JmsMessage] =
+    for {
+      _ <- jmsRequest.setStringProperty(MessageProperties.OMGApplicationID, requestMessage.omgApplicationId)
+      _ <- jmsRequest.setStringProperty(MessageProperties.OMGMessageTypeID, requestMessage.omgMessageTypeId)
+      _ <- jmsRequest.setStringProperty(MessageProperties.OMGMessageFormat, "application/json")
+      _ <- jmsRequest.setStringProperty(MessageProperties.OMGReplyAddress, "PACS001.request")
+      _ <- jmsRequest.setStringProperty(MessageProperties.OMGToken, "AbCdEf123456")
+    } yield jmsRequest
 }
-
 object JmsRequestReplyClient {
-
   type ReplyMessageHandler[F[_]] = ReplyMessage => F[Unit]
 
-  private val defaultConsumerConcurrencyLevel = 1
-  private val defaultConsumerPollingInterval = 50.millis
-  private val defaultProducerConcurrencyLevel = 1
-  private val signingRegion = "elasticmq"
-  private val initialCapacityOfMap = 16
-  private val loadFactorForMap = 0.75f
-
-  /** Create a JMS Request-Reply Client for use with Amazon Simple Queue Service.
-    *
-    * @param endpoint
-    *   \- details for the SQS Host
-    * @param credentials
-    *   \- the credentials for connecting to the ActiveMQ broker.
-    * @param customClientId
-    *   \- an optional Custom client ID to identify this client.
-    * @param replyQueue
-    *   \- the queue that replies should be consumed from.
-    *
-    * @return
-    *   \- The resource for the JMS Request-Reply Client.
-    */
-  def createForSqs[F[_] : Async : Logger](
-    endpoint: HostBrokerEndpoint,
-    credentials: UsernamePasswordCredentials,
-    customClientId: Option[F[String]] = None
-  )(replyQueue: String): Resource[F, JmsRequestReplyClient[F]] = {
-    val clientIdResource: Resource[F, String] =
-      Resource.liftK[F](customClientId.getOrElse(RandomClientIdGen.randomClientId[F]))
-    val jmsClientResource: Resource[F, JmsClient[F]] = clientIdResource.flatMap { clientId =>
-      simpleQueueService.makeJmsClient[F](
-        simpleQueueService.Config(
-          endpoint =
-            simpleQueueService.Endpoint(Some(DirectAddress(HTTP, endpoint.host, Some(endpoint.port))), signingRegion),
-          credentials = Some(Credentials(credentials.username, credentials.password)),
-          clientId = simpleQueueService.ClientId(clientId),
-          numberOfMessagesToPrefetch = None
-        )
-      )
-    }
-    create[F](jmsClientResource)(replyQueue)
-  }
-
-  /** Create a JMS Request-Reply Client.
-    *
-    * @param jmsClientResource
-    *   \- a jms4s Client resource.
-    * @param replyQueue
-    *   \- the queue that replies should be consumed from.
-    * @return
-    *   The resource for the JMS Request-Reply Client.
-    */
-  private def create[F[_] : Async : Logger](
-    jmsClientResource: Resource[F, JmsClient[F]]
-  )(replyQueue: String): Resource[F, JmsRequestReplyClient[F]] =
-    for {
-      requestMap <- Resource.pure(
-                      new ConcurrentHashMap[String, ReplyMessage => F[Unit]](
-                        initialCapacityOfMap,
-                        loadFactorForMap,
-                        defaultProducerConcurrencyLevel
-                      )
-                    )
-      jmsClient <- jmsClientResource
-      consumer <- jmsClient.createAcknowledgerConsumer(
-                    inputDestinationName = QueueName(replyQueue),
-                    concurrencyLevel = defaultConsumerConcurrencyLevel,
-                    pollingInterval = defaultConsumerPollingInterval
-                  )
-      consumerHandlerResource = consumer.handle(jmsConsumerHandler[F](requestMap)(_, _)).background
-      producerResource = jmsClient.createProducer(concurrencyLevel = defaultProducerConcurrencyLevel)
-      consumerProducer <- Resource.both(consumerHandlerResource, producerResource)
-    } yield new JmsRequestReplyClient[F](requestMap, consumerProducer._2)
-
-  /** A jms4s consumer handler that consumes a reply message, finds the ReplyMessageHandler and dispatches the message
-    * to it.
-    */
-  private def jmsConsumerHandler[F[_]](
-    requestMap: ConcurrentHashMap[String, ReplyMessageHandler[F]]
-  )(jmsMessage: JmsMessage, @unused messageFactory: MessageFactory[F])(implicit
-    F: Async[F],
-    L: Logger[F]
-  ): F[AckAction[F]] = {
-    val maybeReplyMessageHandler: F[Option[ReplyMessageHandler[F]]] =
-      F.delay(jmsMessage.getJMSCorrelationId.flatMap(correlationId => Option(requestMap.remove(correlationId))))
-
-    val maybeHandled: F[Unit] = F.flatMap(maybeReplyMessageHandler) {
-      case Some(correlatedRequestHandler) =>
-        correlatedRequestHandler(ReplyMessage(jmsMessage.attemptAsText.get))
-      case None =>
-        L.error(s"No request found for response '${jmsMessage.attemptAsText.get}'")
-    }
-
-    F.*>(maybeHandled)(F.pure(AckAction.ack[F]))
-  }
-
-}
-
-private trait RandomClientIdGen[F[_]] {
-
-  /** Generates a ClientId pseudo-random manner.
-    * @return
-    *   randomly generated ClientId
-    */
-  def randomClientId: F[String]
-}
-
-private object RandomClientIdGen {
-  def apply[F[_]](implicit randomClientIdGen: RandomClientIdGen[F]): RandomClientIdGen[F] = randomClientIdGen
-
-  def randomClientId[F[_] : RandomClientIdGen]: F[String] = RandomClientIdGen[F].randomClientId
-
-  implicit def fromSync[F[_]](implicit sync: Sync[F]): RandomClientIdGen[F] = new RandomClientIdGen[F] {
-    override final val randomClientId: F[String] =
-      sync.map(sync.blocking(UUID.randomUUID()))(uuid => s"jms-rr-client-$uuid")
-  }
 }

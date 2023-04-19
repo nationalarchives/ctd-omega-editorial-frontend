@@ -19,24 +19,28 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.services
+package uk.gov.nationalarchives.omega.editorial.connectors
 
-import cats.effect.IO
-import play.api.Logger
-import uk.gov.nationalarchives.omega.editorial.connectors.MessagingService
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, GetEditSet }
-import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
+import cats.effect.kernel.Sync
 
-import javax.inject.{ Inject, Singleton }
+import java.util.UUID
 
-@Singleton
-class EditSetService @Inject() (messagingService: MessagingService, timeProvider: TimeProvider) {
+private trait RandomClientIdGen[F[_]] {
 
-  private val logger: Logger = Logger(this.getClass)
+  /** Generates a ClientId pseudo-random manner.
+    * @return
+    *   randomly generated ClientId
+    */
+  def randomClientId: F[String]
+}
 
-  def get(id: String): IO[Option[EditSet]] = {
-    logger.info(s"The edit set id is $id ")
-    messagingService.getEditSet(GetEditSet(id, timeProvider.now()))
+private object RandomClientIdGen {
+  def apply[F[_]](implicit randomClientIdGen: RandomClientIdGen[F]): RandomClientIdGen[F] = randomClientIdGen
+
+  def randomClientId[F[_] : RandomClientIdGen]: F[String] = RandomClientIdGen[F].randomClientId
+
+  implicit def fromSync[F[_]](implicit sync: Sync[F]): RandomClientIdGen[F] = new RandomClientIdGen[F] {
+    override final val randomClientId: F[String] =
+      sync.map(sync.blocking(UUID.randomUUID()))(uuid => s"jms-rr-client-$uuid")
   }
-
 }

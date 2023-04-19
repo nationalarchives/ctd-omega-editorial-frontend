@@ -1,11 +1,11 @@
 import play.api.libs.json.Json
-import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector.SID
+import uk.gov.nationalarchives.omega.editorial.connectors.{ ApiConnector, MessageType }
 import uk.gov.nationalarchives.omega.editorial.models.UpdateEditSetRecord
 
 import java.time.{ LocalDate, LocalDateTime, Month }
 class UpdateEditSetRecordISpec extends BaseRequestReplyServiceISpec {
 
-  override val serviceId: String = SID.UpdateEditSetRecord.value
+  override val serviceId: String = MessageType.UpdateEditSetRecordType.value
 
   "The service to get an Edit Set Record by OCI, will" - {
     "succeed, when we make" - {
@@ -14,10 +14,15 @@ class UpdateEditSetRecordISpec extends BaseRequestReplyServiceISpec {
           "and a known Record" in { requestReplyHandler =>
             val request = generateRequestAsJsonString("1", "COAL.2022.V4RJW.P")
 
-            val result = sendRequest(requestReplyHandler, request)
+            val result = sendRequest(
+              requestReplyHandler,
+              request,
+              ApiConnector.applicationId,
+              MessageType.UpdateEditSetRecordType.value
+            )
 
             result.asserting(
-              _ mustBe Json.stringify(
+              _.messageText mustBe Json.stringify(
                 Json.parse(
                   """{
                     |  "status":"success",
@@ -33,10 +38,15 @@ class UpdateEditSetRecordISpec extends BaseRequestReplyServiceISpec {
           "but a known Record" in { requestReplyHandler =>
             val request = generateRequestAsJsonString("88", "COAL.2022.V4RJW.P")
 
-            val result = sendRequest(requestReplyHandler, request)
+            val result = sendRequest(
+              requestReplyHandler,
+              request,
+              ApiConnector.applicationId,
+              MessageType.UpdateEditSetRecordType.value
+            )
 
             result.asserting(
-              _ mustBe Json.stringify(
+              _.messageText mustBe Json.stringify(
                 Json.parse(
                   """{
                     |  "status":"success",
@@ -53,11 +63,21 @@ class UpdateEditSetRecordISpec extends BaseRequestReplyServiceISpec {
       val request1 = generateRequestAsJsonString("1", "COAL.2022.V1RJW.P")
       val request2 = generateRequestAsJsonString("1", "COAL.2022.V4RJW.P")
 
-      val result1 = sendRequest(requestReplyHandler, request1)
-      val result2 = sendRequest(requestReplyHandler, request2)
+      val result1 = sendRequest(
+        requestReplyHandler,
+        request1,
+        ApiConnector.applicationId,
+        MessageType.UpdateEditSetRecordType.value
+      )
+      val result2 = sendRequest(
+        requestReplyHandler,
+        request2,
+        ApiConnector.applicationId,
+        MessageType.UpdateEditSetRecordType.value
+      )
 
       result1.asserting(
-        _ mustBe Json.stringify(
+        _.messageText mustBe Json.stringify(
           Json.parse(
             """{
               |  "status":"success",
@@ -67,7 +87,7 @@ class UpdateEditSetRecordISpec extends BaseRequestReplyServiceISpec {
         )
       ) *>
         result2.asserting(
-          _ mustBe Json.stringify(
+          _.messageText mustBe Json.stringify(
             Json.parse(
               """{
                 |  "status":"success",

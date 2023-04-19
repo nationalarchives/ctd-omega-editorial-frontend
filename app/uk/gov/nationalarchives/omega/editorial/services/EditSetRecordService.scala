@@ -22,7 +22,7 @@
 package uk.gov.nationalarchives.omega.editorial.services
 
 import cats.effect.IO
-import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
+import uk.gov.nationalarchives.omega.editorial.connectors.MessagingService
 import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
 import uk.gov.nationalarchives.omega.editorial.models.UpdateEditSetRecord.Fields.MaterialReference
 import uk.gov.nationalarchives.omega.editorial.models._
@@ -34,20 +34,19 @@ import scala.annotation.unused
 
 @Singleton
 class EditSetRecordService @Inject() (
-  apiConnector: ApiConnector,
-  referenceDataService: ReferenceDataService,
+  messagingService: MessagingService,
   timeProvider: TimeProvider
 ) {
 
   def get(editSetOci: String, recordOci: String): IO[Option[EditSetRecord]] =
-    apiConnector.getEditSetRecord(GetEditSetRecord(editSetOci, recordOci, timeProvider.now()))
+    messagingService.getEditSetRecord(GetEditSetRecord(editSetOci, recordOci, timeProvider.now()))
 
   def updateEditSetRecord(
     editSetId: String,
     recordId: String,
     values: EditSetRecordFormValues
   ): IO[UpdateResponseStatus] =
-    apiConnector.updateEditSetRecord(asUpdateEditSetRecord(editSetId, recordId, values))
+    messagingService.updateEditSetRecord(asUpdateEditSetRecord(editSetId, recordId, values))
 
   private def asUpdateEditSetRecord(
     editSetId: String,

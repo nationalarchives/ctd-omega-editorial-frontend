@@ -20,14 +20,14 @@
  */
 
 import play.api.libs.json.Json
-import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
+import uk.gov.nationalarchives.omega.editorial.connectors.{ ApiConnector, MessageType }
 import uk.gov.nationalarchives.omega.editorial.models.GetEditSetRecord
 
 import java.time.LocalDateTime
 
 class GetEditSetRecordISpec extends BaseRequestReplyServiceISpec {
 
-  override val serviceId: String = ApiConnector.SID.GetEditSetRecord.value
+  override val serviceId: String = MessageType.GetEditSetRecordType.value
 
   "The service to get an Edit Set Record by OCI, will" - {
     "succeed, when we make" - {
@@ -36,10 +36,15 @@ class GetEditSetRecordISpec extends BaseRequestReplyServiceISpec {
           "and a known Record" in { requestReplyHandler =>
             val request = generateRequestAsJsonString("1", "COAL.2022.V4RJW.P")
 
-            val result = sendRequest(requestReplyHandler, request)
+            val result = sendRequest(
+              requestReplyHandler,
+              request,
+              ApiConnector.applicationId,
+              MessageType.GetEditSetRecordType.value
+            )
 
             result.asserting(
-              _ mustBe Json.stringify(
+              _.messageText mustBe Json.stringify(
                 Json.parse(
                   """{
                     |  "ccr" : "COAL 80/80/4",
@@ -73,9 +78,14 @@ class GetEditSetRecordISpec extends BaseRequestReplyServiceISpec {
           "but a known Record" in { requestReplyHandler =>
             val request = generateRequestAsJsonString("88", "COAL.2022.V1RJW.P")
 
-            val result = sendRequest(requestReplyHandler, request)
+            val result = sendRequest(
+              requestReplyHandler,
+              request,
+              ApiConnector.applicationId,
+              MessageType.GetEditSetRecordType.value
+            )
 
-            result.asserting(_ mustBe Json.stringify(Json.parse("""{
+            result.asserting(_.messageText mustBe Json.stringify(Json.parse("""{
               "ccr" : "COAL 80/80/1",
               "oci" : "COAL.2022.V1RJW.P",
               "scopeAndContent" : "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths. (B)",
@@ -132,11 +142,13 @@ class GetEditSetRecordISpec extends BaseRequestReplyServiceISpec {
         val request1 = generateRequestAsJsonString("1", "COAL.2022.V1RJW.P")
         val request2 = generateRequestAsJsonString("1", "COAL.2022.V4RJW.P")
 
-        val result1 = sendRequest(requestReplyHandler, request1)
-        val result2 = sendRequest(requestReplyHandler, request2)
+        val result1 =
+          sendRequest(requestReplyHandler, request1, ApiConnector.applicationId, MessageType.GetEditSetRecordType.value)
+        val result2 =
+          sendRequest(requestReplyHandler, request2, ApiConnector.applicationId, MessageType.GetEditSetRecordType.value)
 
         result1.asserting(
-          _ mustBe Json.stringify(
+          _.messageText mustBe Json.stringify(
             Json.parse(
               """{
                 |  "ccr" : "COAL 80/80/1",
@@ -191,7 +203,7 @@ class GetEditSetRecordISpec extends BaseRequestReplyServiceISpec {
           )
         ) *>
           result2.asserting(
-            _ mustBe Json.stringify(
+            _.messageText mustBe Json.stringify(
               Json.parse(
                 """{
                   |  "ccr" : "COAL 80/80/4",

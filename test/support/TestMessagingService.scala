@@ -21,32 +21,29 @@
 
 package support
 
-import uk.gov.nationalarchives.omega.editorial.models.{ GetEditSet, GetEditSetRecord, UpdateEditSetRecord }
+import cats.effect.IO
+import uk.gov.nationalarchives.omega.editorial.connectors.MessagingService
+import uk.gov.nationalarchives.omega.editorial.models._
+import uk.gov.nationalarchives.omega.editorial.services.jms.StubData
 
-trait ApiConnectorMonitoring {
+object TestMessagingService extends MessagingService(null) with MessagingServiceMonitoring with StubData {
 
-  private var lastSentGetEditSet: Option[GetEditSet] = None
-  private var lastSentGetEditSetRecord: Option[GetEditSetRecord] = None
-  private var lastSentUpdateEditSetRecord: Option[UpdateEditSetRecord] = None
+  override def getEditSet(getEditSetRequest: GetEditSet): IO[Option[EditSet]] =
+    IO.pure {
+      record(getEditSetRequest)
+      getEditSet(getEditSetRequest.oci)
+    }
 
-  def record(getEditSetRequest: GetEditSet): Unit =
-    lastSentGetEditSet = Option(getEditSetRequest)
+  override def getEditSetRecord(getEditSetRecordRequest: GetEditSetRecord): IO[Option[EditSetRecord]] =
+    IO.pure {
+      record(getEditSetRecordRequest)
+      getEditSetRecord(getEditSetRecordRequest.recordOci)
+    }
 
-  def record(getEditSetRecordRequest: GetEditSetRecord): Unit =
-    lastSentGetEditSetRecord = Option(getEditSetRecordRequest)
+  override def updateEditSetRecord(updateEditSetRecord: UpdateEditSetRecord): IO[UpdateResponseStatus] =
+    IO.pure {
+      record(updateEditSetRecord)
+      UpdateResponseStatus(s"success", s"Successfully updated record with OCI [${updateEditSetRecord.recordOci}]")
+    }
 
-  def record(updateEditSetRecordRequest: UpdateEditSetRecord): Unit =
-    lastSentUpdateEditSetRecord = Option(updateEditSetRecordRequest)
-
-  def getLastSentGetEditSetRequest(): Option[GetEditSet] = lastSentGetEditSet
-
-  def getLastSentGetEditSetRecordRequest(): Option[GetEditSetRecord] = lastSentGetEditSetRecord
-
-  def getLastSentUpdateEditSetRecordRequest(): Option[UpdateEditSetRecord] = lastSentUpdateEditSetRecord
-
-  def reset(): Unit = {
-    lastSentGetEditSet = None
-    lastSentGetEditSetRecord = None
-    lastSentUpdateEditSetRecord = None
-  }
 }

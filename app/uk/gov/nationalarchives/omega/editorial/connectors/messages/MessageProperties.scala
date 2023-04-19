@@ -19,24 +19,14 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.services
+package uk.gov.nationalarchives.omega.editorial.connectors.messages
 
-import cats.effect.IO
-import play.api.Logger
-import uk.gov.nationalarchives.omega.editorial.connectors.MessagingService
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, GetEditSet }
-import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
+object MessageProperties {
 
-import javax.inject.{ Inject, Singleton }
-
-@Singleton
-class EditSetService @Inject() (messagingService: MessagingService, timeProvider: TimeProvider) {
-
-  private val logger: Logger = Logger(this.getClass)
-
-  def get(id: String): IO[Option[EditSet]] = {
-    logger.info(s"The edit set id is $id ")
-    messagingService.getEditSet(GetEditSet(id, timeProvider.now()))
-  }
+  val OMGApplicationID = "OMGApplicationID"
+  val OMGMessageTypeID = "OMGMessageTypeID"
+  val OMGMessageFormat = "OMGMessageFormat"
+  val OMGToken = "OMGToken"
+  val OMGReplyAddress = "OMGReplyAddress"
 
 }

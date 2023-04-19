@@ -31,6 +31,7 @@ import jms4s.sqs.simpleQueueService
 import jms4s.sqs.simpleQueueService._
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
+import uk.gov.nationalarchives.omega.editorial.connectors.messages.MessageProperties
 
 import scala.concurrent.duration.DurationInt
 import javax.inject.{ Inject, Singleton }
@@ -81,8 +82,25 @@ class StubServer @Inject() (responseBuilder: ResponseBuilder) {
       requestMessageId <- responseBuilder.jmsMessageId(jmsMessage)
       _                <- logger.info(s"got a message with ID $requestMessageId")
       responseText     <- responseBuilder.createResponseText(jmsMessage)
-      responseMessage  <- messageFactory.makeTextMessage(responseText)
-      _ = responseMessage.setJMSCorrelationId(requestMessageId)
-    } yield responseMessage
+      replyMessage     <- messageFactory.makeTextMessage(responseText)
+      _ = replyMessage.setJMSCorrelationId(requestMessageId)
+      _ = replyMessage.setStringProperty(MessageProperties.OMGApplicationID, "PACS001")
+      _ = replyMessage.setStringProperty(
+            MessageProperties.OMGMessageTypeID,
+            getReplyMessageType(jmsMessage.getStringProperty(MessageProperties.OMGMessageTypeID))
+          )
+      _ = replyMessage.setStringProperty(MessageProperties.OMGMessageFormat, "application/json")
+      _ = replyMessage.setStringProperty(MessageProperties.OMGReplyAddress, "PACS001.request")
+      _ = replyMessage.setStringProperty(MessageProperties.OMGToken, "AbCdEf123456")
+    } yield replyMessage
+
+  private val messageTypeMap = Map[String, String]("OSLISALS001" -> "ODLISALS001")
+  private def getReplyMessageType(maybeMessageType: Option[String]): String = {
+    val messageType = for {
+      requestMessageType <- maybeMessageType
+      replyMessageType   <- messageTypeMap.get(requestMessageType)
+    } yield replyMessageType
+    messageType.getOrElse("NOT FOUND")
+  }
 
 }
