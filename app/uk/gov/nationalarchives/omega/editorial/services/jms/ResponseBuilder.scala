@@ -44,29 +44,29 @@ class ResponseBuilder @Inject() (stubData: StubData) {
   def jmsMessageId(jmsMessage: JmsMessage): IO[String] =
     me.fromOption(
       jmsMessage.getJMSMessageId,
-      ifEmpty = MissingJMSID
+      ifEmpty = MissingMessageType
     )
 
   def createResponseText(jmsMessage: JmsMessage): IO[String] =
     jmsMessage.getStringProperty(MessageProperties.OMGMessageTypeID) match {
-      case Some(sidValue) if MessageType.GetEditSetType.matches(sidValue) =>
+      case Some(messageType) if MessageType.GetEditSetType.matches(messageType) =>
         handleGetEditSet(jmsMessage)
-      case Some(sidValue) if MessageType.GetEditSetRecordType.matches(sidValue) =>
+      case Some(messageType) if MessageType.GetEditSetRecordType.matches(messageType) =>
         handleGetEditSetRecord(jmsMessage)
-      case Some(sidValue) if MessageType.UpdateEditSetRecordType.matches(sidValue) =>
+      case Some(messageType) if MessageType.UpdateEditSetRecordType.matches(messageType) =>
         handleUpdateEditSetRecord(jmsMessage)
-      case Some(sidValue) if MessageType.GetLegalStatusesType.matches(sidValue) =>
+      case Some(messageType) if MessageType.GetLegalStatusesType.matches(messageType) =>
         handleGetLegalStatuses(jmsMessage)
-      case Some(sidValue) if MessageType.GetPlacesOfDepositType.matches(sidValue) =>
+      case Some(messageType) if MessageType.GetPlacesOfDepositType.matches(messageType) =>
         handleGetPlacesOfDeposit(jmsMessage)
-      case Some(sidValue) if MessageType.GetPersonsType.matches(sidValue) =>
+      case Some(messageType) if MessageType.GetPersonsType.matches(messageType) =>
         handleGetPersons(jmsMessage)
-      case Some(sidValue) if MessageType.GetCorporateBodiesType.matches(sidValue) =>
+      case Some(messageType) if MessageType.GetCorporateBodiesType.matches(messageType) =>
         handleGetCorporateBodies(jmsMessage)
       case Some(unknown) =>
         onUnhandledCase(s"Message type is unrecognised: [$unknown]")
       case None =>
-        onUnhandledCase(s"No SID provided")
+        onUnhandledCase(s"No message type provided")
     }
 
   private def handleGetEditSet(jmsMessage: JmsMessage): IO[String] =
@@ -154,7 +154,7 @@ object ResponseBuilder {
 
   sealed abstract class StubServerError extends Throwable
 
-  private final case object MissingJMSID extends StubServerError
+  private final case object MissingMessageType extends StubServerError
   private final case class NotATextMessage(err: Throwable) extends StubServerError
   private final case class CannotParse(txt: String) extends StubServerError
 

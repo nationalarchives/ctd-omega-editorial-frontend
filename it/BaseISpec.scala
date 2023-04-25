@@ -20,7 +20,7 @@ abstract class BaseISpec
     extends PlaySpec with GuiceOneServerPerSuite with BeforeAndAfterEach with ModelSupport
     with MessagingServiceAssertions {
 
-  implicit val monitoredApiConnector: MonitoredMessagingService = app.injector.instanceOf[MonitoredMessagingService]
+  implicit val monitoredMessagingService: MonitoredMessagingService = app.injector.instanceOf[MonitoredMessagingService]
   lazy implicit val testTimeProvider: TimeProvider = () => LocalDateTime.of(2023, Month.FEBRUARY, 28, 1, 1, 1)
   implicit val wsClient: WSClient = app.injector.instanceOf[WSClient]
 
@@ -53,7 +53,7 @@ abstract class BaseISpec
   override def beforeEach(): Unit = {
     super.beforeEach()
     resetMessageBus()
-    monitoredApiConnector.reset()
+    monitoredMessagingService.reset()
   }
 
   def asDocument(response: WSResponse): Document = Jsoup.parse(response.body)

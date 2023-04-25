@@ -22,19 +22,19 @@ package services
 
 import cats.effect.testing.scalatest.AsyncIOSpec
 import org.mockito.cats.MockitoCats.whenF
-import org.mockito.{ArgumentMatchersSugar, MockitoSugar}
+import org.mockito.{ ArgumentMatchersSugar, MockitoSugar }
 import org.scalatest.freespec.AsyncFreeSpec
 import org.scalatest.matchers.must.Matchers
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
 import uk.gov.nationalarchives.omega.editorial.connectors.MessageType.GetLegalStatusesType
 import uk.gov.nationalarchives.omega.editorial.connectors.messages.uk.gov.nationalarchives.omega.editorial.connectors.messages.ReplyMessage
-import uk.gov.nationalarchives.omega.editorial.models.{GetLegalStatuses, LegalStatus}
+import uk.gov.nationalarchives.omega.editorial.models.{ GetLegalStatuses, LegalStatus }
 import uk.gov.nationalarchives.omega.editorial.services.MessagingService
 
 import java.time.LocalDateTime
 
 class MessagingServiceSpec
-  extends AsyncFreeSpec with AsyncIOSpec with Matchers with MockitoSugar with ArgumentMatchersSugar {
+    extends AsyncFreeSpec with AsyncIOSpec with Matchers with MockitoSugar with ArgumentMatchersSugar {
 
   "When the messaging service receives a request" - {
     " for legal statuses" in {
