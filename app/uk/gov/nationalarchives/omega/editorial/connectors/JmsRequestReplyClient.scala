@@ -23,25 +23,24 @@ package uk.gov.nationalarchives.omega.editorial.connectors
 
 import cats.effect.implicits.genSpawnOps
 import cats.effect.kernel.Sync
-import cats.effect.{ Async, Resource }
+import cats.effect.{Async, Resource}
 import jms4s.JmsAcknowledgerConsumer.AckAction
 import jms4s.config.QueueName
-import jms4s.jms.{ JmsMessage, MessageFactory }
+import jms4s.jms.{JmsMessage, MessageFactory}
 import jms4s.sqs.simpleQueueService
-import jms4s.sqs.simpleQueueService.{ Credentials, DirectAddress, HTTP }
-import jms4s.{ JmsClient, JmsProducer }
+import jms4s.sqs.simpleQueueService.{Credentials, DirectAddress, HTTP}
+import jms4s.{JmsClient, JmsProducer}
 import org.typelevel.log4cats.Logger
+import uk.gov.nationalarchives.omega.editorial.config.{HostBrokerEndpoint, UsernamePasswordCredentials}
 import uk.gov.nationalarchives.omega.editorial.connectors.JmsRequestReplyClient.ReplyMessageHandler
-import uk.gov.nationalarchives.omega.editorial.config.{ HostBrokerEndpoint, UsernamePasswordCredentials }
+import uk.gov.nationalarchives.omega.editorial.connectors.messages.uk.gov.nationalarchives.omega.editorial.connectors.messages.ReplyMessage
+import uk.gov.nationalarchives.omega.editorial.connectors.messages.{MessageProperties, RequestMessage}
 
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import scala.annotation.unused
 import scala.concurrent.duration.DurationInt
-import scala.util.{ Failure, Success }
-
-case class RequestMessage(body: String, sid: String)
-case class ReplyMessage(body: String)
+import scala.util.{Failure, Success, Try}
 
 /** A JMS Request-Reply client.
   *
@@ -72,7 +71,7 @@ class JmsRequestReplyClient[F[_] : Async](
     val sender: F[Option[String]] = producer.send { messageFactory =>
       val jmsMessage: F[JmsMessage.JmsTextMessage] = messageFactory.makeTextMessage(jmsRequest.body)
       Async[F].map(jmsMessage)(jmsMessage =>
-        jmsMessage.setStringProperty("sid", jmsRequest.sid) match {
+        setProperties(jmsMessage, jmsRequest) match {
           case Success(_) => (jmsMessage, QueueName(requestQueue))
           case Failure(e) =>
             L.error(s"Failed to set SID due to ${e.getMessage}")
@@ -92,6 +91,15 @@ class JmsRequestReplyClient[F[_] : Async](
         )
     }
   }
+
+  private def setProperties(jmsRequest: JmsMessage, requestMessage: RequestMessage): Try[JmsMessage] =
+    for {
+      _ <- jmsRequest.setStringProperty(MessageProperties.OMGApplicationID, requestMessage.omgApplicationId)
+      _ <- jmsRequest.setStringProperty(MessageProperties.OMGMessageTypeID, requestMessage.omgMessageTypeId)
+      _ <- jmsRequest.setStringProperty(MessageProperties.OMGMessageFormat, "application/json")
+      _ <- jmsRequest.setStringProperty(MessageProperties.OMGReplyAddress, "PACS001.request")
+      _ <- jmsRequest.setStringProperty(MessageProperties.OMGToken, "AbCdEf123456")
+    } yield jmsRequest
 
 }
 
@@ -186,13 +194,20 @@ object JmsRequestReplyClient {
 
     val maybeHandled: F[Unit] = F.flatMap(maybeReplyMessageHandler) {
       case Some(correlatedRequestHandler) =>
-        correlatedRequestHandler(ReplyMessage(jmsMessage.attemptAsText.get))
+        correlatedRequestHandler(unpackReply(jmsMessage))
       case None =>
         L.error(s"No request found for response '${jmsMessage.attemptAsText.get}'")
     }
 
     F.*>(maybeHandled)(F.pure(AckAction.ack[F]))
   }
+
+  private def unpackReply(jmsMessage: JmsMessage): ReplyMessage =
+    ReplyMessage(
+      jmsMessage.attemptAsText.getOrElse(""),
+      jmsMessage.getJMSCorrelationId,
+      jmsMessage.getStringProperty(MessageProperties.OMGMessageTypeID)
+    )
 
 }
 

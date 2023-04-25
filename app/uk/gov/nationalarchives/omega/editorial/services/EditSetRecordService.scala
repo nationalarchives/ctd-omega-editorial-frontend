@@ -35,7 +35,6 @@ import scala.annotation.unused
 @Singleton
 class EditSetRecordService @Inject() (
   apiConnector: ApiConnector,
-  referenceDataService: ReferenceDataService,
   timeProvider: TimeProvider
 ) {
 

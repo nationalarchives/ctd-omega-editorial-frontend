@@ -26,11 +26,13 @@ import cats.effect.unsafe.implicits.global
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import play.api.inject.ApplicationLifecycle
-import play.api.libs.json.{ Json, Reads }
+import play.api.libs.json.{Json, Reads}
 import uk.gov.nationalarchives.omega.editorial.config.Config
+import uk.gov.nationalarchives.omega.editorial.connectors.messages.RequestMessage
+import uk.gov.nationalarchives.omega.editorial.connectors.messages.uk.gov.nationalarchives.omega.editorial.connectors.messages.ReplyMessage
 import uk.gov.nationalarchives.omega.editorial.models._
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class ApiConnector @Inject() (
@@ -48,16 +50,16 @@ class ApiConnector @Inject() (
   def getEditSet(getEditSet: GetEditSet): IO[Option[EditSet]] = {
     val requestBody = Json.stringify(Json.toJson(getEditSet))
     logger.info(s"Requesting edit set ${getEditSet.oci}...") *>
-      handle(SID.GetEditSet, requestBody)
-        .flatMap(parse[EditSet])
+      handle(MessageType.GetEditSetType, requestBody)
+        .flatMap(replyMessage => parse[EditSet](replyMessage.messageText))
         .redeem(_ => None, Some.apply)
   }
 
   def getEditSetRecord(getEditSetRecord: GetEditSetRecord): IO[Option[EditSetRecord]] = {
     val requestBody = Json.stringify(Json.toJson(getEditSetRecord))
     logger.info(s"Requesting record ${getEditSetRecord.recordOci} from edit set ${getEditSetRecord.editSetOci}") *>
-      handle(SID.GetEditSetRecord, requestBody)
-        .flatMap(parse[EditSetRecord])
+      handle(MessageType.GetEditSetRecordType, requestBody)
+        .flatMap(replyMessage => parse[EditSetRecord](replyMessage.messageText))
         .redeem(_ => None, Some.apply)
   }
 
@@ -66,28 +68,28 @@ class ApiConnector @Inject() (
     logger.info(
       s"Requesting update of edit set record ${updateEditSetRecord.recordOci}: \n${pprint.apply(updateEditSetRecord)}\n"
     ) *>
-      handle(SID.UpdateEditSetRecord, requestBody).flatMap(parse[UpdateResponseStatus])
+      handle(MessageType.UpdateEditSetRecordType, requestBody).flatMap(replyMessage => parse[UpdateResponseStatus](replyMessage.messageText))
   }
 
   def getPlacesOfDeposit(getPlacesOfDeposit: GetPlacesOfDeposit): IO[Seq[PlaceOfDeposit]] =
     logger.info(s"Requesting all of the places of deposit") *>
-      handle(SID.GetPlacesOfDeposit, Json.stringify(Json.toJson(getPlacesOfDeposit)))
-        .flatMap(parse[Seq[PlaceOfDeposit]])
+      handle(MessageType.GetPlacesOfDepositType, Json.stringify(Json.toJson(getPlacesOfDeposit)))
+        .flatMap(replyMessage => parse[Seq[PlaceOfDeposit]](replyMessage.messageText))
 
   def getPersons(getPersons: GetPersons): IO[Seq[Person]] =
     logger.info(s"Requesting all of the persons") *>
-      handle(SID.GetPersons, Json.stringify(Json.toJson(getPersons)))
-        .flatMap(parse[Seq[Person]])
+      handle(MessageType.GetPersonsType, Json.stringify(Json.toJson(getPersons)))
+        .flatMap(replyMessage => parse[Seq[Person]](replyMessage.messageText))
 
   def getCorporateBodies(getCorporateBodies: GetCorporateBodies): IO[Seq[CorporateBody]] =
     logger.info(s"Requesting all of the corporate bodies") *>
-      handle(SID.GetCorporateBodies, Json.stringify(Json.toJson(getCorporateBodies)))
-        .flatMap(parse[Seq[CorporateBody]])
+      handle(MessageType.GetCorporateBodiesType, Json.stringify(Json.toJson(getCorporateBodies)))
+        .flatMap(replyMessage => parse[Seq[CorporateBody]](replyMessage.messageText))
 
   def getLegalStatuses(getLegalStatuses: GetLegalStatuses): IO[Seq[LegalStatus]] =
     logger.info(s"Requesting all of the legal status summary") *>
-      handle(SID.GetLegalStatuses, Json.stringify(Json.toJson(getLegalStatuses)))
-        .flatMap(parse[Seq[LegalStatus]])
+      handle(MessageType.GetLegalStatusesType, Json.stringify(Json.toJson(getLegalStatuses)))
+        .flatMap(replyMessage => parse[Seq[LegalStatus]](replyMessage.messageText))
 
   private def createClientAndCloser: IO[(JmsRequestReplyClient[IO], IO[Unit])] =
     registerStopHook() *>
@@ -100,10 +102,10 @@ class ApiConnector @Inject() (
     }
   }
 
-  private def handle(sid: SID, requestBody: String): IO[String] =
+  private def handle(messageType: MessageType, requestBody: String): IO[ReplyMessage] =
     handler.handle(
       requestQueueName,
-      requestMessage = RequestMessage(requestBody, sid.value)
+      requestMessage = RequestMessage(requestBody, ApiConnector.applicationId, messageType.value)
     )
 
   private def parse[A : Reads](messageText: String): IO[A] =
@@ -115,23 +117,12 @@ class ApiConnector @Inject() (
 
 object ApiConnector {
 
+  val applicationId = "PACE001"
+
   sealed abstract class SID(val value: String) {
 
     def matches(sid: String): Boolean =
       sid.trim.equalsIgnoreCase(this.value)
-
-  }
-
-  object SID {
-
-    case object GetEditSet extends SID("OSGEES001")
-    case object GetEditSetRecord extends SID("OSGESR001")
-    case object UpdateEditSetRecord extends SID("OSUESR001")
-    case object GetLegalStatuses extends SID("OSLISALS001")
-    // TODO: The real SID will be provided by Adam once he figures out the schema.
-    case object GetPlacesOfDeposit extends SID("OSGPOD001")
-    case object GetPersons extends SID("OSGPER001")
-    case object GetCorporateBodies extends SID("OSGCBY001")
 
   }
 

@@ -21,28 +21,26 @@
 
 package uk.gov.nationalarchives.omega.editorial.connectors
 
-import cats.effect.IO
-import cats.effect.std.Queue
-import org.typelevel.log4cats.Logger
-import uk.gov.nationalarchives.omega.editorial.connectors.JmsRequestReplyClient.ReplyMessageHandler
-import uk.gov.nationalarchives.omega.editorial.connectors.messages.RequestMessage
-import uk.gov.nationalarchives.omega.editorial.connectors.messages.uk.gov.nationalarchives.omega.editorial.connectors.messages.ReplyMessage
+sealed abstract class MessageType(val value: String) {
 
-case class RequestReplyHandler(client: JmsRequestReplyClient[IO]) {
+  def matches(sid: String): Boolean =
+    sid.trim.equalsIgnoreCase(this.value)
 
-  /** Convenience method for binding a request and its reply
-    * @param requestQueue
-    *   the JMS queue to send the message to
-    * @param requestMessage
-    *   the JMS message
-    * @return
-    */
-  def handle(requestQueue: String, requestMessage: RequestMessage)(implicit L: Logger[IO]): IO[ReplyMessage] =
-    Queue.bounded[IO, ReplyMessage](1).flatMap { queue =>
-      val replyHandler: ReplyMessageHandler[IO] = replyMessage => queue.offer(replyMessage)
-      client.request(requestQueue, requestMessage, replyHandler) flatMap { _ =>
-        queue.take
-      }
-    }
+}
+object MessageType {
+
+  case object GetEditSetType extends MessageType("OSGEES001")
+
+  case object GetEditSetRecordType extends MessageType("OSGESR001")
+
+  case object UpdateEditSetRecordType extends MessageType("OSUESR001")
+
+  case object GetLegalStatusesType extends MessageType("OSLISALS001")
+
+  case object GetPlacesOfDepositType extends MessageType("OSGPOD001")
+
+  case object GetPersonsType extends MessageType("OSGPER001")
+
+  case object GetCorporateBodiesType extends MessageType("OSGCBY001")
 
 }
