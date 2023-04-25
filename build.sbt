@@ -144,21 +144,21 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
       "com.github.pureconfig"  %% "pureconfig"                    % "0.17.2",
       "dev.fpinbo"             %% "jms4s-simple-queue-service"    % "0.0.1-53518bb-SNAPSHOT",
       "org.typelevel"          %% "cats-core"                     % "2.9.0",
-      "org.typelevel"          %% "cats-effect"                   % "3.4.4",
-      "org.typelevel"          %% "cats-effect-kernel"            % "3.4.4",
+      "org.typelevel"          %% "cats-effect"                   % "3.4.8",
+      "org.typelevel"          %% "cats-effect-kernel"            % "3.4.7",
       "org.typelevel"          %% "log4cats-core"                 % "2.5.0",
       "org.typelevel"          %% "log4cats-slf4j"                % "2.5.0",
       "org.webjars.npm"         % "govuk-frontend"                % "4.3.1",
       "uk.gov.hmrc"            %% "play-frontend-hmrc"            % "6.2.0-play-28",
       "com.lihaoyi"            %% "pprint"                        % "0.8.1",
-      "org.scalatestplus.play" %% "scalatestplus-play"            % "5.1.0"  % Test,
-      "org.jsoup"               % "jsoup"                         % "1.15.3" % Test,
-      "org.typelevel"          %% "cats-effect-testing-scalatest" % "1.5.0"  % Test,
-      "org.mockito"            %% "mockito-scala-scalatest"       % "1.17.5" % Test,
-      "org.mockito"            %% "mockito-scala-cats"            % "1.17.5" % Test
-).map(_.exclude("org.slf4j", "*")),
+      "org.scalatestplus.play" %% "scalatestplus-play"            % "5.1.0"   % Test,
+      "org.jsoup"               % "jsoup"                         % "1.15.4"  % Test,
+      "org.typelevel"          %% "cats-effect-testing-scalatest" % "1.5.0"   % Test,
+      "org.mockito"            %% "mockito-scala-scalatest"       % "1.17.12" % Test,
+      "org.mockito"            %% "mockito-scala-cats"            % "1.17.12" % Test
+    ).map(_.exclude("org.slf4j", "*")),
     libraryDependencies ++= Seq(
-      "ch.qos.logback" % "logback-classic" % "1.3.0"
+      "ch.qos.logback" % "logback-classic" % "1.3.5" // Java 8 compatible
     ),
     publishMavenStyle := true,
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
