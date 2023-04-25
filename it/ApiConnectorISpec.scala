@@ -2,10 +2,10 @@ import cats.effect.unsafe.implicits.global
 import org.scalatest.prop.TableDrivenPropertyChecks.forAll
 import org.scalatest.prop.Tables.Table
 import uk.gov.nationalarchives.omega.editorial.models
-import uk.gov.nationalarchives.omega.editorial.models.{GetEditSet, GetEditSetRecord, UpdateEditSetRecord, UpdateResponseStatus}
+import uk.gov.nationalarchives.omega.editorial.models.{ GetEditSet, GetEditSetRecord, UpdateEditSetRecord, UpdateResponseStatus }
 import uk.gov.nationalarchives.omega.editorial.services.MessagingService
 
-import java.time.{LocalDate, LocalDateTime, Month}
+import java.time.{ LocalDate, LocalDateTime, Month }
 
 class ApiConnectorISpec extends BaseISpec {
 

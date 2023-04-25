@@ -1,8 +1,8 @@
 import play.api.libs.json.Json
-import uk.gov.nationalarchives.omega.editorial.connectors.{ApiConnector, MessageType}
+import uk.gov.nationalarchives.omega.editorial.connectors.{ ApiConnector, MessageType }
 import uk.gov.nationalarchives.omega.editorial.models.UpdateEditSetRecord
 
-import java.time.{LocalDate, LocalDateTime, Month}
+import java.time.{ LocalDate, LocalDateTime, Month }
 class UpdateEditSetRecordISpec extends BaseRequestReplyServiceISpec {
 
   override val messageType: String = MessageType.UpdateEditSetRecordType.value

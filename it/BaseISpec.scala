@@ -1,23 +1,24 @@
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.scalatest.{Assertion, BeforeAndAfterEach}
+import org.scalatest.{ Assertion, BeforeAndAfterEach }
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.{ OK, SEE_OTHER }
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.ws.{DefaultWSCookie, WSClient, WSCookie, WSResponse}
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import play.api.{Application, inject}
+import play.api.libs.ws.{ DefaultWSCookie, WSClient, WSCookie, WSResponse }
+import play.api.test.Helpers.{ await, defaultAwaitTimeout }
+import play.api.{ Application, inject }
 import support._
 import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.services.MessagingService
 import uk.gov.nationalarchives.omega.editorial.services.jms._
 import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 
-import java.time.{LocalDateTime, Month}
+import java.time.{ LocalDateTime, Month }
 
 abstract class BaseISpec
-    extends PlaySpec with GuiceOneServerPerSuite with BeforeAndAfterEach with ModelSupport with MessagingServiceAssertions {
+    extends PlaySpec with GuiceOneServerPerSuite with BeforeAndAfterEach with ModelSupport
+    with MessagingServiceAssertions {
 
   implicit val monitoredApiConnector: MonitoredMessagingService = app.injector.instanceOf[MonitoredMessagingService]
   lazy implicit val testTimeProvider: TimeProvider = () => LocalDateTime.of(2023, Month.FEBRUARY, 28, 1, 1, 1)

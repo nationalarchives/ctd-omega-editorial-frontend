@@ -27,12 +27,12 @@ import cats.implicits._
 import jms4s.jms.JmsMessage
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
-import play.api.libs.json.{Json, Reads, Writes}
+import play.api.libs.json.{ Json, Reads, Writes }
 import uk.gov.nationalarchives.omega.editorial.connectors.MessageType
 import uk.gov.nationalarchives.omega.editorial.connectors.messages.MessageProperties
 import uk.gov.nationalarchives.omega.editorial.models._
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 @Singleton
 class ResponseBuilder @Inject() (stubData: StubData) {

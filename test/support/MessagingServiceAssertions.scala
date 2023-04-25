@@ -40,8 +40,8 @@ trait MessagingServiceAssertions {
     apiConnectorMonitoring.getLastSentGetEditSetRecordRequest mustBe empty
 
   def assertCallMadeToGetEditSetRecord(editSetId: String, editSetRecordId: String)(implicit
-                                                                                   apiConnectorMonitoring: MessagingServiceMonitoring,
-                                                                                   timeProvider: TimeProvider
+    apiConnectorMonitoring: MessagingServiceMonitoring,
+    timeProvider: TimeProvider
   ): Assertion =
     apiConnectorMonitoring.getLastSentGetEditSetRecordRequest mustBe Some(
       generateGetEditSetRecord(editSetId, editSetRecordId)

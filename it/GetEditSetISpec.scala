@@ -20,10 +20,10 @@
  */
 
 import play.api.libs.json.Json
-import uk.gov.nationalarchives.omega.editorial.connectors.{ApiConnector, MessageType}
+import uk.gov.nationalarchives.omega.editorial.connectors.{ ApiConnector, MessageType }
 import uk.gov.nationalarchives.omega.editorial.models.GetEditSet
 
-import java.time.{LocalDateTime, Month}
+import java.time.{ LocalDateTime, Month }
 
 class GetEditSetISpec extends BaseRequestReplyServiceISpec {
 

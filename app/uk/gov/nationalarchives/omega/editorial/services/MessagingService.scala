@@ -44,11 +44,11 @@ package uk.gov.nationalarchives.omega.editorial.services
 import cats.effect.IO
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
-import play.api.libs.json.{Json, Reads}
-import uk.gov.nationalarchives.omega.editorial.connectors.{ApiConnector, MessageType}
-import uk.gov.nationalarchives.omega.editorial.models.{CorporateBody, EditSet, EditSetRecord, GetCorporateBodies, GetEditSet, GetEditSetRecord, GetLegalStatuses, GetPersons, GetPlacesOfDeposit, LegalStatus, Person, PlaceOfDeposit, UpdateEditSetRecord, UpdateResponseStatus}
+import play.api.libs.json.{ Json, Reads }
+import uk.gov.nationalarchives.omega.editorial.connectors.{ ApiConnector, MessageType }
+import uk.gov.nationalarchives.omega.editorial.models.{ CorporateBody, EditSet, EditSetRecord, GetCorporateBodies, GetEditSet, GetEditSetRecord, GetLegalStatuses, GetPersons, GetPlacesOfDeposit, LegalStatus, Person, PlaceOfDeposit, UpdateEditSetRecord, UpdateResponseStatus }
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 @Singleton
 class MessagingService @Inject() (apiConnector: ApiConnector) {
@@ -113,9 +113,9 @@ class MessagingService @Inject() (apiConnector: ApiConnector) {
     )(CannotParseReply(messageText))
 
   private case class CannotParseReply(reply: String) extends Exception(
-    s"""can't parse reply, got:
-       |$reply
-       |""".stripMargin
-  )
+        s"""can't parse reply, got:
+           |$reply
+           |""".stripMargin
+      )
 
 }

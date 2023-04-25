@@ -20,7 +20,7 @@
  */
 
 import play.api.libs.json.Json
-import uk.gov.nationalarchives.omega.editorial.connectors.{ApiConnector, MessageType}
+import uk.gov.nationalarchives.omega.editorial.connectors.{ ApiConnector, MessageType }
 import uk.gov.nationalarchives.omega.editorial.models.GetEditSetRecord
 
 import java.time.LocalDateTime

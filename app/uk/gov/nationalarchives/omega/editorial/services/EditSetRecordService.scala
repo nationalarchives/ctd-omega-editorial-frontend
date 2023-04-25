@@ -25,16 +25,16 @@ import cats.effect.IO
 import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
 import uk.gov.nationalarchives.omega.editorial.models.UpdateEditSetRecord.Fields.MaterialReference
 import uk.gov.nationalarchives.omega.editorial.models._
-import uk.gov.nationalarchives.omega.editorial.support.{DateParser, TimeProvider}
+import uk.gov.nationalarchives.omega.editorial.support.{ DateParser, TimeProvider }
 
 import java.time.LocalDate
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 import scala.annotation.unused
 
 @Singleton
 class EditSetRecordService @Inject() (
-                                       messagingService: MessagingService,
-                                       timeProvider: TimeProvider
+  messagingService: MessagingService,
+  timeProvider: TimeProvider
 ) {
 
   def get(editSetOci: String, recordOci: String): IO[Option[EditSetRecord]] =

@@ -23,10 +23,10 @@ package uk.gov.nationalarchives.omega.editorial.services
 
 import cats.effect.IO
 import play.api.Logger
-import uk.gov.nationalarchives.omega.editorial.models.{EditSet, GetEditSet}
+import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, GetEditSet }
 import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 @Singleton
 class EditSetService @Inject() (messagingService: MessagingService, timeProvider: TimeProvider) {

@@ -4,10 +4,10 @@ import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
 import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.services.MessagingService
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 @Singleton
-class MonitoredMessagingService @Inject()(
+class MonitoredMessagingService @Inject() (
   apiConnector: ApiConnector
 ) extends MessagingService(apiConnector) with MessagingServiceMonitoring {
 

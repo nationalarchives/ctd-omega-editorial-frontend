@@ -30,10 +30,10 @@ import uk.gov.nationalarchives.omega.editorial.config.Config
 import uk.gov.nationalarchives.omega.editorial.connectors.messages.RequestMessage
 import uk.gov.nationalarchives.omega.editorial.connectors.messages.uk.gov.nationalarchives.omega.editorial.connectors.messages.ReplyMessage
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 @Singleton
-class ApiConnector @Inject()(
+class ApiConnector @Inject() (
   config: Config,
   lifecycle: ApplicationLifecycle
 ) {
@@ -43,7 +43,6 @@ class ApiConnector @Inject()(
   private val replyQueueName = "omega-editorial-web-application-instance-1"
   private lazy val (client, closer): (JmsRequestReplyClient[IO], IO[Unit]) = createClientAndCloser.unsafeRunSync()
   private lazy val handler: RequestReplyHandler = RequestReplyHandler(client)
-
 
   private def createClientAndCloser: IO[(JmsRequestReplyClient[IO], IO[Unit])] =
     registerStopHook() *>

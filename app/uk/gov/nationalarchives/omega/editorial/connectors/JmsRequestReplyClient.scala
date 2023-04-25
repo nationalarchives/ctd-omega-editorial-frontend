@@ -22,23 +22,23 @@
 package uk.gov.nationalarchives.omega.editorial.connectors
 
 import cats.effect.implicits.genSpawnOps
-import cats.effect.{Async, Resource}
+import cats.effect.{ Async, Resource }
 import jms4s.JmsAcknowledgerConsumer.AckAction
 import jms4s.config.QueueName
-import jms4s.jms.{JmsMessage, MessageFactory}
+import jms4s.jms.{ JmsMessage, MessageFactory }
 import jms4s.sqs.simpleQueueService
-import jms4s.sqs.simpleQueueService.{Credentials, DirectAddress, HTTP}
-import jms4s.{JmsClient, JmsProducer}
+import jms4s.sqs.simpleQueueService.{ Credentials, DirectAddress, HTTP }
+import jms4s.{ JmsClient, JmsProducer }
 import org.typelevel.log4cats.Logger
-import uk.gov.nationalarchives.omega.editorial.config.{HostBrokerEndpoint, UsernamePasswordCredentials}
+import uk.gov.nationalarchives.omega.editorial.config.{ HostBrokerEndpoint, UsernamePasswordCredentials }
 import uk.gov.nationalarchives.omega.editorial.connectors.JmsRequestReplyClient.ReplyMessageHandler
 import uk.gov.nationalarchives.omega.editorial.connectors.messages.uk.gov.nationalarchives.omega.editorial.connectors.messages.ReplyMessage
-import uk.gov.nationalarchives.omega.editorial.connectors.messages.{MessageProperties, RequestMessage}
+import uk.gov.nationalarchives.omega.editorial.connectors.messages.{ MessageProperties, RequestMessage }
 
 import java.util.concurrent.ConcurrentHashMap
 import scala.annotation.unused
 import scala.concurrent.duration.DurationInt
-import scala.util.{Failure, Success, Try}
+import scala.util.{ Failure, Success, Try }
 
 /** A JMS Request-Reply client.
   *
@@ -208,5 +208,3 @@ object JmsRequestReplyClient {
     )
 
 }
-
-

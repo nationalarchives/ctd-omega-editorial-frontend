@@ -25,7 +25,7 @@ import cats.effect.IO
 import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 @Singleton
 class ReferenceDataService @Inject() (messagingService: MessagingService, timeProvider: TimeProvider) {

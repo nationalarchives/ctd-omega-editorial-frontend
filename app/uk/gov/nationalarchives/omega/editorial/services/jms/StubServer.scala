@@ -60,24 +60,24 @@ class StubServer @Inject() (responseBuilder: ResponseBuilder) {
       _      <- Resource.eval(logger.info("Starting StubServer..."))
       client <- jmsClient
       consumer <- client.createAcknowledgerConsumer(
-        requestQueueName,
-        concurrencyLevel = consumerConcurrencyLevel,
-        pollingInterval = pollingInterval
-      )
+                    requestQueueName,
+                    concurrencyLevel = consumerConcurrencyLevel,
+                    pollingInterval = pollingInterval
+                  )
       _ <- Resource.eval(consumer.handle { (jmsMessage, messageFactory) =>
-        handleMessage(jmsMessage, messageFactory).map { message =>
-          AckAction.send(message, responseQueryName)
-        }
-      })
+             handleMessage(jmsMessage, messageFactory).map { message =>
+               AckAction.send(message, responseQueryName)
+             }
+           })
     } yield consumer
 
     consumerResource.useForever
   }
 
   private def handleMessage(
-                             jmsMessage: JmsMessage,
-                             messageFactory: MessageFactory[IO]
-                           ): IO[JmsMessage.JmsTextMessage] =
+    jmsMessage: JmsMessage,
+    messageFactory: MessageFactory[IO]
+  ): IO[JmsMessage.JmsTextMessage] =
     for {
       requestMessageId <- responseBuilder.jmsMessageId(jmsMessage)
       _                <- logger.info(s"got a message with ID $requestMessageId")
@@ -86,9 +86,9 @@ class StubServer @Inject() (responseBuilder: ResponseBuilder) {
       _ = replyMessage.setJMSCorrelationId(requestMessageId)
       _ = replyMessage.setStringProperty(MessageProperties.OMGApplicationID, "PACS001")
       _ = replyMessage.setStringProperty(
-        MessageProperties.OMGMessageTypeID,
-        getReplyMessageType(jmsMessage.getStringProperty(MessageProperties.OMGMessageTypeID))
-      )
+            MessageProperties.OMGMessageTypeID,
+            getReplyMessageType(jmsMessage.getStringProperty(MessageProperties.OMGMessageTypeID))
+          )
       _ = replyMessage.setStringProperty(MessageProperties.OMGMessageFormat, "application/json")
       _ = replyMessage.setStringProperty(MessageProperties.OMGReplyAddress, "PACS001.request")
       _ = replyMessage.setStringProperty(MessageProperties.OMGToken, "AbCdEf123456")
