@@ -294,9 +294,9 @@
     name = FieldNames.legalStatusID,
     items = legalStatusItems ++ legalStatusReferenceData.map { status =>
         SelectItem(
-            selected = editSetRecordForm.data.get(FieldNames.legalStatusID).contains(status.uri),
+            selected = editSetRecordForm.data.get(FieldNames.legalStatusID).contains(status.identifier),
             text = status.label,
-            value = Some(status.uri)
+            value = Some(status.identifier)
         )
     },
     label = Label(

@@ -19,31 +19,28 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package support
+package uk.gov.nationalarchives.omega.editorial.connectors
 
-import cats.effect.IO
-import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
-import uk.gov.nationalarchives.omega.editorial.models._
-import uk.gov.nationalarchives.omega.editorial.services.jms.StubData
+import cats.effect.kernel.Sync
 
-object TestApiConnector extends ApiConnector(null, null) with ApiConnectorMonitoring with StubData {
+import java.util.UUID
 
-  override def getEditSet(getEditSetRequest: GetEditSet): IO[Option[EditSet]] =
-    IO.pure {
-      record(getEditSetRequest)
-      getEditSet(getEditSetRequest.oci)
-    }
+private trait RandomClientIdGen[F[_]] {
 
-  override def getEditSetRecord(getEditSetRecordRequest: GetEditSetRecord): IO[Option[EditSetRecord]] =
-    IO.pure {
-      record(getEditSetRecordRequest)
-      getEditSetRecord(getEditSetRecordRequest.recordOci)
-    }
+  /** Generates a ClientId pseudo-random manner.
+    * @return
+    *   randomly generated ClientId
+    */
+  def randomClientId: F[String]
+}
 
-  override def updateEditSetRecord(updateEditSetRecord: UpdateEditSetRecord): IO[UpdateResponseStatus] =
-    IO.pure {
-      record(updateEditSetRecord)
-      UpdateResponseStatus(s"success", s"Successfully updated record with OCI [${updateEditSetRecord.recordOci}]")
-    }
+private object RandomClientIdGen {
+  def apply[F[_]](implicit randomClientIdGen: RandomClientIdGen[F]): RandomClientIdGen[F] = randomClientIdGen
 
+  def randomClientId[F[_] : RandomClientIdGen]: F[String] = RandomClientIdGen[F].randomClientId
+
+  implicit def fromSync[F[_]](implicit sync: Sync[F]): RandomClientIdGen[F] = new RandomClientIdGen[F] {
+    override final val randomClientId: F[String] =
+      sync.map(sync.blocking(UUID.randomUUID()))(uuid => s"jms-rr-client-$uuid")
+  }
 }

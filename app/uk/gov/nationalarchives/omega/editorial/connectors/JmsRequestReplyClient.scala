@@ -22,7 +22,6 @@
 package uk.gov.nationalarchives.omega.editorial.connectors
 
 import cats.effect.implicits.genSpawnOps
-import cats.effect.kernel.Sync
 import cats.effect.{Async, Resource}
 import jms4s.JmsAcknowledgerConsumer.AckAction
 import jms4s.config.QueueName
@@ -36,7 +35,6 @@ import uk.gov.nationalarchives.omega.editorial.connectors.JmsRequestReplyClient.
 import uk.gov.nationalarchives.omega.editorial.connectors.messages.uk.gov.nationalarchives.omega.editorial.connectors.messages.ReplyMessage
 import uk.gov.nationalarchives.omega.editorial.connectors.messages.{MessageProperties, RequestMessage}
 
-import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import scala.annotation.unused
 import scala.concurrent.duration.DurationInt
@@ -211,22 +209,4 @@ object JmsRequestReplyClient {
 
 }
 
-private trait RandomClientIdGen[F[_]] {
 
-  /** Generates a ClientId pseudo-random manner.
-    * @return
-    *   randomly generated ClientId
-    */
-  def randomClientId: F[String]
-}
-
-private object RandomClientIdGen {
-  def apply[F[_]](implicit randomClientIdGen: RandomClientIdGen[F]): RandomClientIdGen[F] = randomClientIdGen
-
-  def randomClientId[F[_] : RandomClientIdGen]: F[String] = RandomClientIdGen[F].randomClientId
-
-  implicit def fromSync[F[_]](implicit sync: Sync[F]): RandomClientIdGen[F] = new RandomClientIdGen[F] {
-    override final val randomClientId: F[String] =
-      sync.map(sync.blocking(UUID.randomUUID()))(uuid => s"jms-rr-client-$uuid")
-  }
-}
