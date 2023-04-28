@@ -18,6 +18,7 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package services
 
 import cats.effect.testing.scalatest.AsyncIOSpec
@@ -27,7 +28,7 @@ import org.scalatest.freespec.AsyncFreeSpec
 import org.scalatest.matchers.must.Matchers
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
 import uk.gov.nationalarchives.omega.editorial.connectors.MessageType.GetLegalStatusesType
-import uk.gov.nationalarchives.omega.editorial.connectors.messages.uk.gov.nationalarchives.omega.editorial.connectors.messages.ReplyMessage
+import uk.gov.nationalarchives.omega.editorial.connectors.messages.ReplyMessage
 import uk.gov.nationalarchives.omega.editorial.models.{ GetLegalStatuses, LegalStatus }
 import uk.gov.nationalarchives.omega.editorial.services.MessagingService
 

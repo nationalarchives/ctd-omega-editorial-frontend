@@ -32,8 +32,7 @@ import jms4s.{ JmsClient, JmsProducer }
 import org.typelevel.log4cats.Logger
 import uk.gov.nationalarchives.omega.editorial.config.{ HostBrokerEndpoint, UsernamePasswordCredentials }
 import uk.gov.nationalarchives.omega.editorial.connectors.JmsRequestReplyClient.ReplyMessageHandler
-import uk.gov.nationalarchives.omega.editorial.connectors.messages.uk.gov.nationalarchives.omega.editorial.connectors.messages.ReplyMessage
-import uk.gov.nationalarchives.omega.editorial.connectors.messages.{ MessageProperties, RequestMessage }
+import uk.gov.nationalarchives.omega.editorial.connectors.messages.{ MessageProperties, ReplyMessage, RequestMessage }
 
 import java.util.concurrent.ConcurrentHashMap
 import scala.annotation.unused
@@ -95,7 +94,7 @@ class JmsRequestReplyClient[F[_] : Async](
       _ <- jmsRequest.setStringProperty(MessageProperties.OMGApplicationID, requestMessage.omgApplicationId)
       _ <- jmsRequest.setStringProperty(MessageProperties.OMGMessageTypeID, requestMessage.omgMessageTypeId)
       _ <- jmsRequest.setStringProperty(MessageProperties.OMGMessageFormat, "application/json")
-      _ <- jmsRequest.setStringProperty(MessageProperties.OMGReplyAddress, "PACS001.request")
+      _ <- jmsRequest.setStringProperty(MessageProperties.OMGReplyAddress, "PACS001-request")
       _ <- jmsRequest.setStringProperty(MessageProperties.OMGToken, "AbCdEf123456")
     } yield jmsRequest
 

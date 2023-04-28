@@ -25,8 +25,7 @@ import cats.effect.IO
 import cats.effect.std.Queue
 import org.typelevel.log4cats.Logger
 import uk.gov.nationalarchives.omega.editorial.connectors.JmsRequestReplyClient.ReplyMessageHandler
-import uk.gov.nationalarchives.omega.editorial.connectors.messages.RequestMessage
-import uk.gov.nationalarchives.omega.editorial.connectors.messages.uk.gov.nationalarchives.omega.editorial.connectors.messages.ReplyMessage
+import uk.gov.nationalarchives.omega.editorial.connectors.messages.{ ReplyMessage, RequestMessage }
 
 case class RequestReplyHandler(client: JmsRequestReplyClient[IO]) {
 

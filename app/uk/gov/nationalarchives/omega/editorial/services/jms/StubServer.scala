@@ -41,8 +41,8 @@ class StubServer @Inject() (responseBuilder: ResponseBuilder) {
 
   private implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jLogger.getLogger[IO]
 
-  private val requestQueueName = QueueName("request-general")
-  private val responseQueryName = QueueName("omega-editorial-web-application-instance-1")
+  private val requestQueueName = QueueName("PACS001-request")
+  private val replyQueueName = QueueName("PACE001-reply")
   private val consumerConcurrencyLevel = 1
   private val pollingInterval = 50.millis
 
@@ -66,7 +66,7 @@ class StubServer @Inject() (responseBuilder: ResponseBuilder) {
                   )
       _ <- Resource.eval(consumer.handle { (jmsMessage, messageFactory) =>
              handleMessage(jmsMessage, messageFactory).map { message =>
-               AckAction.send(message, responseQueryName)
+               AckAction.send(message, replyQueueName)
              }
            })
     } yield consumer
@@ -90,7 +90,7 @@ class StubServer @Inject() (responseBuilder: ResponseBuilder) {
             getReplyMessageType(jmsMessage.getStringProperty(MessageProperties.OMGMessageTypeID))
           )
       _ = replyMessage.setStringProperty(MessageProperties.OMGMessageFormat, "application/json")
-      _ = replyMessage.setStringProperty(MessageProperties.OMGReplyAddress, "PACS001.request")
+      _ = replyMessage.setStringProperty(MessageProperties.OMGReplyAddress, "PACS001-request")
       _ = replyMessage.setStringProperty(MessageProperties.OMGToken, "AbCdEf123456")
     } yield replyMessage
 

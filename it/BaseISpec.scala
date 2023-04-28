@@ -91,14 +91,14 @@ abstract class BaseISpec
 
   private def resetMessageBus(): Unit = {
     clearRequestQueue()
-    clearResponseQueue()
+    clearReplyQueue()
     ()
   }
 
-  private def clearRequestQueue(): Assertion = clearQueue("request-general").status mustBe OK
+  private def clearRequestQueue(): Assertion = clearQueue("PACS001-request").status mustBe OK
 
-  private def clearResponseQueue(): Assertion =
-    clearQueue("omega-editorial-web-application-instance-1").status mustBe OK
+  private def clearReplyQueue(): Assertion =
+    clearQueue("PACE001-reply").status mustBe OK
 
   private def clearQueue(name: String): WSResponse =
     await {

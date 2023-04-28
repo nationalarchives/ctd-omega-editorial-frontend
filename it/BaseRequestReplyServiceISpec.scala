@@ -7,8 +7,7 @@ import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jFactory
 import support.TestStubData
 import uk.gov.nationalarchives.omega.editorial.config.{ HostBrokerEndpoint, UsernamePasswordCredentials }
-import uk.gov.nationalarchives.omega.editorial.connectors.messages.RequestMessage
-import uk.gov.nationalarchives.omega.editorial.connectors.messages.uk.gov.nationalarchives.omega.editorial.connectors.messages.ReplyMessage
+import uk.gov.nationalarchives.omega.editorial.connectors.messages.{ ReplyMessage, RequestMessage }
 import uk.gov.nationalarchives.omega.editorial.connectors.{ JmsRequestReplyClient, RequestReplyHandler }
 import uk.gov.nationalarchives.omega.editorial.services.jms._
 
@@ -24,8 +23,8 @@ abstract class BaseRequestReplyServiceISpec
   implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jFactory[IO].getLogger
 
   protected val stubData = new TestStubData
-  private val requestQueueName = "request-general"
-  private val replyQueueName = "omega-editorial-web-application-instance-1"
+  private val requestQueueName = "PACS001-request"
+  private val replyQueueName = "PACE001-reply"
   private val messagingServerHost = "localhost"
   private val messagingServerPort = 9324
   private val stubServer = new StubServer(new ResponseBuilder(stubData))
