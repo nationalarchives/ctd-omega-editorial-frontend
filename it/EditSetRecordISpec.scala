@@ -109,7 +109,7 @@ class EditSetRecordISpec extends BaseISpec {
                 formerReferencePro = "MPS 4/1",
                 startDate = ExpectedDate("1", "1", "1962"),
                 endDate = ExpectedDate("31", "12", "1962"),
-                legalStatusID = "ref.1",
+                legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
                 note = "A note about COAL.2022.V1RJW.P.",
                 background = "Photo was taken by a daughter of one of the coal miners who used them.",
                 optionsForPlaceOfDepositID = Seq(
@@ -892,7 +892,7 @@ class EditSetRecordISpec extends BaseISpec {
             val values =
               valuesFromRecord(editSetRecordOci) ++
                 Map(
-                  "legal-status-id" -> "ref.10"
+                  "legal-status-id" -> "http://catalogue.nationalarchives.gov.uk/unrecognised"
                 )
 
             val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
@@ -905,7 +905,7 @@ class EditSetRecordISpec extends BaseISpec {
             assertCallMadeToUpdateEditSetRecord(
               updateEditSetRecordForRecord.copy(fields =
                 updateEditSetRecordForRecord.fields.copy(
-                  legalStatusId = "ref.10"
+                  legalStatusId = "http://catalogue.nationalarchives.gov.uk/unrecognised"
                 )
               )
             )
@@ -1516,7 +1516,7 @@ class EditSetRecordISpec extends BaseISpec {
               "end-date-day"                -> "26",
               "end-date-month"              -> "10",
               "end-date-year"               -> "1960",
-              "legal-status-id"             -> "ref.2",
+              "legal-status-id"             -> "http://catalogue.nationalarchives.gov.uk/non-public-record",
               "note"                        -> "A brief note about COAL.2022.V1RJW.P.",
               "background"        -> "The photo was taken by a daughter of one of the coal miners who used them.",
               "custodial-history" -> "These files originally created by successor or predecessor departments for COAL",
@@ -1542,7 +1542,7 @@ class EditSetRecordISpec extends BaseISpec {
                 formerReferencePro = "CAB 172",
                 startDate = LocalDate.of(1960, Month.APRIL, 2),
                 endDate = LocalDate.of(1960, Month.OCTOBER, 26),
-                legalStatusId = "ref.2",
+                legalStatusId = "http://catalogue.nationalarchives.gov.uk/non-public-record",
                 note = "A brief note about COAL.2022.V1RJW.P.",
                 background = "The photo was taken by a daughter of one of the coal miners who used them.",
                 custodialHistory = "These files originally created by successor or predecessor departments for COAL",
