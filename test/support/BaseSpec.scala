@@ -72,7 +72,7 @@ class BaseSpec
   )
   val validSessionToken: String = Session.generateToken("1234")
   val invalidSessionToken: String = Session.generateToken("invalid-user")
-  implicit val apiConnectorMonitoring: MessagingServiceMonitoring = TestMessagingService
+  implicit val messageServiceMonitoring: MessagingServiceMonitoring = TestMessagingService
   lazy implicit val testTimeProvider: TimeProvider = () => LocalDateTime.of(2023, Month.FEBRUARY, 28, 1, 1, 1)
   implicit val executionContext: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
 
