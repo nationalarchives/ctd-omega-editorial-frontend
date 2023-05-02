@@ -23,7 +23,9 @@ package uk.gov.nationalarchives.omega.editorial.config
 
 case class Config(
   broker: HostBrokerEndpoint,
-  credentials: UsernamePasswordCredentials
+  credentials: UsernamePasswordCredentials,
+  defaultRequestQueueName: String,
+  legalStatusRequestQueueName: Option[String] = None
 )
 
 case class HostBrokerEndpoint(host: String, port: Int)
