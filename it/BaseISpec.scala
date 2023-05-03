@@ -95,10 +95,10 @@ abstract class BaseISpec
     ()
   }
 
-  private def clearRequestQueue(): Assertion = clearQueue("PACS001-request").status mustBe OK
+  private def clearRequestQueue(): Assertion = clearQueue("PACS001_request").status mustBe OK
 
   private def clearReplyQueue(): Assertion =
-    clearQueue("PACE001-reply").status mustBe OK
+    clearQueue("PACE001_reply").status mustBe OK
 
   private def clearQueue(name: String): WSResponse =
     await {

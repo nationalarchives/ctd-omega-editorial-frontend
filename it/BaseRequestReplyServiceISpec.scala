@@ -23,8 +23,8 @@ abstract class BaseRequestReplyServiceISpec
   implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jFactory[IO].getLogger
 
   protected val stubData = new TestStubData
-  private val requestQueueName = "PACS001-request"
-  private val replyQueueName = "PACE001-reply"
+  private val requestQueueName = "PACS001_request"
+  private val replyQueueName = "PACE001_reply"
   private val messagingServerHost = "localhost"
   private val messagingServerPort = 9324
   private val stubServer = new StubServer(new ResponseBuilder(stubData))

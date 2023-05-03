@@ -38,8 +38,8 @@ class ApiConnector @Inject() (
 ) {
 
   private implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jLogger.getLogger[IO]
-  private val requestQueueName = "PACS001-request"
-  private val replyQueueName = "PACE001-reply"
+  private val requestQueueName = "PACS001_request"
+  private val replyQueueName = "PACE001_reply"
   private lazy val (client, closer): (JmsRequestReplyClient[IO], IO[Unit]) = createClientAndCloser.unsafeRunSync()
   private lazy val handler: RequestReplyHandler = RequestReplyHandler(client)
 
