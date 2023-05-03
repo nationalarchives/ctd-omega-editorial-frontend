@@ -26,34 +26,36 @@ import org.scalatest.matchers.must.Matchers._
 import uk.gov.nationalarchives.omega.editorial.models.{ GetEditSet, GetEditSetRecord, UpdateEditSetRecord }
 import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 
-trait ApiConnectorAssertions {
+trait MessagingServiceAssertions {
 
-  def assertNoCallMadeToGetEditSet()(implicit apiConnectorMonitoring: ApiConnectorMonitoring): Assertion =
-    apiConnectorMonitoring.getLastSentGetEditSetRequest() mustBe empty
+  def assertNoCallMadeToGetEditSet()(implicit messagingServiceMonitoring: MessagingServiceMonitoring): Assertion =
+    messagingServiceMonitoring.getLastSentGetEditSetRequest mustBe empty
 
   def assertCallMadeToGetEditSet(
     id: String
-  )(implicit apiConnectorMonitoring: ApiConnectorMonitoring, timeProvider: TimeProvider): Assertion =
-    apiConnectorMonitoring.getLastSentGetEditSetRequest() mustBe Option(generateGetEditSet(id))
+  )(implicit messagingServiceMonitoring: MessagingServiceMonitoring, timeProvider: TimeProvider): Assertion =
+    messagingServiceMonitoring.getLastSentGetEditSetRequest mustBe Option(generateGetEditSet(id))
 
-  def assertNoCallMadeToGetEditSetRecord()(implicit apiConnectorMonitoring: ApiConnectorMonitoring): Assertion =
-    apiConnectorMonitoring.getLastSentGetEditSetRecordRequest() mustBe empty
+  def assertNoCallMadeToGetEditSetRecord()(implicit messagingServiceMonitoring: MessagingServiceMonitoring): Assertion =
+    messagingServiceMonitoring.getLastSentGetEditSetRecordRequest mustBe empty
 
   def assertCallMadeToGetEditSetRecord(editSetId: String, editSetRecordId: String)(implicit
-    apiConnectorMonitoring: ApiConnectorMonitoring,
+    messagingServiceMonitoring: MessagingServiceMonitoring,
     timeProvider: TimeProvider
   ): Assertion =
-    apiConnectorMonitoring.getLastSentGetEditSetRecordRequest() mustBe Some(
+    messagingServiceMonitoring.getLastSentGetEditSetRecordRequest mustBe Some(
       generateGetEditSetRecord(editSetId, editSetRecordId)
     )
 
   def assertCallMadeToUpdateEditSetRecord(expectedUpdateEditSetRecord: UpdateEditSetRecord)(implicit
-    apiConnectorMonitoring: ApiConnectorMonitoring
+    messagingServiceMonitoring: MessagingServiceMonitoring
   ): Assertion =
-    apiConnectorMonitoring.getLastSentUpdateEditSetRecordRequest() mustBe Option(expectedUpdateEditSetRecord)
+    messagingServiceMonitoring.getLastSentUpdateEditSetRecordRequest mustBe Option(expectedUpdateEditSetRecord)
 
-  def assertNoCallMadeToUpdateEditSetRecord()(implicit apiConnectorMonitoring: ApiConnectorMonitoring): Assertion =
-    apiConnectorMonitoring.getLastSentUpdateEditSetRecordRequest() mustBe empty
+  def assertNoCallMadeToUpdateEditSetRecord()(implicit
+    messagingServiceMonitoring: MessagingServiceMonitoring
+  ): Assertion =
+    messagingServiceMonitoring.getLastSentUpdateEditSetRecordRequest mustBe empty
 
   private def generateGetEditSet(editSetId: String)(implicit timeProvider: TimeProvider): GetEditSet =
     GetEditSet(editSetId, timeProvider.now())

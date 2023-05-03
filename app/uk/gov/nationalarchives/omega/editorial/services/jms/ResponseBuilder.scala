@@ -25,11 +25,12 @@ import cats.MonadError
 import cats.effect.IO
 import cats.implicits._
 import jms4s.jms.JmsMessage
-import play.api.libs.json.{ Json, Reads, Writes }
-import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector.SID
-import uk.gov.nationalarchives.omega.editorial.models._
-import org.typelevel.log4cats.slf4j.Slf4jLogger
 import org.typelevel.log4cats.SelfAwareStructuredLogger
+import org.typelevel.log4cats.slf4j.Slf4jLogger
+import play.api.libs.json.{ Json, Reads, Writes }
+import uk.gov.nationalarchives.omega.editorial.connectors.MessageType
+import uk.gov.nationalarchives.omega.editorial.connectors.messages.MessageProperties
+import uk.gov.nationalarchives.omega.editorial.models._
 
 import javax.inject.{ Inject, Singleton }
 
@@ -43,29 +44,29 @@ class ResponseBuilder @Inject() (stubData: StubData) {
   def jmsMessageId(jmsMessage: JmsMessage): IO[String] =
     me.fromOption(
       jmsMessage.getJMSMessageId,
-      ifEmpty = MissingJMSID
+      ifEmpty = MissingMessageType
     )
 
   def createResponseText(jmsMessage: JmsMessage): IO[String] =
-    jmsMessage.getStringProperty(sidHeaderKey) match {
-      case Some(sidValue) if SID.GetEditSet.matches(sidValue) =>
+    jmsMessage.getStringProperty(MessageProperties.OMGMessageTypeID) match {
+      case Some(messageType) if MessageType.GetEditSetType.matches(messageType) =>
         handleGetEditSet(jmsMessage)
-      case Some(sidValue) if SID.GetEditSetRecord.matches(sidValue) =>
+      case Some(messageType) if MessageType.GetEditSetRecordType.matches(messageType) =>
         handleGetEditSetRecord(jmsMessage)
-      case Some(sidValue) if SID.UpdateEditSetRecord.matches(sidValue) =>
+      case Some(messageType) if MessageType.UpdateEditSetRecordType.matches(messageType) =>
         handleUpdateEditSetRecord(jmsMessage)
-      case Some(sidValue) if SID.GetLegalStatuses.matches(sidValue) =>
+      case Some(messageType) if MessageType.GetLegalStatusesType.matches(messageType) =>
         handleGetLegalStatuses(jmsMessage)
-      case Some(sidValue) if SID.GetPlacesOfDeposit.matches(sidValue) =>
+      case Some(messageType) if MessageType.GetPlacesOfDepositType.matches(messageType) =>
         handleGetPlacesOfDeposit(jmsMessage)
-      case Some(sidValue) if SID.GetPersons.matches(sidValue) =>
+      case Some(messageType) if MessageType.GetPersonsType.matches(messageType) =>
         handleGetPersons(jmsMessage)
-      case Some(sidValue) if SID.GetCorporateBodies.matches(sidValue) =>
+      case Some(messageType) if MessageType.GetCorporateBodiesType.matches(messageType) =>
         handleGetCorporateBodies(jmsMessage)
       case Some(unknown) =>
-        onUnhandledCase(s"SID is unrecognised: [$unknown]")
+        onUnhandledCase(s"Message type is unrecognised: [$unknown]")
       case None =>
-        onUnhandledCase(s"No SID provided")
+        onUnhandledCase(s"No message type provided")
     }
 
   private def handleGetEditSet(jmsMessage: JmsMessage): IO[String] =
@@ -153,10 +154,8 @@ object ResponseBuilder {
 
   sealed abstract class StubServerError extends Throwable
 
-  private final case object MissingJMSID extends StubServerError
+  private final case object MissingMessageType extends StubServerError
   private final case class NotATextMessage(err: Throwable) extends StubServerError
   private final case class CannotParse(txt: String) extends StubServerError
-
-  private val sidHeaderKey = "sid"
 
 }

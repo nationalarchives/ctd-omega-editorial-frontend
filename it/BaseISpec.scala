@@ -9,17 +9,18 @@ import play.api.libs.ws.{ DefaultWSCookie, WSClient, WSCookie, WSResponse }
 import play.api.test.Helpers.{ await, defaultAwaitTimeout }
 import play.api.{ Application, inject }
 import support._
-import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
 import uk.gov.nationalarchives.omega.editorial.models._
-import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
+import uk.gov.nationalarchives.omega.editorial.services.MessagingService
 import uk.gov.nationalarchives.omega.editorial.services.jms._
+import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 
 import java.time.{ LocalDateTime, Month }
 
 abstract class BaseISpec
-    extends PlaySpec with GuiceOneServerPerSuite with BeforeAndAfterEach with ModelSupport with ApiConnectorAssertions {
+    extends PlaySpec with GuiceOneServerPerSuite with BeforeAndAfterEach with ModelSupport
+    with MessagingServiceAssertions {
 
-  implicit val monitoredApiConnector: MonitoredApiConnector = app.injector.instanceOf[MonitoredApiConnector]
+  implicit val monitoredMessagingService: MonitoredMessagingService = app.injector.instanceOf[MonitoredMessagingService]
   lazy implicit val testTimeProvider: TimeProvider = () => LocalDateTime.of(2023, Month.FEBRUARY, 28, 1, 1, 1)
   implicit val wsClient: WSClient = app.injector.instanceOf[WSClient]
 
@@ -36,7 +37,7 @@ abstract class BaseISpec
     secure = false,
     httpOnly = false
   )
-  val stubData = app.injector.instanceOf[StubDataImpl]
+  private val stubData = app.injector.instanceOf[StubDataImpl]
   val allCreators: Seq[Creator] =
     stubData.getPersons().flatMap(Creator.from) ++ stubData.getCorporateBodies().flatMap(Creator.from)
 
@@ -44,7 +45,7 @@ abstract class BaseISpec
 
   override def fakeApplication(): Application =
     GuiceApplicationBuilder()
-      .bindings(inject.bind[ApiConnector].to[MonitoredApiConnector])
+      .bindings(inject.bind[MessagingService].to[MonitoredMessagingService])
       .bindings(inject.bind[StubData].to[TestStubData])
       .overrides(inject.bind[TimeProvider].toInstance(testTimeProvider))
       .build()
@@ -52,7 +53,7 @@ abstract class BaseISpec
   override def beforeEach(): Unit = {
     super.beforeEach()
     resetMessageBus()
-    monitoredApiConnector.reset()
+    monitoredMessagingService.reset()
   }
 
   def asDocument(response: WSResponse): Document = Jsoup.parse(response.body)
@@ -70,7 +71,7 @@ abstract class BaseISpec
 
   def loginForSessionCookie(): WSCookie = {
     val values = Map("username" -> "1234", "password" -> "1234")
-    val getLoginPageResponse = getLoginPage()
+    val getLoginPageResponse = getLoginPage
     val responseForLoginPageSubmission = await(
       wsUrl("/login")
         .withFollowRedirects(false)
@@ -81,7 +82,7 @@ abstract class BaseISpec
     getSessionCookie(responseForLoginPageSubmission)
   }
 
-  def getLoginPage(): WSResponse =
+  def getLoginPage: WSResponse =
     await(
       wsUrl("/login")
         .withFollowRedirects(false)
@@ -90,14 +91,14 @@ abstract class BaseISpec
 
   private def resetMessageBus(): Unit = {
     clearRequestQueue()
-    clearResponseQueue()
+    clearReplyQueue()
     ()
   }
 
-  private def clearRequestQueue(): Assertion = clearQueue("request-general").status mustBe OK
+  private def clearRequestQueue(): Assertion = clearQueue("PACS001_request").status mustBe OK
 
-  private def clearResponseQueue(): Assertion =
-    clearQueue("omega-editorial-web-application-instance-1").status mustBe OK
+  private def clearReplyQueue(): Assertion =
+    clearQueue("PACE001_reply").status mustBe OK
 
   private def clearQueue(name: String): WSResponse =
     await {

@@ -20,14 +20,14 @@
  */
 
 import play.api.libs.json.Json
-import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
+import uk.gov.nationalarchives.omega.editorial.connectors.{ ApiConnector, MessageType }
 import uk.gov.nationalarchives.omega.editorial.models.GetEditSet
 
 import java.time.{ LocalDateTime, Month }
 
 class GetEditSetISpec extends BaseRequestReplyServiceISpec {
 
-  override val serviceId: String = ApiConnector.SID.GetEditSet.value
+  override val messageType: String = MessageType.GetEditSetType.value
 
   "GetEditSet Client" - {
 
@@ -37,8 +37,8 @@ class GetEditSetISpec extends BaseRequestReplyServiceISpec {
         Json.stringify(Json.toJson(GetEditSet(oci = editSetId, LocalDateTime.of(2023, Month.FEBRUARY, 24, 8, 10))))
       val expected = Json.stringify(Json.toJson(stubData.getExpectedEditSet(editSetId)))
 
-      val result = sendRequest(requestReplyHandler, request)
-      result.asserting(_ mustBe expected)
+      val result = sendRequest(requestReplyHandler, request, ApiConnector.applicationId, messageType)
+      result.asserting(_.messageText mustBe expected)
     }
 
     "send two messages and handle the replies" in { requestReplyHandler =>
@@ -47,11 +47,11 @@ class GetEditSetISpec extends BaseRequestReplyServiceISpec {
         Json.stringify(Json.toJson(GetEditSet(oci = editSetId, LocalDateTime.of(2023, Month.FEBRUARY, 24, 8, 10))))
       val expected = Json.stringify(Json.toJson(stubData.getExpectedEditSet(editSetId)))
 
-      val result1 = sendRequest(requestReplyHandler, request)
-      val result2 = sendRequest(requestReplyHandler, request)
+      val result1 = sendRequest(requestReplyHandler, request, ApiConnector.applicationId, messageType)
+      val result2 = sendRequest(requestReplyHandler, request, ApiConnector.applicationId, messageType)
 
-      result1.asserting(_ mustBe expected) *>
-        result2.asserting(_ mustBe expected)
+      result1.asserting(_.messageText mustBe expected) *>
+        result2.asserting(_.messageText mustBe expected)
     }
 
     "send three messages and handle the replies" in { requestReplyHandler =>
@@ -60,13 +60,13 @@ class GetEditSetISpec extends BaseRequestReplyServiceISpec {
         Json.stringify(Json.toJson(GetEditSet(oci = editSetId, LocalDateTime.of(2023, Month.FEBRUARY, 24, 8, 10))))
       val expected = Json.stringify(Json.toJson(stubData.getExpectedEditSet(editSetId)))
 
-      val result1 = sendRequest(requestReplyHandler, request)
-      val result2 = sendRequest(requestReplyHandler, request)
-      val result3 = sendRequest(requestReplyHandler, request)
+      val result1 = sendRequest(requestReplyHandler, request, ApiConnector.applicationId, messageType)
+      val result2 = sendRequest(requestReplyHandler, request, ApiConnector.applicationId, messageType)
+      val result3 = sendRequest(requestReplyHandler, request, ApiConnector.applicationId, messageType)
 
-      result1.asserting(_ mustBe expected) *>
-        result2.asserting(_ mustBe expected) *>
-        result3.asserting(_ mustBe expected)
+      result1.asserting(_.messageText mustBe expected) *>
+        result2.asserting(_.messageText mustBe expected) *>
+        result3.asserting(_.messageText mustBe expected)
     }
 
   }

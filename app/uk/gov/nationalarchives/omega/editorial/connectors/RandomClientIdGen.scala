@@ -21,27 +21,26 @@
 
 package uk.gov.nationalarchives.omega.editorial.connectors
 
-import cats.effect.IO
-import cats.effect.std.Queue
-import org.typelevel.log4cats.Logger
-import uk.gov.nationalarchives.omega.editorial.connectors.JmsRequestReplyClient.ReplyMessageHandler
-import uk.gov.nationalarchives.omega.editorial.connectors.messages.{ ReplyMessage, RequestMessage }
+import cats.effect.kernel.Sync
 
-case class RequestReplyHandler(client: JmsRequestReplyClient[IO]) {
+import java.util.UUID
 
-  /** Convenience method for binding a request and its reply
-    * @param requestQueue
-    *   the JMS queue to send the message to
-    * @param requestMessage
-    *   the JMS message
+private trait RandomClientIdGen[F[_]] {
+
+  /** Generates a ClientId pseudo-random manner.
     * @return
+    *   randomly generated ClientId
     */
-  def handle(requestQueue: String, requestMessage: RequestMessage)(implicit L: Logger[IO]): IO[ReplyMessage] =
-    Queue.bounded[IO, ReplyMessage](1).flatMap { queue =>
-      val replyHandler: ReplyMessageHandler[IO] = replyMessage => queue.offer(replyMessage)
-      client.request(requestQueue, requestMessage, replyHandler) flatMap { _ =>
-        queue.take
-      }
-    }
+  def randomClientId: F[String]
+}
 
+private object RandomClientIdGen {
+  def apply[F[_]](implicit randomClientIdGen: RandomClientIdGen[F]): RandomClientIdGen[F] = randomClientIdGen
+
+  def randomClientId[F[_] : RandomClientIdGen]: F[String] = RandomClientIdGen[F].randomClientId
+
+  implicit def fromSync[F[_]](implicit sync: Sync[F]): RandomClientIdGen[F] = new RandomClientIdGen[F] {
+    override final val randomClientId: F[String] =
+      sync.map(sync.blocking(UUID.randomUUID()))(uuid => s"jms-rr-client-$uuid")
+  }
 }

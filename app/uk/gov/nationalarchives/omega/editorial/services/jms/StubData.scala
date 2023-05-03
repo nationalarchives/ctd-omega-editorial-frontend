@@ -22,7 +22,7 @@
 package uk.gov.nationalarchives.omega.editorial.services.jms
 
 import uk.gov.nationalarchives.omega.editorial.models.MaterialReference.{ DescriptionOnly, LinkAndDescription, LinkOnly }
-import uk.gov.nationalarchives.omega.editorial.models._
+import uk.gov.nationalarchives.omega.editorial.models.{ LegalStatus, _ }
 import com.google.inject.ImplementedBy
 
 import javax.inject.{ Inject, Singleton }
@@ -47,7 +47,7 @@ trait StubData {
       endDateDay = "31",
       endDateMonth = "12",
       endDateYear = "1962",
-      legalStatusID = "ref.1",
+      legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
       placeOfDepositID = "1",
       note = "A note about COAL.2022.V1RJW.P.",
       background = "Photo was taken by a daughter of one of the coal miners who used them.",
@@ -83,7 +83,7 @@ trait StubData {
       endDateDay = "31",
       endDateMonth = "12",
       endDateYear = "1966",
-      legalStatusID = "ref.2",
+      legalStatusID = "http://catalogue.nationalarchives.gov.uk/non-public-record",
       placeOfDepositID = "",
       note = "A note about COAL.2022.V2RJW.",
       background = "",
@@ -131,7 +131,7 @@ trait StubData {
       endDateDay = "31",
       endDateMonth = "12",
       endDateYear = "1961",
-      legalStatusID = "ref.1",
+      legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
       placeOfDepositID = "1",
       note = "",
       background = "",
@@ -155,7 +155,7 @@ trait StubData {
       endDateDay = "31",
       endDateMonth = "12",
       endDateYear = "1963",
-      legalStatusID = "ref.1",
+      legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
       placeOfDepositID = "1",
       note = "Need to check copyright info.",
       background = "",
@@ -179,7 +179,7 @@ trait StubData {
       endDateDay = "31",
       endDateMonth = "12",
       endDateYear = "1965",
-      legalStatusID = "ref.1",
+      legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
       placeOfDepositID = "1",
       note = "",
       background = "",
@@ -203,7 +203,7 @@ trait StubData {
       endDateDay = "31",
       endDateMonth = "12",
       endDateYear = "1967",
-      legalStatusID = "ref.1",
+      legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
       placeOfDepositID = "1",
       note = "",
       background = "",
@@ -227,7 +227,7 @@ trait StubData {
       endDateDay = "31",
       endDateMonth = "12",
       endDateYear = "1969",
-      legalStatusID = "ref.1",
+      legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
       placeOfDepositID = "1",
       note = "",
       background = "",
@@ -251,7 +251,7 @@ trait StubData {
       endDateDay = "31",
       endDateMonth = "12",
       endDateYear = "1971",
-      legalStatusID = "ref.1",
+      legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
       placeOfDepositID = "1",
       note = "",
       background = "",
@@ -275,7 +275,7 @@ trait StubData {
       endDateDay = "31",
       endDateMonth = "12",
       endDateYear = "1973",
-      legalStatusID = "ref.1",
+      legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
       placeOfDepositID = "1",
       note = "",
       background = "",
@@ -301,7 +301,7 @@ trait StubData {
       endDateDay = "31",
       endDateMonth = "12",
       endDateYear = "1975",
-      legalStatusID = "ref.1",
+      legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
       placeOfDepositID = "1",
       note = "",
       background = "",
@@ -327,7 +327,7 @@ trait StubData {
       endDateDay = "31",
       endDateMonth = "12",
       endDateYear = "1977",
-      legalStatusID = "ref.1",
+      legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
       placeOfDepositID = "1",
       note = "Quality of photos is only fair.",
       background = "",
@@ -461,10 +461,14 @@ trait StubData {
       .getOrElse(throw new RuntimeException(s"Unknown Edit Set Record [$id]"))
 
   def getLegalStatuses(): Seq[LegalStatus] = Seq(
-    LegalStatus("ref.1", "Public Record(s)"),
-    LegalStatus("ref.2", "Not Public Records"),
-    LegalStatus("ref.3", "Public Records unless otherwise Stated"),
-    LegalStatus("ref.4", "Welsh Public Record(s)")
+    LegalStatus("http://catalogue.nationalarchives.gov.uk/public-record", "Public Record"),
+    LegalStatus("http://catalogue.nationalarchives.gov.uk/non-public-record", "Non-Public Record"),
+    LegalStatus(
+      "http://catalogue.nationalarchives.gov.uk/public-record-unless-otherwise-stated",
+      "Public Record (unless otherwise stated)"
+    ),
+    LegalStatus("http://catalogue.nationalarchives.gov.uk/welsh-public-record", "Welsh Public Record"),
+    LegalStatus("http://catalogue.nationalarchives.gov.uk/non-record-material", "Non-Record Material")
   )
 
   def getPlacesOfDeposit(): Seq[PlaceOfDeposit] = Seq(

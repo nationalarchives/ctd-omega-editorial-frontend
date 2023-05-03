@@ -1740,14 +1740,14 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
   private def givenPlacesOfDepositsExist()(implicit
     referenceDataService: ReferenceDataService
   ): ScalaOngoingStubbing[IO[Seq[PlaceOfDeposit]]] =
-    when(referenceDataService.getPlacesOfDeposit()).thenReturn(IO.pure(placesOfDeposit))
+    when(referenceDataService.getPlacesOfDeposit).thenReturn(IO.pure(placesOfDeposit))
 
   /** The actual list has no relevance to these tests.
     */
   private def givenCreatorsExist()(implicit
     referenceDataService: ReferenceDataService
   ): ScalaOngoingStubbing[IO[Seq[Creator]]] =
-    when(referenceDataService.getCreators()).thenReturn(IO.pure(creators))
+    when(referenceDataService.getCreators).thenReturn(IO.pure(creators))
 
   def givenEditViewIsGenerated(editSetRecord: EditSetRecord)(implicit
     editSetRecordEditView: editSetRecordEdit

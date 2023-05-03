@@ -19,29 +19,14 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.connectors
+package uk.gov.nationalarchives.omega.editorial.connectors.messages
 
-import cats.effect.IO
-import cats.effect.std.Queue
-import org.typelevel.log4cats.Logger
-import uk.gov.nationalarchives.omega.editorial.connectors.JmsRequestReplyClient.ReplyMessageHandler
-import uk.gov.nationalarchives.omega.editorial.connectors.messages.{ ReplyMessage, RequestMessage }
+object MessageProperties {
 
-case class RequestReplyHandler(client: JmsRequestReplyClient[IO]) {
-
-  /** Convenience method for binding a request and its reply
-    * @param requestQueue
-    *   the JMS queue to send the message to
-    * @param requestMessage
-    *   the JMS message
-    * @return
-    */
-  def handle(requestQueue: String, requestMessage: RequestMessage)(implicit L: Logger[IO]): IO[ReplyMessage] =
-    Queue.bounded[IO, ReplyMessage](1).flatMap { queue =>
-      val replyHandler: ReplyMessageHandler[IO] = replyMessage => queue.offer(replyMessage)
-      client.request(requestQueue, requestMessage, replyHandler) flatMap { _ =>
-        queue.take
-      }
-    }
+  val OMGApplicationID = "OMGApplicationID"
+  val OMGMessageTypeID = "OMGMessageTypeID"
+  val OMGMessageFormat = "OMGMessageFormat"
+  val OMGToken = "OMGToken"
+  val OMGReplyAddress = "OMGReplyAddress"
 
 }

@@ -95,8 +95,8 @@ class EditSetRecordController @Inject() (
     request: Request[AnyContent]
   ): IO[Result] =
     for {
-      placesOfDeposit <- referenceDataService.getPlacesOfDeposit()
-      creators        <- referenceDataService.getCreators()
+      placesOfDeposit <- referenceDataService.getPlacesOfDeposit
+      creators        <- referenceDataService.getCreators
       legalStatuses   <- referenceDataService.getLegalStatuses
     } yield {
       val editSetRecordPreparedForDisplay = prepareForDisplay(editSetRecord, placesOfDeposit, creators)
@@ -124,9 +124,9 @@ class EditSetRecordController @Inject() (
       case Right(RemoveLastCreator(record)) => removeLastCreator(user, editSet, record)
       case Left(FormValidationFailed(formWithErrors, record)) =>
         for {
-          placesOfDeposit <- referenceDataService.getPlacesOfDeposit()
+          placesOfDeposit <- referenceDataService.getPlacesOfDeposit
           legalStatuses   <- referenceDataService.getLegalStatuses
-          creators        <- referenceDataService.getCreators()
+          creators        <- referenceDataService.getCreators
         } yield BadRequest(
           generateEditSetRecordEditView(user, editSet, record, placesOfDeposit, creators, legalStatuses, formWithErrors)
         )
@@ -237,9 +237,9 @@ class EditSetRecordController @Inject() (
     request: Request[AnyContent]
   ): IO[Result] =
     for {
-      placesOfDeposit <- referenceDataService.getPlacesOfDeposit()
+      placesOfDeposit <- referenceDataService.getPlacesOfDeposit
       legalStatuses   <- referenceDataService.getLegalStatuses
-      creators        <- referenceDataService.getCreators()
+      creators        <- referenceDataService.getCreators
     } yield {
       val selectedNonEmptyCreatorsFromRequest = filterRequestData { case (key, value) =>
         key.startsWith(FieldNames.creatorIDs) && value.trim.nonEmpty
@@ -275,9 +275,9 @@ class EditSetRecordController @Inject() (
     request: Request[AnyContent]
   ): IO[Result] =
     for {
-      placesOfDeposit <- referenceDataService.getPlacesOfDeposit()
+      placesOfDeposit <- referenceDataService.getPlacesOfDeposit
       legalStatuses   <- referenceDataService.getLegalStatuses
-      creators        <- referenceDataService.getCreators()
+      creators        <- referenceDataService.getCreators
     } yield {
       val selectedCreatorsFromRequest = filterRequestData { case (key, _) =>
         key.startsWith(FieldNames.creatorIDs)
@@ -303,9 +303,9 @@ class EditSetRecordController @Inject() (
     request: Request[AnyContent]
   ): IO[Result] =
     for {
-      placesOfDeposit <- referenceDataService.getPlacesOfDeposit()
+      placesOfDeposit <- referenceDataService.getPlacesOfDeposit
       legalStatuses   <- referenceDataService.getLegalStatuses
-      creators        <- referenceDataService.getCreators()
+      creators        <- referenceDataService.getCreators
     } yield {
       val originalForm: Form[EditSetRecordFormValues] = EditSetRecordFormValuesFormProvider().bindFromRequest()
       val errorsForCoveringDatesOnly = originalForm.errors(FieldNames.coveringDates)
@@ -390,7 +390,7 @@ class EditSetRecordController @Inject() (
     request.body.asFormUrlEncoded.get("action").headOption match {
       case Some("save") =>
         for {
-          placesOfDeposit <- referenceDataService.getPlacesOfDeposit()
+          placesOfDeposit <- referenceDataService.getPlacesOfDeposit
           validatedForm   <- validateForm(editSetRecord, placesOfDeposit)
         } yield Save(editSetRecord, validatedForm)
       case Some("discard")           => Right(Discard)
@@ -551,7 +551,6 @@ class EditSetRecordController @Inject() (
 object EditSetRecordController {
 
   private val noSelectionForPlaceOfDeposit = ""
-  sealed abstract class InternalEditSetRecordControllerError
 
   private sealed abstract class SubmitAction
 

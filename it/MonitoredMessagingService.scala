@@ -1,17 +1,15 @@
 import cats.effect.IO
-import play.api.inject.ApplicationLifecycle
-import support.ApiConnectorMonitoring
-import uk.gov.nationalarchives.omega.editorial.config.Config
+import support.MessagingServiceMonitoring
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
-import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetRecord, GetEditSet, GetEditSetRecord, UpdateEditSetRecord, UpdateResponseStatus }
+import uk.gov.nationalarchives.omega.editorial.models._
+import uk.gov.nationalarchives.omega.editorial.services.MessagingService
 
 import javax.inject.{ Inject, Singleton }
 
 @Singleton
-class MonitoredApiConnector @Inject() (
-  config: Config,
-  lifecycle: ApplicationLifecycle
-) extends ApiConnector(config, lifecycle) with ApiConnectorMonitoring {
+class MonitoredMessagingService @Inject() (
+  apiConnector: ApiConnector
+) extends MessagingService(apiConnector) with MessagingServiceMonitoring {
 
   override def getEditSet(getEditSetRequest: GetEditSet): IO[Option[EditSet]] = {
     record(getEditSetRequest)
