@@ -94,7 +94,7 @@ class JmsRequestReplyClient[F[_] : Async](
       _ <- jmsRequest.setStringProperty(MessageProperties.OMGApplicationID, requestMessage.omgApplicationId)
       _ <- jmsRequest.setStringProperty(MessageProperties.OMGMessageTypeID, requestMessage.omgMessageTypeId)
       _ <- jmsRequest.setStringProperty(MessageProperties.OMGMessageFormat, "application/json")
-      _ <- jmsRequest.setStringProperty(MessageProperties.OMGReplyAddress, "PACS001_request")
+      _ <- jmsRequest.setStringProperty(MessageProperties.OMGReplyAddress, ApiConnector.replyQueueName)
       _ <- jmsRequest.setStringProperty(MessageProperties.OMGToken, "AbCdEf123456")
     } yield jmsRequest
 

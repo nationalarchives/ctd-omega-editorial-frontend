@@ -54,7 +54,7 @@ class MessagingServiceSpec
        |[
        |  {
        |    "identifier": "${legalStatus.identifier}",
-       |    "label": "${legalStatus.label}"
+       |    "name": "${legalStatus.name}"
        |  }
        |]
        |""".stripMargin

@@ -41,7 +41,8 @@ class StubServer @Inject() (responseBuilder: ResponseBuilder) {
 
   private implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jLogger.getLogger[IO]
 
-  private val requestQueueName = QueueName("PACS001_request")
+  private val applicationId = "STUB001"
+  private val requestQueueName = QueueName(s"${applicationId}_request")
   private val replyQueueName = QueueName("PACE001_reply")
   private val consumerConcurrencyLevel = 1
   private val pollingInterval = 50.millis
@@ -84,13 +85,13 @@ class StubServer @Inject() (responseBuilder: ResponseBuilder) {
       responseText     <- responseBuilder.createResponseText(jmsMessage)
       replyMessage     <- messageFactory.makeTextMessage(responseText)
       _ = replyMessage.setJMSCorrelationId(requestMessageId)
-      _ = replyMessage.setStringProperty(MessageProperties.OMGApplicationID, "PACS001")
+      _ = replyMessage.setStringProperty(MessageProperties.OMGApplicationID, applicationId)
       _ = replyMessage.setStringProperty(
             MessageProperties.OMGMessageTypeID,
             getReplyMessageType(jmsMessage.getStringProperty(MessageProperties.OMGMessageTypeID))
           )
       _ = replyMessage.setStringProperty(MessageProperties.OMGMessageFormat, "application/json")
-      _ = replyMessage.setStringProperty(MessageProperties.OMGReplyAddress, "PACS001_request")
+      _ = replyMessage.setStringProperty(MessageProperties.OMGReplyAddress, replyQueueName.value)
       _ = replyMessage.setStringProperty(MessageProperties.OMGToken, "AbCdEf123456")
     } yield replyMessage
 
