@@ -79,7 +79,7 @@ class BaseSpec
   private lazy val testConfig: Config = Config(
     broker = HostBrokerEndpoint("not.a.real.host", 0),
     credentials = UsernamePasswordCredentials("?", "?"),
-    defaultRequestQueueName = "PACS001_request"
+    defaultRequestQueueName = "STUB001_request"
   )
 
   override def beforeEach(): Unit = {

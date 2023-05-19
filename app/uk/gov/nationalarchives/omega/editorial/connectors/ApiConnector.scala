@@ -27,6 +27,7 @@ import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import play.api.inject.ApplicationLifecycle
 import uk.gov.nationalarchives.omega.editorial.config.Config
+import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector.replyQueueName
 import uk.gov.nationalarchives.omega.editorial.connectors.MessageType.GetLegalStatusesType
 import uk.gov.nationalarchives.omega.editorial.connectors.messages.{ ReplyMessage, RequestMessage }
 
@@ -39,7 +40,6 @@ class ApiConnector @Inject() (
 ) {
 
   private implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jLogger.getLogger[IO]
-  private val replyQueueName = "PACE001_reply"
   private lazy val (client, closer): (JmsRequestReplyClient[IO], IO[Unit]) = createClientAndCloser.unsafeRunSync()
   private lazy val handler: RequestReplyHandler = RequestReplyHandler(client)
 
@@ -71,5 +71,6 @@ class ApiConnector @Inject() (
 object ApiConnector {
 
   val applicationId = "PACE001"
+  val replyQueueName = s"${ApiConnector.applicationId}_reply"
 
 }
