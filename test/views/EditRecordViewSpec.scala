@@ -73,8 +73,7 @@ class EditRecordViewSpec extends BaseViewSpec {
       PlaceOfDeposit("3", "British Library, National Sound Archive")
     )
 
-//  private val allCreators: Seq[Creator] = Seq.empty
-  private val allCreators: List[AgentSummary] = List.empty
+  private val allCreators: Seq[AgentSummary] = Seq.empty
 
   val editSetRecord = EditSetRecord(
     ccr = "COAL 80/80/1",
