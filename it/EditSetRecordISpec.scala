@@ -91,7 +91,6 @@ class EditSetRecordISpec extends BaseISpec {
           "the form is filled out correctly" in {
 
             val response = getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, "COAL.2022.V1RJW.P")
-
             assertPageAsExpected(
               response,
               OK,
@@ -181,7 +180,6 @@ class EditSetRecordISpec extends BaseISpec {
             getExpectedEditSetRecord(editSetRecordOci).placeOfDepositID mustBe "6"
 
             val response = getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci)
-
             assertPageAsExpected(
               response,
               OK,
@@ -207,7 +205,6 @@ class EditSetRecordISpec extends BaseISpec {
             getExpectedEditSetRecord(editSetRecordOci).creatorIDs mustBe Seq("XXX")
 
             val response = getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci)
-
             assertPageAsExpected(
               response,
               OK,
@@ -2923,7 +2920,8 @@ class EditSetRecordISpec extends BaseISpec {
         expectedSelectedOption.copy(selected = expectedSelectedOption.value == editSetRecord.placeOfDepositID)
       ),
       optionsForCreators = {
-        val recognisedCreatorIds = editSetRecord.creatorIDs.filter(creatorId => allCreators.exists(_.id == creatorId))
+        val recognisedCreatorIds =
+          editSetRecord.creatorIDs.filter(creatorId => allCreators.exists(_.identifier == creatorId))
         val correctedCreatorIds = if (recognisedCreatorIds.nonEmpty) recognisedCreatorIds else Seq("")
         correctedCreatorIds
           .map(creatorId =>
@@ -2970,7 +2968,6 @@ class EditSetRecordISpec extends BaseISpec {
 
     response.status mustBe expectedStatus
     val document = asDocument(response)
-
     document must haveTitle(expectedEditRecordPage.title)
     document must haveHeading(expectedEditRecordPage.heading)
     document must haveLegend(expectedEditRecordPage.legend)

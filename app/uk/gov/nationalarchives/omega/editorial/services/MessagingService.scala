@@ -46,7 +46,7 @@ import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import play.api.libs.json.{ Json, Reads }
 import uk.gov.nationalarchives.omega.editorial.connectors.{ ApiConnector, MessageType }
-import uk.gov.nationalarchives.omega.editorial.models.{ CorporateBody, EditSet, EditSetRecord, GetCorporateBodies, GetEditSet, GetEditSetRecord, GetLegalStatuses, GetPersons, GetPlacesOfDeposit, LegalStatus, Person, PlaceOfDeposit, UpdateEditSetRecord, UpdateResponseStatus }
+import uk.gov.nationalarchives.omega.editorial.models.{ AgentSummary, EditSet, EditSetRecord, GetAgentSummaryList, GetEditSet, GetEditSetRecord, GetLegalStatuses, GetPlacesOfDeposit, LegalStatus, PlaceOfDeposit, UpdateEditSetRecord, UpdateResponseStatus }
 
 import javax.inject.{ Inject, Singleton }
 
@@ -89,17 +89,11 @@ class MessagingService @Inject() (apiConnector: ApiConnector) {
         .handle(MessageType.GetPlacesOfDepositType, Json.stringify(Json.toJson(getPlacesOfDeposit)))
         .flatMap(replyMessage => parse[Seq[PlaceOfDeposit]](replyMessage.messageText))
 
-  def getPersons(getPersons: GetPersons): IO[Seq[Person]] =
-    logger.info(s"Requesting all of the persons") *>
+  def getAgentSummaries(getAgentSummaryList: GetAgentSummaryList): IO[List[AgentSummary]] =
+    logger.info(s"Requesting all of the agent summaries") *>
       apiConnector
-        .handle(MessageType.GetPersonsType, Json.stringify(Json.toJson(getPersons)))
-        .flatMap(replyMessage => parse[Seq[Person]](replyMessage.messageText))
-
-  def getCorporateBodies(getCorporateBodies: GetCorporateBodies): IO[Seq[CorporateBody]] =
-    logger.info(s"Requesting all of the corporate bodies") *>
-      apiConnector
-        .handle(MessageType.GetCorporateBodiesType, Json.stringify(Json.toJson(getCorporateBodies)))
-        .flatMap(replyMessage => parse[Seq[CorporateBody]](replyMessage.messageText))
+        .handle(MessageType.GetAgentSummariesType, Json.stringify(Json.toJson(getAgentSummaryList)))
+        .flatMap(replyMessage => parse[List[AgentSummary]](replyMessage.messageText))
 
   def getLegalStatuses(getLegalStatuses: GetLegalStatuses): IO[Seq[LegalStatus]] =
     logger.info(s"Requesting all of the legal status summary") *>

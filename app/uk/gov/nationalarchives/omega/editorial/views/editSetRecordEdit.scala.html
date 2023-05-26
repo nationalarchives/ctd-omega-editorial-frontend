@@ -25,7 +25,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.Implicits.RichErrorSummary
 @import uk.gov.nationalarchives.omega.editorial.controllers.EditSetRecordController.FieldNames
 @import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
-@import uk.gov.nationalarchives.omega.editorial.models.{Creator, EditSetRecord, LegalStatus, MaterialReference, PhysicalRecord, PlaceOfDeposit, User}
+@import uk.gov.nationalarchives.omega.editorial.models.{AgentSummary, EditSetRecord, LegalStatus, MaterialReference, PhysicalRecord, PlaceOfDeposit, User}
 
 @this(govukButton: GovukButton, govukInput: GovukInput, govukTextarea: GovukTextarea, govukFieldset: GovukFieldset, govukErrorSummary: GovukErrorSummary, govukSelect: GovukSelect, govukLabel: GovukLabel)
 @(
@@ -35,7 +35,7 @@
         record: EditSetRecord,
         legalStatusReferenceData: Seq[LegalStatus],
         placesOfDeposit: Seq[PlaceOfDeposit],
-        creators: Seq[Creator],
+        creators: Seq[AgentSummary],
         editSetRecordForm: Form[EditSetRecordFormValues]
 )(implicit messages: Messages, request: Request[AnyContent])
 
@@ -170,9 +170,9 @@
             )
             val creatorItems = creators.map(creator =>
                 SelectItem(
-                    selected = currentId.contains(creator.id),
+                    selected = currentId.contains(creator.identifier),
                     text = creator.displayedName,
-                    value = Some(creator.id).filter(_.nonEmpty),
+                    value = Some(creator.identifier).filter(_.nonEmpty),
                     disabled = false
                 )
             )

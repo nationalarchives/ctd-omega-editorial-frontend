@@ -95,7 +95,7 @@ class StubServer @Inject() (responseBuilder: ResponseBuilder) {
       _ = replyMessage.setStringProperty(MessageProperties.OMGToken, "AbCdEf123456")
     } yield replyMessage
 
-  private val messageTypeMap = Map[String, String]("OSLISALS001" -> "ODLISALS001")
+  private val messageTypeMap = Map[String, String]("OSLISALS001" -> "ODLISALS001", "OSLISAGT001" -> "ODLISAGT001")
   private def getReplyMessageType(maybeMessageType: Option[String]): String = {
     val messageType = for {
       requestMessageType <- maybeMessageType

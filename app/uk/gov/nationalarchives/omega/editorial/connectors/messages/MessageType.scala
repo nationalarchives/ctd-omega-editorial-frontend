@@ -39,8 +39,6 @@ object MessageType {
 
   case object GetPlacesOfDepositType extends MessageType("OSGPOD001")
 
-  case object GetPersonsType extends MessageType("OSGPER001")
-
-  case object GetCorporateBodiesType extends MessageType("OSGCBY001")
+  case object GetAgentSummariesType extends MessageType("OSLISAGT001")
 
 }

@@ -30,11 +30,11 @@ import javax.inject.{ Inject, Singleton }
 @Singleton
 class ReferenceDataService @Inject() (messagingService: MessagingService, timeProvider: TimeProvider) {
 
-  def getCreators: IO[Seq[Creator]] =
+  def getAgentSummaries: IO[Seq[AgentSummary]] =
     for {
-      persons         <- messagingService.getPersons(GetPersons(timestamp = timeProvider.now()))
-      corporateBodies <- messagingService.getCorporateBodies(GetCorporateBodies(timestamp = timeProvider.now()))
-    } yield persons.flatMap(Creator.from) ++ corporateBodies.flatMap(Creator.from)
+      agentSummaryList <-
+        messagingService.getAgentSummaries(GetAgentSummaryList(List(AgentType.Person, AgentType.CorporateBody)))
+    } yield agentSummaryList
 
   def getPlacesOfDeposit: IO[Seq[PlaceOfDeposit]] =
     messagingService.getPlacesOfDeposit(GetPlacesOfDeposit(timestamp = timeProvider.now()))

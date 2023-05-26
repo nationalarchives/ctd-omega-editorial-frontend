@@ -96,7 +96,7 @@ class EditSetRecordController @Inject() (
   ): IO[Result] =
     for {
       placesOfDeposit <- referenceDataService.getPlacesOfDeposit
-      creators        <- referenceDataService.getCreators
+      creators        <- referenceDataService.getAgentSummaries
       legalStatuses   <- referenceDataService.getLegalStatuses
     } yield {
       val editSetRecordPreparedForDisplay = prepareForDisplay(editSetRecord, placesOfDeposit, creators)
@@ -126,7 +126,7 @@ class EditSetRecordController @Inject() (
         for {
           placesOfDeposit <- referenceDataService.getPlacesOfDeposit
           legalStatuses   <- referenceDataService.getLegalStatuses
-          creators        <- referenceDataService.getCreators
+          creators        <- referenceDataService.getAgentSummaries
         } yield BadRequest(
           generateEditSetRecordEditView(user, editSet, record, placesOfDeposit, creators, legalStatuses, formWithErrors)
         )
@@ -239,7 +239,7 @@ class EditSetRecordController @Inject() (
     for {
       placesOfDeposit <- referenceDataService.getPlacesOfDeposit
       legalStatuses   <- referenceDataService.getLegalStatuses
-      creators        <- referenceDataService.getCreators
+      creators        <- referenceDataService.getAgentSummaries
     } yield {
       val selectedNonEmptyCreatorsFromRequest = filterRequestData { case (key, value) =>
         key.startsWith(FieldNames.creatorIDs) && value.trim.nonEmpty
@@ -277,7 +277,7 @@ class EditSetRecordController @Inject() (
     for {
       placesOfDeposit <- referenceDataService.getPlacesOfDeposit
       legalStatuses   <- referenceDataService.getLegalStatuses
-      creators        <- referenceDataService.getCreators
+      creators        <- referenceDataService.getAgentSummaries
     } yield {
       val selectedCreatorsFromRequest = filterRequestData { case (key, _) =>
         key.startsWith(FieldNames.creatorIDs)
@@ -305,7 +305,7 @@ class EditSetRecordController @Inject() (
     for {
       placesOfDeposit <- referenceDataService.getPlacesOfDeposit
       legalStatuses   <- referenceDataService.getLegalStatuses
-      creators        <- referenceDataService.getCreators
+      creators        <- referenceDataService.getAgentSummaries
     } yield {
       val originalForm: Form[EditSetRecordFormValues] = EditSetRecordFormValuesFormProvider().bindFromRequest()
       val errorsForCoveringDatesOnly = originalForm.errors(FieldNames.coveringDates)
@@ -426,7 +426,7 @@ class EditSetRecordController @Inject() (
   private def prepareForDisplay(
     originalEditSetRecord: EditSetRecord,
     placesOfDeposit: Seq[PlaceOfDeposit],
-    creators: Seq[Creator]
+    creators: Seq[AgentSummary]
   ): EditSetRecord =
     Seq[EditSetRecord.Transformer](
       record => prepareCreatorIDs(creators, record),
@@ -457,7 +457,7 @@ class EditSetRecordController @Inject() (
     editSet: EditSet,
     editSetRecord: EditSetRecord,
     placesOfDeposit: Seq[PlaceOfDeposit],
-    creators: Seq[Creator],
+    creators: Seq[AgentSummary],
     legalStatuses: Seq[LegalStatus],
     form: Form[EditSetRecordFormValues]
   )(implicit request: Request[AnyContent]): HtmlFormat.Appendable = {
@@ -542,9 +542,9 @@ class EditSetRecordController @Inject() (
     editSetRecord.copy(placeOfDepositID = correctedValue)
   }
 
-  private def prepareCreatorIDs(creators: Seq[Creator], editSetRecord: EditSetRecord): EditSetRecord =
+  private def prepareCreatorIDs(creators: Seq[AgentSummary], editSetRecord: EditSetRecord): EditSetRecord =
     editSetRecord.copy(creatorIDs = editSetRecord.creatorIDs.filter { id =>
-      creators.exists(_.id == id)
+      creators.exists(_.identifier == id)
     })
 }
 
