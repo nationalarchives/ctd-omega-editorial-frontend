@@ -31,7 +31,7 @@ case class AgentSummary(
   dateTo: Option[Int] = None
 ) {
 
-  val displayedName = {
+  val displayedName: String = {
     val dateDisplay = (agentType, dateFrom, dateTo) match {
       case (AgentType.CorporateBody, Some(dateFrom), Some(dateTo)) => s" ($dateFrom - $dateTo)"
       case (AgentType.CorporateBody, Some(dateFrom), None)         => s" ($dateFrom - )"
@@ -39,7 +39,7 @@ case class AgentSummary(
       case (AgentType.Person, Some(dateFrom), Some(dateTo))        => s" (b.$dateFrom - d.$dateTo)"
       case (AgentType.Person, Some(dateFrom), None)                => s" (b.$dateFrom - )"
       case (AgentType.Person, None, Some(dateTo))                  => s" ( - d.$dateTo)"
-      case (_, None, None)                                         => ""
+      case _                                                       => ""
     }
     s"$label$dateDisplay"
   }
