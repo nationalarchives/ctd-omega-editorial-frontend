@@ -21,41 +21,38 @@
 
 package uk.gov.nationalarchives.omega.editorial.models
 
-import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import play.api.libs.json.{ Format, Json, Reads, __ }
+import play.api.libs.functional.syntax.{ toFunctionalBuilderOps, unlift }
+import play.api.libs.json.{ Format, __ }
 
 case class AgentSummary(
   agentType: AgentType,
   identifier: String,
   label: String,
-  dateFrom: String,
-  dateTo: String
+  dateFrom: Option[String],
+  dateTo: Option[String]
 ) {
 
   val displayedName: String = {
     val dateDisplay = (agentType, dateFrom, dateTo) match {
-      case (AgentType.CorporateBody, dateFrom, dateTo) => s" ($dateFrom - $dateTo)"
-      case (AgentType.CorporateBody, dateFrom, "")     => s" ($dateFrom - )"
-      case (AgentType.CorporateBody, "", dateTo)       => s" ( - $dateTo)"
-      case (AgentType.Person, dateFrom, dateTo)        => s" (b.$dateFrom - d.$dateTo)"
-      case (AgentType.Person, dateFrom, "")            => s" (b.$dateFrom - )"
-      case (AgentType.Person, "", dateTo)              => s" ( - d.$dateTo)"
-      case _                                           => ""
+      case (AgentType.CorporateBody, Some(dateFrom), Some(dateTo)) => s" ($dateFrom - $dateTo)"
+      case (AgentType.CorporateBody, Some(dateFrom), None)         => s" ($dateFrom - )"
+      case (AgentType.CorporateBody, None, Some(dateTo))           => s" ( - $dateTo)"
+      case (AgentType.Person, Some(dateFrom), Some(dateTo))        => s" (b.$dateFrom - d.$dateTo)"
+      case (AgentType.Person, Some(dateFrom), None)                => s" (b.$dateFrom - )"
+      case (AgentType.Person, None, Some(dateTo))                  => s" ( - d.$dateTo)"
+      case _                                                       => ""
     }
     s"$label$dateDisplay"
   }
 }
 object AgentSummary {
-  implicit val format: Format[AgentSummary] = Json.format[AgentSummary]
 
-  implicit val agentSummaryReads: Reads[AgentSummary] = (
-    (__ \ "type").read[AgentType] and
-      (__ \ "identifier").read[String] and
-      (__ \ "label").read[String] and
-      (__ \ "date-from").read[String] and
-      (__ \ "date-to").read[String]
-  ) { (agentType, identifier, label, dateFrom, dateTo) =>
-    AgentSummary(agentType, identifier, label, dateFrom, dateTo)
-  }
+  implicit val agentSummaryFormat: Format[AgentSummary] = (
+    (__ \ "type").format[AgentType] and
+      (__ \ "identifier").format[String] and
+      (__ \ "label").format[String] and
+      (__ \ "date-from").formatNullable[String] and
+      (__ \ "date-to").formatNullable[String]
+  )(AgentSummary.apply, unlift(AgentSummary.unapply))
 
 }
