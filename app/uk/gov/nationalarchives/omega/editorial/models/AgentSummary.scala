@@ -47,7 +47,6 @@ case class AgentSummary(
   }
 }
 object AgentSummary {
-  // implicit val format: Format[AgentSummary] = Json.format[AgentSummary]
 
   implicit val agentSummaryFormat: Format[AgentSummary] = (
     (__ \ "type").format[AgentType] and
