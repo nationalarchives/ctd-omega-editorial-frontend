@@ -51,7 +51,7 @@ class MessagingServiceSpec
     " for agent summaries" in {
       val mockApiConnector = mock[ApiConnector]
       val expectedAgentSummaries =
-        List(AgentSummary(AgentType.CorporateBody, "W2T", "Hansard Society", "1944", "1944"))
+        List(AgentSummary(AgentType.CorporateBody, "W2T", "Hansard Society", Some("1944"), Some("1944")))
       val messagingService = new MessagingService(mockApiConnector)
       whenF(mockApiConnector.handle(eqTo(GetAgentSummariesType), any[String]))
         .thenReturn(ReplyMessage(getExpectedAgentSummariesJson(expectedAgentSummaries), Some(""), Some("")))
@@ -75,10 +75,10 @@ class MessagingServiceSpec
        |[
        |  {
        |    "identifier": "${agentSummaryList(0).identifier}",
-       |    "name": "${agentSummaryList(0).label}",
-       |    "dateFrom": "${agentSummaryList(0).dateFrom}",
-       |    "dateTo": "${agentSummaryList(0).dateTo}",
-       |    "agentType": "${agentSummaryList(0).agentType}"
+       |    "label": "${agentSummaryList(0).label}",
+       |    "date-from": "${agentSummaryList(0).dateFrom.getOrElse("")}",
+       |    "date-to": "${agentSummaryList(0).dateTo.getOrElse("")}",
+       |    "type": "${agentSummaryList(0).agentType}"
        |  }
        |]
        |""".stripMargin
