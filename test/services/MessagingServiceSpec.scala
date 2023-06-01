@@ -74,11 +74,11 @@ class MessagingServiceSpec
     s"""
        |[
        |  {
+       |   "type": "${agentSummaryList(0).agentType}",
        |    "identifier": "${agentSummaryList(0).identifier}",
-       |    "name": "${agentSummaryList(0).label}",
-       |    "dateFrom": "${agentSummaryList(0).dateFrom}",
-       |    "dateTo": "${agentSummaryList(0).dateTo}",
-       |    "agentType": "${agentSummaryList(0).agentType}"
+       |    "label": "${agentSummaryList(0).label}",
+       |    "date-from": "${agentSummaryList(0).dateFrom}",
+       |    "date-to": "${agentSummaryList(0).dateTo}"
        |  }
        |]
        |""".stripMargin

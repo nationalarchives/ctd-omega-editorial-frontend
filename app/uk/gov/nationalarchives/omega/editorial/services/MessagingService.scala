@@ -74,13 +74,13 @@ class MessagingService @Inject() (apiConnector: ApiConnector) {
     logger.info(s"Requesting all of the agent summaries") *>
       apiConnector
         .handle(MessageType.GetAgentSummariesType, Json.stringify(Json.toJson(getAgentSummaryList)))
-        .flatMap(replyMessage => parse[Seq[AgentSummary]](replyMessage.messageText))
+        .flatMap(replyMessage => parse[List[AgentSummary]](replyMessage.messageText))
 
   def getLegalStatuses(getLegalStatuses: GetLegalStatuses): IO[Seq[LegalStatus]] =
     logger.info(s"Requesting all of the legal status summary") *>
       apiConnector
         .handle(MessageType.GetLegalStatusesType, Json.stringify(Json.toJson(getLegalStatuses)))
-        .flatMap(replyMessage => parse[Seq[LegalStatus]](replyMessage.messageText))
+        .flatMap(replyMessage => parse[List[LegalStatus]](replyMessage.messageText))
 
   private def parse[A : Reads](messageText: String): IO[A] =
     IO.fromOption(
