@@ -59,10 +59,8 @@ class ResponseBuilder @Inject() (stubData: StubData) {
         handleGetLegalStatuses(jmsMessage)
       case Some(messageType) if MessageType.GetPlacesOfDepositType.matches(messageType) =>
         handleGetPlacesOfDeposit(jmsMessage)
-      case Some(messageType) if MessageType.GetPersonsType.matches(messageType) =>
-        handleGetPersons(jmsMessage)
-      case Some(messageType) if MessageType.GetCorporateBodiesType.matches(messageType) =>
-        handleGetCorporateBodies(jmsMessage)
+      case Some(messageType) if MessageType.GetAgentSummariesType.matches(messageType) =>
+        handleGetAgentSummaries(jmsMessage)
       case Some(unknown) =>
         onUnhandledCase(s"Message type is unrecognised: [$unknown]")
       case None =>
@@ -101,13 +99,9 @@ class ResponseBuilder @Inject() (stubData: StubData) {
     parse[GetLegalStatuses](jmsMessage)
       .flatMap(_ => asJsonString(stubData.getLegalStatuses()))
 
-  private def handleGetPersons(jmsMessage: JmsMessage): IO[String] =
-    parse[GetPersons](jmsMessage)
-      .flatMap(_ => asJsonString(stubData.getPersons()))
-
-  private def handleGetCorporateBodies(jmsMessage: JmsMessage): IO[String] =
-    parse[GetCorporateBodies](jmsMessage)
-      .flatMap(_ => asJsonString(stubData.getCorporateBodies()))
+  private def handleGetAgentSummaries(jmsMessage: JmsMessage): IO[String] =
+    parse[GetAgentSummaryList](jmsMessage)
+      .flatMap(_ => asJsonString(stubData.getAgentSummaries()))
 
   private def asJsonString[T : Writes](entity: T): IO[String] = me.pure(Json.toJson(entity).toString)
 

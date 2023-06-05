@@ -23,15 +23,9 @@ package uk.gov.nationalarchives.omega.editorial.models
 
 import play.api.libs.json.{ Format, Json }
 
-case class CorporateBody(
-  id: String,
-  name: String,
-  startingYear: Option[Int] = None,
-  endingYear: Option[Int] = None
-)
+case class GetAgentSummaryList(agentTypeList: List[AgentType])
 
-object CorporateBody {
-
-  implicit val format: Format[CorporateBody] = Json.format[CorporateBody]
+object GetAgentSummaryList {
+  implicit val format: Format[GetAgentSummaryList] = Json.format[GetAgentSummaryList]
 
 }

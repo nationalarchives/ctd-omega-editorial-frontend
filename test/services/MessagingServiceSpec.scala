@@ -27,9 +27,9 @@ import org.mockito.{ ArgumentMatchersSugar, MockitoSugar }
 import org.scalatest.freespec.AsyncFreeSpec
 import org.scalatest.matchers.must.Matchers
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
-import uk.gov.nationalarchives.omega.editorial.connectors.MessageType.GetLegalStatusesType
+import uk.gov.nationalarchives.omega.editorial.connectors.MessageType.{ GetAgentSummariesType, GetLegalStatusesType }
 import uk.gov.nationalarchives.omega.editorial.connectors.messages.ReplyMessage
-import uk.gov.nationalarchives.omega.editorial.models.{ GetLegalStatuses, LegalStatus }
+import uk.gov.nationalarchives.omega.editorial.models.{ AgentSummary, AgentType, GetAgentSummaryList, GetLegalStatuses, LegalStatus }
 import uk.gov.nationalarchives.omega.editorial.services.MessagingService
 
 import java.time.LocalDateTime
@@ -47,6 +47,17 @@ class MessagingServiceSpec
       val result = messagingService.getLegalStatuses(GetLegalStatuses(LocalDateTime.now()))
       result.asserting(_ mustEqual Seq(expectedLegalStatus))
     }
+
+    " for agent summaries" in {
+      val mockApiConnector = mock[ApiConnector]
+      val expectedAgentSummaries =
+        List(AgentSummary(AgentType.CorporateBody, "W2T", "Hansard Society", Some("1944"), Some("1944")))
+      val messagingService = new MessagingService(mockApiConnector)
+      whenF(mockApiConnector.handle(eqTo(GetAgentSummariesType), any[String]))
+        .thenReturn(ReplyMessage(getExpectedAgentSummariesJson(expectedAgentSummaries), Some(""), Some("")))
+      val result = messagingService.getAgentSummaries(GetAgentSummaryList(List(AgentType.CorporateBody)))
+      result.asserting(_ mustEqual expectedAgentSummaries)
+    }
   }
 
   private def getExpectedLegalStatusJson(legalStatus: LegalStatus): String =
@@ -55,6 +66,19 @@ class MessagingServiceSpec
        |  {
        |    "identifier": "${legalStatus.identifier}",
        |    "name": "${legalStatus.name}"
+       |  }
+       |]
+       |""".stripMargin
+
+  private def getExpectedAgentSummariesJson(agentSummaryList: Seq[AgentSummary]): String =
+    s"""
+       |[
+       |  {
+       |    "identifier": "${agentSummaryList(0).identifier}",
+       |    "label": "${agentSummaryList(0).label}",
+       |    "date-from": "${agentSummaryList(0).dateFrom.getOrElse("")}",
+       |    "date-to": "${agentSummaryList(0).dateTo.getOrElse("")}",
+       |    "type": "${agentSummaryList(0).agentType}"
        |  }
        |]
        |""".stripMargin

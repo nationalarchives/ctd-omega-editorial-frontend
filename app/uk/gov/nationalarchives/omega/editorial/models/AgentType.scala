@@ -21,18 +21,18 @@
 
 package uk.gov.nationalarchives.omega.editorial.models
 
-import play.api.libs.json.{ Format, Json }
+import enumeratum.{ Enum, EnumEntry, PlayJsonEnum }
 
-case class Person(
-  id: String,
-  name: String,
-  title: Option[String],
-  yearOfBirth: Option[Int] = None,
-  yearOfDeath: Option[Int] = None
-)
+sealed trait AgentType extends EnumEntry
 
-object Person {
+object AgentType extends Enum[AgentType] with PlayJsonEnum[AgentType] {
 
-  implicit val format: Format[Person] = Json.format[Person]
+  val values = findValues
 
+  case object CorporateBody extends AgentType
+  case object Person extends AgentType
+  case object CollectiveAgent extends AgentType
+  case object Family extends AgentType
+  case object HardwareAgent extends AgentType
+  case object SoftwareAgent extends AgentType
 }

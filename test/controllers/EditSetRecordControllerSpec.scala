@@ -59,7 +59,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
     PlaceOfDeposit("3", "British Library, National Sound Archive")
   )
 
-  private val creators: Seq[Creator] = getPersons().flatMap(Creator.from) ++ getCorporateBodies().flatMap(Creator.from)
+  private val creators: Seq[AgentSummary] = getAgentSummaries()
 
   /** As these mocks are within a fixture, they will all be managed; for instance, a check will be made against missed
     * or unnecessary stubbing. This will give a clearer picture of the usage of dependencies.
@@ -1746,8 +1746,8 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
     */
   private def givenCreatorsExist()(implicit
     referenceDataService: ReferenceDataService
-  ): ScalaOngoingStubbing[IO[Seq[Creator]]] =
-    when(referenceDataService.getCreators).thenReturn(IO.pure(creators))
+  ): ScalaOngoingStubbing[IO[Seq[AgentSummary]]] =
+    when(referenceDataService.getAgentSummaries).thenReturn(IO.pure(creators))
 
   def givenEditViewIsGenerated(editSetRecord: EditSetRecord)(implicit
     editSetRecordEditView: editSetRecordEdit
