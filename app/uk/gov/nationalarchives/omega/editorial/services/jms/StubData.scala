@@ -48,7 +48,7 @@ trait StubData {
       endDateMonth = "12",
       endDateYear = "1962",
       legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
-      placeOfDepositID = "1",
+      placeOfDepositID = "S2",
       note = "A note about COAL.2022.V1RJW.P.",
       background = "Photo was taken by a daughter of one of the coal miners who used them.",
       custodialHistory = "Files originally created by successor or predecessor departments for COAL",
@@ -132,7 +132,7 @@ trait StubData {
       endDateMonth = "12",
       endDateYear = "1961",
       legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
-      placeOfDepositID = "1",
+      placeOfDepositID = "S2",
       note = "",
       background = "",
       custodialHistory = "",
@@ -156,7 +156,7 @@ trait StubData {
       endDateMonth = "12",
       endDateYear = "1963",
       legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
-      placeOfDepositID = "1",
+      placeOfDepositID = "S2",
       note = "Need to check copyright info.",
       background = "",
       custodialHistory = "",
@@ -180,7 +180,7 @@ trait StubData {
       endDateMonth = "12",
       endDateYear = "1965",
       legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
-      placeOfDepositID = "1",
+      placeOfDepositID = "S2",
       note = "",
       background = "",
       custodialHistory = "",
@@ -204,7 +204,7 @@ trait StubData {
       endDateMonth = "12",
       endDateYear = "1967",
       legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
-      placeOfDepositID = "1",
+      placeOfDepositID = "S2",
       note = "",
       background = "",
       custodialHistory = "",
@@ -228,7 +228,7 @@ trait StubData {
       endDateMonth = "12",
       endDateYear = "1969",
       legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
-      placeOfDepositID = "1",
+      placeOfDepositID = "S2",
       note = "",
       background = "",
       custodialHistory = "",
@@ -252,7 +252,7 @@ trait StubData {
       endDateMonth = "12",
       endDateYear = "1971",
       legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
-      placeOfDepositID = "1",
+      placeOfDepositID = "S2",
       note = "",
       background = "",
       custodialHistory = "",
@@ -276,7 +276,7 @@ trait StubData {
       endDateMonth = "12",
       endDateYear = "1973",
       legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
-      placeOfDepositID = "1",
+      placeOfDepositID = "S2",
       note = "",
       background = "",
       custodialHistory = "",
@@ -302,7 +302,7 @@ trait StubData {
       endDateMonth = "12",
       endDateYear = "1975",
       legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
-      placeOfDepositID = "1",
+      placeOfDepositID = "S2",
       note = "",
       background = "",
       custodialHistory = "",
@@ -328,7 +328,7 @@ trait StubData {
       endDateMonth = "12",
       endDateYear = "1977",
       legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
-      placeOfDepositID = "1",
+      placeOfDepositID = "S2",
       note = "Quality of photos is only fair.",
       background = "",
       custodialHistory = "",
@@ -469,12 +469,6 @@ trait StubData {
     ),
     LegalStatus("http://catalogue.nationalarchives.gov.uk/welsh-public-record", "Welsh Public Record"),
     LegalStatus("http://catalogue.nationalarchives.gov.uk/non-record-material", "Non-Record Material")
-  )
-
-  def getPlacesOfDeposit(): Seq[PlaceOfDeposit] = Seq(
-    PlaceOfDeposit("1", "The National Archives, Kew"),
-    PlaceOfDeposit("2", "British Museum, Department of Libraries and Archives"),
-    PlaceOfDeposit("3", "British Library, National Sound Archive")
   )
 
   def getAgentSummaries(): Seq[AgentSummary] = List(
@@ -829,8 +823,22 @@ trait StubData {
       Some("1968")
     ),
     AgentSummary(AgentType.CorporateBody, "G2Y", "Zuckerman Working Party", None, None),
-    AgentSummary(AgentType.CorporateBody, "63F", "British Museum Central Archive", Some("2001"), Some("2001")),
-    AgentSummary(AgentType.CorporateBody, "614", "British Library, Sound Archive", Some("1983"), Some("1983")),
-    AgentSummary(AgentType.CorporateBody, "S2", "The National Archives", Some("2003"), None)
+    AgentSummary(
+      AgentType.CorporateBody,
+      "63F",
+      "British Museum, Department of Libraries and Archives",
+      Some("2001"),
+      Some("2001"),
+      Some(true)
+    ),
+    AgentSummary(
+      AgentType.CorporateBody,
+      "614",
+      "British Library, National Sound Archive",
+      Some("1983"),
+      Some("1983"),
+      Some(true)
+    ),
+    AgentSummary(AgentType.CorporateBody, "S2", "The National Archives, Kew", Some("2003"), None, Some(true))
   )
 }

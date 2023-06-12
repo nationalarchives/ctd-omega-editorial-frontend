@@ -25,7 +25,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.Implicits.RichErrorSummary
 @import uk.gov.nationalarchives.omega.editorial.controllers.EditSetRecordController.FieldNames
 @import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
-@import uk.gov.nationalarchives.omega.editorial.models.{AgentSummary, EditSetRecord, LegalStatus, MaterialReference, PhysicalRecord, PlaceOfDeposit, User}
+@import uk.gov.nationalarchives.omega.editorial.models.{AgentSummary, EditSetRecord, LegalStatus, MaterialReference, PhysicalRecord, User}
 
 @this(govukButton: GovukButton, govukInput: GovukInput, govukTextarea: GovukTextarea, govukFieldset: GovukFieldset, govukErrorSummary: GovukErrorSummary, govukSelect: GovukSelect, govukLabel: GovukLabel)
 @(
@@ -34,7 +34,7 @@
         title: String,
         record: EditSetRecord,
         legalStatusReferenceData: Seq[LegalStatus],
-        placesOfDeposit: Seq[PlaceOfDeposit],
+        placesOfDeposit: Seq[AgentSummary],
         creators: Seq[AgentSummary],
         editSetRecordForm: Form[EditSetRecordFormValues]
 )(implicit messages: Messages, request: Request[AnyContent])
@@ -333,7 +333,7 @@
     name = FieldNames.placeOfDepositID,
     items = {
         val noSelectionAsMap = Map("" -> messages("edit-set.record.error.place-of-deposit-id"))
-        val placesOfDepositAsMap = noSelectionAsMap ++ placesOfDeposit.map(placeOfDeposit => (placeOfDeposit.id, placeOfDeposit.name)).toMap
+        val placesOfDepositAsMap = noSelectionAsMap ++ placesOfDeposit.map(placeOfDeposit => (placeOfDeposit.identifier, placeOfDeposit.label)).toMap
         placesOfDepositAsMap
                 .map { case (id, label) =>
             SelectItem(

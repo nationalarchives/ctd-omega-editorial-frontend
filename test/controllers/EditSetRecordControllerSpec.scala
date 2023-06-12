@@ -38,7 +38,7 @@ import support.BaseControllerSpec
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetRecordController.{ FieldNames, MessageKeys }
 import uk.gov.nationalarchives.omega.editorial.controllers.{ EditSetRecordController, SessionKeys }
 import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues
-import uk.gov.nationalarchives.omega.editorial.models._
+import uk.gov.nationalarchives.omega.editorial.models.{ AgentType, _ }
 import uk.gov.nationalarchives.omega.editorial.services.{ EditSetRecordService, EditSetService, ReferenceDataService }
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
@@ -53,10 +53,24 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
     LegalStatus("ref.4", "Welsh Public Record(s)")
   )
 
-  private val placesOfDeposit: Seq[PlaceOfDeposit] = Seq(
-    PlaceOfDeposit("1", "The National Archives, Kew"),
-    PlaceOfDeposit("2", "British Museum, Department of Libraries and Archives"),
-    PlaceOfDeposit("3", "British Library, National Sound Archive")
+  private val placesOfDeposit: Seq[AgentSummary] = Seq(
+    AgentSummary(AgentType.CorporateBody, "S2", "The National Archives, Kew", Some("2003"), None, Some(true)),
+    AgentSummary(
+      AgentType.CorporateBody,
+      "63F",
+      "British Museum, Department of Libraries and Archives",
+      Some("2001"),
+      Some("2001"),
+      Some(true)
+    ),
+    AgentSummary(
+      AgentType.CorporateBody,
+      "614",
+      "British Library, National Sound Archive",
+      Some("1983"),
+      Some("1983"),
+      Some(true)
+    )
   )
 
   private val creators: Seq[AgentSummary] = getAgentSummaries()
@@ -1739,7 +1753,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
   private def givenPlacesOfDepositsExist()(implicit
     referenceDataService: ReferenceDataService
-  ): ScalaOngoingStubbing[IO[Seq[PlaceOfDeposit]]] =
+  ): ScalaOngoingStubbing[IO[Seq[AgentSummary]]] =
     when(referenceDataService.getPlacesOfDeposit).thenReturn(IO.pure(placesOfDeposit))
 
   /** The actual list has no relevance to these tests.

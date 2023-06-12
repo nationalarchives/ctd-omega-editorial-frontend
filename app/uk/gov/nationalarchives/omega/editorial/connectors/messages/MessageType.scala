@@ -37,8 +37,6 @@ object MessageType {
 
   case object GetLegalStatusesType extends MessageType("OSLISALS001")
 
-  case object GetPlacesOfDepositType extends MessageType("OSGPOD001")
-
   case object GetAgentSummariesType extends MessageType("OSLISAGT001")
 
 }

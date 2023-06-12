@@ -113,9 +113,9 @@ class EditSetRecordISpec extends BaseISpec {
                 background = "Photo was taken by a daughter of one of the coal miners who used them.",
                 optionsForPlaceOfDepositID = Seq(
                   ExpectedSelectOption("", "Select where this record is held", disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew", selected = true),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                  ExpectedSelectOption("S2", "The National Archives, Kew", selected = true),
+                  ExpectedSelectOption("63F", "British Museum, Department of Libraries and Archives"),
+                  ExpectedSelectOption("614", "British Library, National Sound Archive")
                 ),
                 optionsForCreators = Seq(
                   Seq(
@@ -187,9 +187,9 @@ class EditSetRecordISpec extends BaseISpec {
                 .copy(
                   optionsForPlaceOfDepositID = Seq(
                     ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
-                    ExpectedSelectOption("1", "The National Archives, Kew"),
-                    ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
-                    ExpectedSelectOption("3", "British Library, National Sound Archive")
+                    ExpectedSelectOption("S2", "The National Archives, Kew"),
+                    ExpectedSelectOption("63F", "British Museum, Department of Libraries and Archives"),
+                    ExpectedSelectOption("614", "British Library, National Sound Archive")
                   )
                 )
             )
@@ -808,9 +808,9 @@ class EditSetRecordISpec extends BaseISpec {
               generateExpectedEditRecordPageFromRecord(editSetRecordOci).copy(
                 optionsForPlaceOfDepositID = Seq(
                   ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                  ExpectedSelectOption("S2", "The National Archives, Kew"),
+                  ExpectedSelectOption("63F", "British Museum, Department of Libraries and Archives"),
+                  ExpectedSelectOption("614", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages =
                   Seq(ExpectedSummaryErrorMessage("You must choose an option", "place-of-deposit-id")),
@@ -840,9 +840,9 @@ class EditSetRecordISpec extends BaseISpec {
               generateExpectedEditRecordPageFromRecord(editSetRecordOci).copy(
                 optionsForPlaceOfDepositID = Seq(
                   ExpectedSelectOption("", "Select where this record is held", selected = true, disabled = true),
-                  ExpectedSelectOption("1", "The National Archives, Kew"),
-                  ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
-                  ExpectedSelectOption("3", "British Library, National Sound Archive")
+                  ExpectedSelectOption("S2", "The National Archives, Kew"),
+                  ExpectedSelectOption("63F", "British Museum, Department of Libraries and Archives"),
+                  ExpectedSelectOption("614", "British Library, National Sound Archive")
                 ),
                 summaryErrorMessages =
                   Seq(ExpectedSummaryErrorMessage("You must choose an option", "place-of-deposit-id")),
@@ -1517,7 +1517,7 @@ class EditSetRecordISpec extends BaseISpec {
               "note"                        -> "A brief note about COAL.2022.V1RJW.P.",
               "background"        -> "The photo was taken by a daughter of one of the coal miners who used them.",
               "custodial-history" -> "These files originally created by successor or predecessor departments for COAL",
-              "place-of-deposit-id" -> "3",
+              "place-of-deposit-id" -> "614",
               "creator-ids[0]"      -> "46F",
               "creator-ids[1]"      -> "8R6"
             )
@@ -1543,7 +1543,7 @@ class EditSetRecordISpec extends BaseISpec {
                 note = "A brief note about COAL.2022.V1RJW.P.",
                 background = "The photo was taken by a daughter of one of the coal miners who used them.",
                 custodialHistory = "These files originally created by successor or predecessor departments for COAL",
-                placeOfDepositID = "3",
+                placeOfDepositID = "614",
                 creatorIDs = Seq("46F", "8R6")
               )
             )
@@ -1567,7 +1567,7 @@ class EditSetRecordISpec extends BaseISpec {
         "fields are provided and valid without record type suffix" in {
 
           val editSetRecordOci = "COAL.2022.V2RJW"
-          val values = valuesFromRecord(editSetRecordOci) ++ Map("place-of-deposit-id" -> "3")
+          val values = valuesFromRecord(editSetRecordOci) ++ Map("place-of-deposit-id" -> "614")
 
           val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
 
@@ -1579,7 +1579,7 @@ class EditSetRecordISpec extends BaseISpec {
           assertCallMadeToUpdateEditSetRecord(
             updateEditSetRecordForRecord.copy(fields =
               updateEditSetRecordForRecord.fields.copy(
-                placeOfDepositID = "3"
+                placeOfDepositID = "614"
               )
             )
           )
@@ -2913,9 +2913,9 @@ class EditSetRecordISpec extends BaseISpec {
       background = editSetRecord.background,
       optionsForPlaceOfDepositID = Seq(
         ExpectedSelectOption("", "Select where this record is held", disabled = true),
-        ExpectedSelectOption("1", "The National Archives, Kew"),
-        ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
-        ExpectedSelectOption("3", "British Library, National Sound Archive")
+        ExpectedSelectOption("S2", "The National Archives, Kew", selected = true),
+        ExpectedSelectOption("63F", "British Museum, Department of Libraries and Archives"),
+        ExpectedSelectOption("614", "British Library, National Sound Archive")
       ).map(expectedSelectedOption =>
         expectedSelectedOption.copy(selected = expectedSelectedOption.value == editSetRecord.placeOfDepositID)
       ),

@@ -401,21 +401,21 @@ class EditSetRecordController @Inject() (
       case None                      => Left(MissingAction)
     }
 
-  private def validateForm(record: EditSetRecord, placesOfDeposit: Seq[PlaceOfDeposit])(implicit
+  private def validateForm(record: EditSetRecord, placesOfDeposit: Seq[AgentSummary])(implicit
     request: Request[AnyContent]
   ): Outcome[EditSetRecordFormValues] =
     formToEither(bindFormFromRequestForSubmission(placesOfDeposit)).left.map { badForm =>
       FormValidationFailed(badForm, record)
     }
 
-  private def bindFormFromRequestForSubmission(placesOfDeposit: Seq[PlaceOfDeposit])(implicit
+  private def bindFormFromRequestForSubmission(placesOfDeposit: Seq[AgentSummary])(implicit
     request: Request[AnyContent]
   ): Form[EditSetRecordFormValues] =
     validate(EditSetRecordFormValuesFormProvider().bindFromRequest(), placesOfDeposit)
 
   private def validate(
     form: Form[EditSetRecordFormValues],
-    placesOfDeposit: Seq[PlaceOfDeposit]
+    placesOfDeposit: Seq[AgentSummary]
   ): Form[EditSetRecordFormValues] =
     Seq[FormSupport.EditSetRecordFormValuesTransformer](
       validateStartAndEndDates,
@@ -425,7 +425,7 @@ class EditSetRecordController @Inject() (
 
   private def prepareForDisplay(
     originalEditSetRecord: EditSetRecord,
-    placesOfDeposit: Seq[PlaceOfDeposit],
+    placesOfDeposit: Seq[AgentSummary],
     creators: Seq[AgentSummary]
   ): EditSetRecord =
     Seq[EditSetRecord.Transformer](
@@ -456,7 +456,7 @@ class EditSetRecordController @Inject() (
     user: User,
     editSet: EditSet,
     editSetRecord: EditSetRecord,
-    placesOfDeposit: Seq[PlaceOfDeposit],
+    placesOfDeposit: Seq[AgentSummary],
     creators: Seq[AgentSummary],
     legalStatuses: Seq[LegalStatus],
     form: Form[EditSetRecordFormValues]
@@ -492,7 +492,7 @@ class EditSetRecordController @Inject() (
   }
 
   private def validatePlaceOfDeposit(
-    placesOfDeposit: Seq[PlaceOfDeposit]
+    placesOfDeposit: Seq[AgentSummary]
   )(form: Form[EditSetRecordFormValues]): Form[EditSetRecordFormValues] = {
     val formWhenValueAbsentOrUnrecognised =
       form.copy(
@@ -529,11 +529,11 @@ class EditSetRecordController @Inject() (
       date  <- DateParser.parse(List(day, month, year).mkString("/"))
     } yield date
 
-  private def isPlaceOfDepositIdRecognised(placeOfDepositId: String, placesOfDeposit: Seq[PlaceOfDeposit]): Boolean =
-    placesOfDeposit.map(_.id).contains(placeOfDepositId)
+  private def isPlaceOfDepositIdRecognised(placeOfDepositId: String, placesOfDeposit: Seq[AgentSummary]): Boolean =
+    placesOfDeposit.map(_.identifier).contains(placeOfDepositId)
 
   private def preparePlaceOfDeposit(
-    placesOfDeposit: Seq[PlaceOfDeposit]
+    placesOfDeposit: Seq[AgentSummary]
   )(editSetRecord: EditSetRecord): EditSetRecord = {
     val correctedValue =
       if (isPlaceOfDepositIdRecognised(editSetRecord.placeOfDepositID, placesOfDeposit))

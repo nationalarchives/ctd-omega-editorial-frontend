@@ -57,8 +57,6 @@ class ResponseBuilder @Inject() (stubData: StubData) {
         handleUpdateEditSetRecord(jmsMessage)
       case Some(messageType) if MessageType.GetLegalStatusesType.matches(messageType) =>
         handleGetLegalStatuses(jmsMessage)
-      case Some(messageType) if MessageType.GetPlacesOfDepositType.matches(messageType) =>
-        handleGetPlacesOfDeposit(jmsMessage)
       case Some(messageType) if MessageType.GetAgentSummariesType.matches(messageType) =>
         handleGetAgentSummaries(jmsMessage)
       case Some(unknown) =>
@@ -91,17 +89,15 @@ class ResponseBuilder @Inject() (stubData: StubData) {
         .getOrElse(onUnknownEditSetRecord(updateEditSetRecordRequest.editSetOci, updateEditSetRecordRequest.recordOci))
     )
 
-  private def handleGetPlacesOfDeposit(jmsMessage: JmsMessage): IO[String] =
-    parse[GetPlacesOfDeposit](jmsMessage)
-      .flatMap(_ => asJsonString(stubData.getPlacesOfDeposit()))
-
   private def handleGetLegalStatuses(jmsMessage: JmsMessage): IO[String] =
     parse[GetLegalStatuses](jmsMessage)
       .flatMap(_ => asJsonString(stubData.getLegalStatuses()))
 
   private def handleGetAgentSummaries(jmsMessage: JmsMessage): IO[String] =
     parse[GetAgentSummaryList](jmsMessage)
-      .flatMap(_ => asJsonString(stubData.getAgentSummaries()))
+      .flatMap(agentSummaryReq =>
+        asJsonString(stubData.getAgentSummaries().filter(_.depository == agentSummaryReq.depository))
+      )
 
   private def asJsonString[T : Writes](entity: T): IO[String] = me.pure(Json.toJson(entity).toString)
 
@@ -137,10 +133,11 @@ class ResponseBuilder @Inject() (stubData: StubData) {
     jmsMessage.asTextF[IO].adaptError(err => NotATextMessage(err))
 
   private def parse[A : Reads](messageText: String): IO[A] =
-    me.fromOption(
-      Json.parse(messageText).validate[A].asOpt,
-      ifEmpty = CannotParse(messageText)
-    )
+    me
+      .fromOption(
+        Json.parse(messageText).validate[A].asOpt,
+        ifEmpty = CannotParse(messageText)
+      )
 
 }
 

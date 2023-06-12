@@ -29,7 +29,8 @@ case class AgentSummary(
   identifier: String,
   label: String,
   dateFrom: Option[String],
-  dateTo: Option[String]
+  dateTo: Option[String],
+  depository: Option[Boolean] = None
 ) {
 
   val displayedName: String = {
@@ -52,7 +53,8 @@ object AgentSummary {
       (__ \ "identifier").format[String] and
       (__ \ "label").format[String] and
       (__ \ "date-from").formatNullable[String] and
-      (__ \ "date-to").formatNullable[String]
+      (__ \ "date-to").formatNullable[String] and
+      (__ \ "depository").formatNullable[Boolean]
   )(AgentSummary.apply, unlift(AgentSummary.unapply))
 
 }
