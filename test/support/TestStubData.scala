@@ -33,10 +33,17 @@ class TestStubData @Inject() extends StubData {
     AgentSummary(AgentType.Person, "46F", "Fawkes, Guy", Some("1570"), Some("1606")),
     AgentSummary(AgentType.CorporateBody, "92W", "Joint Milk Quality Committee", Some("1948"), Some("1948")),
     AgentSummary(AgentType.CorporateBody, "8R6", "Queen Anne's Bounty", None, None),
-    AgentSummary(AgentType.CorporateBody, "S2", "The National Archives, Kew", Some("2003"), None, Some(true)),
     AgentSummary(
       AgentType.CorporateBody,
-      "63F",
+      tna,
+      "The National Archives, Kew",
+      Some("2003"),
+      None,
+      Some(true)
+    ),
+    AgentSummary(
+      AgentType.CorporateBody,
+      britishMuseum,
       "British Museum, Department of Libraries and Archives",
       Some("2001"),
       Some("2001"),
@@ -44,7 +51,7 @@ class TestStubData @Inject() extends StubData {
     ),
     AgentSummary(
       AgentType.CorporateBody,
-      "614",
+      britishLibrary,
       "British Library, National Sound Archive",
       Some("1983"),
       Some("1983"),

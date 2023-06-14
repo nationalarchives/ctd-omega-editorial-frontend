@@ -33,6 +33,12 @@ class StubDataImpl @Inject() extends StubData
 @ImplementedBy(classOf[StubDataImpl])
 trait StubData {
 
+  val baseUri: String = "http://catalogue.nationalarchives.gov.uk"
+
+  val tna: String = s"""$baseUri/agent.S2"""
+  val britishMuseum: String = s"""$baseUri/agent.63F"""
+  val britishLibrary: String = s"""$baseUri/agent.614"""
+
   private val editSetRecordOne: EditSetRecord =
     EditSetRecord(
       ccr = "COAL 80/80/1",
@@ -48,7 +54,7 @@ trait StubData {
       endDateMonth = "12",
       endDateYear = "1962",
       legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
-      placeOfDepositID = "S2",
+      placeOfDepositID = tna,
       note = "A note about COAL.2022.V1RJW.P.",
       background = "Photo was taken by a daughter of one of the coal miners who used them.",
       custodialHistory = "Files originally created by successor or predecessor departments for COAL",
@@ -132,7 +138,7 @@ trait StubData {
       endDateMonth = "12",
       endDateYear = "1961",
       legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
-      placeOfDepositID = "S2",
+      placeOfDepositID = tna,
       note = "",
       background = "",
       custodialHistory = "",
@@ -156,7 +162,7 @@ trait StubData {
       endDateMonth = "12",
       endDateYear = "1963",
       legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
-      placeOfDepositID = "S2",
+      placeOfDepositID = tna,
       note = "Need to check copyright info.",
       background = "",
       custodialHistory = "",
@@ -180,7 +186,7 @@ trait StubData {
       endDateMonth = "12",
       endDateYear = "1965",
       legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
-      placeOfDepositID = "S2",
+      placeOfDepositID = tna,
       note = "",
       background = "",
       custodialHistory = "",
@@ -204,7 +210,7 @@ trait StubData {
       endDateMonth = "12",
       endDateYear = "1967",
       legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
-      placeOfDepositID = "S2",
+      placeOfDepositID = tna,
       note = "",
       background = "",
       custodialHistory = "",
@@ -228,7 +234,7 @@ trait StubData {
       endDateMonth = "12",
       endDateYear = "1969",
       legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
-      placeOfDepositID = "S2",
+      placeOfDepositID = tna,
       note = "",
       background = "",
       custodialHistory = "",
@@ -252,7 +258,7 @@ trait StubData {
       endDateMonth = "12",
       endDateYear = "1971",
       legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
-      placeOfDepositID = "S2",
+      placeOfDepositID = tna,
       note = "",
       background = "",
       custodialHistory = "",
@@ -276,7 +282,7 @@ trait StubData {
       endDateMonth = "12",
       endDateYear = "1973",
       legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
-      placeOfDepositID = "S2",
+      placeOfDepositID = tna,
       note = "",
       background = "",
       custodialHistory = "",
@@ -302,7 +308,7 @@ trait StubData {
       endDateMonth = "12",
       endDateYear = "1975",
       legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
-      placeOfDepositID = "S2",
+      placeOfDepositID = tna,
       note = "",
       background = "",
       custodialHistory = "",
@@ -328,7 +334,7 @@ trait StubData {
       endDateMonth = "12",
       endDateYear = "1977",
       legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
-      placeOfDepositID = "S2",
+      placeOfDepositID = tna,
       note = "Quality of photos is only fair.",
       background = "",
       custodialHistory = "",
@@ -825,7 +831,7 @@ trait StubData {
     AgentSummary(AgentType.CorporateBody, "G2Y", "Zuckerman Working Party", None, None),
     AgentSummary(
       AgentType.CorporateBody,
-      "63F",
+      britishMuseum,
       "British Museum, Department of Libraries and Archives",
       Some("2001"),
       Some("2001"),
@@ -833,12 +839,19 @@ trait StubData {
     ),
     AgentSummary(
       AgentType.CorporateBody,
-      "614",
+      britishLibrary,
       "British Library, National Sound Archive",
       Some("1983"),
       Some("1983"),
       Some(true)
     ),
-    AgentSummary(AgentType.CorporateBody, "S2", "The National Archives, Kew", Some("2003"), None, Some(true))
+    AgentSummary(
+      AgentType.CorporateBody,
+      tna,
+      "The National Archives, Kew",
+      Some("2003"),
+      None,
+      Some(true)
+    )
   )
 }

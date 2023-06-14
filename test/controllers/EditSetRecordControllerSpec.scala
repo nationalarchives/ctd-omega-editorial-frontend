@@ -54,10 +54,17 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
   )
 
   private val placesOfDeposit: Seq[AgentSummary] = Seq(
-    AgentSummary(AgentType.CorporateBody, "S2", "The National Archives, Kew", Some("2003"), None, Some(true)),
     AgentSummary(
       AgentType.CorporateBody,
-      "63F",
+      tna,
+      "The National Archives, Kew",
+      Some("2003"),
+      None,
+      Some(true)
+    ),
+    AgentSummary(
+      AgentType.CorporateBody,
+      britishMuseum,
       "British Museum, Department of Libraries and Archives",
       Some("2001"),
       Some("2001"),
@@ -65,7 +72,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
     ),
     AgentSummary(
       AgentType.CorporateBody,
-      "614",
+      britishLibrary,
       "British Library, National Sound Archive",
       Some("1983"),
       Some("1983"),
