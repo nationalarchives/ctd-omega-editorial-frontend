@@ -80,7 +80,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
     )
   )
 
-  private val creators: Seq[AgentSummary] = getAgentSummaries()
+  private val creators: Seq[AgentSummary] = getAgentSummaries
 
   /** As these mocks are within a fixture, they will all be managed; for instance, a check will be made against missed
     * or unnecessary stubbing. This will give a clearer picture of the usage of dependencies.
@@ -816,8 +816,8 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
           val editSetId = "1"
           val editSetRecordId = "COAL.2022.V1RJW.P"
           val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
-            s"${FieldNames.creatorIDs}[0]" -> "48N",
-            s"${FieldNames.creatorIDs}[1]" -> "46F"
+            s"${FieldNames.creatorIDs}[0]" -> s"$baseUriAgent.48N",
+            s"${FieldNames.creatorIDs}[1]" -> s"$baseUriAgent.46F"
           )
           val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
           givenEditSetExists(editSetId, returnedEditSet)
@@ -828,7 +828,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             editSetId,
             editSetRecordId,
             editSetRecordFormValuesFromRecord(editSetRecordId)
-              .copy(creatorIDs = Seq("48N", "46F"))
+              .copy(creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.46F"))
           )
 
           val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
@@ -841,8 +841,8 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
           val editSetId = "1"
           val editSetRecordId = "COAL.2022.V1RJW.P"
           val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
-            s"${FieldNames.creatorIDs}[0]" -> "48N",
-            s"${FieldNames.creatorIDs}[1]" -> "46F",
+            s"${FieldNames.creatorIDs}[0]" -> s"$baseUriAgent.48N",
+            s"${FieldNames.creatorIDs}[1]" -> s"$baseUriAgent.46F",
             s"${FieldNames.creatorIDs}[2]" -> ""
           )
           val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
@@ -854,7 +854,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             editSetId,
             editSetRecordId,
             editSetRecordFormValuesFromRecord(editSetRecordId)
-              .copy(creatorIDs = Seq("48N", "46F", ""))
+              .copy(creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.46F", ""))
           )
 
           val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
@@ -867,9 +867,9 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
           val editSetId = "1"
           val editSetRecordId = "COAL.2022.V1RJW.P"
           val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
-            s"${FieldNames.creatorIDs}[0]" -> "48N",
-            s"${FieldNames.creatorIDs}[1]" -> "46F",
-            s"${FieldNames.creatorIDs}[2]" -> "46F"
+            s"${FieldNames.creatorIDs}[0]" -> s"$baseUriAgent.48N",
+            s"${FieldNames.creatorIDs}[1]" -> s"$baseUriAgent.46F",
+            s"${FieldNames.creatorIDs}[2]" -> s"$baseUriAgent.46F"
           )
           val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
           givenEditSetExists(editSetId, returnedEditSet)
@@ -880,7 +880,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             editSetId,
             editSetRecordId,
             editSetRecordFormValuesFromRecord(editSetRecordId)
-              .copy(creatorIDs = Seq("48N", "46F", "46F"))
+              .copy(creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.46F", s"$baseUriAgent.46F"))
           )
 
           val result: Future[Result] = submitToSaveWhileLoggedIn(editSetId, editSetRecordId, values)
@@ -1257,9 +1257,9 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             val editSetId = "1"
             val editSetRecordId = "COAL.2022.V11RJW.P"
             val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
-            editSetRecord.creatorIDs mustBe Seq("8R6")
+            editSetRecord.creatorIDs mustBe Seq(s"$baseUriAgent.8R6")
             val values: Map[String, String] =
-              valuesFromRecord(editSetRecordId) ++ Map(s"${FieldNames.creatorIDs}[0]" -> "8R6")
+              valuesFromRecord(editSetRecordId) ++ Map(s"${FieldNames.creatorIDs}[0]" -> s"$baseUriAgent.8R6")
             val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
@@ -1273,7 +1273,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
             status(result) mustBe OK
             assertEditViewForm(
-              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("8R6")),
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq(s"$baseUriAgent.8R6")),
               returnedEditSetRecord,
               Seq.empty
             )
@@ -1284,9 +1284,9 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             val editSetId = "1"
             val editSetRecordId = "COAL.2022.V11RJW.P"
             val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
-            editSetRecord.creatorIDs mustBe Seq("8R6")
+            editSetRecord.creatorIDs mustBe Seq(s"$baseUriAgent.8R6")
             val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
-              s"${FieldNames.creatorIDs}[0]" -> "8R6",
+              s"${FieldNames.creatorIDs}[0]" -> s"$baseUriAgent.8R6",
               s"${FieldNames.creatorIDs}[1]" -> ""
             )
             val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
@@ -1302,7 +1302,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
             status(result) mustBe OK
             assertEditViewForm(
-              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("8R6")),
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq(s"$baseUriAgent.8R6")),
               returnedEditSetRecord,
               Seq.empty
             )
@@ -1313,7 +1313,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             val editSetId = "1"
             val editSetRecordId = "COAL.2022.V11RJW.P"
             val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
-            editSetRecord.creatorIDs mustBe Seq("8R6")
+            editSetRecord.creatorIDs mustBe Seq(s"$baseUriAgent.8R6")
             val values: Map[String, String] =
               valuesFromRecord(editSetRecordId) ++ Map(s"${FieldNames.creatorIDs}[0]" -> "")
             val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
@@ -1329,7 +1329,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
             status(result) mustBe OK
             assertEditViewForm(
-              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("8R6")),
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq(s"$baseUriAgent.8R6")),
               returnedEditSetRecord,
               Seq.empty
             )
@@ -1340,9 +1340,9 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             val editSetId = "1"
             val editSetRecordId = "COAL.2022.V11RJW.P"
             val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
-            editSetRecord.creatorIDs mustBe Seq("8R6")
+            editSetRecord.creatorIDs mustBe Seq(s"$baseUriAgent.8R6")
             val values: Map[String, String] =
-              valuesFromRecord(editSetRecordId) ++ Map(s"${FieldNames.creatorIDs}[0]" -> "92W")
+              valuesFromRecord(editSetRecordId) ++ Map(s"${FieldNames.creatorIDs}[0]" -> s"$baseUriAgent.92W")
             val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
             givenEditSetExists(editSetId, returnedEditSet)
             val returnedEditSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
@@ -1356,7 +1356,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
             status(result) mustBe OK
             assertEditViewForm(
-              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("8R6")),
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq(s"$baseUriAgent.8R6")),
               returnedEditSetRecord,
               Seq.empty
             )
@@ -1369,10 +1369,10 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             val editSetId = "1"
             val editSetRecordId = "COAL.2022.V7RJW.P"
             val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
-            editSetRecord.creatorIDs mustBe Seq("48N", "92W")
+            editSetRecord.creatorIDs mustBe Seq(s"$baseUriAgent.48N", s"$baseUriAgent.92W")
             val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
-              s"${FieldNames.creatorIDs}[0]" -> "48N",
-              s"${FieldNames.creatorIDs}[1]" -> "92W"
+              s"${FieldNames.creatorIDs}[0]" -> s"$baseUriAgent.48N",
+              s"${FieldNames.creatorIDs}[1]" -> s"$baseUriAgent.92W"
             )
             val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
             givenEditSetExists(editSetId, returnedEditSet)
@@ -1387,7 +1387,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
             status(result) mustBe OK
             assertEditViewForm(
-              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("48N", "92W")),
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.92W")),
               returnedEditSetRecord,
               Seq.empty
             )
@@ -1398,11 +1398,11 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             val editSetId = "1"
             val editSetRecordId = "COAL.2022.V5RJW.P"
             val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
-            editSetRecord.creatorIDs mustBe Seq("46F", "48N", "46F")
+            editSetRecord.creatorIDs mustBe Seq(s"$baseUriAgent.46F", s"$baseUriAgent.48N", s"$baseUriAgent.46F")
             val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
-              s"${FieldNames.creatorIDs}[0]" -> "46F",
-              s"${FieldNames.creatorIDs}[1]" -> "48N",
-              s"${FieldNames.creatorIDs}[2]" -> "46F"
+              s"${FieldNames.creatorIDs}[0]" -> s"$baseUriAgent.46F",
+              s"${FieldNames.creatorIDs}[1]" -> s"$baseUriAgent.48N",
+              s"${FieldNames.creatorIDs}[2]" -> s"$baseUriAgent.46F"
             )
             val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
             givenEditSetExists(editSetId, returnedEditSet)
@@ -1417,7 +1417,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
             status(result) mustBe OK
             assertEditViewForm(
-              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("46F", "48N", "46F")),
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq(s"$baseUriAgent.46F", s"$baseUriAgent.48N", s"$baseUriAgent.46F")),
               returnedEditSetRecord,
               Seq.empty
             )
@@ -1428,11 +1428,11 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             val editSetId = "1"
             val editSetRecordId = "COAL.2022.V5RJW.P"
             val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
-            editSetRecord.creatorIDs mustBe Seq("46F", "48N", "46F")
+            editSetRecord.creatorIDs mustBe Seq(s"$baseUriAgent.46F", s"$baseUriAgent.48N", s"$baseUriAgent.46F")
             val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
-              s"${FieldNames.creatorIDs}[0]" -> "8R6",
-              s"${FieldNames.creatorIDs}[1]" -> "92W",
-              s"${FieldNames.creatorIDs}[2]" -> "48N"
+              s"${FieldNames.creatorIDs}[0]" -> s"$baseUriAgent.8R6",
+              s"${FieldNames.creatorIDs}[1]" -> s"$baseUriAgent.92W",
+              s"${FieldNames.creatorIDs}[2]" -> s"$baseUriAgent.48N"
             )
             val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
             givenEditSetExists(editSetId, returnedEditSet)
@@ -1447,7 +1447,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
             status(result) mustBe OK
             assertEditViewForm(
-              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("46F", "48N", "46F")),
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq(s"$baseUriAgent.46F", s"$baseUriAgent.48N", s"$baseUriAgent.46F")),
               returnedEditSetRecord,
               Seq.empty
             )
@@ -1467,10 +1467,10 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             val editSetId = "1"
             val editSetRecordId = "COAL.2022.V1RJW.P"
             val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
-            editSetRecord.creatorIDs mustBe Seq("48N", "92W")
+            editSetRecord.creatorIDs mustBe Seq(s"$baseUriAgent.48N", s"$baseUriAgent.92W")
             val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
-              s"${FieldNames.creatorIDs}[0]" -> "48N",
-              s"${FieldNames.creatorIDs}[1]" -> "8R6"
+              s"${FieldNames.creatorIDs}[0]" -> s"$baseUriAgent.48N",
+              s"${FieldNames.creatorIDs}[1]" -> s"$baseUriAgent.8R6"
             )
             val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
             givenEditSetExists(editSetId, returnedEditSet)
@@ -1485,7 +1485,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
             status(result) mustBe OK
             assertEditViewForm(
-              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("48N", "92W")),
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.92W")),
               returnedEditSetRecord,
               Seq.empty
             )
@@ -1496,10 +1496,10 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             val editSetId = "1"
             val editSetRecordId = "COAL.2022.V1RJW.P"
             val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
-            editSetRecord.creatorIDs mustBe Seq("48N", "92W")
+            editSetRecord.creatorIDs mustBe Seq(s"$baseUriAgent.48N", s"$baseUriAgent.92W")
             val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
-              s"${FieldNames.creatorIDs}[0]" -> "46F",
-              s"${FieldNames.creatorIDs}[1]" -> "92W"
+              s"${FieldNames.creatorIDs}[0]" -> s"$baseUriAgent.46F",
+              s"${FieldNames.creatorIDs}[1]" -> s"$baseUriAgent.92W"
             )
             val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
             givenEditSetExists(editSetId, returnedEditSet)
@@ -1514,7 +1514,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
             status(result) mustBe OK
             assertEditViewForm(
-              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("48N", "92W")),
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.92W")),
               returnedEditSetRecord,
               Seq.empty
             )
@@ -1525,10 +1525,10 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             val editSetId = "1"
             val editSetRecordId = "COAL.2022.V1RJW.P"
             val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
-            editSetRecord.creatorIDs mustBe Seq("48N", "92W")
+            editSetRecord.creatorIDs mustBe Seq(s"$baseUriAgent.48N", s"$baseUriAgent.92W")
             val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
               s"${FieldNames.creatorIDs}[0]" -> "",
-              s"${FieldNames.creatorIDs}[1]" -> "92W"
+              s"${FieldNames.creatorIDs}[1]" -> s"$baseUriAgent.92W"
             )
             val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
             givenEditSetExists(editSetId, returnedEditSet)
@@ -1543,7 +1543,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
             status(result) mustBe OK
             assertEditViewForm(
-              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("", "92W")),
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("", s"$baseUriAgent.92W")),
               returnedEditSetRecord,
               Seq.empty
             )
@@ -1557,11 +1557,11 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             val editSetId = "1"
             val editSetRecordId = "COAL.2022.V8RJW.P"
             val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
-            editSetRecord.creatorIDs mustBe Seq("48N", "46F", "8R6")
+            editSetRecord.creatorIDs mustBe Seq(s"$baseUriAgent.48N", s"$baseUriAgent.46F", s"$baseUriAgent.8R6")
             val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
-              s"${FieldNames.creatorIDs}[0]" -> "48N",
-              s"${FieldNames.creatorIDs}[1]" -> "46F",
-              s"${FieldNames.creatorIDs}[2]" -> "92W"
+              s"${FieldNames.creatorIDs}[0]" -> s"$baseUriAgent.48N",
+              s"${FieldNames.creatorIDs}[1]" -> s"$baseUriAgent.46F",
+              s"${FieldNames.creatorIDs}[2]" -> s"$baseUriAgent.92W"
             )
             val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
             givenEditSetExists(editSetId, returnedEditSet)
@@ -1576,7 +1576,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
             status(result) mustBe OK
             assertEditViewForm(
-              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("48N", "46F", "92W")),
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.46F", s"$baseUriAgent.92W")),
               returnedEditSetRecord,
               Seq.empty
             )
@@ -1587,11 +1587,11 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
             val editSetId = "1"
             val editSetRecordId = "COAL.2022.V8RJW.P"
             val editSetRecord: EditSetRecord = getExpectedEditSetRecord(editSetRecordId)
-            editSetRecord.creatorIDs mustBe Seq("48N", "46F", "8R6")
+            editSetRecord.creatorIDs mustBe Seq(s"$baseUriAgent.48N", s"$baseUriAgent.46F", s"$baseUriAgent.8R6")
             val values: Map[String, String] = valuesFromRecord(editSetRecordId) ++ Map(
-              s"${FieldNames.creatorIDs}[0]" -> "92W",
-              s"${FieldNames.creatorIDs}[1]" -> "48N",
-              s"${FieldNames.creatorIDs}[2]" -> "8R6"
+              s"${FieldNames.creatorIDs}[0]" -> s"$baseUriAgent.92W",
+              s"${FieldNames.creatorIDs}[1]" -> s"$baseUriAgent.48N",
+              s"${FieldNames.creatorIDs}[2]" -> s"$baseUriAgent.8R6"
             )
             val returnedEditSet: EditSet = getExpectedEditSet(editSetId)
             givenEditSetExists(editSetId, returnedEditSet)
@@ -1606,7 +1606,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
             status(result) mustBe OK
             assertEditViewForm(
-              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq("92W", "48N", "8R6")),
+              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq(s"$baseUriAgent.92W", s"$baseUriAgent.48N", s"$baseUriAgent.8R6")),
               returnedEditSetRecord,
               Seq.empty
             )

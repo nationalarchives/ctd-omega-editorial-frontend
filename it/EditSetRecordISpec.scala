@@ -120,17 +120,17 @@ class EditSetRecordISpec extends BaseISpec {
                 optionsForCreators = Seq(
                   Seq(
                     ExpectedSelectOption("", "Select creator", disabled = true),
-                    ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)", selected = true),
-                    ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                    ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                    ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)", selected = true),
+                    ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                    ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                    ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                   ),
                   Seq(
                     ExpectedSelectOption("", "Select creator", disabled = true),
-                    ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                    ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                    ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                    ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                    ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                    ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
+                    ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                   )
                 ),
                 separatedMaterial = Seq(
@@ -202,7 +202,7 @@ class EditSetRecordISpec extends BaseISpec {
           "the single creator ID is unrecognised" in {
 
             val editSetRecordOci = "COAL.2022.V10RJW.P"
-            getExpectedEditSetRecord(editSetRecordOci).creatorIDs mustBe Seq("XXX")
+            getExpectedEditSetRecord(editSetRecordOci).creatorIDs mustBe Seq(s"$baseUriAgent.XXX")
 
             val response = getEditSetRecordEditPageWhileLoggedIn(idOfExistingEditSet, editSetRecordOci)
             assertPageAsExpected(
@@ -213,10 +213,10 @@ class EditSetRecordISpec extends BaseISpec {
                   optionsForCreators = Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -242,10 +242,10 @@ class EditSetRecordISpec extends BaseISpec {
                   optionsForCreators = Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -1128,17 +1128,17 @@ class EditSetRecordISpec extends BaseISpec {
                 optionsForCreators = Seq(
                   Seq(
                     ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                    ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                    ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                    ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                    ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                    ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                    ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                    ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                   ),
                   Seq(
                     ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                    ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                    ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                    ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                    ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                    ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                    ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                    ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                    ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                   )
                 ),
                 summaryErrorMessages = Seq(
@@ -1162,8 +1162,8 @@ class EditSetRecordISpec extends BaseISpec {
           val values =
             valuesFromRecord(editSetRecordOci) ++
               Map(
-                "creator-ids[0]" -> "48N",
-                "creator-ids[1]" -> "46F"
+                "creator-ids[0]" -> s"$baseUriAgent.48N",
+                "creator-ids[1]" -> s"$baseUriAgent.46F"
               )
 
           val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
@@ -1176,7 +1176,7 @@ class EditSetRecordISpec extends BaseISpec {
           assertCallMadeToUpdateEditSetRecord(
             updateEditSetRecordForRecord.copy(fields =
               updateEditSetRecordForRecord.fields.copy(
-                creatorIDs = Seq("48N", "46F")
+                creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.46F")
               )
             )
           )
@@ -1188,8 +1188,8 @@ class EditSetRecordISpec extends BaseISpec {
           val values =
             valuesFromRecord(editSetRecordOci) ++
               Map(
-                "creator-ids[0]" -> "48N",
-                "creator-ids[1]" -> "46F",
+                "creator-ids[0]" -> s"$baseUriAgent.48N",
+                "creator-ids[1]" -> s"$baseUriAgent.46F",
                 "creator-ids[2]" -> ""
               )
 
@@ -1203,7 +1203,7 @@ class EditSetRecordISpec extends BaseISpec {
           assertCallMadeToUpdateEditSetRecord(
             updateEditSetRecordForRecord.copy(fields =
               updateEditSetRecordForRecord.fields.copy(
-                creatorIDs = Seq("48N", "46F")
+                creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.46F")
               )
             )
           )
@@ -1215,9 +1215,9 @@ class EditSetRecordISpec extends BaseISpec {
           val values =
             valuesFromRecord(editSetRecordOci) ++
               Map(
-                "creator-ids[0]" -> "48N",
-                "creator-ids[1]" -> "46F",
-                "creator-ids[2]" -> "46F"
+                "creator-ids[0]" -> s"$baseUriAgent.48N",
+                "creator-ids[1]" -> s"$baseUriAgent.46F",
+                "creator-ids[2]" -> s"$baseUriAgent.46F"
               )
 
           val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
@@ -1230,7 +1230,7 @@ class EditSetRecordISpec extends BaseISpec {
           assertCallMadeToUpdateEditSetRecord(
             updateEditSetRecordForRecord.copy(fields =
               updateEditSetRecordForRecord.fields.copy(
-                creatorIDs = Seq("48N", "46F", "46F")
+                creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.46F", s"$baseUriAgent.46F")
               )
             )
           )
@@ -1518,8 +1518,8 @@ class EditSetRecordISpec extends BaseISpec {
               "background"        -> "The photo was taken by a daughter of one of the coal miners who used them.",
               "custodial-history" -> "These files originally created by successor or predecessor departments for COAL",
               "place-of-deposit-id" -> britishLibrary,
-              "creator-ids[0]"      -> "46F",
-              "creator-ids[1]"      -> "8R6"
+              "creator-ids[0]"      -> s"$baseUriAgent.46F",
+              "creator-ids[1]"      -> s"$baseUriAgent.8R6"
             )
 
           val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
@@ -1544,7 +1544,7 @@ class EditSetRecordISpec extends BaseISpec {
                 background = "The photo was taken by a daughter of one of the coal miners who used them.",
                 custodialHistory = "These files originally created by successor or predecessor departments for COAL",
                 placeOfDepositID = britishLibrary,
-                creatorIDs = Seq("46F", "8R6")
+                creatorIDs = Seq(s"$baseUriAgent.46F", s"$baseUriAgent.8R6")
               )
             )
           )
@@ -1703,10 +1703,10 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty", selected = true)
                     )
                   )
                 )
@@ -1715,7 +1715,7 @@ class EditSetRecordISpec extends BaseISpec {
             val values =
               valuesFromRecord(editSetRecordOci) ++
                 Map(
-                  "creator-ids[0]" -> "8R6"
+                  "creator-ids[0]" -> s"$baseUriAgent.8R6"
                 )
 
             val response = submitAddingAnotherCreatorSlot(idOfExistingEditSet, editSetRecordOci, values)
@@ -1728,17 +1728,17 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty", selected = true)
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -1760,10 +1760,10 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty", selected = true)
                     )
                   )
                 )
@@ -1771,7 +1771,7 @@ class EditSetRecordISpec extends BaseISpec {
 
             val values =
               valuesFromRecord(editSetRecordOci) ++ Map(
-                "creator-ids[0]" -> "8R6",
+                "creator-ids[0]" -> s"$baseUriAgent.8R6",
                 "creator-ids[1]" -> ""
               )
 
@@ -1785,17 +1785,17 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty", selected = true)
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -1817,10 +1817,10 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty", selected = true)
                     )
                   )
                 )
@@ -1841,10 +1841,10 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -1866,10 +1866,10 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty", selected = true)
                     )
                   )
                 )
@@ -1877,7 +1877,7 @@ class EditSetRecordISpec extends BaseISpec {
 
             val values =
               valuesFromRecord(editSetRecordOci) ++ Map(
-                "creator-ids[0]" -> "92W"
+                "creator-ids[0]" -> s"$baseUriAgent.92W"
               )
 
             val submissionResponse = submitAddingAnotherCreatorSlot(idOfExistingEditSet, editSetRecordOci, values)
@@ -1890,17 +1890,17 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -1925,20 +1925,20 @@ class EditSetRecordISpec extends BaseISpec {
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        "48N",
+                        s"$baseUriAgent.48N",
                         "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
                         selected = true
                       ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -1947,8 +1947,8 @@ class EditSetRecordISpec extends BaseISpec {
             val values =
               valuesFromRecord(editSetRecordOci) ++
                 Map(
-                  "creator-ids[0]" -> "48N",
-                  "creator-ids[1]" -> "92W"
+                  "creator-ids[0]" -> s"$baseUriAgent.48N",
+                  "creator-ids[1]" -> s"$baseUriAgent.92W"
                 )
 
             val submissionResponse = submitAddingAnotherCreatorSlot(idOfExistingEditSet, editSetRecordOci, values)
@@ -1962,27 +1962,27 @@ class EditSetRecordISpec extends BaseISpec {
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        "48N",
+                        s"$baseUriAgent.48N",
                         "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
                         selected = true
                       ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -2004,28 +2004,28 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        "48N",
+                        s"$baseUriAgent.48N",
                         "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
                         selected = true
                       ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -2034,9 +2034,9 @@ class EditSetRecordISpec extends BaseISpec {
             val values =
               valuesFromRecord(editSetRecordOci) ++
                 Map(
-                  "creator-ids[0]" -> "46F",
-                  "creator-ids[1]" -> "48N",
-                  "creator-ids[2]" -> "46F"
+                  "creator-ids[0]" -> s"$baseUriAgent.46F",
+                  "creator-ids[1]" -> s"$baseUriAgent.48N",
+                  "creator-ids[2]" -> s"$baseUriAgent.46F"
                 )
 
             val response = submitAddingAnotherCreatorSlot(idOfExistingEditSet, editSetRecordOci, values)
@@ -2049,35 +2049,35 @@ class EditSetRecordISpec extends BaseISpec {
                   optionsForCreators = Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        "48N",
+                        s"$baseUriAgent.48N",
                         "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
                         selected = true
                       ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -2099,28 +2099,28 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        "48N",
+                        s"$baseUriAgent.48N",
                         "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
                         selected = true
                       ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -2128,9 +2128,9 @@ class EditSetRecordISpec extends BaseISpec {
 
             val values =
               valuesFromRecord(editSetRecordOci) ++ Map(
-                "creator-ids[0]" -> "8R6",
-                "creator-ids[1]" -> "92W",
-                "creator-ids[2]" -> "48N"
+                "creator-ids[0]" -> s"$baseUriAgent.8R6",
+                "creator-ids[1]" -> s"$baseUriAgent.92W",
+                "creator-ids[2]" -> s"$baseUriAgent.48N"
               )
 
             val response = submitAddingAnotherCreatorSlot(idOfExistingEditSet, editSetRecordOci, values)
@@ -2143,35 +2143,35 @@ class EditSetRecordISpec extends BaseISpec {
                   optionsForCreators = Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty", selected = true)
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        "48N",
+                        s"$baseUriAgent.48N",
                         "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
                         selected = true
                       ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -2198,20 +2198,20 @@ class EditSetRecordISpec extends BaseISpec {
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        "48N",
+                        s"$baseUriAgent.48N",
                         "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
                         selected = true
                       ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -2220,8 +2220,8 @@ class EditSetRecordISpec extends BaseISpec {
             val values =
               valuesFromRecord(editSetRecordOci) ++
                 Map(
-                  "creator-ids[0]" -> "48N",
-                  "creator-ids[1]" -> "92W"
+                  "creator-ids[0]" -> s"$baseUriAgent.48N",
+                  "creator-ids[1]" -> s"$baseUriAgent.92W"
                 )
 
             val response = submitRemovingTheLastCreator(idOfExistingEditSet, editSetRecordOci, values)
@@ -2235,13 +2235,13 @@ class EditSetRecordISpec extends BaseISpec {
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        "48N",
+                        s"$baseUriAgent.48N",
                         "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
                         selected = true
                       ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -2264,20 +2264,20 @@ class EditSetRecordISpec extends BaseISpec {
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        "48N",
+                        s"$baseUriAgent.48N",
                         "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
                         selected = true
                       ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -2286,8 +2286,8 @@ class EditSetRecordISpec extends BaseISpec {
             val values =
               valuesFromRecord(editSetRecordOci) ++
                 Map(
-                  "creator-ids[0]" -> "46F",
-                  "creator-ids[1]" -> "92W"
+                  "creator-ids[0]" -> s"$baseUriAgent.46F",
+                  "creator-ids[1]" -> s"$baseUriAgent.92W"
                 )
 
             val response = submitRemovingTheLastCreator(idOfExistingEditSet, editSetRecordOci, values)
@@ -2300,10 +2300,10 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -2326,20 +2326,20 @@ class EditSetRecordISpec extends BaseISpec {
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        "48N",
+                        s"$baseUriAgent.48N",
                         "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
                         selected = true
                       ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -2362,10 +2362,10 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -2390,27 +2390,27 @@ class EditSetRecordISpec extends BaseISpec {
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        "48N",
+                        s"$baseUriAgent.48N",
                         "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
                         selected = true
                       ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty", selected = true)
                     )
                   )
                 )
@@ -2419,9 +2419,9 @@ class EditSetRecordISpec extends BaseISpec {
             val values =
               valuesFromRecord(editSetRecordOci) ++
                 Map(
-                  "creator-ids[0]" -> "48N",
-                  "creator-ids[1]" -> "46F",
-                  "creator-ids[2]" -> "8R6"
+                  "creator-ids[0]" -> s"$baseUriAgent.48N",
+                  "creator-ids[1]" -> s"$baseUriAgent.46F",
+                  "creator-ids[2]" -> s"$baseUriAgent.8R6"
                 )
 
             val response = submitRemovingTheLastCreator(idOfExistingEditSet, editSetRecordOci, values)
@@ -2435,20 +2435,20 @@ class EditSetRecordISpec extends BaseISpec {
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        "48N",
+                        s"$baseUriAgent.48N",
                         "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
                         selected = true
                       ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -2471,27 +2471,27 @@ class EditSetRecordISpec extends BaseISpec {
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        "48N",
+                        s"$baseUriAgent.48N",
                         "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
                         selected = true
                       ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty", selected = true)
                     )
                   )
                 )
@@ -2500,9 +2500,9 @@ class EditSetRecordISpec extends BaseISpec {
             val values =
               valuesFromRecord(editSetRecordOci) ++
                 Map(
-                  "creator-ids[0]" -> "92W",
-                  "creator-ids[1]" -> "48N",
-                  "creator-ids[2]" -> "8R6"
+                  "creator-ids[0]" -> s"$baseUriAgent.92W",
+                  "creator-ids[1]" -> s"$baseUriAgent.48N",
+                  "creator-ids[2]" -> s"$baseUriAgent.8R6"
                 )
 
             val response = submitRemovingTheLastCreator(idOfExistingEditSet, editSetRecordOci, values)
@@ -2515,21 +2515,21 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        "48N",
+                        s"$baseUriAgent.48N",
                         "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
                         selected = true
                       ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -2552,27 +2552,27 @@ class EditSetRecordISpec extends BaseISpec {
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        "48N",
+                        s"$baseUriAgent.48N",
                         "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
                         selected = true
                       ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)", selected = true),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty", selected = true)
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty", selected = true)
                     )
                   )
                 )
@@ -2580,9 +2580,9 @@ class EditSetRecordISpec extends BaseISpec {
 
             val valuesForFirstSubmission = valuesFromRecord(editSetRecordOci) ++
               Map(
-                "creator-ids[0]" -> "92W",
-                "creator-ids[1]" -> "48N",
-                "creator-ids[2]" -> "8R6"
+                "creator-ids[0]" -> s"$baseUriAgent.92W",
+                "creator-ids[1]" -> s"$baseUriAgent.48N",
+                "creator-ids[2]" -> s"$baseUriAgent.8R6"
               )
 
             val firstSubmissionResponse =
@@ -2596,21 +2596,21 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        "48N",
+                        s"$baseUriAgent.48N",
                         "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)",
                         selected = true
                       ),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -2618,8 +2618,8 @@ class EditSetRecordISpec extends BaseISpec {
 
             val valuesForSecondSubmission = valuesFromRecord(editSetRecordOci) - "creator-ids[2]" ++
               Map(
-                "creator-ids[0]" -> "92W",
-                "creator-ids[1]" -> "48N"
+                "creator-ids[0]" -> s"$baseUriAgent.92W",
+                "creator-ids[1]" -> s"$baseUriAgent.48N"
               )
 
             val secondSubmissionResponse =
@@ -2633,10 +2633,10 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-                      ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-                      ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
-                      ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)", selected = true),
+                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
                     )
                   )
                 )
@@ -2927,10 +2927,10 @@ class EditSetRecordISpec extends BaseISpec {
           .map(creatorId =>
             Seq(
               ExpectedSelectOption("", "Select creator", disabled = true),
-              ExpectedSelectOption("48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
-              ExpectedSelectOption("46F", "Fawkes, Guy (b.1570 - d.1606)"),
-              ExpectedSelectOption("92W", "Joint Milk Quality Committee (1948 - 1948)"),
-              ExpectedSelectOption("8R6", "Queen Anne's Bounty")
+              ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (b.1889 - d.1977)"),
+              ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (b.1570 - d.1606)"),
+              ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
+              ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
             ).map(expectedSelectedOption =>
               expectedSelectedOption.copy(selected = expectedSelectedOption.value == creatorId)
             )

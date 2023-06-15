@@ -28,11 +28,11 @@ import javax.inject.Inject
 
 class TestStubData @Inject() extends StubData {
 
-  override def getAgentSummaries(): Seq[AgentSummary] = List(
-    AgentSummary(AgentType.Person, "48N", "Baden-Powell, Lady Olave St Clair", Some("1889"), Some("1977")),
-    AgentSummary(AgentType.Person, "46F", "Fawkes, Guy", Some("1570"), Some("1606")),
-    AgentSummary(AgentType.CorporateBody, "92W", "Joint Milk Quality Committee", Some("1948"), Some("1948")),
-    AgentSummary(AgentType.CorporateBody, "8R6", "Queen Anne's Bounty", None, None),
+  override def getAgentSummaries: Seq[AgentSummary] = List(
+    AgentSummary(AgentType.Person, s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair", Some("1889"), Some("1977")),
+    AgentSummary(AgentType.Person, s"$baseUriAgent.46F", "Fawkes, Guy", Some("1570"), Some("1606")),
+    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.92W", "Joint Milk Quality Committee", Some("1948"), Some("1948")),
+    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.8R6", "Queen Anne's Bounty", None, None),
     AgentSummary(
       AgentType.CorporateBody,
       tna,

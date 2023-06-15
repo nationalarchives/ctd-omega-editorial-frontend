@@ -41,7 +41,7 @@ abstract class BaseISpec
   )
   private lazy val stubData = app.injector.instanceOf[StubDataImpl]
 
-  lazy val allCreators: Seq[AgentSummary] = stubData.getAgentSummaries()
+  lazy val allCreators: Seq[AgentSummary] = stubData.getAgentSummaries
 
   private val playSessionCookieName = "PLAY_SESSION"
 
