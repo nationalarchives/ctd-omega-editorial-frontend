@@ -27,7 +27,7 @@ import org.typelevel.log4cats.slf4j.Slf4jLogger
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.{ Json, Reads }
 import uk.gov.nationalarchives.omega.editorial.connectors.{ ApiConnector, MessageType }
-import uk.gov.nationalarchives.omega.editorial.models.{ AgentSummary, EditSet, EditSetRecord, GetAgentSummaryList, GetEditSet, GetEditSetRecord, GetLegalStatuses, GetPlacesOfDeposit, LegalStatus, PlaceOfDeposit, UpdateEditSetRecord, UpdateResponseStatus }
+import uk.gov.nationalarchives.omega.editorial.models.{ AgentSummary, EditSet, EditSetRecord, GetAgentSummaryList, GetEditSet, GetEditSetRecord, GetLegalStatuses, LegalStatus, UpdateEditSetRecord, UpdateResponseStatus }
 
 import javax.inject.{ Inject, Singleton }
 
@@ -64,11 +64,11 @@ class MessagingService @Inject() (apiConnector: ApiConnector) {
         .flatMap(replyMessage => parse[UpdateResponseStatus](replyMessage.messageText))
   }
 
-  def getPlacesOfDeposit(getPlacesOfDeposit: GetPlacesOfDeposit): IO[Seq[PlaceOfDeposit]] =
+  def getPlacesOfDeposit(getAgentSummaryList: GetAgentSummaryList): IO[Seq[AgentSummary]] =
     logger.info(s"Requesting all of the places of deposit") *>
       apiConnector
-        .handle(MessageType.GetPlacesOfDepositType, Json.stringify(Json.toJson(getPlacesOfDeposit)))
-        .flatMap(replyMessage => parse[Seq[PlaceOfDeposit]](replyMessage.messageText))
+        .handle(MessageType.GetAgentSummariesType, Json.stringify(Json.toJson(getAgentSummaryList)))
+        .flatMap(replyMessage => parse[Seq[AgentSummary]](replyMessage.messageText))
 
   def getAgentSummaries(getAgentSummaryList: GetAgentSummaryList): IO[Seq[AgentSummary]] =
     logger.info(s"Requesting all of the agent summaries") *>

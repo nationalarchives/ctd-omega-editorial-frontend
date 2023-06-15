@@ -50,17 +50,6 @@ class BaseSpec
   val user: User = User("dummy user")
   val editSetRecordService: EditSetRecordService = app.injector.instanceOf[EditSetRecordService]
   val editSetService: EditSetService = app.injector.instanceOf[EditSetService]
-  val legalStatuses: Seq[LegalStatus] = Seq(
-    LegalStatus("ref.1", "Public Record(s)"),
-    LegalStatus("ref.2", "Not Public Records"),
-    LegalStatus("ref.3", "Public Records unless otherwise Stated"),
-    LegalStatus("ref.4", "Welsh Public Record(s)")
-  )
-  val allPlacesOfDeposit: Seq[PlaceOfDeposit] = Seq(
-    PlaceOfDeposit("1", "The National Archives, Kew"),
-    PlaceOfDeposit("2", "British Museum, Department of Libraries and Archives"),
-    PlaceOfDeposit("3", "British Library, National Sound Archive")
-  )
   val validSessionToken: String = Session.generateToken("1234")
   val invalidSessionToken: String = Session.generateToken("invalid-user")
   implicit val messageServiceMonitoring: MessagingServiceMonitoring = TestMessagingService

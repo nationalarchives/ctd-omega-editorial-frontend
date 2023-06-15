@@ -23,7 +23,7 @@ package uk.gov.nationalarchives.omega.editorial.models
 
 import play.api.libs.json.{ Format, Json }
 
-case class GetAgentSummaryList(agentTypeList: List[AgentType])
+case class GetAgentSummaryList(agentTypeList: List[AgentType], depository: Option[Boolean] = None)
 
 object GetAgentSummaryList {
   implicit val format: Format[GetAgentSummaryList] = Json.format[GetAgentSummaryList]

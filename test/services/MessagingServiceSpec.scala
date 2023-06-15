@@ -58,6 +58,17 @@ class MessagingServiceSpec
       val result = messagingService.getAgentSummaries(GetAgentSummaryList(List(AgentType.CorporateBody)))
       result.asserting(_ mustEqual expectedAgentSummaries)
     }
+
+    " for place of deposit" in {
+      val mockApiConnector = mock[ApiConnector]
+      val expectedAgentSummaries =
+        List(AgentSummary(AgentType.CorporateBody, "S2", "The National Archives, Kew", Some("2003"), Some("")))
+      val messagingService = new MessagingService(mockApiConnector)
+      whenF(mockApiConnector.handle(eqTo(GetAgentSummariesType), any[String]))
+        .thenReturn(ReplyMessage(getExpectedAgentSummariesJson(expectedAgentSummaries), Some(""), Some("")))
+      val result = messagingService.getPlacesOfDeposit(GetAgentSummaryList(List(AgentType.CorporateBody), Some(true)))
+      result.asserting(_ mustEqual expectedAgentSummaries)
+    }
   }
 
   private def getExpectedLegalStatusJson(legalStatus: LegalStatus): String =

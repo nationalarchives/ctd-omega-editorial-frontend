@@ -36,8 +36,13 @@ class ReferenceDataService @Inject() (messagingService: MessagingService, timePr
         messagingService.getAgentSummaries(GetAgentSummaryList(List(AgentType.Person, AgentType.CorporateBody)))
     } yield agentSummaryList
 
-  def getPlacesOfDeposit: IO[Seq[PlaceOfDeposit]] =
-    messagingService.getPlacesOfDeposit(GetPlacesOfDeposit(timestamp = timeProvider.now()))
+  def getPlacesOfDeposit: IO[Seq[AgentSummary]] =
+    for {
+      agentSummaryList <-
+        messagingService.getPlacesOfDeposit(
+          GetAgentSummaryList(List(AgentType.CorporateBody), Some(true))
+        )
+    } yield agentSummaryList
 
   def getLegalStatuses: IO[Seq[LegalStatus]] =
     messagingService.getLegalStatuses(GetLegalStatuses(timeProvider.now()))

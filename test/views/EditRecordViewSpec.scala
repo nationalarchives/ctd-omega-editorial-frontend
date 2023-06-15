@@ -66,12 +66,25 @@ class EditRecordViewSpec extends BaseViewSpec {
       LegalStatus("ref.4", "Welsh Public Record(s)")
     )
 
-  private val allPlacesOfDeposits =
-    Seq(
-      PlaceOfDeposit("1", "The National Archives, Kew"),
-      PlaceOfDeposit("2", "British Museum, Department of Libraries and Archives"),
-      PlaceOfDeposit("3", "British Library, National Sound Archive")
+  private val allPlacesOfDeposits = Seq(
+    AgentSummary(AgentType.CorporateBody, "1", "The National Archives, Kew", Some("2003"), None, Some(true)),
+    AgentSummary(
+      AgentType.CorporateBody,
+      "2",
+      "British Museum, Department of Libraries and Archives",
+      Some("2001"),
+      Some("2001"),
+      Some(true)
+    ),
+    AgentSummary(
+      AgentType.CorporateBody,
+      "3",
+      "British Library, National Sound Archive",
+      Some("1983"),
+      Some("1983"),
+      Some(true)
     )
+  )
 
   private val allCreators: Seq[AgentSummary] = Seq.empty
 
