@@ -24,6 +24,7 @@ package uk.gov.nationalarchives.omega.editorial.controllers
 import cats.effect.IO
 import play.api.i18n.{ I18nSupport, Lang }
 import play.api.mvc.{ MessagesAbstractController, MessagesControllerComponents, Result }
+import uk.gov.nationalarchives.omega.editorial.FrontendError.{ EditSetNotFound, EditSetRecordNotFound, Outcome }
 import uk.gov.nationalarchives.omega.editorial.controllers.authentication.Secured
 import uk.gov.nationalarchives.omega.editorial.models.{ EditSet, EditSetRecord }
 import uk.gov.nationalarchives.omega.editorial.services.{ EditSetRecordService, EditSetService }
@@ -35,8 +36,6 @@ abstract class BaseAppController(
   editSetRecordService: EditSetRecordService
 ) extends MessagesAbstractController(messagesControllerComponents) with I18nSupport with Secured with FormSupport
     with MessageSupport {
-
-  import BaseAppController._
 
   implicit def resultToIOResult(result: Result): IO[Result] = IO.pure(result)
 
@@ -53,21 +52,5 @@ abstract class BaseAppController(
       .map(_.toRight(EditSetRecordNotFound(recordOci)))
 
   def resolvedMessage(key: String, args: String*): String = messagesApi(key, args: _*)(Lang("en"))
-
-}
-
-object BaseAppController {
-
-  type Outcome[A] = Either[Error, A]
-
-  abstract class Error
-
-  case object MissingAction extends Error
-
-  case class InvalidAction(action: String) extends Error
-
-  case class EditSetNotFound(id: String) extends Error
-
-  case class EditSetRecordNotFound(id: String) extends Error
 
 }

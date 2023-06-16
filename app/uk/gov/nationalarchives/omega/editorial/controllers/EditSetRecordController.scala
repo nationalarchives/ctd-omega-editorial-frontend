@@ -28,14 +28,14 @@ import play.api.data.{ Form, FormError }
 import play.api.i18n.Messages
 import play.api.mvc._
 import play.twirl.api.HtmlFormat
-import uk.gov.nationalarchives.omega.editorial.controllers
-import uk.gov.nationalarchives.omega.editorial.controllers.BaseAppController._
+import uk.gov.nationalarchives.omega.editorial.FrontendError.{ EditSetNotFound, EditSetRecordNotFound, InvalidAction, MissingAction, Outcome }
+import uk.gov.nationalarchives.omega.editorial.{ CoveringDateError, FrontendError, controllers }
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetRecordController._
 import uk.gov.nationalarchives.omega.editorial.forms.EditSetRecordFormValues.populateForm
 import uk.gov.nationalarchives.omega.editorial.forms.{ EditSetRecordFormValues, EditSetRecordFormValuesFormProvider }
 import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.services.CoveringDateCalculator.getStartAndEndDates
-import uk.gov.nationalarchives.omega.editorial.services.{ CoveringDateError, EditSetRecordService, EditSetService, ReferenceDataService }
+import uk.gov.nationalarchives.omega.editorial.services.{ EditSetRecordService, EditSetService, ReferenceDataService }
 import uk.gov.nationalarchives.omega.editorial.support.{ DateParser, FormSupport }
 import uk.gov.nationalarchives.omega.editorial.views.html.{ editSetRecordEdit, editSetRecordEditDiscard, editSetRecordEditSave }
 
@@ -565,7 +565,7 @@ object EditSetRecordController {
   private case class RemoveLastCreator(editSetRecord: EditSetRecord) extends SubmitAction
 
   private case class FormValidationFailed(forWithErrors: Form[EditSetRecordFormValues], record: EditSetRecord)
-      extends BaseAppController.Error
+      extends FrontendError.Error
 
   object FieldNames {
     val background = "background"

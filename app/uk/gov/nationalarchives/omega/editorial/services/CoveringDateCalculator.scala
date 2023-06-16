@@ -21,9 +21,9 @@
 
 package uk.gov.nationalarchives.omega.editorial.services
 
+import uk.gov.nationalarchives.omega.editorial.FrontendError.{ DateTooFarInFuture, DateTooFarInPast, InvalidRange, MultipleErrors, Result }
 import java.time._
 import uk.gov.nationalarchives.omega.editorial.models.DateRange
-import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError._
 import uk.gov.nationalarchives.omega.editorial.services.{ CoveringDateNode => Node }
 
 object CoveringDateCalculator {

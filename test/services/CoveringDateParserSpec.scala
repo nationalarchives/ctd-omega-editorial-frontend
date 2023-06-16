@@ -25,8 +25,8 @@ import java.time._
 import org.scalatest.prop.{ TableDrivenPropertyChecks, Tables }
 import support.BaseSpec
 import support.CommonMatchers.{ failToParseAs, parseSuccessfullyAs }
+import uk.gov.nationalarchives.omega.editorial.FrontendError.ParseError
 import uk.gov.nationalarchives.omega.editorial.services.{ CoveringDateNode => Node, CoveringDateParser }
-import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError.ParseError
 
 class CoveringDateParserSpec extends BaseSpec with TableDrivenPropertyChecks {
 

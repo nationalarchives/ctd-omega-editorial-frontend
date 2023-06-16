@@ -26,6 +26,7 @@ import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.{ Json, Reads }
+import uk.gov.nationalarchives.omega.editorial.CannotParseReply
 import uk.gov.nationalarchives.omega.editorial.connectors.{ ApiConnector, MessageType }
 import uk.gov.nationalarchives.omega.editorial.models.{ AgentSummary, EditSet, EditSetRecord, GetAgentSummaryList, GetEditSet, GetEditSetRecord, GetLegalStatuses, LegalStatus, UpdateEditSetRecord, UpdateResponseStatus }
 
@@ -87,10 +88,10 @@ class MessagingService @Inject() (apiConnector: ApiConnector) {
       Json.parse(messageText).validate[A].asOpt
     )(CannotParseReply(messageText))
 
-  private case class CannotParseReply(reply: String) extends Exception(
-        s"""can't parse reply, got:
-           |$reply
-           |""".stripMargin
-      )
+//  private case class CannotParseReply(reply: String) extends Exception(
+//        s"""can't parse reply, got:
+//           |$reply
+//           |""".stripMargin
+//      )
 
 }
