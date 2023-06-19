@@ -91,12 +91,12 @@ class ResponseBuilder @Inject() (stubData: StubData) {
 
   private def handleGetLegalStatuses(jmsMessage: JmsMessage): IO[String] =
     parse[GetLegalStatuses](jmsMessage)
-      .flatMap(_ => asJsonString(stubData.getLegalStatuses()))
+      .flatMap(_ => asJsonString(stubData.getLegalStatuses))
 
   private def handleGetAgentSummaries(jmsMessage: JmsMessage): IO[String] =
     parse[GetAgentSummaryList](jmsMessage)
       .flatMap(agentSummaryReq =>
-        asJsonString(stubData.getAgentSummaries().filter(_.depository == agentSummaryReq.depository))
+        asJsonString(stubData.getAgentSummaries.filter(_.depository == agentSummaryReq.depository))
       )
 
   private def asJsonString[T : Writes](entity: T): IO[String] = me.pure(Json.toJson(entity).toString)

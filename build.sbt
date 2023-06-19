@@ -131,7 +131,6 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
     ),
     resolvers ++= Seq(
       Resolver.mavenLocal,
-      Resolver.githubPackages("rwalpole"),
       MavenRepository("HMRC-open-artefacts-maven2", "https://open.artefacts.tax.service.gov.uk/maven2")
     ),
     githubTokenSource := TokenSource.Or(
@@ -141,8 +140,8 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
     headerLicense := Some(HeaderLicense.MIT("2022", "The National Archives")),
     libraryDependencies ++= Seq(
       guice,
-      "com.github.pureconfig"  %% "pureconfig"                    % "0.17.2",
-      "dev.fpinbo"             %% "jms4s-simple-queue-service"    % "0.0.1-53518bb-SNAPSHOT",
+      "com.github.pureconfig"  %% "pureconfig"                    % "0.17.4",
+      "uk.gov.nationalarchives.thirdparty.dev.fpinbo" %% "jms4s-simple-queue-service" % "0.5.0-TNA-OMG-0.1.0",
       "org.typelevel"          %% "cats-core"                     % "2.9.0",
       "org.typelevel"          %% "cats-effect"                   % "3.4.8",
       "org.typelevel"          %% "cats-effect-kernel"            % "3.4.7",
