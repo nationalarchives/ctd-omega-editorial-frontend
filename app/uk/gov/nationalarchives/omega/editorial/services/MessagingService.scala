@@ -88,10 +88,4 @@ class MessagingService @Inject() (apiConnector: ApiConnector) {
       Json.parse(messageText).validate[A].asOpt
     )(CannotParseReply(messageText))
 
-//  private case class CannotParseReply(reply: String) extends Exception(
-//        s"""can't parse reply, got:
-//           |$reply
-//           |""".stripMargin
-//      )
-
 }
