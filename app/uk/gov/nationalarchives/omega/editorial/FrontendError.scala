@@ -19,16 +19,37 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package uk.gov.nationalarchives.omega.editorial.services
+package uk.gov.nationalarchives.omega.editorial
 
 import uk.gov.nationalarchives.omega.editorial.models.DateRange
+
 import java.time.LocalDate
 
-sealed abstract class CoveringDateError
+abstract class FrontendError extends Throwable
 
-object CoveringDateError {
+sealed abstract class CoveringDateError
+sealed abstract class StubServerError extends FrontendError
+
+case object MissingMessageType extends StubServerError
+case class NotATextMessage(err: Throwable) extends StubServerError
+case class CannotParse(txt: String) extends StubServerError
+case class CannotParseReply(reply: String) extends Exception(
+      s"""can't parse reply, got:
+         |$reply
+         |""".stripMargin
+    )
+
+object FrontendError {
+  type Outcome[A] = Either[Error, A]
 
   type Result[A] = Either[CoveringDateError, A]
+
+  abstract class Error extends FrontendError
+
+  case object MissingAction extends Error
+  case class InvalidAction(action: String) extends Error
+  case class EditSetNotFound(id: String) extends Error
+  case class EditSetRecordNotFound(id: String) extends Error
 
   final case object ParseError extends CoveringDateError
   final case class DateTooFarInFuture(date: LocalDate) extends CoveringDateError

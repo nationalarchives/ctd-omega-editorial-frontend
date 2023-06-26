@@ -21,10 +21,10 @@
 
 package uk.gov.nationalarchives.omega.editorial.services
 
+import uk.gov.nationalarchives.omega.editorial.FrontendError.{ ParseError, Result }
 import java.time._
 import scala.util.parsing.combinator._
 import scala.util.Try
-import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError._
 import uk.gov.nationalarchives.omega.editorial.services.{ CoveringDateNode => Node }
 
 object CoveringDateParser extends JavaTokenParsers {

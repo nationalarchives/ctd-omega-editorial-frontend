@@ -28,6 +28,7 @@ import jms4s.jms.JmsMessage
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import play.api.libs.json.{ Json, Reads, Writes }
+import uk.gov.nationalarchives.omega.editorial.{ CannotParse, MissingMessageType, NotATextMessage }
 import uk.gov.nationalarchives.omega.editorial.connectors.MessageType
 import uk.gov.nationalarchives.omega.editorial.connectors.messages.MessageProperties
 import uk.gov.nationalarchives.omega.editorial.models._
@@ -36,7 +37,6 @@ import javax.inject.{ Inject, Singleton }
 
 @Singleton
 class ResponseBuilder @Inject() (stubData: StubData) {
-  import ResponseBuilder._
 
   private val logger: SelfAwareStructuredLogger[IO] = Slf4jLogger.getLogger[IO]
   private val me = MonadError[IO, Throwable]
@@ -138,15 +138,5 @@ class ResponseBuilder @Inject() (stubData: StubData) {
         Json.parse(messageText).validate[A].asOpt,
         ifEmpty = CannotParse(messageText)
       )
-
-}
-
-object ResponseBuilder {
-
-  sealed abstract class StubServerError extends Throwable
-
-  private final case object MissingMessageType extends StubServerError
-  private final case class NotATextMessage(err: Throwable) extends StubServerError
-  private final case class CannotParse(txt: String) extends StubServerError
 
 }

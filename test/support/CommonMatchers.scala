@@ -24,9 +24,9 @@ package support
 import org.jsoup.nodes.{ Document, Element }
 import org.scalatest.matchers.{ MatchResult, Matcher }
 import support.ExpectedValues.{ ExpectedMaterial, ExpectedSelectOption, ExpectedSummaryErrorMessage }
+import uk.gov.nationalarchives.omega.editorial.{ CoveringDateError, FrontendError }
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetController._
 import uk.gov.nationalarchives.omega.editorial.controllers.EditSetRecordController
-import uk.gov.nationalarchives.omega.editorial.services.CoveringDateError
 
 import scala.jdk.CollectionConverters._
 
@@ -313,7 +313,7 @@ object CommonMatchers {
       document.select(s"#${EditSetRecordController.FieldNames.legalStatusID} option[selected]").attr("value")
     )
 
-  def parseSuccessfullyAs[A](expected: A): Matcher[CoveringDateError.Result[A]] = {
+  def parseSuccessfullyAs[A](expected: A): Matcher[FrontendError.Result[A]] = {
     case Right(ok) =>
       MatchResult(
         expected == ok,
@@ -330,7 +330,7 @@ object CommonMatchers {
       )
   }
 
-  def failToParseAs(expectedError: CoveringDateError): Matcher[CoveringDateError.Result[_]] = {
+  def failToParseAs(expectedError: CoveringDateError): Matcher[FrontendError.Result[_]] = {
     case Right(ok) =>
       MatchResult(
         matches = false,
