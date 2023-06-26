@@ -23,7 +23,7 @@ package uk.gov.nationalarchives.omega.editorial.models
 
 import play.api.libs.json.{ Format, Json }
 
-case class LegalStatus(identifier: String, name: String)
+case class LegalStatus(identifier: String, label: String)
 
 object LegalStatus {
   implicit val format: Format[LegalStatus] = Json.format[LegalStatus]
