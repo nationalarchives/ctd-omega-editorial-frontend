@@ -141,7 +141,10 @@ class UpdateEditSetRecordISpec extends BaseRequestReplyServiceISpec {
                 description = None
               )
             ),
-            creatorIDs = Seq(s"http://catalogue.nationalarchives.gov.uk/agent.8R6", "http://catalogue.nationalarchives.gov.uk/agent.92W")
+            creatorIDs = Seq(
+              s"http://catalogue.nationalarchives.gov.uk/agent.8R6",
+              "http://catalogue.nationalarchives.gov.uk/agent.92W"
+            )
           )
         )
       )

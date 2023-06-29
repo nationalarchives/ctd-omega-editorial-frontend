@@ -480,7 +480,13 @@ trait StubData {
 
   def getAgentSummaries: Seq[AgentSummary] = List(
     AgentSummary(AgentType.Person, s"$baseUriAgent.3RX", "Abbot, Charles", Some("1798"), Some("1867")),
-    AgentSummary(AgentType.Person, s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair", Some("1889"), Some("1977")),
+    AgentSummary(
+      AgentType.Person,
+      s"$baseUriAgent.48N",
+      "Baden-Powell, Lady Olave St Clair",
+      Some("1889"),
+      Some("1977")
+    ),
     AgentSummary(AgentType.Person, s"$baseUriAgent.39K", "Cannon, John Francis Michael", Some("1930"), None),
     AgentSummary(AgentType.Person, s"$baseUriAgent.3FH", "Dainton, Sir Frederick Sydney", Some("1914"), Some("1997")),
     AgentSummary(AgentType.Person, s"$baseUriAgent.54J", "Edward, ", Some("1330"), Some("1376")),
@@ -497,14 +503,26 @@ trait StubData {
     AgentSummary(AgentType.Person, s"$baseUriAgent.51X", "Macpherson, Sir William (Alan)", Some("1926"), None),
     AgentSummary(AgentType.Person, s"$baseUriAgent.515", "Newcastle, 1st Duke of, ", None, None),
     AgentSummary(AgentType.Person, s"$baseUriAgent.4VF", "Old Pretender, The", None, None),
-    AgentSummary(AgentType.Person, s"$baseUriAgent.4H3", "Oliphant, Sir Mark Marcus Laurence Elwin", Some("1901"), Some("2000")),
+    AgentSummary(
+      AgentType.Person,
+      s"$baseUriAgent.4H3",
+      "Oliphant, Sir Mark Marcus Laurence Elwin",
+      Some("1901"),
+      Some("2000")
+    ),
     AgentSummary(AgentType.Person, s"$baseUriAgent.46W", "Paine, Thomas", Some("1737"), Some("1809")),
     AgentSummary(AgentType.Person, s"$baseUriAgent.3SH", "Reade, Hubert Granville Revell", Some("1859"), Some("1938")),
     AgentSummary(AgentType.Person, s"$baseUriAgent.2TF", "Reading, ", None, None),
     AgentSummary(AgentType.Person, s"$baseUriAgent.53T", "Salisbury, Sir Edward James", Some("1886"), Some("1978")),
     AgentSummary(AgentType.Person, s"$baseUriAgent.3QL", "Tate, Sir Henry", Some("1819"), Some("1899")),
     AgentSummary(AgentType.Person, s"$baseUriAgent.37K", "Uvarov, Sir Boris Petrovitch", Some("1889"), Some("1970")),
-    AgentSummary(AgentType.Person, s"$baseUriAgent.2T1", "Vane-Tempest-Stewart, Charles Stewart", Some("1852"), Some("1915")),
+    AgentSummary(
+      AgentType.Person,
+      s"$baseUriAgent.2T1",
+      "Vane-Tempest-Stewart, Charles Stewart",
+      Some("1852"),
+      Some("1915")
+    ),
     AgentSummary(AgentType.Person, s"$baseUriAgent.4RW", "Victor Amadeus, ", Some("1666"), Some("1732")),
     AgentSummary(AgentType.Person, s"$baseUriAgent.3GY", "Victoria, ", Some("1819"), Some("1901")),
     AgentSummary(
@@ -514,8 +532,20 @@ trait StubData {
       Some("1794"),
       Some("1794")
     ),
-    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.S34", "1st Regiment of Foot or Royal Scots", Some("1812"), Some("1812")),
-    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.87K", "Abbotsbury Railway Company", Some("1877"), Some("1877")),
+    AgentSummary(
+      AgentType.CorporateBody,
+      s"$baseUriAgent.S34",
+      "1st Regiment of Foot or Royal Scots",
+      Some("1812"),
+      Some("1812")
+    ),
+    AgentSummary(
+      AgentType.CorporateBody,
+      s"$baseUriAgent.87K",
+      "Abbotsbury Railway Company",
+      Some("1877"),
+      Some("1877")
+    ),
     AgentSummary(
       AgentType.CorporateBody,
       s"$baseUriAgent.VWG",
@@ -556,7 +586,13 @@ trait StubData {
       Some("1946"),
       Some("1946")
     ),
-    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.GW5", "Cattle Emergency Committee", Some("1934"), Some("1934")),
+    AgentSummary(
+      AgentType.CorporateBody,
+      s"$baseUriAgent.GW5",
+      "Cattle Emergency Committee",
+      Some("1934"),
+      Some("1934")
+    ),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.934", "Dairy Crest", Some("1981"), Some("1981")),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.9HC", "Dean of the Chapel Royal", None, None),
     AgentSummary(
@@ -581,8 +617,20 @@ trait StubData {
       Some("1862")
     ),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.HF4", "East India Company", Some("1600"), Some("1600")),
-    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.WN3", "Education and Skills Funding Agency", Some("2017"), Some("2017")),
-    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.WNL", "Education and Skills Funding Agency", Some("2017"), Some("2017")),
+    AgentSummary(
+      AgentType.CorporateBody,
+      s"$baseUriAgent.WN3",
+      "Education and Skills Funding Agency",
+      Some("2017"),
+      Some("2017")
+    ),
+    AgentSummary(
+      AgentType.CorporateBody,
+      s"$baseUriAgent.WNL",
+      "Education and Skills Funding Agency",
+      Some("2017"),
+      Some("2017")
+    ),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.Q1R", "Falkland Islands Company", Some("1899"), Some("1899")),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.SQ9", "Fish's Corps of Foot", Some("1782"), Some("1782")),
     AgentSummary(
@@ -599,7 +647,13 @@ trait StubData {
       Some("1895"),
       Some("1895")
     ),
-    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.KSC", "Gaming Board for Great Britain", Some("1968"), Some("1968")),
+    AgentSummary(
+      AgentType.CorporateBody,
+      s"$baseUriAgent.KSC",
+      "Gaming Board for Great Britain",
+      Some("1968"),
+      Some("1968")
+    ),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.73R", "GCHQ", None, None),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.VR1", "Geffrye Museum", Some("1914"), Some("1914")),
     AgentSummary(
@@ -624,7 +678,13 @@ trait StubData {
       Some("1975"),
       Some("1975")
     ),
-    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.8JK", "Her Majesty's Stationery Office", Some("1986"), Some("1986")),
+    AgentSummary(
+      AgentType.CorporateBody,
+      s"$baseUriAgent.8JK",
+      "Her Majesty's Stationery Office",
+      Some("1986"),
+      Some("1986")
+    ),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.9FV", "Ideal Benefit Society", Some("1912"), Some("1912")),
     AgentSummary(
       AgentType.CorporateBody,
@@ -647,8 +707,20 @@ trait StubData {
       Some("1999"),
       Some("1999")
     ),
-    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.LS5", "Jodrell Bank Observatory, Cheshire", Some("1955"), Some("1955")),
-    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.92W", "Joint Milk Quality Committee", Some("1948"), Some("1948")),
+    AgentSummary(
+      AgentType.CorporateBody,
+      s"$baseUriAgent.LS5",
+      "Jodrell Bank Observatory, Cheshire",
+      Some("1955"),
+      Some("1955")
+    ),
+    AgentSummary(
+      AgentType.CorporateBody,
+      s"$baseUriAgent.92W",
+      "Joint Milk Quality Committee",
+      Some("1948"),
+      Some("1948")
+    ),
     AgentSummary(
       AgentType.CorporateBody,
       s"$baseUriAgent.L3W",
@@ -666,16 +738,40 @@ trait StubData {
       Some("1966"),
       Some("1966")
     ),
-    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.TTT", "King's Volunteers Regiment of Foot, 1761-1763", None, None),
+    AgentSummary(
+      AgentType.CorporateBody,
+      s"$baseUriAgent.TTT",
+      "King's Volunteers Regiment of Foot, 1761-1763",
+      None,
+      None
+    ),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.VR7", "Lady Lever Art Gallery", Some("1922"), Some("1922")),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.XQ", "Law Society", Some("1825"), Some("1825")),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.91W", "League of Mercy", Some("1898"), Some("1898")),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.VX", "Legal Aid Board", Some("1989"), Some("1989")),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.TXG", "Legal Aid Board, 1988-1989", None, None),
-    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.6LL", "Machinery of Government Committee", Some("1917"), Some("1917")),
+    AgentSummary(
+      AgentType.CorporateBody,
+      s"$baseUriAgent.6LL",
+      "Machinery of Government Committee",
+      Some("1917"),
+      Some("1917")
+    ),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.G6N", "Magnetic Department", Some("1839"), Some("1839")),
-    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.71K", "Manpower Distribution Board", Some("1916"), Some("1916")),
-    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.KN1", "Master of the Rolls Archives Committee", Some("1925"), Some("1925")),
+    AgentSummary(
+      AgentType.CorporateBody,
+      s"$baseUriAgent.71K",
+      "Manpower Distribution Board",
+      Some("1916"),
+      Some("1916")
+    ),
+    AgentSummary(
+      AgentType.CorporateBody,
+      s"$baseUriAgent.KN1",
+      "Master of the Rolls Archives Committee",
+      Some("1925"),
+      Some("1925")
+    ),
     AgentSummary(
       AgentType.CorporateBody,
       s"$baseUriAgent.J6X",
@@ -698,7 +794,13 @@ trait StubData {
       Some("1817"),
       Some("1817")
     ),
-    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.W1S", "Office for Budget Responsibility", Some("2010"), Some("2010")),
+    AgentSummary(
+      AgentType.CorporateBody,
+      s"$baseUriAgent.W1S",
+      "Office for Budget Responsibility",
+      Some("2010"),
+      Some("2010")
+    ),
     AgentSummary(
       AgentType.CorporateBody,
       s"$baseUriAgent.N4W",
@@ -741,7 +843,13 @@ trait StubData {
       Some("1990"),
       Some("1990")
     ),
-    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.988", "Oxford University Archives", Some("1634"), Some("1634")),
+    AgentSummary(
+      AgentType.CorporateBody,
+      s"$baseUriAgent.988",
+      "Oxford University Archives",
+      Some("1634"),
+      Some("1634")
+    ),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.TWX", "Oxford University Press", Some("1633"), Some("1633")),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.79L", "Palace Court", Some("1660"), Some("1660")),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.TX6", "Parker Inquiry", None, None),
@@ -757,7 +865,13 @@ trait StubData {
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.8R6", "Queen Anne's Bounty", None, None),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.SH2", "Queen's Own Dragoons, 1788-1818", None, None),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.79X", "Queens Prison", Some("1842"), Some("1842")),
-    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.W91", "Queen's Printer for Scotland", Some("1999"), Some("1999")),
+    AgentSummary(
+      AgentType.CorporateBody,
+      s"$baseUriAgent.W91",
+      "Queen's Printer for Scotland",
+      Some("1999"),
+      Some("1999")
+    ),
     AgentSummary(
       AgentType.CorporateBody,
       s"$baseUriAgent.F11",
@@ -770,12 +884,24 @@ trait StubData {
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.CY1", "Railway Executive", Some("1939"), Some("1939")),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.TXH", "SaBRE", Some("2002"), Some("2002")),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.739", "Scaccarium Superius", None, None),
-    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.NWN", "School of Anti-Aircraft Artillery", Some("1942"), Some("1942")),
+    AgentSummary(
+      AgentType.CorporateBody,
+      s"$baseUriAgent.NWN",
+      "School of Anti-Aircraft Artillery",
+      Some("1942"),
+      Some("1942")
+    ),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.SGS", "Scots Greys, 1877-1921", None, None),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.VXR", "Takeover Panel", None, None),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.QQR", "Tate Gallery", Some("1897"), Some("1897")),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.63K", "Tate Gallery Archive", Some("1970"), Some("1970")),
-    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.G91", "Thalidomide Y List Inquiry", Some("1978"), Some("1978")),
+    AgentSummary(
+      AgentType.CorporateBody,
+      s"$baseUriAgent.G91",
+      "Thalidomide Y List Inquiry",
+      Some("1978"),
+      Some("1978")
+    ),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.FKS", "The Buying Agency", Some("1991"), Some("1991")),
     AgentSummary(
       AgentType.CorporateBody,
@@ -802,7 +928,13 @@ trait StubData {
     ),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.VTY", "Valuation Office Agency", Some("1991"), Some("19910")),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.9HJ", "Venetian Republic", Some("727"), Some("727")),
-    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.QYF", "Victoria and Albert Museum", Some("1857"), Some("1857")),
+    AgentSummary(
+      AgentType.CorporateBody,
+      s"$baseUriAgent.QYF",
+      "Victoria and Albert Museum",
+      Some("1857"),
+      Some("1857")
+    ),
     AgentSummary(
       AgentType.CorporateBody,
       s"$baseUriAgent.61H",
@@ -821,7 +953,13 @@ trait StubData {
       Some("1808")
     ),
     AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.V2R", "Zahid Mubarek Inquiry", Some("2004"), Some("2004")),
-    AgentSummary(AgentType.CorporateBody, s"$baseUriAgent.763", "Zambia Department, Commonwealth Office", Some("1967"), Some("1967")),
+    AgentSummary(
+      AgentType.CorporateBody,
+      s"$baseUriAgent.763",
+      "Zambia Department, Commonwealth Office",
+      Some("1967"),
+      Some("1967")
+    ),
     AgentSummary(
       AgentType.CorporateBody,
       s"$baseUriAgent.765",

@@ -1387,7 +1387,8 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
             status(result) mustBe OK
             assertEditViewForm(
-              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.92W")),
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.92W")),
               returnedEditSetRecord,
               Seq.empty
             )
@@ -1417,7 +1418,8 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
             status(result) mustBe OK
             assertEditViewForm(
-              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq(s"$baseUriAgent.46F", s"$baseUriAgent.48N", s"$baseUriAgent.46F")),
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(creatorIDs = Seq(s"$baseUriAgent.46F", s"$baseUriAgent.48N", s"$baseUriAgent.46F")),
               returnedEditSetRecord,
               Seq.empty
             )
@@ -1447,7 +1449,8 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
             status(result) mustBe OK
             assertEditViewForm(
-              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq(s"$baseUriAgent.46F", s"$baseUriAgent.48N", s"$baseUriAgent.46F")),
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(creatorIDs = Seq(s"$baseUriAgent.46F", s"$baseUriAgent.48N", s"$baseUriAgent.46F")),
               returnedEditSetRecord,
               Seq.empty
             )
@@ -1485,7 +1488,8 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
             status(result) mustBe OK
             assertEditViewForm(
-              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.92W")),
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.92W")),
               returnedEditSetRecord,
               Seq.empty
             )
@@ -1514,7 +1518,8 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
             status(result) mustBe OK
             assertEditViewForm(
-              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.92W")),
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.92W")),
               returnedEditSetRecord,
               Seq.empty
             )
@@ -1576,7 +1581,8 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
             status(result) mustBe OK
             assertEditViewForm(
-              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.46F", s"$baseUriAgent.92W")),
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.46F", s"$baseUriAgent.92W")),
               returnedEditSetRecord,
               Seq.empty
             )
@@ -1606,7 +1612,8 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
 
             status(result) mustBe OK
             assertEditViewForm(
-              editSetRecordFormValuesFromRecord(editSetRecordId).copy(creatorIDs = Seq(s"$baseUriAgent.92W", s"$baseUriAgent.48N", s"$baseUriAgent.8R6")),
+              editSetRecordFormValuesFromRecord(editSetRecordId)
+                .copy(creatorIDs = Seq(s"$baseUriAgent.92W", s"$baseUriAgent.48N", s"$baseUriAgent.8R6")),
               returnedEditSetRecord,
               Seq.empty
             )
