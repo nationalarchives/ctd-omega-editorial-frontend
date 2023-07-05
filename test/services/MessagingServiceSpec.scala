@@ -29,7 +29,7 @@ import org.scalatest.matchers.must.Matchers
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
 import uk.gov.nationalarchives.omega.editorial.connectors.MessageType.{ GetAgentSummariesType, GetLegalStatusesType }
 import uk.gov.nationalarchives.omega.editorial.connectors.messages.ReplyMessage
-import uk.gov.nationalarchives.omega.editorial.models.{ AgentSummary, AgentType, GetAgentSummaryList, GetLegalStatuses, LegalStatus }
+import uk.gov.nationalarchives.omega.editorial.models.{ AgentDescription, AgentSummary, AgentType, GetAgentSummaryList, GetLegalStatuses, LegalStatus }
 import uk.gov.nationalarchives.omega.editorial.services.MessagingService
 
 import java.time.LocalDateTime
@@ -50,8 +50,24 @@ class MessagingServiceSpec
 
     " for agent summaries" in {
       val mockApiConnector = mock[ApiConnector]
-      val expectedAgentSummaries =
-        List(AgentSummary(AgentType.CorporateBody, "W2T", "Hansard Society", Some("1944"), Some("1944")))
+      val expectedAgentSummaries = List(
+        AgentSummary(
+          AgentType.CorporateBody,
+          "W2T",
+          "current description",
+          List(
+            AgentDescription(
+              "W2T",
+              "Hansard Society",
+              Some(false),
+              Some(false),
+              "2022-06-22T02:00:00-0500",
+              Some("1944"),
+              Some("1944")
+            )
+          )
+        )
+      )
       val messagingService = new MessagingService(mockApiConnector)
       whenF(mockApiConnector.handle(eqTo(GetAgentSummariesType), any[String]))
         .thenReturn(ReplyMessage(getExpectedAgentSummariesJson(expectedAgentSummaries), Some(""), Some("")))
@@ -62,11 +78,30 @@ class MessagingServiceSpec
     " for place of deposit" in {
       val mockApiConnector = mock[ApiConnector]
       val expectedAgentSummaries =
-        List(AgentSummary(AgentType.CorporateBody, "S2", "The National Archives, Kew", Some("2003"), Some("")))
+        List(
+          AgentSummary(
+            AgentType.CorporateBody,
+            "614",
+            "current description",
+            List(
+              AgentDescription(
+                "614",
+                "The National Archives",
+                Some(false),
+                Some(false),
+                "2022-06-22T02:00:00-0500",
+                Some("2003"),
+                None
+              )
+            )
+          )
+        )
       val messagingService = new MessagingService(mockApiConnector)
       whenF(mockApiConnector.handle(eqTo(GetAgentSummariesType), any[String]))
-        .thenReturn(ReplyMessage(getExpectedAgentSummariesJson(expectedAgentSummaries), Some(""), Some("")))
-      val result = messagingService.getPlacesOfDeposit(GetAgentSummaryList(List(AgentType.CorporateBody), Some(true)))
+        .thenReturn(ReplyMessage(getExpectedPlacesOfDepositJson(expectedAgentSummaries), Some(""), Some("")))
+      val result = messagingService.getPlacesOfDeposit(
+        GetAgentSummaryList(List(AgentType.CorporateBody), None, Some(true), Some(false))
+      )
       result.asserting(_ mustEqual expectedAgentSummaries)
     }
   }
@@ -85,13 +120,42 @@ class MessagingServiceSpec
     s"""
        |[
        |  {
-       |    "identifier": "${agentSummaryList(0).identifier}",
-       |    "label": "${agentSummaryList(0).label}",
-       |    "date-from": "${agentSummaryList(0).dateFrom.getOrElse("")}",
-       |    "date-to": "${agentSummaryList(0).dateTo.getOrElse("")}",
-       |    "type": "${agentSummaryList(0).agentType}"
-       |  }
+       |    "type" : "${agentSummaryList(0).agentType.entryName}",
+       |    "identifier" : "${agentSummaryList(0).identifier}",
+       |    "current-description" : "${agentSummaryList(0).currentDescription}",
+       |    "description" : [
+       |      {
+       |      "identifier": "${agentSummaryList(0).identifier}",
+       |      "label": "${agentSummaryList(0).description(0).label}",
+       |      "authority-file" : ${agentSummaryList(0).description(0).authorityFile.getOrElse("")},
+       |      "depository" : ${agentSummaryList(0).description(0).depository.getOrElse("")},
+       |      "version-timestamp" : "${agentSummaryList(0).description(0).versionTimestamp}",
+       |      "date-from": "${agentSummaryList(0).description(0).dateFrom.getOrElse("")}",
+       |      "date-to": "${agentSummaryList(0).description(0).dateTo.getOrElse("")}"
+       |      }
+       |    ]
+       |   }
        |]
        |""".stripMargin
 
+  private def getExpectedPlacesOfDepositJson(agentSummaryList: Seq[AgentSummary]): String =
+    s"""
+       |[
+       |  {
+       |    "type" : "${agentSummaryList(0).agentType.entryName}",
+       |    "identifier" : "${agentSummaryList(0).identifier}",
+       |    "current-description" : "${agentSummaryList(0).currentDescription}",
+       |    "description" : [
+       |      {
+       |      "identifier": "${agentSummaryList(0).identifier}",
+       |      "label": "${agentSummaryList(0).description(0).label}",
+       |      "authority-file" : ${agentSummaryList(0).description(0).authorityFile.getOrElse("")},
+       |      "depository" : ${agentSummaryList(0).description(0).depository.getOrElse("")},
+       |      "version-timestamp" : "${agentSummaryList(0).description(0).versionTimestamp}",
+       |      "date-from": "${agentSummaryList(0).description(0).dateFrom.getOrElse("")}"
+       |      }
+       |    ]
+       |   }
+       |]
+       |""".stripMargin
 }

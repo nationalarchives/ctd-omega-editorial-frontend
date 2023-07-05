@@ -21,9 +21,10 @@
 
 package uk.gov.nationalarchives.omega.editorial.models
 
+import enumeratum.EnumEntry.CapitalWords
 import enumeratum.{ Enum, EnumEntry, PlayJsonEnum }
 
-sealed trait AgentType extends EnumEntry
+sealed trait AgentType extends EnumEntry with CapitalWords
 
 object AgentType extends Enum[AgentType] with PlayJsonEnum[AgentType] {
 

@@ -96,7 +96,9 @@ class ResponseBuilder @Inject() (stubData: StubData) {
   private def handleGetAgentSummaries(jmsMessage: JmsMessage): IO[String] =
     parse[GetAgentSummaryList](jmsMessage)
       .flatMap(agentSummaryReq =>
-        asJsonString(stubData.getAgentSummaries.filter(_.depository == agentSummaryReq.depository))
+        asJsonString(
+          stubData.getAgentSummaries.filter(_.description.head.depository == agentSummaryReq.depository)
+        )
       )
 
   private def asJsonString[T : Writes](entity: T): IO[String] = me.pure(Json.toJson(entity).toString)

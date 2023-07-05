@@ -40,7 +40,7 @@ class ReferenceDataService @Inject() (messagingService: MessagingService, timePr
     for {
       agentSummaryList <-
         messagingService.getPlacesOfDeposit(
-          GetAgentSummaryList(List(AgentType.CorporateBody), Some(true))
+          GetAgentSummaryList(List(AgentType.CorporateBody), Some(""), Some(true), Some(false))
         )
     } yield agentSummaryList
 

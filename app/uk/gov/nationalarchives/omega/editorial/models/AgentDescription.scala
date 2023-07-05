@@ -24,20 +24,38 @@ package uk.gov.nationalarchives.omega.editorial.models
 import play.api.libs.functional.syntax.{ toFunctionalBuilderOps, unlift }
 import play.api.libs.json.{ Format, __ }
 
-case class AgentSummary(
-  agentType: AgentType,
+case class AgentDescription(
   identifier: String,
-  currentDescription: String,
-  description: List[AgentDescription]
-)
+  label: String,
+  authorityFile: Option[Boolean],
+  depository: Option[Boolean],
+  versionTimestamp: String,
+  dateFrom: Option[String],
+  dateTo: Option[String],
+  previousDescription: Option[String] = None
+) {
 
-object AgentSummary {
+  val displayedName: String = {
+    val dateDisplay = (dateFrom, dateTo) match {
+      case (Some(dateFrom), Some(dateTo)) => s" ($dateFrom - $dateTo)"
+      case (Some(dateFrom), None)         => s" ($dateFrom - )"
+      case (None, Some(dateTo))           => s" ( - $dateTo)"
+      case _                              => ""
+    }
+    s"$label$dateDisplay"
+  }
+}
 
-  implicit val agentSummaryFormat: Format[AgentSummary] = (
-    (__ \ "type").format[AgentType] and
-      (__ \ "identifier").format[String] and
-      (__ \ "current-description").format[String] and
-      (__ \ "description").format[List[AgentDescription]]
-  )(AgentSummary.apply, unlift(AgentSummary.unapply))
+object AgentDescription {
+  implicit val agentDescriptionFormat: Format[AgentDescription] = (
+    (__ \ "identifier").format[String] and
+      (__ \ "label").format[String] and
+      (__ \ "authority-file").formatNullable[Boolean] and
+      (__ \ "depository").formatNullable[Boolean] and
+      (__ \ "version-timestamp").format[String] and
+      (__ \ "date-from").formatNullable[String] and
+      (__ \ "date-to").formatNullable[String] and
+      (__ \ "previous-description").formatNullable[String]
+  )(AgentDescription.apply, unlift(AgentDescription.unapply))
 
 }

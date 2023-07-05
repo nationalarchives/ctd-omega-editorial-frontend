@@ -21,11 +21,22 @@
 
 package uk.gov.nationalarchives.omega.editorial.models
 
-import play.api.libs.json.{ Format, Json }
+import play.api.libs.functional.syntax.{ toFunctionalBuilderOps, unlift }
+import play.api.libs.json.{ Format, __ }
 
-case class GetAgentSummaryList(agentTypeList: List[AgentType], depository: Option[Boolean] = None)
+case class GetAgentSummaryList(
+  agentType: List[AgentType],
+  versionTimestamp: Option[String] = None,
+  depository: Option[Boolean] = Some(false),
+  authorityFile: Option[Boolean] = Some(false)
+)
 
 object GetAgentSummaryList {
-  implicit val format: Format[GetAgentSummaryList] = Json.format[GetAgentSummaryList]
+  implicit val format: Format[GetAgentSummaryList] = (
+    (__ \ "type").format[List[AgentType]] and
+      (__ \ "version-timestamp").formatNullable[String] and
+      (__ \ "depository").formatNullable[Boolean] and
+      (__ \ "authority-file").formatNullable[Boolean]
+  )(GetAgentSummaryList.apply, unlift(GetAgentSummaryList.unapply))
 
 }
