@@ -71,7 +71,9 @@ class MessagingServiceSpec
       val messagingService = new MessagingService(mockApiConnector)
       whenF(mockApiConnector.handle(eqTo(GetAgentSummariesType), any[String]))
         .thenReturn(ReplyMessage(getExpectedAgentSummariesJson(expectedAgentSummaries), Some(""), Some("")))
-      val result = messagingService.getAgentSummaries(GetAgentSummaryList(List(AgentType.CorporateBody)))
+      val result = messagingService.getAgentSummaries(
+        GetAgentSummaryList(List(AgentType.CorporateBody), None, Some(false), Some(false))
+      )
       result.asserting(_ mustEqual expectedAgentSummaries)
     }
 

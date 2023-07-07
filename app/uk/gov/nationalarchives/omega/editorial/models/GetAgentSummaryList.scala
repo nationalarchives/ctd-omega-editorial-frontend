@@ -27,8 +27,8 @@ import play.api.libs.json.{ Format, __ }
 case class GetAgentSummaryList(
   agentType: List[AgentType],
   versionTimestamp: Option[String] = None,
-  depository: Option[Boolean] = Some(false),
-  authorityFile: Option[Boolean] = Some(false)
+  depository: Option[Boolean] = None,
+  authorityFile: Option[Boolean] = None
 )
 
 object GetAgentSummaryList {
