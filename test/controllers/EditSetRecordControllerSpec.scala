@@ -57,26 +57,50 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
     AgentSummary(
       AgentType.CorporateBody,
       tna,
-      "The National Archives, Kew",
-      Some("2003"),
-      None,
-      Some(true)
+      "current description",
+      List(
+        AgentDescription(
+          "S2",
+          "The National Archives",
+          Some(false),
+          Some(false),
+          "2022-06-22T02:00:00-0500",
+          Some("2003"),
+          None
+        )
+      )
     ),
     AgentSummary(
       AgentType.CorporateBody,
       britishMuseum,
-      "British Museum, Department of Libraries and Archives",
-      Some("2001"),
-      Some("2001"),
-      Some(true)
+      "current description",
+      List(
+        AgentDescription(
+          s"$baseUriAgent.63F",
+          "British Museum Central Archive",
+          Some(false),
+          Some(false),
+          "2022-06-22T02:00:00-0500",
+          Some("2001"),
+          Some("2001")
+        )
+      )
     ),
     AgentSummary(
       AgentType.CorporateBody,
       britishLibrary,
-      "British Library, National Sound Archive",
-      Some("1983"),
-      Some("1983"),
-      Some(true)
+      "current description",
+      List(
+        AgentDescription(
+          s"$baseUriAgent.614",
+          "British Library, Sound Archive",
+          Some(false),
+          Some(false),
+          "2022-06-22T02:00:00-0500",
+          Some("1983"),
+          Some("1983")
+        )
+      )
     )
   )
 

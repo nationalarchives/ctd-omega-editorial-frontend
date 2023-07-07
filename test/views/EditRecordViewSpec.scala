@@ -67,22 +67,53 @@ class EditRecordViewSpec extends BaseViewSpec {
     )
 
   private val allPlacesOfDeposits = Seq(
-    AgentSummary(AgentType.CorporateBody, "1", "The National Archives, Kew", Some("2003"), None, Some(true)),
+    AgentSummary(
+      AgentType.CorporateBody,
+      "1",
+      "current description",
+      List(
+        AgentDescription(
+          "1",
+          "The National Archives",
+          Some(false),
+          Some(false),
+          "2022-06-22T02:00:00-0500",
+          Some("2003"),
+          None
+        )
+      )
+    ),
     AgentSummary(
       AgentType.CorporateBody,
       "2",
-      "British Museum, Department of Libraries and Archives",
-      Some("2001"),
-      Some("2001"),
-      Some(true)
+      "current description",
+      List(
+        AgentDescription(
+          "2",
+          "British Museum Central Archive",
+          Some(false),
+          Some(false),
+          "2022-06-22T02:00:00-0500",
+          Some("2001"),
+          Some("2001")
+        )
+      )
     ),
     AgentSummary(
       AgentType.CorporateBody,
       "3",
-      "British Library, National Sound Archive",
-      Some("1983"),
-      Some("1983"),
-      Some(true)
+      "current description",
+      List(
+        AgentDescription(
+          "3",
+          "British Library, Sound Archive",
+          Some(false),
+          Some(false),
+          "2022-06-22T02:00:00-0500",
+          Some("1983"),
+          Some("1983")
+        )
+      )
     )
   )
 
@@ -188,9 +219,9 @@ class EditRecordViewSpec extends BaseViewSpec {
       document must haveSelectionForPlaceOfDeposit(
         Seq(
           ExpectedSelectOption("", "edit-set.record.error.place-of-deposit-id", disabled = true),
-          ExpectedSelectOption("1", "The National Archives, Kew"),
-          ExpectedSelectOption("2", "British Museum, Department of Libraries and Archives"),
-          ExpectedSelectOption("3", "British Library, National Sound Archive", selected = true)
+          ExpectedSelectOption("1", "The National Archives"),
+          ExpectedSelectOption("2", "British Museum Central Archive"),
+          ExpectedSelectOption("3", "British Library, Sound Archive", selected = true)
         )
       )
 

@@ -33,14 +33,16 @@ class ReferenceDataService @Inject() (messagingService: MessagingService, timePr
   def getAgentSummaries: IO[Seq[AgentSummary]] =
     for {
       agentSummaryList <-
-        messagingService.getAgentSummaries(GetAgentSummaryList(List(AgentType.Person, AgentType.CorporateBody)))
+        messagingService.getAgentSummaries(
+          GetAgentSummaryList(List(AgentType.Person, AgentType.CorporateBody), None, Some(false), Some(false))
+        )
     } yield agentSummaryList
 
   def getPlacesOfDeposit: IO[Seq[AgentSummary]] =
     for {
       agentSummaryList <-
         messagingService.getPlacesOfDeposit(
-          GetAgentSummaryList(List(AgentType.CorporateBody), Some(true))
+          GetAgentSummaryList(List(AgentType.CorporateBody), None, Some(true), Some(false))
         )
     } yield agentSummaryList
 
