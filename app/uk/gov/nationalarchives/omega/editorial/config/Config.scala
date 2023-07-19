@@ -25,7 +25,8 @@ case class Config(
   broker: HostBrokerEndpoint,
   credentials: UsernamePasswordCredentials,
   defaultRequestQueueName: String,
-  legalStatusRequestQueueName: Option[String] = None
+  legalStatusRequestQueueName: Option[String] = None,
+  agentSummaryRequestQueueName: Option[String] = None
 )
 
 case class HostBrokerEndpoint(host: String, port: Int)

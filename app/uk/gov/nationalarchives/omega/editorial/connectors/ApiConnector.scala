@@ -28,7 +28,7 @@ import org.typelevel.log4cats.slf4j.Slf4jLogger
 import play.api.inject.ApplicationLifecycle
 import uk.gov.nationalarchives.omega.editorial.config.Config
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector.replyQueueName
-import uk.gov.nationalarchives.omega.editorial.connectors.MessageType.GetLegalStatusesType
+import uk.gov.nationalarchives.omega.editorial.connectors.MessageType.{ GetAgentSummariesType, GetLegalStatusesType }
 import uk.gov.nationalarchives.omega.editorial.connectors.messages.{ ReplyMessage, RequestMessage }
 
 import javax.inject.{ Inject, Singleton }
@@ -62,8 +62,9 @@ class ApiConnector @Inject() (
 
   private def getQueueName(messageType: MessageType): String =
     messageType match {
-      case GetLegalStatusesType => config.legalStatusRequestQueueName.getOrElse(config.defaultRequestQueueName)
-      case _                    => config.defaultRequestQueueName
+      case GetLegalStatusesType  => config.legalStatusRequestQueueName.getOrElse(config.defaultRequestQueueName)
+      case GetAgentSummariesType => config.legalStatusRequestQueueName.getOrElse(config.defaultRequestQueueName)
+      case _                     => config.defaultRequestQueueName
     }
 
 }
