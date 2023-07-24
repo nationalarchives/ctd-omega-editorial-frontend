@@ -33,112 +33,98 @@ class TestStubData @Inject() extends StubData {
       AgentType.Person,
       s"$baseUriAgent.48N",
       "current description",
-      List(
-        AgentDescription(
-          s"$baseUriAgent.48N",
-          "Baden-Powell, Lady Olave St Clair",
-          Some(false),
-          Some(false),
-          "2022-06-22T02:00:00-0500",
-          Some("1889"),
-          Some("1977")
-        )
+      AgentDescription(
+        s"$baseUriAgent.48N",
+        "Baden-Powell, Lady Olave St Clair",
+        Some(false),
+        Some(false),
+        "2022-06-22T02:00:00-0500",
+        Some("1889"),
+        Some("1977")
       )
     ),
     AgentSummary(
       AgentType.Person,
       s"$baseUriAgent.46F",
       "current description",
-      List(
-        AgentDescription(
-          s"$baseUriAgent.46F",
-          "Fawkes, Guy",
-          Some(false),
-          Some(false),
-          "2022-06-22T02:00:00-0500",
-          Some("1570"),
-          Some("1606")
-        )
+      AgentDescription(
+        s"$baseUriAgent.46F",
+        "Fawkes, Guy",
+        Some(false),
+        Some(false),
+        "2022-06-22T02:00:00-0500",
+        Some("1570"),
+        Some("1606")
       )
     ),
     AgentSummary(
       AgentType.CorporateBody,
       s"$baseUriAgent.92W",
       "current description",
-      List(
-        AgentDescription(
-          s"$baseUriAgent.92W",
-          "Joint Milk Quality Committee",
-          Some(false),
-          Some(false),
-          "2022-06-22T02:00:00-0500",
-          Some("1948"),
-          Some("1948")
-        )
+      AgentDescription(
+        s"$baseUriAgent.92W",
+        "Joint Milk Quality Committee",
+        Some(false),
+        Some(false),
+        "2022-06-22T02:00:00-0500",
+        Some("1948"),
+        Some("1948")
       )
     ),
     AgentSummary(
       AgentType.CorporateBody,
       s"$baseUriAgent.8R6",
       "current description",
-      List(
-        AgentDescription(
-          s"$baseUriAgent.8R6",
-          "Queen Anne's Bounty",
-          Some(false),
-          Some(false),
-          "2022-06-22T02:00:00-0500",
-          None,
-          None
-        )
+      AgentDescription(
+        s"$baseUriAgent.8R6",
+        "Queen Anne's Bounty",
+        Some(false),
+        Some(false),
+        "2022-06-22T02:00:00-0500",
+        None,
+        None
       )
     ),
     AgentSummary(
       AgentType.CorporateBody,
       tna,
       "current description",
-      List(
-        AgentDescription(
-          "S2",
-          "The National Archives",
-          Some(false),
-          Some(true),
-          "2022-06-22T02:00:00-0500",
-          Some("2003"),
-          None
-        )
+      AgentDescription(
+        "S2",
+        "The National Archives",
+        Some(false),
+        Some(true),
+        "2022-06-22T02:00:00-0500",
+        Some("2003"),
+        None
       )
     ),
     AgentSummary(
       AgentType.CorporateBody,
       britishMuseum,
       "current description",
-      List(
-        AgentDescription(
-          s"$baseUriAgent.63F",
-          "British Museum, Central Archive",
-          Some(false),
-          Some(true),
-          "2022-06-22T02:00:00-0500",
-          Some("2001"),
-          Some("2001")
-        )
+      AgentDescription(
+        s"$baseUriAgent.63F",
+        "British Museum, Central Archive",
+        Some(false),
+        Some(true),
+        "2022-06-22T02:00:00-0500",
+        Some("2001"),
+        Some("2001")
       )
     ),
     AgentSummary(
       AgentType.CorporateBody,
       britishLibrary,
       "current description",
-      List(
-        AgentDescription(
-          s"$baseUriAgent.614",
-          "British Library, Sound Archive",
-          Some(false),
-          Some(true),
-          "2022-06-22T02:00:00-0500",
-          Some("1983"),
-          Some("1983")
-        )
+      AgentDescription(
+        s"$baseUriAgent.614",
+        "British Library, Sound Archive",
+        Some(false),
+        Some(true),
+        "2022-06-22T02:00:00-0500",
+        Some("1983"),
+        Some("1983")
       )
     )
   )

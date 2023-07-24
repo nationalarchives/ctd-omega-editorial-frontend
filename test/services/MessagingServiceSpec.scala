@@ -55,16 +55,14 @@ class MessagingServiceSpec
           AgentType.CorporateBody,
           "W2T",
           "current description",
-          List(
-            AgentDescription(
-              "W2T",
-              "Hansard Society",
-              Some(false),
-              Some(false),
-              "2022-06-22T02:00:00-0500",
-              Some("1944"),
-              Some("1944")
-            )
+          AgentDescription(
+            "W2T",
+            "Hansard Society",
+            Some(false),
+            Some(false),
+            "2022-06-22T02:00:00-0500",
+            Some("1944"),
+            Some("1944")
           )
         )
       )
@@ -85,16 +83,14 @@ class MessagingServiceSpec
             AgentType.CorporateBody,
             "614",
             "current description",
-            List(
-              AgentDescription(
-                "614",
-                "The National Archives",
-                Some(false),
-                Some(false),
-                "2022-06-22T02:00:00-0500",
-                Some("2003"),
-                None
-              )
+            AgentDescription(
+              "614",
+              "The National Archives",
+              Some(false),
+              Some(false),
+              "2022-06-22T02:00:00-0500",
+              Some("2003"),
+              None
             )
           )
         )
@@ -125,17 +121,16 @@ class MessagingServiceSpec
        |    "type" : "${agentSummaryList(0).agentType.entryName}",
        |    "identifier" : "${agentSummaryList(0).identifier}",
        |    "current-description" : "${agentSummaryList(0).currentDescription}",
-       |    "description" : [
+       |    "description" :
        |      {
        |      "identifier": "${agentSummaryList(0).identifier}",
-       |      "label": "${agentSummaryList(0).description(0).label}",
-       |      "authority-file" : ${agentSummaryList(0).description(0).authorityFile.getOrElse("")},
-       |      "depository" : ${agentSummaryList(0).description(0).depository.getOrElse("")},
-       |      "version-timestamp" : "${agentSummaryList(0).description(0).versionTimestamp}",
-       |      "date-from": "${agentSummaryList(0).description(0).dateFrom.getOrElse("")}",
-       |      "date-to": "${agentSummaryList(0).description(0).dateTo.getOrElse("")}"
+       |      "label": "${agentSummaryList(0).description.label}",
+       |      "authority-file" : ${agentSummaryList(0).description.authorityFile.getOrElse("")},
+       |      "depository" : ${agentSummaryList(0).description.depository.getOrElse("")},
+       |      "version-timestamp" : "${agentSummaryList(0).description.versionTimestamp}",
+       |      "date-from": "${agentSummaryList(0).description.dateFrom.getOrElse("")}",
+       |      "date-to": "${agentSummaryList(0).description.dateTo.getOrElse("")}"
        |      }
-       |    ]
        |   }
        |]
        |""".stripMargin
@@ -147,16 +142,15 @@ class MessagingServiceSpec
        |    "type" : "${agentSummaryList(0).agentType.entryName}",
        |    "identifier" : "${agentSummaryList(0).identifier}",
        |    "current-description" : "${agentSummaryList(0).currentDescription}",
-       |    "description" : [
+       |    "description" :
        |      {
        |      "identifier": "${agentSummaryList(0).identifier}",
-       |      "label": "${agentSummaryList(0).description(0).label}",
-       |      "authority-file" : ${agentSummaryList(0).description(0).authorityFile.getOrElse("")},
-       |      "depository" : ${agentSummaryList(0).description(0).depository.getOrElse("")},
-       |      "version-timestamp" : "${agentSummaryList(0).description(0).versionTimestamp}",
-       |      "date-from": "${agentSummaryList(0).description(0).dateFrom.getOrElse("")}"
+       |      "label": "${agentSummaryList(0).description.label}",
+       |      "authority-file" : ${agentSummaryList(0).description.authorityFile.getOrElse("")},
+       |      "depository" : ${agentSummaryList(0).description.depository.getOrElse("")},
+       |      "version-timestamp" : "${agentSummaryList(0).description.versionTimestamp}",
+       |      "date-from": "${agentSummaryList(0).description.dateFrom.getOrElse("")}"
        |      }
-       |    ]
        |   }
        |]
        |""".stripMargin

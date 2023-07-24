@@ -97,7 +97,7 @@ class ResponseBuilder @Inject() (stubData: StubData) {
     parse[GetAgentSummaryList](jmsMessage)
       .flatMap(agentSummaryReq =>
         asJsonString(
-          stubData.getAgentSummaries.filter(_.description.head.depository == agentSummaryReq.depository)
+          stubData.getAgentSummaries.filter(_.description.depository == agentSummaryReq.depository)
         )
       )
 

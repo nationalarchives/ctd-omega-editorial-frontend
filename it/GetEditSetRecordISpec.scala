@@ -54,8 +54,8 @@ class GetEditSetRecordISpec extends BaseRequestReplyServiceISpec {
                     |  "endDateDay" : "31",
                     |  "endDateMonth" : "12",
                     |  "endDateYear" : "1961",
-                    |  "legalStatusID": "http://catalogue.nationalarchives.gov.uk/public-record",
-                    |  "placeOfDepositID" : "http://catalogue.nationalarchives.gov.uk/agent.S2",
+                    |  "legalStatusID": "http://cat.nationalarchives.gov.uk/public-record",
+                    |  "placeOfDepositID" : "http://cat.nationalarchives.gov.uk/agent.S2",
                     |  "note": "",
                     |  "background": "",
                     |  "custodialHistory" : "",
@@ -88,8 +88,8 @@ class GetEditSetRecordISpec extends BaseRequestReplyServiceISpec {
               "endDateDay" : "31",
               "endDateMonth" : "12",
               "endDateYear" : "1962",
-              "legalStatusID": "http://catalogue.nationalarchives.gov.uk/public-record",
-              "placeOfDepositID" : "http://catalogue.nationalarchives.gov.uk/agent.S2",
+              "legalStatusID": "http://cat.nationalarchives.gov.uk/public-record",
+              "placeOfDepositID" : "http://cat.nationalarchives.gov.uk/agent.S2",
               "note": "A note about COAL.2022.V1RJW.P.",
               "background": "Photo was taken by a daughter of one of the coal miners who used them.",
               "custodialHistory" : "Files originally created by successor or predecessor departments for COAL",
@@ -122,7 +122,7 @@ class GetEditSetRecordISpec extends BaseRequestReplyServiceISpec {
                 }
               ],
               "background": "Photo was taken by a daughter of one of the coal miners who used them.",
-              "creatorIDs": ["http://catalogue.nationalarchives.gov.uk/agent.48N", "http://catalogue.nationalarchives.gov.uk/agent.92W"]
+              "creatorIDs": ["http://cat.nationalarchives.gov.uk/agent.48N", "http://cat.nationalarchives.gov.uk/agent.92W"]
             } """.stripMargin)))
           }
         }
@@ -151,8 +151,8 @@ class GetEditSetRecordISpec extends BaseRequestReplyServiceISpec {
                 |  "endDateDay" : "31",
                 |  "endDateMonth" : "12",
                 |  "endDateYear" : "1962",
-                |  "legalStatusID": "http://catalogue.nationalarchives.gov.uk/public-record",
-                |  "placeOfDepositID" : "http://catalogue.nationalarchives.gov.uk/agent.S2",
+                |  "legalStatusID": "http://cat.nationalarchives.gov.uk/public-record",
+                |  "placeOfDepositID" : "http://cat.nationalarchives.gov.uk/agent.S2",
                 |  "note": "A note about COAL.2022.V1RJW.P.",
                 |  "background": "Photo was taken by a daughter of one of the coal miners who used them.",
                 |  "custodialHistory" : "Files originally created by successor or predecessor departments for COAL",
@@ -185,7 +185,7 @@ class GetEditSetRecordISpec extends BaseRequestReplyServiceISpec {
                 |    }
                 |  ],
                 |  "background": "Photo was taken by a daughter of one of the coal miners who used them.",
-                |  "creatorIDs": ["http://catalogue.nationalarchives.gov.uk/agent.48N", "http://catalogue.nationalarchives.gov.uk/agent.92W"]
+                |  "creatorIDs": ["http://cat.nationalarchives.gov.uk/agent.48N", "http://cat.nationalarchives.gov.uk/agent.92W"]
                 |} """.stripMargin
             )
           )
@@ -206,8 +206,8 @@ class GetEditSetRecordISpec extends BaseRequestReplyServiceISpec {
                   |  "endDateDay" : "31",
                   |  "endDateMonth" : "12",
                   |  "endDateYear" : "1961",
-                  |  "legalStatusID": "http://catalogue.nationalarchives.gov.uk/public-record",
-                  |  "placeOfDepositID" : "http://catalogue.nationalarchives.gov.uk/agent.S2",
+                  |  "legalStatusID": "http://cat.nationalarchives.gov.uk/public-record",
+                  |  "placeOfDepositID" : "http://cat.nationalarchives.gov.uk/agent.S2",
                   |  "note": "",
                   |  "background": "",
                   |  "custodialHistory" : "",

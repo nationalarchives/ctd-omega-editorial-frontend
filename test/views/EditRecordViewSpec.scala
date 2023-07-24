@@ -71,48 +71,42 @@ class EditRecordViewSpec extends BaseViewSpec {
       AgentType.CorporateBody,
       "1",
       "current description",
-      List(
-        AgentDescription(
-          "1",
-          "The National Archives",
-          Some(false),
-          Some(false),
-          "2022-06-22T02:00:00-0500",
-          Some("2003"),
-          None
-        )
+      AgentDescription(
+        "1",
+        "The National Archives",
+        Some(false),
+        Some(false),
+        "2022-06-22T02:00:00-0500",
+        Some("2003"),
+        None
       )
     ),
     AgentSummary(
       AgentType.CorporateBody,
       "2",
       "current description",
-      List(
-        AgentDescription(
-          "2",
-          "British Museum Central Archive",
-          Some(false),
-          Some(false),
-          "2022-06-22T02:00:00-0500",
-          Some("2001"),
-          Some("2001")
-        )
+      AgentDescription(
+        "2",
+        "British Museum Central Archive",
+        Some(false),
+        Some(false),
+        "2022-06-22T02:00:00-0500",
+        Some("2001"),
+        Some("2001")
       )
     ),
     AgentSummary(
       AgentType.CorporateBody,
       "3",
       "current description",
-      List(
-        AgentDescription(
-          "3",
-          "British Library, Sound Archive",
-          Some(false),
-          Some(false),
-          "2022-06-22T02:00:00-0500",
-          Some("1983"),
-          Some("1983")
-        )
+      AgentDescription(
+        "3",
+        "British Library, Sound Archive",
+        Some(false),
+        Some(false),
+        "2022-06-22T02:00:00-0500",
+        Some("1983"),
+        Some("1983")
       )
     )
   )

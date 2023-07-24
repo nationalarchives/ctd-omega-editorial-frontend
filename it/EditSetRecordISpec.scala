@@ -108,7 +108,7 @@ class EditSetRecordISpec extends BaseISpec {
                 formerReferencePro = "MPS 4/1",
                 startDate = ExpectedDate("1", "1", "1962"),
                 endDate = ExpectedDate("31", "12", "1962"),
-                legalStatusID = "http://catalogue.nationalarchives.gov.uk/public-record",
+                legalStatusID = "http://cat.nationalarchives.gov.uk/public-record",
                 note = "A note about COAL.2022.V1RJW.P.",
                 background = "Photo was taken by a daughter of one of the coal miners who used them.",
                 optionsForPlaceOfDepositID = Seq(
