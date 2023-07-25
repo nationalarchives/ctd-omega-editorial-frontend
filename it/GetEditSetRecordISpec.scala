@@ -122,7 +122,7 @@ class GetEditSetRecordISpec extends BaseRequestReplyServiceISpec {
                 }
               ],
               "background": "Photo was taken by a daughter of one of the coal miners who used them.",
-              "creatorIDs": ["http://cat.nationalarchives.gov.uk/agent.48N", "http://cat.nationalarchives.gov.uk/agent.92W"]
+              "creatorIDs": ["http://cat.nationalarchives.gov.uk/agent.3LG", "http://cat.nationalarchives.gov.uk/agent.N6L"]
             } """.stripMargin)))
           }
         }
@@ -185,7 +185,7 @@ class GetEditSetRecordISpec extends BaseRequestReplyServiceISpec {
                 |    }
                 |  ],
                 |  "background": "Photo was taken by a daughter of one of the coal miners who used them.",
-                |  "creatorIDs": ["http://cat.nationalarchives.gov.uk/agent.48N", "http://cat.nationalarchives.gov.uk/agent.92W"]
+                |  "creatorIDs": ["http://cat.nationalarchives.gov.uk/agent.3LG", "http://cat.nationalarchives.gov.uk/agent.N6L"]
                 |} """.stripMargin
             )
           )
