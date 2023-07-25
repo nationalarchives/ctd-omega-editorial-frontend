@@ -31,57 +31,58 @@ class TestStubData @Inject() extends StubData {
   override def getAgentSummaries: Seq[AgentSummary] = List(
     AgentSummary(
       AgentType.Person,
-      s"$baseUriAgent.48N",
+      s"$baseUriAgent.3LG",
       "current description",
       AgentDescription(
-        s"$baseUriAgent.48N",
-        "Baden-Powell, Lady Olave St Clair",
+        s"$baseUriAgent.3LG",
+        "Edwin Hill",
         Some(false),
         Some(false),
         "2022-06-22T02:00:00-0500",
-        Some("1889"),
-        Some("1977")
+        Some("1793"),
+        Some("1876"),
+        None
       )
     ),
     AgentSummary(
       AgentType.Person,
-      s"$baseUriAgent.46F",
+      s"$baseUriAgent.2YK",
       "current description",
       AgentDescription(
-        s"$baseUriAgent.46F",
-        "Fawkes, Guy",
+        s"$baseUriAgent.2YK",
+        "Edward Gibson",
         Some(false),
         Some(false),
         "2022-06-22T02:00:00-0500",
-        Some("1570"),
-        Some("1606")
+        Some("1837"),
+        Some("1913")
       )
     ),
     AgentSummary(
       AgentType.CorporateBody,
-      s"$baseUriAgent.92W",
+      s"$baseUriAgent.N6L",
       "current description",
       AgentDescription(
-        s"$baseUriAgent.92W",
-        "Joint Milk Quality Committee",
+        s"$baseUriAgent.N6L",
+        "National Coal Board, Northumberland and Durham Division",
         Some(false),
         Some(false),
         "2022-06-22T02:00:00-0500",
-        Some("1948"),
-        Some("1948")
+        Some("1964"),
+        Some("1967")
       )
     ),
     AgentSummary(
       AgentType.CorporateBody,
-      s"$baseUriAgent.8R6",
+      s"$baseUriAgent.W91",
       "current description",
       AgentDescription(
-        s"$baseUriAgent.8R6",
-        "Queen Anne's Bounty",
+        s"$baseUriAgent.W91",
+        "Queen's Printer for Scotland",
         Some(false),
         Some(false),
         "2022-06-22T02:00:00-0500",
-        None,
+        Some("1999"),
         None
       )
     ),

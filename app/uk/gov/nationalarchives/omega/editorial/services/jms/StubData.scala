@@ -73,7 +73,7 @@ trait StubData {
         LinkOnly("#;", "COAL 80/80/6"),
         LinkOnly("#;", "COAL 80/80/7")
       ),
-      creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.92W")
+      creatorIDs = Seq(s"$baseUriAgent.3LG", s"$baseUriAgent.N6L")
     )
 
   private val editSetRecordTwo: EditSetRecord =
@@ -97,7 +97,7 @@ trait StubData {
       custodialHistory = "",
       relatedMaterial = Seq.empty,
       separatedMaterial = Seq.empty,
-      creatorIDs = Seq(s"$baseUriAgent.515", s"$baseUriAgent.XXX")
+      creatorIDs = Seq(s"$baseUriAgent.4VS", s"$baseUriAgent.XXX")
     )
 
   private val editSetRecordThree: EditSetRecord =
@@ -121,7 +121,7 @@ trait StubData {
       custodialHistory = "",
       relatedMaterial = Seq.empty,
       separatedMaterial = Seq.empty,
-      creatorIDs = Seq(s"$baseUriAgent.8R6", s"$baseUriAgent.92W", s"$baseUriAgent.8R6")
+      creatorIDs = Seq(s"$baseUriAgent.W91", s"$baseUriAgent.N6L", s"$baseUriAgent.W91")
     )
 
   private val editSetRecordFour: EditSetRecord =
@@ -169,7 +169,7 @@ trait StubData {
       custodialHistory = "",
       relatedMaterial = Seq.empty,
       separatedMaterial = Seq.empty,
-      creatorIDs = Seq(s"$baseUriAgent.46F", s"$baseUriAgent.48N", s"$baseUriAgent.46F")
+      creatorIDs = Seq(s"$baseUriAgent.2YK", s"$baseUriAgent.3LG", s"$baseUriAgent.2YK")
     )
 
   private val editSetRecordSix: EditSetRecord =
@@ -193,7 +193,7 @@ trait StubData {
       custodialHistory = "",
       relatedMaterial = Seq.empty,
       separatedMaterial = Seq.empty,
-      creatorIDs = Seq(s"$baseUriAgent.4", s"$baseUriAgent.FKS", s"$baseUriAgent.4WV")
+      creatorIDs = Seq(s"$baseUriAgent.4W4", s"$baseUriAgent.FKS", s"$baseUriAgent.4WV")
     )
 
   private val editSetRecordSeven: EditSetRecord =
@@ -217,7 +217,7 @@ trait StubData {
       custodialHistory = "",
       relatedMaterial = Seq.empty,
       separatedMaterial = Seq.empty,
-      creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.92W")
+      creatorIDs = Seq(s"$baseUriAgent.3LG", s"$baseUriAgent.N6L")
     )
 
   private val editSetRecordEight: EditSetRecord =
@@ -241,7 +241,7 @@ trait StubData {
       custodialHistory = "",
       relatedMaterial = Seq.empty,
       separatedMaterial = Seq.empty,
-      creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.46F", s"$baseUriAgent.8R6")
+      creatorIDs = Seq(s"$baseUriAgent.3LG", s"$baseUriAgent.2YK", s"$baseUriAgent.W91")
     )
 
   private val editSetRecordNine: EditSetRecord =
@@ -265,7 +265,7 @@ trait StubData {
       custodialHistory = "",
       relatedMaterial = Seq.empty,
       separatedMaterial = Seq.empty,
-      creatorIDs = Seq(s"$baseUriAgent.2TK", s"$baseUriAgent.39T", s"$baseUriAgent.ST", s"$baseUriAgent.331")
+      creatorIDs = Seq(s"$baseUriAgent.2TK", s"$baseUriAgent.39T", s"$baseUriAgent.4X7", s"$baseUriAgent.331")
     )
 
   private val editSetRecordTen: EditSetRecord =
@@ -317,7 +317,7 @@ trait StubData {
         DescriptionOnly("Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."),
         LinkOnly("#;", "COAL 80/80/5")
       ),
-      creatorIDs = Seq(s"$baseUriAgent.8R6")
+      creatorIDs = Seq(s"$baseUriAgent.W91")
     )
 
   private val editSetRecordTwelve: EditSetRecord =
@@ -349,7 +349,7 @@ trait StubData {
           "Bedlington Colliery, Newcastle Upon Tyne. Photograph depicting: view of pithead baths."
         )
       ),
-      creatorIDs = Seq(s"$baseUriAgent.8R6", s"$baseUriAgent.92W", "")
+      creatorIDs = Seq(s"$baseUriAgent.W91", s"$baseUriAgent.N6L", "")
     )
 
   private val editSetRecordMap: Map[String, EditSetRecord] =
@@ -495,16 +495,16 @@ trait StubData {
     ),
     AgentSummary(
       AgentType.Person,
-      s"$baseUriAgent.48N",
+      s"$baseUriAgent.3LG",
       "current description",
       AgentDescription(
-        s"$baseUriAgent.48N",
-        "Baden-Powell, Lady Olave St Clair",
+        s"$baseUriAgent.3LG",
+        "Edwin Hill",
         Some(false),
         Some(false),
         "2022-06-22T02:00:00-0500",
-        Some("1889"),
-        Some("1977"),
+        Some("1793"),
+        Some("1876"),
         None
       )
     ),
@@ -582,16 +582,16 @@ trait StubData {
     ),
     AgentSummary(
       AgentType.Person,
-      s"$baseUriAgent.46F",
+      s"$baseUriAgent.2YK",
       "current description",
       AgentDescription(
-        s"$baseUriAgent.46F",
-        "Fawkes, Guy",
+        s"$baseUriAgent.2YK",
+        "Edward Gibson",
         Some(false),
         Some(false),
         "2022-06-22T02:00:00-0500",
-        Some("1570"),
-        Some("1606")
+        Some("1837"),
+        Some("1913")
       )
     ),
     AgentSummary(
@@ -652,6 +652,20 @@ trait StubData {
     ),
     AgentSummary(
       AgentType.Person,
+      s"$baseUriAgent.4W4",
+      "current description",
+      AgentDescription(
+        s"$baseUriAgent.4W4",
+        "Edward Allan Morris",
+        Some(false),
+        Some(false),
+        "2022-06-22T02:00:00-0500",
+        Some("1910"),
+        Some("1997")
+      )
+    ),
+    AgentSummary(
+      AgentType.Person,
       s"$baseUriAgent.4",
       "current description",
       AgentDescription(
@@ -680,15 +694,15 @@ trait StubData {
     ),
     AgentSummary(
       AgentType.Person,
-      s"$baseUriAgent.ST",
+      s"$baseUriAgent.4X7",
       "current description",
       AgentDescription(
-        s"$baseUriAgent.ST",
-        "Lawson, Nigel",
+        s"$baseUriAgent.4X7",
+        "Sir John Frank Charles Kingman",
         Some(false),
         Some(false),
         "2022-06-22T02:00:00-0500",
-        Some("1932"),
+        Some("1939"),
         None
       )
     ),
@@ -708,11 +722,11 @@ trait StubData {
     ),
     AgentSummary(
       AgentType.Person,
-      s"$baseUriAgent.515",
+      s"$baseUriAgent.4VS",
       "current description",
       AgentDescription(
-        s"$baseUriAgent.515",
-        "Newcastle, 1st Duke of, ",
+        s"$baseUriAgent.4VS",
+        "Winchilsea, 6th Earl",
         Some(false),
         Some(false),
         "2022-06-22T02:00:00-0500",
@@ -872,6 +886,20 @@ trait StubData {
         "2022-06-22T02:00:00-0500",
         Some("1819"),
         Some("1901")
+      )
+    ),
+    AgentSummary(
+      AgentType.CorporateBody,
+      s"$baseUriAgent.NL6",
+      "current description",
+      AgentDescription(
+        s"$baseUriAgent.NL6",
+        "National Coal Board, Northumberland and Durham Division",
+        Some(false),
+        Some(false),
+        "2022-06-22T02:00:00-0500",
+        Some("1964"),
+        Some("1967")
       )
     ),
     AgentSummary(
@@ -1406,16 +1434,16 @@ trait StubData {
     ),
     AgentSummary(
       AgentType.CorporateBody,
-      s"$baseUriAgent.92W",
+      s"$baseUriAgent.N6L",
       "current description",
       AgentDescription(
-        s"$baseUriAgent.92W",
-        "Joint Milk Quality Committee",
+        s"$baseUriAgent.N6L",
+        "National Coal Board, Northumberland and Durham Division",
         Some(false),
         Some(false),
         "2022-06-22T02:00:00-0500",
-        Some("1948"),
-        Some("1948")
+        Some("1964"),
+        Some("1967")
       )
     ),
     AgentSummary(
@@ -1882,15 +1910,15 @@ trait StubData {
     ),
     AgentSummary(
       AgentType.CorporateBody,
-      s"$baseUriAgent.8R6",
+      s"$baseUriAgent.W91",
       "current description",
       AgentDescription(
-        s"$baseUriAgent.8R6",
-        "Queen Anne's Bounty",
+        s"$baseUriAgent.W91",
+        "Queen's Printer for Scotland",
         Some(false),
         Some(false),
         "2022-06-22T02:00:00-0500",
-        None,
+        Some("1999"),
         None
       )
     ),
@@ -1920,20 +1948,6 @@ trait StubData {
         "2022-06-22T02:00:00-0500",
         Some("1842"),
         Some("1842")
-      )
-    ),
-    AgentSummary(
-      AgentType.CorporateBody,
-      s"$baseUriAgent.W91",
-      "current description",
-      AgentDescription(
-        s"$baseUriAgent.W91",
-        "Queen's Printer for Scotland",
-        Some(false),
-        Some(false),
-        "2022-06-22T02:00:00-0500",
-        Some("1999"),
-        Some("1999")
       )
     ),
     AgentSummary(
@@ -2106,16 +2120,16 @@ trait StubData {
     ),
     AgentSummary(
       AgentType.CorporateBody,
-      s"$baseUriAgent.FKS",
+      s"$baseUriAgent.24",
       "current description",
       AgentDescription(
-        s"$baseUriAgent.FKS",
-        "The Buying Agency",
+        s"$baseUriAgent.24",
+        "National Coal Board",
         Some(false),
         Some(false),
         "2022-06-22T02:00:00-0500",
-        Some("1991"),
-        Some("1991")
+        Some("1946"),
+        Some("1986")
       )
     ),
     AgentSummary(

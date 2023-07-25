@@ -121,24 +121,27 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     ExpectedSelectOption("", "Select creator", disabled = true),
                     ExpectedSelectOption(
-                      s"$baseUriAgent.48N",
-                      "Baden-Powell, Lady Olave St Clair (1889 - 1977)",
+                      s"$baseUriAgent.3LG",
+                      "Edwin Hill (1793 - 1876)",
                       selected = true
                     ),
-                    ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                    ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                    ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                    ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                    ExpectedSelectOption(
+                      s"$baseUriAgent.N6L",
+                      "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                    ),
+                    ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                   ),
                   Seq(
                     ExpectedSelectOption("", "Select creator", disabled = true),
-                    ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                    ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
+                    ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                    ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
                     ExpectedSelectOption(
-                      s"$baseUriAgent.92W",
-                      "Joint Milk Quality Committee (1948 - 1948)",
+                      s"$baseUriAgent.N6L",
+                      "National Coal Board, Northumberland and Durham Division (1964 - 1967)",
                       selected = true
                     ),
-                    ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                    ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                   )
                 ),
                 separatedMaterial = Seq(
@@ -221,10 +224,13 @@ class EditSetRecordISpec extends BaseISpec {
                   optionsForCreators = Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -250,10 +256,13 @@ class EditSetRecordISpec extends BaseISpec {
                   optionsForCreators = Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -1136,17 +1145,23 @@ class EditSetRecordISpec extends BaseISpec {
                 optionsForCreators = Seq(
                   Seq(
                     ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                    ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                    ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                    ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                    ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                    ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                    ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                    ExpectedSelectOption(
+                      s"$baseUriAgent.N6L",
+                      "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                    ),
+                    ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                   ),
                   Seq(
                     ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                    ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                    ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                    ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                    ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                    ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                    ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                    ExpectedSelectOption(
+                      s"$baseUriAgent.N6L",
+                      "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                    ),
+                    ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                   )
                 ),
                 summaryErrorMessages = Seq(
@@ -1170,8 +1185,8 @@ class EditSetRecordISpec extends BaseISpec {
           val values =
             valuesFromRecord(editSetRecordOci) ++
               Map(
-                "creator-ids[0]" -> s"$baseUriAgent.48N",
-                "creator-ids[1]" -> s"$baseUriAgent.46F"
+                "creator-ids[0]" -> s"$baseUriAgent.3LG",
+                "creator-ids[1]" -> s"$baseUriAgent.2YK"
               )
 
           val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
@@ -1184,7 +1199,7 @@ class EditSetRecordISpec extends BaseISpec {
           assertCallMadeToUpdateEditSetRecord(
             updateEditSetRecordForRecord.copy(fields =
               updateEditSetRecordForRecord.fields.copy(
-                creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.46F")
+                creatorIDs = Seq(s"$baseUriAgent.3LG", s"$baseUriAgent.2YK")
               )
             )
           )
@@ -1196,8 +1211,8 @@ class EditSetRecordISpec extends BaseISpec {
           val values =
             valuesFromRecord(editSetRecordOci) ++
               Map(
-                "creator-ids[0]" -> s"$baseUriAgent.48N",
-                "creator-ids[1]" -> s"$baseUriAgent.46F",
+                "creator-ids[0]" -> s"$baseUriAgent.3LG",
+                "creator-ids[1]" -> s"$baseUriAgent.2YK",
                 "creator-ids[2]" -> ""
               )
 
@@ -1211,7 +1226,7 @@ class EditSetRecordISpec extends BaseISpec {
           assertCallMadeToUpdateEditSetRecord(
             updateEditSetRecordForRecord.copy(fields =
               updateEditSetRecordForRecord.fields.copy(
-                creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.46F")
+                creatorIDs = Seq(s"$baseUriAgent.3LG", s"$baseUriAgent.2YK")
               )
             )
           )
@@ -1223,9 +1238,9 @@ class EditSetRecordISpec extends BaseISpec {
           val values =
             valuesFromRecord(editSetRecordOci) ++
               Map(
-                "creator-ids[0]" -> s"$baseUriAgent.48N",
-                "creator-ids[1]" -> s"$baseUriAgent.46F",
-                "creator-ids[2]" -> s"$baseUriAgent.46F"
+                "creator-ids[0]" -> s"$baseUriAgent.3LG",
+                "creator-ids[1]" -> s"$baseUriAgent.2YK",
+                "creator-ids[2]" -> s"$baseUriAgent.2YK"
               )
 
           val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
@@ -1238,7 +1253,7 @@ class EditSetRecordISpec extends BaseISpec {
           assertCallMadeToUpdateEditSetRecord(
             updateEditSetRecordForRecord.copy(fields =
               updateEditSetRecordForRecord.fields.copy(
-                creatorIDs = Seq(s"$baseUriAgent.48N", s"$baseUriAgent.46F", s"$baseUriAgent.46F")
+                creatorIDs = Seq(s"$baseUriAgent.3LG", s"$baseUriAgent.2YK", s"$baseUriAgent.2YK")
               )
             )
           )
@@ -1526,8 +1541,8 @@ class EditSetRecordISpec extends BaseISpec {
               "background"        -> "The photo was taken by a daughter of one of the coal miners who used them.",
               "custodial-history" -> "These files originally created by successor or predecessor departments for COAL",
               "place-of-deposit-id" -> britishLibrary,
-              "creator-ids[0]"      -> s"$baseUriAgent.46F",
-              "creator-ids[1]"      -> s"$baseUriAgent.8R6"
+              "creator-ids[0]"      -> s"$baseUriAgent.2YK",
+              "creator-ids[1]"      -> s"$baseUriAgent.W91"
             )
 
           val submissionResponse = submitSavingChanges(idOfExistingEditSet, editSetRecordOci, values)
@@ -1552,7 +1567,7 @@ class EditSetRecordISpec extends BaseISpec {
                 background = "The photo was taken by a daughter of one of the coal miners who used them.",
                 custodialHistory = "These files originally created by successor or predecessor departments for COAL",
                 placeOfDepositID = britishLibrary,
-                creatorIDs = Seq(s"$baseUriAgent.46F", s"$baseUriAgent.8R6")
+                creatorIDs = Seq(s"$baseUriAgent.2YK", s"$baseUriAgent.W91")
               )
             )
           )
@@ -1711,10 +1726,17 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty", selected = true)
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.W91",
+                        "Queen's Printer for Scotland (1999 - )",
+                        selected = true
+                      )
                     )
                   )
                 )
@@ -1723,11 +1745,10 @@ class EditSetRecordISpec extends BaseISpec {
             val values =
               valuesFromRecord(editSetRecordOci) ++
                 Map(
-                  "creator-ids[0]" -> s"$baseUriAgent.8R6"
+                  "creator-ids[0]" -> s"$baseUriAgent.W91"
                 )
 
             val response = submitAddingAnotherCreatorSlot(idOfExistingEditSet, editSetRecordOci, values)
-
             assertPageAsExpected(
               response,
               OK,
@@ -1736,17 +1757,27 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty", selected = true)
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.W91",
+                        "Queen's Printer for Scotland (1999 - )",
+                        selected = true
+                      )
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -1768,10 +1799,17 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty", selected = true)
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.W91",
+                        "Queen's Printer for Scotland (1999 - )",
+                        selected = true
+                      )
                     )
                   )
                 )
@@ -1779,7 +1817,7 @@ class EditSetRecordISpec extends BaseISpec {
 
             val values =
               valuesFromRecord(editSetRecordOci) ++ Map(
-                "creator-ids[0]" -> s"$baseUriAgent.8R6",
+                "creator-ids[0]" -> s"$baseUriAgent.W91",
                 "creator-ids[1]" -> ""
               )
 
@@ -1793,17 +1831,27 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty", selected = true)
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.W91",
+                        "Queen's Printer for Scotland (1999 - )",
+                        selected = true
+                      )
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -1825,10 +1873,17 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty", selected = true)
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.W91",
+                        "Queen's Printer for Scotland (1999 - )",
+                        selected = true
+                      )
                     )
                   )
                 )
@@ -1849,10 +1904,13 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -1874,10 +1932,17 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty", selected = true)
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.W91",
+                        "Queen's Printer for Scotland (1999 - )",
+                        selected = true
+                      )
                     )
                   )
                 )
@@ -1885,11 +1950,10 @@ class EditSetRecordISpec extends BaseISpec {
 
             val values =
               valuesFromRecord(editSetRecordOci) ++ Map(
-                "creator-ids[0]" -> s"$baseUriAgent.92W"
+                "creator-ids[0]" -> s"$baseUriAgent.N6L"
               )
 
             val submissionResponse = submitAddingAnotherCreatorSlot(idOfExistingEditSet, editSetRecordOci, values)
-
             assertPageAsExpected(
               submissionResponse,
               OK,
@@ -1898,21 +1962,24 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.92W",
-                        "Joint Milk Quality Committee (1948 - 1948)",
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -1937,24 +2004,27 @@ class EditSetRecordISpec extends BaseISpec {
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.48N",
-                        "Baden-Powell, Lady Olave St Clair (1889 - 1977)",
+                        s"$baseUriAgent.3LG",
+                        "Edwin Hill (1793 - 1876)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.92W",
-                        "Joint Milk Quality Committee (1948 - 1948)",
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -1963,8 +2033,8 @@ class EditSetRecordISpec extends BaseISpec {
             val values =
               valuesFromRecord(editSetRecordOci) ++
                 Map(
-                  "creator-ids[0]" -> s"$baseUriAgent.48N",
-                  "creator-ids[1]" -> s"$baseUriAgent.92W"
+                  "creator-ids[0]" -> s"$baseUriAgent.3LG",
+                  "creator-ids[1]" -> s"$baseUriAgent.N6L"
                 )
 
             val submissionResponse = submitAddingAnotherCreatorSlot(idOfExistingEditSet, editSetRecordOci, values)
@@ -1978,31 +2048,37 @@ class EditSetRecordISpec extends BaseISpec {
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.48N",
-                        "Baden-Powell, Lady Olave St Clair (1889 - 1977)",
+                        s"$baseUriAgent.3LG",
+                        "Edwin Hill (1793 - 1876)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.92W",
-                        "Joint Milk Quality Committee (1948 - 1948)",
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -2024,28 +2100,37 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)", selected = true),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)", selected = true),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.48N",
-                        "Baden-Powell, Lady Olave St Clair (1889 - 1977)",
+                        s"$baseUriAgent.3LG",
+                        "Edwin Hill (1793 - 1876)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)", selected = true),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)", selected = true),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -2054,9 +2139,9 @@ class EditSetRecordISpec extends BaseISpec {
             val values =
               valuesFromRecord(editSetRecordOci) ++
                 Map(
-                  "creator-ids[0]" -> s"$baseUriAgent.46F",
-                  "creator-ids[1]" -> s"$baseUriAgent.48N",
-                  "creator-ids[2]" -> s"$baseUriAgent.46F"
+                  "creator-ids[0]" -> s"$baseUriAgent.2YK",
+                  "creator-ids[1]" -> s"$baseUriAgent.3LG",
+                  "creator-ids[2]" -> s"$baseUriAgent.2YK"
                 )
 
             val response = submitAddingAnotherCreatorSlot(idOfExistingEditSet, editSetRecordOci, values)
@@ -2069,35 +2154,47 @@ class EditSetRecordISpec extends BaseISpec {
                   optionsForCreators = Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)", selected = true),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)", selected = true),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.48N",
-                        "Baden-Powell, Lady Olave St Clair (1889 - 1977)",
+                        s"$baseUriAgent.3LG",
+                        "Edwin Hill (1793 - 1876)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)", selected = true),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)", selected = true),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -2119,28 +2216,37 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)", selected = true),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)", selected = true),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.48N",
-                        "Baden-Powell, Lady Olave St Clair (1889 - 1977)",
+                        s"$baseUriAgent.3LG",
+                        "Edwin Hill (1793 - 1876)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)", selected = true),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)", selected = true),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -2148,9 +2254,9 @@ class EditSetRecordISpec extends BaseISpec {
 
             val values =
               valuesFromRecord(editSetRecordOci) ++ Map(
-                "creator-ids[0]" -> s"$baseUriAgent.8R6",
-                "creator-ids[1]" -> s"$baseUriAgent.92W",
-                "creator-ids[2]" -> s"$baseUriAgent.48N"
+                "creator-ids[0]" -> s"$baseUriAgent.W91",
+                "creator-ids[1]" -> s"$baseUriAgent.N6L",
+                "creator-ids[2]" -> s"$baseUriAgent.3LG"
               )
 
             val response = submitAddingAnotherCreatorSlot(idOfExistingEditSet, editSetRecordOci, values)
@@ -2163,39 +2269,52 @@ class EditSetRecordISpec extends BaseISpec {
                   optionsForCreators = Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty", selected = true)
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.W91",
+                        "Queen's Printer for Scotland (1999 - )",
+                        selected = true
+                      )
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.92W",
-                        "Joint Milk Quality Committee (1948 - 1948)",
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.48N",
-                        "Baden-Powell, Lady Olave St Clair (1889 - 1977)",
+                        s"$baseUriAgent.3LG",
+                        "Edwin Hill (1793 - 1876)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -2222,24 +2341,27 @@ class EditSetRecordISpec extends BaseISpec {
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.48N",
-                        "Baden-Powell, Lady Olave St Clair (1889 - 1977)",
+                        s"$baseUriAgent.3LG",
+                        "Edwin Hill (1793 - 1876)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.92W",
-                        "Joint Milk Quality Committee (1948 - 1948)",
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -2248,8 +2370,8 @@ class EditSetRecordISpec extends BaseISpec {
             val values =
               valuesFromRecord(editSetRecordOci) ++
                 Map(
-                  "creator-ids[0]" -> s"$baseUriAgent.48N",
-                  "creator-ids[1]" -> s"$baseUriAgent.92W"
+                  "creator-ids[0]" -> s"$baseUriAgent.3LG",
+                  "creator-ids[1]" -> s"$baseUriAgent.N6L"
                 )
 
             val response = submitRemovingTheLastCreator(idOfExistingEditSet, editSetRecordOci, values)
@@ -2263,13 +2385,16 @@ class EditSetRecordISpec extends BaseISpec {
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.48N",
-                        "Baden-Powell, Lady Olave St Clair (1889 - 1977)",
+                        s"$baseUriAgent.3LG",
+                        "Edwin Hill (1793 - 1876)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -2292,24 +2417,27 @@ class EditSetRecordISpec extends BaseISpec {
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.48N",
-                        "Baden-Powell, Lady Olave St Clair (1889 - 1977)",
+                        s"$baseUriAgent.3LG",
+                        "Edwin Hill (1793 - 1876)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.92W",
-                        "Joint Milk Quality Committee (1948 - 1948)",
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -2318,8 +2446,8 @@ class EditSetRecordISpec extends BaseISpec {
             val values =
               valuesFromRecord(editSetRecordOci) ++
                 Map(
-                  "creator-ids[0]" -> s"$baseUriAgent.46F",
-                  "creator-ids[1]" -> s"$baseUriAgent.92W"
+                  "creator-ids[0]" -> s"$baseUriAgent.2YK",
+                  "creator-ids[1]" -> s"$baseUriAgent.N6L"
                 )
 
             val response = submitRemovingTheLastCreator(idOfExistingEditSet, editSetRecordOci, values)
@@ -2332,10 +2460,13 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)", selected = true),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)", selected = true),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -2358,24 +2489,27 @@ class EditSetRecordISpec extends BaseISpec {
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.48N",
-                        "Baden-Powell, Lady Olave St Clair (1889 - 1977)",
+                        s"$baseUriAgent.3LG",
+                        "Edwin Hill (1793 - 1876)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.92W",
-                        "Joint Milk Quality Committee (1948 - 1948)",
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -2385,7 +2519,7 @@ class EditSetRecordISpec extends BaseISpec {
               valuesFromRecord(editSetRecordOci) ++
                 Map(
                   "creator-ids[0]" -> "",
-                  "creator-ids[1]" -> "92W"
+                  "creator-ids[1]" -> "N6L"
                 )
 
             val response = submitRemovingTheLastCreator(idOfExistingEditSet, editSetRecordOci, values)
@@ -2398,10 +2532,13 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true, selected = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -2426,27 +2563,40 @@ class EditSetRecordISpec extends BaseISpec {
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.48N",
-                        "Baden-Powell, Lady Olave St Clair (1889 - 1977)",
+                        s"$baseUriAgent.3LG",
+                        "Edwin Hill (1793 - 1876)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)", selected = true),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)", selected = true),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty", selected = true)
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.W91",
+                        "Queen's Printer for Scotland (1999 - )",
+                        selected = true
+                      )
                     )
                   )
                 )
@@ -2455,9 +2605,9 @@ class EditSetRecordISpec extends BaseISpec {
             val values =
               valuesFromRecord(editSetRecordOci) ++
                 Map(
-                  "creator-ids[0]" -> s"$baseUriAgent.48N",
-                  "creator-ids[1]" -> s"$baseUriAgent.46F",
-                  "creator-ids[2]" -> s"$baseUriAgent.8R6"
+                  "creator-ids[0]" -> s"$baseUriAgent.3LG",
+                  "creator-ids[1]" -> s"$baseUriAgent.2YK",
+                  "creator-ids[2]" -> s"$baseUriAgent.W91"
                 )
 
             val response = submitRemovingTheLastCreator(idOfExistingEditSet, editSetRecordOci, values)
@@ -2471,20 +2621,26 @@ class EditSetRecordISpec extends BaseISpec {
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.48N",
-                        "Baden-Powell, Lady Olave St Clair (1889 - 1977)",
+                        s"$baseUriAgent.3LG",
+                        "Edwin Hill (1793 - 1876)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)", selected = true),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)", selected = true),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -2507,27 +2663,40 @@ class EditSetRecordISpec extends BaseISpec {
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.48N",
-                        "Baden-Powell, Lady Olave St Clair (1889 - 1977)",
+                        s"$baseUriAgent.3LG",
+                        "Edwin Hill (1793 - 1876)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)", selected = true),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)", selected = true),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty", selected = true)
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.W91",
+                        "Queen's Printer for Scotland (1999 - )",
+                        selected = true
+                      )
                     )
                   )
                 )
@@ -2536,9 +2705,9 @@ class EditSetRecordISpec extends BaseISpec {
             val values =
               valuesFromRecord(editSetRecordOci) ++
                 Map(
-                  "creator-ids[0]" -> s"$baseUriAgent.92W",
-                  "creator-ids[1]" -> s"$baseUriAgent.48N",
-                  "creator-ids[2]" -> s"$baseUriAgent.8R6"
+                  "creator-ids[0]" -> s"$baseUriAgent.N6L",
+                  "creator-ids[1]" -> s"$baseUriAgent.3LG",
+                  "creator-ids[2]" -> s"$baseUriAgent.W91"
                 )
 
             val response = submitRemovingTheLastCreator(idOfExistingEditSet, editSetRecordOci, values)
@@ -2551,25 +2720,28 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.92W",
-                        "Joint Milk Quality Committee (1948 - 1948)",
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.48N",
-                        "Baden-Powell, Lady Olave St Clair (1889 - 1977)",
+                        s"$baseUriAgent.3LG",
+                        "Edwin Hill (1793 - 1876)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -2592,27 +2764,40 @@ class EditSetRecordISpec extends BaseISpec {
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.48N",
-                        "Baden-Powell, Lady Olave St Clair (1889 - 1977)",
+                        s"$baseUriAgent.3LG",
+                        "Edwin Hill (1793 - 1876)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)", selected = true),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)", selected = true),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty", selected = true)
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.W91",
+                        "Queen's Printer for Scotland (1999 - )",
+                        selected = true
+                      )
                     )
                   )
                 )
@@ -2620,9 +2805,9 @@ class EditSetRecordISpec extends BaseISpec {
 
             val valuesForFirstSubmission = valuesFromRecord(editSetRecordOci) ++
               Map(
-                "creator-ids[0]" -> s"$baseUriAgent.92W",
-                "creator-ids[1]" -> s"$baseUriAgent.48N",
-                "creator-ids[2]" -> s"$baseUriAgent.8R6"
+                "creator-ids[0]" -> s"$baseUriAgent.N6L",
+                "creator-ids[1]" -> s"$baseUriAgent.3LG",
+                "creator-ids[2]" -> s"$baseUriAgent.W91"
               )
 
             val firstSubmissionResponse =
@@ -2635,25 +2820,28 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.92W",
-                        "Joint Milk Quality Committee (1948 - 1948)",
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     ),
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.48N",
-                        "Baden-Powell, Lady Olave St Clair (1889 - 1977)",
+                        s"$baseUriAgent.3LG",
+                        "Edwin Hill (1793 - 1876)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-                      ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+                      ExpectedSelectOption(
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+                      ),
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -2661,8 +2849,8 @@ class EditSetRecordISpec extends BaseISpec {
 
             val valuesForSecondSubmission = valuesFromRecord(editSetRecordOci) - "creator-ids[2]" ++
               Map(
-                "creator-ids[0]" -> s"$baseUriAgent.92W",
-                "creator-ids[1]" -> s"$baseUriAgent.48N"
+                "creator-ids[0]" -> s"$baseUriAgent.N6L",
+                "creator-ids[1]" -> s"$baseUriAgent.3LG"
               )
 
             val secondSubmissionResponse =
@@ -2675,14 +2863,14 @@ class EditSetRecordISpec extends BaseISpec {
                   Seq(
                     Seq(
                       ExpectedSelectOption("", "Select creator", disabled = true),
-                      ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-                      ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
+                      ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+                      ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
                       ExpectedSelectOption(
-                        s"$baseUriAgent.92W",
-                        "Joint Milk Quality Committee (1948 - 1948)",
+                        s"$baseUriAgent.N6L",
+                        "National Coal Board, Northumberland and Durham Division (1964 - 1967)",
                         selected = true
                       ),
-                      ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+                      ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
                     )
                   )
                 )
@@ -2971,10 +3159,13 @@ class EditSetRecordISpec extends BaseISpec {
           .map(creatorId =>
             Seq(
               ExpectedSelectOption("", "Select creator", disabled = true),
-              ExpectedSelectOption(s"$baseUriAgent.48N", "Baden-Powell, Lady Olave St Clair (1889 - 1977)"),
-              ExpectedSelectOption(s"$baseUriAgent.46F", "Fawkes, Guy (1570 - 1606)"),
-              ExpectedSelectOption(s"$baseUriAgent.92W", "Joint Milk Quality Committee (1948 - 1948)"),
-              ExpectedSelectOption(s"$baseUriAgent.8R6", "Queen Anne's Bounty")
+              ExpectedSelectOption(s"$baseUriAgent.3LG", "Edwin Hill (1793 - 1876)"),
+              ExpectedSelectOption(s"$baseUriAgent.2YK", "Edward Gibson (1837 - 1913)"),
+              ExpectedSelectOption(
+                s"$baseUriAgent.N6L",
+                "National Coal Board, Northumberland and Durham Division (1964 - 1967)"
+              ),
+              ExpectedSelectOption(s"$baseUriAgent.W91", "Queen's Printer for Scotland (1999 - )")
             ).map(expectedSelectedOption =>
               expectedSelectedOption.copy(selected = expectedSelectedOption.value == creatorId)
             )
