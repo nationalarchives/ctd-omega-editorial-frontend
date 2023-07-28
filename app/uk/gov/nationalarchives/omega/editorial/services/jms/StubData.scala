@@ -2371,36 +2371,6 @@ trait StubData {
         None
       )
     ),
-//    AgentSummary(
-//      AgentType.CorporateBody,
-//      s"$baseUriAgent.63F",
-//      "current description",
-//      AgentDescription(
-//        s"$baseUriAgent.63F",
-//        "British Museum, Central Archive",
-//        Some(false),
-//        Some(true),
-//        "2022-06-22T02:00:00-0500",
-//        Some("2001"),
-//        Some("2001"),
-//        None
-//      )
-//    ),
-//    AgentSummary(
-//      AgentType.CorporateBody,
-//      s"$baseUriAgent.614",
-//      "current description",
-//      AgentDescription(
-//        s"$baseUriAgent.614",
-//        "British Library, Sound Archive",
-//        Some(false),
-//        Some(true),
-//        "2022-06-22T02:00:00-0500",
-//        Some("1983"),
-//        Some("1983"),
-//        None
-//      )
-//    ),
     AgentSummary(
       AgentType.CorporateBody,
       s"$baseUriAgent.agent.63V",
