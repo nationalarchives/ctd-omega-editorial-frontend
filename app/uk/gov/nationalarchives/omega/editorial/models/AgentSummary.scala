@@ -28,7 +28,7 @@ case class AgentSummary(
   agentType: AgentType,
   identifier: String,
   currentDescription: String,
-  description: AgentDescription
+  description: List[AgentDescription]
 )
 
 object AgentSummary {
@@ -37,7 +37,7 @@ object AgentSummary {
     (__ \ "type").format[AgentType] and
       (__ \ "identifier").format[String] and
       (__ \ "current-description").format[String] and
-      (__ \ "description").format[AgentDescription]
+      (__ \ "description").format[List[AgentDescription]]
   )(AgentSummary.apply, unlift(AgentSummary.unapply))
 
 }

@@ -171,7 +171,7 @@
             val creatorItems = creators.map(creator =>
                 SelectItem(
                     selected = currentId.contains(creator.identifier),
-                    text = creator.description.displayedName,
+                    text = creator.description.head.displayedName,
                     value = Some(creator.identifier).filter(_.nonEmpty),
                     disabled = false
                 )
@@ -333,7 +333,7 @@
     name = FieldNames.placeOfDepositID,
     items = {
         val noSelectionAsMap = Map("" -> messages("edit-set.record.error.place-of-deposit-id"))
-        val placesOfDepositAsMap = noSelectionAsMap ++ placesOfDeposit.map(placeOfDeposit => (placeOfDeposit.identifier, placeOfDeposit.description.label)).toMap
+        val placesOfDepositAsMap = noSelectionAsMap ++ placesOfDeposit.map(placeOfDeposit => (placeOfDeposit.identifier, placeOfDeposit.description.head.label)).toMap
         placesOfDepositAsMap
                 .map { case (id, label) =>
             SelectItem(

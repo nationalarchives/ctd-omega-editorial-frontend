@@ -33,99 +33,113 @@ class TestStubData @Inject() extends StubData {
       AgentType.Person,
       s"$baseUriAgent.3LG",
       "current description",
-      AgentDescription(
-        s"$baseUriAgent.3LG",
-        "Edwin Hill",
-        Some(false),
-        Some(false),
-        "2022-06-22T02:00:00-0500",
-        Some("1793"),
-        Some("1876"),
-        None
+      List(
+        AgentDescription(
+          s"$baseUriAgent.3LG",
+          "Edwin Hill",
+          Some(false),
+          Some(false),
+          "2022-06-22T02:00:00-0500",
+          Some("1793"),
+          Some("1876"),
+          None
+        )
       )
     ),
     AgentSummary(
       AgentType.Person,
       s"$baseUriAgent.2YK",
       "current description",
-      AgentDescription(
-        s"$baseUriAgent.2YK",
-        "Edward Gibson",
-        Some(false),
-        Some(false),
-        "2022-06-22T02:00:00-0500",
-        Some("1837"),
-        Some("1913")
+      List(
+        AgentDescription(
+          s"$baseUriAgent.2YK",
+          "Edward Gibson",
+          Some(false),
+          Some(false),
+          "2022-06-22T02:00:00-0500",
+          Some("1837"),
+          Some("1913")
+        )
       )
     ),
     AgentSummary(
       AgentType.CorporateBody,
       s"$baseUriAgent.N6L",
       "current description",
-      AgentDescription(
-        s"$baseUriAgent.N6L",
-        "National Coal Board, Northumberland and Durham Division",
-        Some(false),
-        Some(false),
-        "2022-06-22T02:00:00-0500",
-        Some("1964"),
-        Some("1967")
+      List(
+        AgentDescription(
+          s"$baseUriAgent.N6L",
+          "National Coal Board, Northumberland and Durham Division",
+          Some(false),
+          Some(false),
+          "2022-06-22T02:00:00-0500",
+          Some("1964"),
+          Some("1967")
+        )
       )
     ),
     AgentSummary(
       AgentType.CorporateBody,
       s"$baseUriAgent.W91",
       "current description",
-      AgentDescription(
-        s"$baseUriAgent.W91",
-        "Queen's Printer for Scotland",
-        Some(false),
-        Some(false),
-        "2022-06-22T02:00:00-0500",
-        Some("1999"),
-        None
+      List(
+        AgentDescription(
+          s"$baseUriAgent.W91",
+          "Queen's Printer for Scotland",
+          Some(false),
+          Some(false),
+          "2022-06-22T02:00:00-0500",
+          Some("1999"),
+          None
+        )
       )
     ),
     AgentSummary(
       AgentType.CorporateBody,
       tna,
       "current description",
-      AgentDescription(
-        "S2",
-        "The National Archives",
-        Some(false),
-        Some(true),
-        "2022-06-22T02:00:00-0500",
-        Some("2003"),
-        None
+      List(
+        AgentDescription(
+          "S2",
+          "The National Archives",
+          Some(false),
+          Some(true),
+          "2022-06-22T02:00:00-0500",
+          Some("2003"),
+          None
+        )
       )
     ),
     AgentSummary(
       AgentType.CorporateBody,
       britishMuseum,
       "current description",
-      AgentDescription(
-        s"$baseUriAgent.63F",
-        "British Museum, Central Archive",
-        Some(false),
-        Some(true),
-        "2022-06-22T02:00:00-0500",
-        Some("2001"),
-        Some("2001")
+      List(
+        AgentDescription(
+          s"$baseUriAgent.63F",
+          "British Museum, Central Archive",
+          Some(false),
+          Some(true),
+          "2022-06-22T02:00:00-0500",
+          Some("2001"),
+          Some("2001")
+        )
       )
     ),
     AgentSummary(
       AgentType.CorporateBody,
       britishLibrary,
       "current description",
-      AgentDescription(
-        s"$baseUriAgent.614",
-        "British Library, Sound Archive",
-        Some(false),
-        Some(true),
-        "2022-06-22T02:00:00-0500",
-        Some("1983"),
-        Some("1983")
+      List(
+        AgentDescription(
+          s"$baseUriAgent.614",
+          "British Library, Sound Archive",
+          Some(false),
+          Some(true),
+          "2022-06-22T02:00:00-0500",
+          Some("1983"),
+          Some("1983")
+        )
       )
     )
   )
