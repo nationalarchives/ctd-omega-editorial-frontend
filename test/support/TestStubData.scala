@@ -21,6 +21,7 @@
 
 package support
 
+import cats.data.NonEmptyList
 import uk.gov.nationalarchives.omega.editorial.services.jms.StubData
 import uk.gov.nationalarchives.omega.editorial.models.{ AgentSummary, _ }
 
@@ -33,7 +34,7 @@ class TestStubData @Inject() extends StubData {
       AgentType.Person,
       s"$baseUriAgent.3LG",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.3LG",
           "Edwin Hill",
@@ -50,7 +51,7 @@ class TestStubData @Inject() extends StubData {
       AgentType.Person,
       s"$baseUriAgent.2YK",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.2YK",
           "Edward Gibson",
@@ -66,7 +67,7 @@ class TestStubData @Inject() extends StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.N6L",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.N6L",
           "National Coal Board, Northumberland and Durham Division",
@@ -82,7 +83,7 @@ class TestStubData @Inject() extends StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.W91",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.W91",
           "Queen's Printer for Scotland",
@@ -98,7 +99,7 @@ class TestStubData @Inject() extends StubData {
       AgentType.CorporateBody,
       tna,
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           "S2",
           "The National Archives",
@@ -114,7 +115,7 @@ class TestStubData @Inject() extends StubData {
       AgentType.CorporateBody,
       britishMuseum,
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.63F",
           "British Museum, Central Archive",
@@ -130,7 +131,7 @@ class TestStubData @Inject() extends StubData {
       AgentType.CorporateBody,
       britishLibrary,
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.614",
           "British Library, Sound Archive",

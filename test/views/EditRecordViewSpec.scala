@@ -21,6 +21,7 @@
 
 package views
 
+import cats.data.NonEmptyList
 import org.jsoup.nodes.Document
 import play.api.data.Forms.{ mapping, seq, text }
 import play.api.data.{ Form, FormError }
@@ -71,7 +72,7 @@ class EditRecordViewSpec extends BaseViewSpec {
       AgentType.CorporateBody,
       "1",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           "1",
           "The National Archives",
@@ -87,7 +88,7 @@ class EditRecordViewSpec extends BaseViewSpec {
       AgentType.CorporateBody,
       "2",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           "2",
           "British Museum Central Archive",
@@ -103,7 +104,7 @@ class EditRecordViewSpec extends BaseViewSpec {
       AgentType.CorporateBody,
       "3",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           "3",
           "British Library, Sound Archive",

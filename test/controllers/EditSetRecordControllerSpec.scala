@@ -21,6 +21,7 @@
 
 package controllers
 
+import cats.data.NonEmptyList
 import cats.effect.IO
 import org.mockito.ArgumentMatchers
 import org.mockito.captor.Captor._
@@ -58,7 +59,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
       AgentType.CorporateBody,
       tna,
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           "S2",
           "The National Archives",
@@ -74,7 +75,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
       AgentType.CorporateBody,
       britishMuseum,
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.63F",
           "British Museum Central Archive",
@@ -90,7 +91,7 @@ class EditSetRecordControllerSpec extends BaseControllerSpec {
       AgentType.CorporateBody,
       britishLibrary,
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.614",
           "British Library, Sound Archive",

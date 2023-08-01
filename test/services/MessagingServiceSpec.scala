@@ -21,6 +21,7 @@
 
 package services
 
+import cats.data.NonEmptyList
 import cats.effect.testing.scalatest.AsyncIOSpec
 import org.mockito.cats.MockitoCats.whenF
 import org.mockito.{ ArgumentMatchersSugar, MockitoSugar }
@@ -55,7 +56,7 @@ class MessagingServiceSpec
           AgentType.CorporateBody,
           "W2T",
           "current description",
-          List(
+          NonEmptyList.of(
             AgentDescription(
               "W2T",
               "Hansard Society",
@@ -85,7 +86,7 @@ class MessagingServiceSpec
             AgentType.CorporateBody,
             "614",
             "current description",
-            List(
+            NonEmptyList.of(
               AgentDescription(
                 "614",
                 "The National Archives",

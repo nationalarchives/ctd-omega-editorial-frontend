@@ -21,6 +21,7 @@
 
 package uk.gov.nationalarchives.omega.editorial.services.jms
 
+import cats.data.NonEmptyList
 import uk.gov.nationalarchives.omega.editorial.models.MaterialReference.{ DescriptionOnly, LinkAndDescription, LinkOnly }
 import uk.gov.nationalarchives.omega.editorial.models.{ LegalStatus, _ }
 import com.google.inject.ImplementedBy
@@ -484,7 +485,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.3RX",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.3RX",
           "Abbot, Charles",
@@ -500,7 +501,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.3LG",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.3LG",
           "Edwin Hill",
@@ -517,7 +518,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.39K",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.39K",
           "Cannon, John Francis Michael",
@@ -534,7 +535,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.3FH",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.3FH",
           "Dainton, Sir Frederick Sydney",
@@ -551,7 +552,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.54J",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.54J",
           "Edward, ",
@@ -567,7 +568,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.2QX",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.2QX",
           "Edward VII",
@@ -583,7 +584,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.561",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.561",
           "Fanshawe, Baron, of Richmond, ",
@@ -599,7 +600,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.2YK",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.2YK",
           "Edward Gibson",
@@ -615,7 +616,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.2JN",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.2JN",
           "George, David Lloyd",
@@ -631,7 +632,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.34X",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.34X",
           "Halley, Edmund",
@@ -647,7 +648,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.2TK",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.2TK",
           "Halifax, ",
@@ -663,7 +664,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.39T",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.39T",
           "Irvine, Linda Mary",
@@ -679,7 +680,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.4W4",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.4W4",
           "Edward Allan Morris",
@@ -695,7 +696,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.4",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.4",
           "Jack the Ripper, ",
@@ -711,7 +712,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.4FF",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.4FF",
           "Keay, Sir Lancelot Herman",
@@ -727,7 +728,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.4X7",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.4X7",
           "Sir John Frank Charles Kingman",
@@ -743,7 +744,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.51X",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.51X",
           "Macpherson, Sir William (Alan)",
@@ -759,7 +760,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.4VS",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.4VS",
           "Winchilsea, 6th Earl",
@@ -775,7 +776,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.4VF",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.4VF",
           "Old Pretender, The",
@@ -791,7 +792,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.4H3",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.4H3",
           "Oliphant, Sir Mark Marcus Laurence Elwin",
@@ -807,7 +808,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.46W",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.46W",
           "Paine, Thomas",
@@ -823,7 +824,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.3SH",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.3SH",
           "Reade, Hubert Granville Revell",
@@ -839,7 +840,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.2TF",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.2TF",
           "Reading, ",
@@ -855,7 +856,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.53T",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.53T",
           "Salisbury, Sir Edward James",
@@ -871,7 +872,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.3QL",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.3QL",
           "Tate, Sir Henry",
@@ -887,7 +888,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.37K",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.37K",
           "Uvarov, Sir Boris Petrovitch",
@@ -903,7 +904,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.2T1",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.2T1",
           "Vane-Tempest-Stewart, Charles Stewart",
@@ -919,7 +920,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.4RW",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.4RW",
           "Victor Amadeus, ",
@@ -935,7 +936,7 @@ trait StubData {
       AgentType.Person,
       s"$baseUriAgent.3GY",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.3GY",
           "Victoria, ",
@@ -951,7 +952,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.NL6",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.NL6",
           "National Coal Board, Northumberland and Durham Division",
@@ -967,7 +968,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.RR6",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.RR6",
           "100th (Gordon Highlanders) Regiment of Foot",
@@ -983,7 +984,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.S34",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.S34",
           "1st Regiment of Foot or Royal Scots",
@@ -999,7 +1000,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.87K",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.87K",
           "Abbotsbury Railway Company",
@@ -1015,7 +1016,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.VWG",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.VWG",
           "Accountant General in the Court of Chancery",
@@ -1031,7 +1032,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.LWY",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.LWY",
           "Admiralty Administrative Whitley Council, General Purposes Committee",
@@ -1047,7 +1048,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.VS6",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.VS6",
           "Advisory Committee on Animal Feedingstuffs",
@@ -1063,7 +1064,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.CC",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.CC",
           "Bank of England",
@@ -1079,7 +1080,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.N9S",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.N9S",
           "Bank on Tickets of the Million Adventure",
@@ -1095,7 +1096,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.JS8",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(s"$baseUriAgent.JS8", "BBC", Some(false), Some(false), "2022-06-22T02:00:00-0500", None, None)
       )
     ),
@@ -1103,7 +1104,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.8WG",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.8WG",
           "Bee Husbandry Committee",
@@ -1119,7 +1120,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.6VQ",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.6VQ",
           "Cabinet",
@@ -1135,7 +1136,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.SV",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.SV",
           "Cabinet",
@@ -1151,7 +1152,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.5V4",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.5V4",
           "Cabinet, Committee for Control of Official Histories",
@@ -1167,7 +1168,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.GW5",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.GW5",
           "Cattle Emergency Committee",
@@ -1183,7 +1184,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.934",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.934",
           "Dairy Crest",
@@ -1199,7 +1200,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.9HC",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.9HC",
           "Dean of the Chapel Royal",
@@ -1215,7 +1216,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.WGL",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.WGL",
           "Department for Environment, Food and Rural Affairs, Water Quality Division",
@@ -1231,7 +1232,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.WJ4",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.WJ4",
           "Department for Exiting the European Union",
@@ -1247,7 +1248,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.9YJ",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.9YJ",
           "East Grinstead, Groombridge and Tunbridge Wells Railway Company",
@@ -1263,7 +1264,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.HF4",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.HF4",
           "East India Company",
@@ -1279,7 +1280,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.WN3",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.WN3",
           "Education and Skills Funding Agency",
@@ -1295,7 +1296,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.WNL",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.WNL",
           "Education and Skills Funding Agency",
@@ -1311,7 +1312,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.Q1R",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.Q1R",
           "Falkland Islands Company",
@@ -1327,7 +1328,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.SQ9",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.SQ9",
           "Fish's Corps of Foot",
@@ -1343,7 +1344,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.R6R",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.R6R",
           "Foreign and Commonwealth Office, Consulate, Dusseldorf, West Germany",
@@ -1359,7 +1360,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.HKL",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.HKL",
           "Foreign Office, Consulate, Angora and Konieh, Ottoman Empire",
@@ -1375,7 +1376,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.KSC",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.KSC",
           "Gaming Board for Great Britain",
@@ -1391,13 +1392,13 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.73R",
       "current description",
-      List(AgentDescription("73R", "GCHQ", Some(false), Some(false), "2022-06-22T02:00:00-0500", None, None))
+      NonEmptyList.of(AgentDescription("73R", "GCHQ", Some(false), Some(false), "2022-06-22T02:00:00-0500", None, None))
     ),
     AgentSummary(
       AgentType.CorporateBody,
       s"$baseUriAgent.VR1",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           "VR1",
           "Geffrye Museum",
@@ -1413,7 +1414,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.QX5",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.QX5",
           "General Nursing Council for England and Wales, Registration and Enrolment Committee",
@@ -1429,7 +1430,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.C1Y",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.C1Y",
           "Halifax High Level and North and South Junction Railway Company",
@@ -1445,7 +1446,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.W2T",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.W2T",
           "Hansard Society",
@@ -1461,7 +1462,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.F18",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.F18",
           "Health and Safety Commission, Health and Safety Executive, Employment Medical Advisory Service",
@@ -1477,7 +1478,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.8JK",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.8JK",
           "Her Majesty's Stationery Office",
@@ -1493,7 +1494,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.9FV",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.9FV",
           "Ideal Benefit Society",
@@ -1509,7 +1510,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.5YX",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.5YX",
           "Imperial War Museum: Churchill Museum and Cabinet War Rooms",
@@ -1525,7 +1526,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.W1Q",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.W1Q",
           "Independent Expert Group on Mobile Phones",
@@ -1541,7 +1542,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.QLY",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.QLY",
           "Independent Expert Group on Mobile Phones",
@@ -1557,7 +1558,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.LS5",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.LS5",
           "Jodrell Bank Observatory, Cheshire",
@@ -1573,7 +1574,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.N6L",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.N6L",
           "National Coal Board, Northumberland and Durham Division",
@@ -1589,7 +1590,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.L3W",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.L3W",
           "Justices in Eyre, of Assize, of Gaol Delivery, of Oyer and Terminer, of the Peace, and of Nisi Prius",
@@ -1605,7 +1606,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.N8X",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.N8X",
           "Justices of the Forest",
@@ -1621,7 +1622,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.THY",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.THY",
           "Kew Gardens Archive",
@@ -1637,7 +1638,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.SGX",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.SGX",
           "King's Own Dragoons, 1751-1818",
@@ -1653,7 +1654,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.CCR",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.CCR",
           "Knitting, Lace and Net Industry Training Board",
@@ -1669,7 +1670,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.TTT",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.TTT",
           "King's Volunteers Regiment of Foot, 1761-1763",
@@ -1685,7 +1686,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.VR7",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.VR7",
           "Lady Lever Art Gallery",
@@ -1701,7 +1702,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.XQ",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.XQ",
           "Law Society",
@@ -1717,7 +1718,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.91W",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.91W",
           "League of Mercy",
@@ -1733,7 +1734,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.VX",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.VX",
           "Legal Aid Board",
@@ -1749,7 +1750,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.TXG",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.TXG",
           "Legal Aid Board, 1988-1989",
@@ -1765,7 +1766,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.6LL",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.6LL",
           "Machinery of Government Committee",
@@ -1781,7 +1782,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.G6N",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.G6N",
           "Magnetic Department",
@@ -1797,7 +1798,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.71K",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.71K",
           "Manpower Distribution Board",
@@ -1813,7 +1814,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.KN1",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.KN1",
           "Master of the Rolls Archives Committee",
@@ -1829,7 +1830,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.J6X",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.J6X",
           "National Agricultural Advisory Service, Great House Experimental Husbandry Farm",
@@ -1845,7 +1846,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.K7N",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.K7N",
           "National Air Traffic Control Services, Director General Projects and Engineering, Directorate of Projects",
@@ -1861,7 +1862,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.TSL",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.TSL",
           "National Archives, The",
@@ -1877,7 +1878,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.LSN",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.LSN",
           "Navy Board, Transport Branch, Prisoner of War Department",
@@ -1893,7 +1894,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.W1S",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.W1S",
           "Office for Budget Responsibility",
@@ -1909,7 +1910,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.N4W",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.N4W",
           "Office of Population Censuses and Surveys, Computer Division",
@@ -1925,7 +1926,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.QQC",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.QQC",
           "Office of Works, Directorate of Works, Maintenance Surveyors Division, Sanitary Engineers Section",
@@ -1941,7 +1942,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.QFY",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.QFY",
           "Office of the President of Social Security Appeal Tribunals, Medical Appeal Tribunals and Vaccine Damage Tribunals",
@@ -1957,7 +1958,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.VYJ",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.VYJ",
           "Ordnance Survey of Great Britain, Directorate of Data Collection and Management",
@@ -1973,7 +1974,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.8FX",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.8FX",
           "Overseas Development Administration, Information Department",
@@ -1989,7 +1990,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.3C",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.3C",
           "Overseas Finance, International Finance, IF1 International Financial Institutions and Debt Division",
@@ -2005,7 +2006,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.988",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.988",
           "Oxford University Archives",
@@ -2021,7 +2022,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.TWX",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.TWX",
           "Oxford University Press",
@@ -2037,7 +2038,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.79L",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.79L",
           "Palace Court",
@@ -2053,7 +2054,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.TX6",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.TX6",
           "Parker Inquiry",
@@ -2069,7 +2070,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.VY4",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.VY4",
           "Paymaster General of the Court of Chancery, Supreme Court Pay Office",
@@ -2085,7 +2086,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.VX3",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.VX3",
           "Persona Associates Ltd",
@@ -2101,7 +2102,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.V36",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.V36",
           "Petty Bag Office",
@@ -2117,7 +2118,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.W91",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.W91",
           "Queen's Printer for Scotland",
@@ -2133,7 +2134,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.SH2",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.SH2",
           "Queen's Own Dragoons, 1788-1818",
@@ -2149,7 +2150,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.79X",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.79X",
           "Queens Prison",
@@ -2165,7 +2166,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.F11",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.F11",
           "Radioactive Substances Advisory Committee",
@@ -2181,7 +2182,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.CYY",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.CYY",
           "Railway Executive",
@@ -2197,7 +2198,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.CXY",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.CXY",
           "Railway Executive",
@@ -2213,7 +2214,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.CY1",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.CY1",
           "Railway Executive",
@@ -2229,7 +2230,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.TXH",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.TXH",
           "SaBRE",
@@ -2245,7 +2246,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.739",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.739",
           "Scaccarium Superius",
@@ -2261,7 +2262,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.NWN",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.NWN",
           "School of Anti-Aircraft Artillery",
@@ -2277,7 +2278,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.SGS",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.SGS",
           "Scots Greys, 1877-1921",
@@ -2293,7 +2294,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.VXR",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.VXR",
           "Takeover Panel",
@@ -2309,7 +2310,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.QQR",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.QQR",
           "Tate Gallery",
@@ -2325,7 +2326,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.63K",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.63K",
           "Tate Gallery Archive",
@@ -2341,7 +2342,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.G91",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.G91",
           "Thalidomide Y List Inquiry",
@@ -2357,7 +2358,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.24",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.24",
           "National Coal Board",
@@ -2373,7 +2374,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.JLC",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.JLC",
           "The Crown Estate, Other Urban Estates, Foreshore and Seabed Branches",
@@ -2389,7 +2390,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.SYL",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.SYL",
           "Uhlans Britanniques de Sainte-Domingue (Charmilly's), 1794-1795",
@@ -2405,7 +2406,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.TXK",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.TXK",
           "UK Passport Service",
@@ -2421,7 +2422,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.V3H",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.V3H",
           "UK Web Archiving Consortium",
@@ -2437,7 +2438,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.CCX",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.CCX",
           "United Kingdom Atomic Energy Authority, Atomic Weapons Research Establishment, Directors Office",
@@ -2453,7 +2454,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.VTY",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.VTY",
           "Valuation Office Agency",
@@ -2469,7 +2470,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.9HJ",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.9HJ",
           "Venetian Republic",
@@ -2485,7 +2486,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.QYF",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.QYF",
           "Victoria and Albert Museum",
@@ -2501,7 +2502,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.61H",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.61H",
           "Victoria & Albert Museum, Archive of Art and Design",
@@ -2517,7 +2518,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.W9K",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.W9K",
           "Wales Tourist Board",
@@ -2533,7 +2534,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.VRG",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.VRG",
           "Walker Art Gallery",
@@ -2549,7 +2550,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.61J",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.61J",
           "Wallace Collection",
@@ -2565,7 +2566,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.HXV",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.HXV",
           "War and Colonial Department, Commissioners for liquidating the Danish and Dutch loans for St Thomas and St John",
@@ -2581,7 +2582,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.V2R",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.V2R",
           "Zahid Mubarek Inquiry",
@@ -2597,7 +2598,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.763",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.763",
           "Zambia Department, Commonwealth Office",
@@ -2613,7 +2614,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.765",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.765",
           "Zambia, Malawi and Southern Africa Department",
@@ -2629,7 +2630,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.G2Y",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.G2Y",
           "Zuckerman Working Party",
@@ -2645,7 +2646,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.agent.63V",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.agent.63V",
           "Fleet Air Arm Museum",
@@ -2662,7 +2663,7 @@ trait StubData {
       AgentType.CorporateBody,
       s"$baseUriAgent.agent.S7",
       "current description",
-      List(
+      NonEmptyList.of(
         AgentDescription(
           s"$baseUriAgent.agent.S7",
           "The National Archives",
