@@ -22,24 +22,19 @@
 package uk.gov.nationalarchives.omega.editorial.models
 
 import cats.data.NonEmptyList
-import play.api.libs.functional.syntax.{ toFunctionalBuilderOps, unlift }
-import play.api.libs.json.{ Format, __ }
-import uk.gov.nationalarchives.omega.editorial.models.NonEmptyListOps._
+import play.api.libs.json._
 
-case class AgentSummary(
-  agentType: AgentType,
-  identifier: String,
-  currentDescription: String,
-  description: NonEmptyList[AgentDescription]
-)
+object NonEmptyListOps {
 
-object AgentSummary {
+  def reads[T : Reads]: Reads[NonEmptyList[T]] =
+    Reads.of[List[T]].collect(JsonValidationError("expected a NonEmptyList but got an empty list")) {
+      case head :: tail => NonEmptyList(head, tail)
+    }
 
-  implicit val agentSummaryFormat: Format[AgentSummary] = (
-    (__ \ "type").format[AgentType] and
-      (__ \ "identifier").format[String] and
-      (__ \ "current-description").format[String] and
-      (__ \ "description").format[NonEmptyList[AgentDescription]]
-  )(AgentSummary.apply, unlift(AgentSummary.unapply))
+  def writes[T : Writes]: Writes[NonEmptyList[T]] =
+    Writes.of[List[T]].contramap(_.toList)
+
+  implicit def format[T : Format]: Format[NonEmptyList[T]] =
+    Format(reads, writes)
 
 }

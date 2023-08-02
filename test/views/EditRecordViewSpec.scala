@@ -21,6 +21,7 @@
 
 package views
 
+import cats.data.NonEmptyList
 import org.jsoup.nodes.Document
 import play.api.data.Forms.{ mapping, seq, text }
 import play.api.data.{ Form, FormError }
@@ -71,49 +72,55 @@ class EditRecordViewSpec extends BaseViewSpec {
       AgentType.CorporateBody,
       "1",
       "current description",
-      AgentDescription(
-        "1",
-        "The National Archives",
-        Some(false),
-        Some(false),
-        "2022-06-22T02:00:00-0500",
-        Some("2003"),
-        None
+      NonEmptyList.of(
+        AgentDescription(
+          "1",
+          "The National Archives",
+          Some(false),
+          Some(false),
+          "2022-06-22T02:00:00-0500",
+          Some("2003"),
+          None
+        )
       )
     ),
     AgentSummary(
       AgentType.CorporateBody,
       "2",
       "current description",
-      AgentDescription(
-        "2",
-        "British Museum Central Archive",
-        Some(false),
-        Some(false),
-        "2022-06-22T02:00:00-0500",
-        Some("2001"),
-        Some("2001")
+      NonEmptyList.of(
+        AgentDescription(
+          "2",
+          "British Museum Central Archive",
+          Some(false),
+          Some(false),
+          "2022-06-22T02:00:00-0500",
+          Some("2001"),
+          Some("2001")
+        )
       )
     ),
     AgentSummary(
       AgentType.CorporateBody,
       "3",
       "current description",
-      AgentDescription(
-        "3",
-        "British Library, Sound Archive",
-        Some(false),
-        Some(false),
-        "2022-06-22T02:00:00-0500",
-        Some("1983"),
-        Some("1983")
+      NonEmptyList.of(
+        AgentDescription(
+          "3",
+          "British Library, Sound Archive",
+          Some(false),
+          Some(false),
+          "2022-06-22T02:00:00-0500",
+          Some("1983"),
+          Some("1983")
+        )
       )
     )
   )
 
   private val allCreators: Seq[AgentSummary] = Seq.empty
 
-  val editSetRecord = EditSetRecord(
+  val editSetRecord: EditSetRecord = EditSetRecord(
     ccr = "COAL 80/80/1",
     oci = "COAL.2022.V1RJW.P",
     scopeAndContent = "",

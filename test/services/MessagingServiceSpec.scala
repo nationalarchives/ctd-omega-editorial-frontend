@@ -21,6 +21,7 @@
 
 package services
 
+import cats.data.NonEmptyList
 import cats.effect.testing.scalatest.AsyncIOSpec
 import org.mockito.cats.MockitoCats.whenF
 import org.mockito.{ ArgumentMatchersSugar, MockitoSugar }
@@ -29,7 +30,7 @@ import org.scalatest.matchers.must.Matchers
 import uk.gov.nationalarchives.omega.editorial.connectors.ApiConnector
 import uk.gov.nationalarchives.omega.editorial.connectors.MessageType.{ GetAgentSummariesType, GetLegalStatusesType }
 import uk.gov.nationalarchives.omega.editorial.connectors.messages.ReplyMessage
-import uk.gov.nationalarchives.omega.editorial.models.{ AgentDescription, AgentSummary, AgentType, GetAgentSummaryList, GetLegalStatuses, LegalStatus }
+import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.services.MessagingService
 
 import java.time.LocalDateTime
@@ -55,14 +56,16 @@ class MessagingServiceSpec
           AgentType.CorporateBody,
           "W2T",
           "current description",
-          AgentDescription(
-            "W2T",
-            "Hansard Society",
-            Some(false),
-            Some(false),
-            "2022-06-22T02:00:00-0500",
-            Some("1944"),
-            Some("1944")
+          NonEmptyList.of(
+            AgentDescription(
+              "W2T",
+              "Hansard Society",
+              Some(false),
+              Some(false),
+              "2022-06-22T02:00:00-0500",
+              Some("1944"),
+              Some("1944")
+            )
           )
         )
       )
@@ -83,14 +86,16 @@ class MessagingServiceSpec
             AgentType.CorporateBody,
             "614",
             "current description",
-            AgentDescription(
-              "614",
-              "The National Archives",
-              Some(false),
-              Some(false),
-              "2022-06-22T02:00:00-0500",
-              Some("2003"),
-              None
+            NonEmptyList.of(
+              AgentDescription(
+                "614",
+                "The National Archives",
+                Some(false),
+                Some(false),
+                "2022-06-22T02:00:00-0500",
+                Some("2003"),
+                None
+              )
             )
           )
         )
@@ -118,19 +123,20 @@ class MessagingServiceSpec
     s"""
        |[
        |  {
-       |    "type" : "${agentSummaryList(0).agentType.entryName}",
-       |    "identifier" : "${agentSummaryList(0).identifier}",
-       |    "current-description" : "${agentSummaryList(0).currentDescription}",
-       |    "description" :
+       |    "type" : "${agentSummaryList.head.agentType.entryName}",
+       |    "identifier" : "${agentSummaryList.head.identifier}",
+       |    "current-description" : "${agentSummaryList.head.currentDescription}",
+       |    "description" : [
        |      {
-       |      "identifier": "${agentSummaryList(0).identifier}",
-       |      "label": "${agentSummaryList(0).description.label}",
-       |      "authority-file" : ${agentSummaryList(0).description.authorityFile.getOrElse("")},
-       |      "depository" : ${agentSummaryList(0).description.depository.getOrElse("")},
-       |      "version-timestamp" : "${agentSummaryList(0).description.versionTimestamp}",
-       |      "date-from": "${agentSummaryList(0).description.dateFrom.getOrElse("")}",
-       |      "date-to": "${agentSummaryList(0).description.dateTo.getOrElse("")}"
+       |      "identifier": "${agentSummaryList.head.identifier}",
+       |      "label": "${agentSummaryList.head.description.head.label}",
+       |      "authority-file" : ${agentSummaryList.head.description.head.authorityFile.getOrElse("")},
+       |      "depository" : ${agentSummaryList.head.description.head.depository.getOrElse("")},
+       |      "version-timestamp" : "${agentSummaryList.head.description.head.versionTimestamp}",
+       |      "date-from": "${agentSummaryList.head.description.head.dateFrom.getOrElse("")}",
+       |      "date-to": "${agentSummaryList.head.description.head.dateTo.getOrElse("")}"
        |      }
+       |    ]
        |   }
        |]
        |""".stripMargin
@@ -139,18 +145,19 @@ class MessagingServiceSpec
     s"""
        |[
        |  {
-       |    "type" : "${agentSummaryList(0).agentType.entryName}",
-       |    "identifier" : "${agentSummaryList(0).identifier}",
-       |    "current-description" : "${agentSummaryList(0).currentDescription}",
-       |    "description" :
+       |    "type" : "${agentSummaryList.head.agentType.entryName}",
+       |    "identifier" : "${agentSummaryList.head.identifier}",
+       |    "current-description" : "${agentSummaryList.head.currentDescription}",
+       |    "description" : [
        |      {
-       |      "identifier": "${agentSummaryList(0).identifier}",
-       |      "label": "${agentSummaryList(0).description.label}",
-       |      "authority-file" : ${agentSummaryList(0).description.authorityFile.getOrElse("")},
-       |      "depository" : ${agentSummaryList(0).description.depository.getOrElse("")},
-       |      "version-timestamp" : "${agentSummaryList(0).description.versionTimestamp}",
-       |      "date-from": "${agentSummaryList(0).description.dateFrom.getOrElse("")}"
+       |      "identifier": "${agentSummaryList.head.identifier}",
+       |      "label": "${agentSummaryList.head.description.head.label}",
+       |      "authority-file" : ${agentSummaryList.head.description.head.authorityFile.getOrElse("")},
+       |      "depository" : ${agentSummaryList.head.description.head.depository.getOrElse("")},
+       |      "version-timestamp" : "${agentSummaryList.head.description.head.versionTimestamp}",
+       |      "date-from": "${agentSummaryList.head.description.head.dateFrom.getOrElse("")}"
        |      }
+       |    ]
        |   }
        |]
        |""".stripMargin
