@@ -37,12 +37,6 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
     description := "Omega Editorial Frontend",
     organizationName := "The National Archives",
     organizationHomepage := Some(url("http://nationalarchives.gov.uk")),
-    githubOwner := "nationalarchives",
-    githubRepository := "ctd-omega-editorial-frontend",
-    githubTokenSource := TokenSource.Or(
-      TokenSource.Environment("GITHUB_TOKEN"),
-      TokenSource.GitConfig("github.token") //  ~/.gitconfig
-    ),
     scmInfo := Some(
       ScmInfo(
         url("https://github.com/nationalarchives/ctd-omega-editorial-frontend"),
@@ -132,10 +126,6 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
     resolvers ++= Seq(
       Resolver.mavenLocal,
       MavenRepository("HMRC-open-artefacts-maven2", "https://open.artefacts.tax.service.gov.uk/maven2")
-    ),
-    githubTokenSource := TokenSource.Or(
-      TokenSource.Environment("GITHUB_TOKEN"),
-      TokenSource.GitConfig("github.token") //  ~/.gitconfig
     ),
     headerLicense := Some(HeaderLicense.MIT("2022", "The National Archives")),
     libraryDependencies ++= Seq(
