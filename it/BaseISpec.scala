@@ -53,7 +53,7 @@ abstract class BaseISpec
       .bindings(
         inject
           .bind[Config]
-          .to(Config(HostBrokerEndpoint("localhost", 9324), UsernamePasswordCredentials("?", "?"), "STUB001_request"))
+          .to(Config(HostBrokerEndpoint("localhost", 9324), UsernamePasswordCredentials("?", "?"), "STUB001_REQUEST001"))
       )
       .bindings(inject.bind[MessagingService].to[MonitoredMessagingService])
       .overrides(inject.bind[TimeProvider].toInstance(testTimeProvider))
@@ -104,10 +104,10 @@ abstract class BaseISpec
     ()
   }
 
-  private def clearRequestQueue(): Assertion = clearQueue("STUB001_request").status mustBe OK
+  private def clearRequestQueue(): Assertion = clearQueue("STUB001_REQUEST001").status mustBe OK
 
   private def clearReplyQueue(): Assertion =
-    clearQueue("PACE001_reply").status mustBe OK
+    clearQueue("PACE001_REPLY001").status mustBe OK
 
   private def clearQueue(name: String): WSResponse =
     await {

@@ -72,6 +72,6 @@ class ApiConnector @Inject() (
 object ApiConnector {
 
   val applicationId = "PACE001"
-  val replyQueueName = s"${ApiConnector.applicationId}_reply"
+  val replyQueueName = s"${ApiConnector.applicationId}_REPLY001"
 
 }

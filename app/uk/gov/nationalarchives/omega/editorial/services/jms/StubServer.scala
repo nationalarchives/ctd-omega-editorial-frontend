@@ -42,8 +42,8 @@ class StubServer @Inject() (responseBuilder: ResponseBuilder) {
   private implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jLogger.getLogger[IO]
 
   private val applicationId = "STUB001"
-  private val requestQueueName = QueueName(s"${applicationId}_request")
-  private val replyQueueName = QueueName("PACE001_reply")
+  private val requestQueueName = QueueName(s"${applicationId}_REQUEST001")
+  private val replyQueueName = QueueName("PACE001_REPLY001")
   private val consumerConcurrencyLevel = 1
   private val pollingInterval = 50.millis
 
