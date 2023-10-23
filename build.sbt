@@ -195,7 +195,7 @@ Test / parallelExecution := false
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
 
 // This will include coverage generation for both unit and integration tests.
-coverageEnabled := true
+coverageEnabled := sys.props.getOrElse("coverageEnabled", "true").toBoolean
 
 val packagesExcludedFromCoverageCheck = Seq(
   ".*Reverse.*",
