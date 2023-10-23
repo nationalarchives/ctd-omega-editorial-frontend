@@ -30,17 +30,17 @@ import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Result
-import play.api.test.Helpers.{ contentAsString, defaultAwaitTimeout }
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.api.test.Injecting
 import play.twirl.api.Content
-import uk.gov.nationalarchives.omega.editorial.config.{ Config, HostBrokerEndpoint, UsernamePasswordCredentials }
+import uk.gov.nationalarchives.omega.editorial.config.{AwsCredentialsAuthentication, Config, SqsJmsBrokerConfig, SqsJmsBrokerEndpointConfig}
 import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.models.session.Session
 import uk.gov.nationalarchives.omega.editorial.modules.StartupModule
-import uk.gov.nationalarchives.omega.editorial.services.{ EditSetRecordService, EditSetService, MessagingService }
+import uk.gov.nationalarchives.omega.editorial.services.{EditSetRecordService, EditSetService, MessagingService}
 import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 
-import java.time.{ LocalDateTime, Month }
+import java.time.{LocalDateTime, Month}
 import scala.concurrent.Future
 
 class BaseSpec
@@ -57,8 +57,7 @@ class BaseSpec
   implicit val executionContext: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
 
   private lazy val testConfig: Config = Config(
-    broker = HostBrokerEndpoint("not.a.real.host", 0),
-    credentials = UsernamePasswordCredentials("?", "?"),
+    sqsJmsBroker = SqsJmsBrokerConfig("not-a-real-region", Some(SqsJmsBrokerEndpointConfig(false, Some("not.a.real.host"), Some(0), Some(AwsCredentialsAuthentication("?", "?"))))),
     defaultRequestQueueName = "STUB001_REQUEST001"
   )
 

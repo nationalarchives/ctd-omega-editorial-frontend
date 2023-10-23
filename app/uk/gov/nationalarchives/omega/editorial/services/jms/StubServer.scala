@@ -49,8 +49,8 @@ class StubServer @Inject() (responseBuilder: ResponseBuilder) {
 
   private val jmsClient: Resource[IO, JmsClient[IO]] = simpleQueueService.makeJmsClient[IO](
     Config(
-      endpoint = Endpoint(Some(DirectAddress(HTTP, "localhost", Some(9324))), "elasticmq"),
-      credentials = None,
+      "elasticmq",
+      endpoint = Some(Endpoint(Some(DirectAddress(HTTP, "localhost", Some(9324))), None)),
       clientId = ClientId("stub_server_1"),
       None
     )

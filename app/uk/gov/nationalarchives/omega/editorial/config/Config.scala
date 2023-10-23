@@ -22,12 +22,19 @@
 package uk.gov.nationalarchives.omega.editorial.config
 
 case class Config(
-  broker: HostBrokerEndpoint,
-  credentials: UsernamePasswordCredentials,
-  defaultRequestQueueName: String,
-  legalStatusRequestQueueName: Option[String] = None,
-  agentSummaryRequestQueueName: Option[String] = None
+   sqsJmsBroker: SqsJmsBrokerConfig,
+   defaultRequestQueueName: String,
+   legalStatusRequestQueueName: Option[String] = None,
+   agentSummaryRequestQueueName: Option[String] = None
 )
 
-case class HostBrokerEndpoint(host: String, port: Int)
-case class UsernamePasswordCredentials(username: String, password: String)
+case class SqsJmsBrokerConfig(awsRegion: String, endpoint: Option[SqsJmsBrokerEndpointConfig])
+
+case class SqsJmsBrokerEndpointConfig(
+ tls: Boolean,
+ host: Option[String],
+ port: Option[Int],
+ authentication: Option[AwsCredentialsAuthentication]
+)
+
+case class AwsCredentialsAuthentication(accessKey: String, secretKey: String)

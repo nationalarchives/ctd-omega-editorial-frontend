@@ -1,17 +1,17 @@
 import cats.effect.testing.scalatest.AsyncIOSpec
-import cats.effect.{ IO, Resource }
+import cats.effect.{IO, Resource}
 import org.scalatest.freespec.FixtureAsyncFreeSpec
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.{ BeforeAndAfterAll, FutureOutcome }
+import org.scalatest.{BeforeAndAfterAll, FutureOutcome}
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jFactory
 import support.TestStubData
-import uk.gov.nationalarchives.omega.editorial.config.{ HostBrokerEndpoint, UsernamePasswordCredentials }
-import uk.gov.nationalarchives.omega.editorial.connectors.messages.{ ReplyMessage, RequestMessage }
-import uk.gov.nationalarchives.omega.editorial.connectors.{ JmsRequestReplyClient, RequestReplyHandler }
+import uk.gov.nationalarchives.omega.editorial.config.{AwsCredentialsAuthentication, SqsJmsBrokerConfig, SqsJmsBrokerEndpointConfig}
+import uk.gov.nationalarchives.omega.editorial.connectors.messages.{ReplyMessage, RequestMessage}
+import uk.gov.nationalarchives.omega.editorial.connectors.{JmsRequestReplyClient, RequestReplyHandler}
 import uk.gov.nationalarchives.omega.editorial.services.jms._
 
-import scala.concurrent.duration.{ FiniteDuration, SECONDS }
+import scala.concurrent.duration.{FiniteDuration, SECONDS}
 
 abstract class BaseRequestReplyServiceISpec
     extends FixtureAsyncFreeSpec with AsyncIOSpec with Matchers with BeforeAndAfterAll {
@@ -36,8 +36,7 @@ abstract class BaseRequestReplyServiceISpec
 
   override def withFixture(test: OneArgAsyncTest): FutureOutcome = {
     val clientResource: Resource[IO, JmsRequestReplyClient[IO]] = JmsRequestReplyClient.createForSqs[IO](
-      endpoint = HostBrokerEndpoint(messagingServerHost, messagingServerPort),
-      credentials = UsernamePasswordCredentials("?", "?"),
+      sqsJmsBrokerConfig = SqsJmsBrokerConfig("elasticmq", Some(SqsJmsBrokerEndpointConfig(false, Some(messagingServerHost), Some(messagingServerPort), Some(AwsCredentialsAuthentication("?", "?"))))),
       customClientId = None
     )(replyQueueName)
     val (client, closer) = clientResource.allocated.unsafeRunSync()
