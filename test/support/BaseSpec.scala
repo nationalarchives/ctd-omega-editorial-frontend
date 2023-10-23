@@ -58,6 +58,7 @@ class BaseSpec
 
   private lazy val testConfig: Config = Config(
     sqsJmsBroker = SqsJmsBrokerConfig("not-a-real-region", Some(SqsJmsBrokerEndpointConfig(false, Some("not.a.real.host"), Some(0), Some(AwsCredentialsAuthentication("?", "?"))))),
+    None,
     defaultRequestQueueName = "STUB001_REQUEST001"
   )
 

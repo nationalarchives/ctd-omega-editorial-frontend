@@ -23,6 +23,7 @@ package uk.gov.nationalarchives.omega.editorial.config
 
 case class Config(
    sqsJmsBroker: SqsJmsBrokerConfig,
+   stubServer: Option[StubServerConfig],
    defaultRequestQueueName: String,
    legalStatusRequestQueueName: Option[String] = None,
    agentSummaryRequestQueueName: Option[String] = None
@@ -38,3 +39,5 @@ case class SqsJmsBrokerEndpointConfig(
 )
 
 case class AwsCredentialsAuthentication(accessKey: String, secretKey: String)
+
+case class StubServerConfig(sqsJmsBroker: SqsJmsBrokerConfig)

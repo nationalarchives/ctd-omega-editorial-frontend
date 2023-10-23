@@ -9,7 +9,7 @@ import play.api.libs.ws.{DefaultWSCookie, WSClient, WSCookie, WSResponse}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.api.{Application, inject}
 import support._
-import uk.gov.nationalarchives.omega.editorial.config.{AwsCredentialsAuthentication, Config, SqsJmsBrokerConfig, SqsJmsBrokerEndpointConfig}
+import uk.gov.nationalarchives.omega.editorial.config.{AwsCredentialsAuthentication, Config, SqsJmsBrokerConfig, SqsJmsBrokerEndpointConfig, StubServerConfig}
 import uk.gov.nationalarchives.omega.editorial.models._
 import uk.gov.nationalarchives.omega.editorial.modules.StartupModule
 import uk.gov.nationalarchives.omega.editorial.services.MessagingService
@@ -55,6 +55,7 @@ abstract class BaseISpec
           .bind[Config]
           .to(Config(
             SqsJmsBrokerConfig("elasticmq", Some(SqsJmsBrokerEndpointConfig(false, Some("localhost"), Some(9324), Some(AwsCredentialsAuthentication("?", "?"))))),
+            Some(StubServerConfig(SqsJmsBrokerConfig("elasticmq", Some(SqsJmsBrokerEndpointConfig(false, Some("localhost"), Some(9324), Some(AwsCredentialsAuthentication("?", "?"))))))),
             "STUB001_REQUEST001"
           ))
       )

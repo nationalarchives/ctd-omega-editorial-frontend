@@ -21,13 +21,12 @@
 
 package uk.gov.nationalarchives.omega.editorial.modules
 
-import com.google.inject.{ AbstractModule, Provides, Singleton }
+import com.google.inject.{AbstractModule, Provides, Singleton}
 import pureconfig.ConfigSource
 import pureconfig.generic.auto._
 
 import java.time.LocalDateTime
-
-import uk.gov.nationalarchives.omega.editorial.config.Config
+import uk.gov.nationalarchives.omega.editorial.config.{Config, StubServerConfig}
 import uk.gov.nationalarchives.omega.editorial.StubServerBootstrap
 import uk.gov.nationalarchives.omega.editorial.support.TimeProvider
 
@@ -40,6 +39,11 @@ class StartupModule extends AbstractModule {
   @Singleton
   def configProvider: Config =
     ConfigSource.default.loadOrThrow[Config]
+
+  @Provides
+  @Singleton
+  def stubServerConfigProvider: StubServerConfig =
+    configProvider.stubServer.getOrElse(StubServerConfig(configProvider.sqsJmsBroker))
 
   @Provides
   @Singleton

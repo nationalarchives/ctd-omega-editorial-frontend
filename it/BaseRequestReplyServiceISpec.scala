@@ -6,7 +6,7 @@ import org.scalatest.{BeforeAndAfterAll, FutureOutcome}
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jFactory
 import support.TestStubData
-import uk.gov.nationalarchives.omega.editorial.config.{AwsCredentialsAuthentication, SqsJmsBrokerConfig, SqsJmsBrokerEndpointConfig}
+import uk.gov.nationalarchives.omega.editorial.config.{AwsCredentialsAuthentication, Config, SqsJmsBrokerConfig, SqsJmsBrokerEndpointConfig, StubServerConfig}
 import uk.gov.nationalarchives.omega.editorial.connectors.messages.{ReplyMessage, RequestMessage}
 import uk.gov.nationalarchives.omega.editorial.connectors.{JmsRequestReplyClient, RequestReplyHandler}
 import uk.gov.nationalarchives.omega.editorial.services.jms._
@@ -27,7 +27,8 @@ abstract class BaseRequestReplyServiceISpec
   private val replyQueueName = "PACE001_REPLY001"
   private val messagingServerHost = "localhost"
   private val messagingServerPort = 9324
-  private val stubServer = new StubServer(new ResponseBuilder(stubData))
+  private val sqsJmsBrokerConfig = SqsJmsBrokerConfig("elasticmq", Some(SqsJmsBrokerEndpointConfig(false, Some(messagingServerHost), Some(messagingServerPort), Some(AwsCredentialsAuthentication("?", "?")))))
+  private val stubServer = new StubServer(StubServerConfig(sqsJmsBrokerConfig), new ResponseBuilder(stubData))
 
   override def beforeAll(): Unit = {
     stubServer.start.unsafeToFuture()
@@ -36,7 +37,7 @@ abstract class BaseRequestReplyServiceISpec
 
   override def withFixture(test: OneArgAsyncTest): FutureOutcome = {
     val clientResource: Resource[IO, JmsRequestReplyClient[IO]] = JmsRequestReplyClient.createForSqs[IO](
-      sqsJmsBrokerConfig = SqsJmsBrokerConfig("elasticmq", Some(SqsJmsBrokerEndpointConfig(false, Some(messagingServerHost), Some(messagingServerPort), Some(AwsCredentialsAuthentication("?", "?"))))),
+      sqsJmsBrokerConfig = sqsJmsBrokerConfig,
       customClientId = None
     )(replyQueueName)
     val (client, closer) = clientResource.allocated.unsafeRunSync()
