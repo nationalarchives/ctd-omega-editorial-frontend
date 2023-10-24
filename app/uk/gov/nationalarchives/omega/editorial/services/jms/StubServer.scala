@@ -31,14 +31,16 @@ import jms4s.sqs.simpleQueueService
 import jms4s.sqs.simpleQueueService.{ClientId, DirectAddress, Endpoint, HTTP, HTTPS}
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
-import uk.gov.nationalarchives.omega.editorial.config.{SqsJmsBrokerConfig, StubServerConfig}
+import uk.gov.nationalarchives.omega.editorial.config.{Config, SqsJmsBrokerConfig, StubServerConfig}
 import uk.gov.nationalarchives.omega.editorial.connectors.messages.MessageProperties
 
 import scala.concurrent.duration.DurationInt
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class StubServer @Inject() (config: StubServerConfig, responseBuilder: ResponseBuilder) {
+class StubServer @Inject() (config: Config, responseBuilder: ResponseBuilder) {
+
+  private val stubServerConfig = config.stubServer.getOrElse(StubServerConfig(config.sqsJmsBroker))
 
   private implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jLogger.getLogger[IO]
 
@@ -49,11 +51,11 @@ class StubServer @Inject() (config: StubServerConfig, responseBuilder: ResponseB
   private val pollingInterval = 50.millis
 
   private val jmsClient: Resource[IO, JmsClient[IO]] = {
-    val maybeEndpointConfig = getEndpointConfigForSqs(config.sqsJmsBroker)
+    val maybeEndpointConfig = getEndpointConfigForSqs(stubServerConfig.sqsJmsBroker)
 
     simpleQueueService.makeJmsClient[IO](
       simpleQueueService.Config(
-        config.sqsJmsBroker.awsRegion,
+        stubServerConfig.sqsJmsBroker.awsRegion,
         endpoint = maybeEndpointConfig,
         clientId = ClientId("stub_server_1"),
         None

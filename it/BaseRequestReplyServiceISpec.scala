@@ -28,7 +28,7 @@ abstract class BaseRequestReplyServiceISpec
   private val messagingServerHost = "localhost"
   private val messagingServerPort = 9324
   private val sqsJmsBrokerConfig = SqsJmsBrokerConfig("elasticmq", Some(SqsJmsBrokerEndpointConfig(false, Some(messagingServerHost), Some(messagingServerPort), Some(AwsCredentialsAuthentication("?", "?")))))
-  private val stubServer = new StubServer(StubServerConfig(sqsJmsBrokerConfig), new ResponseBuilder(stubData))
+  private val stubServer = new StubServer(Config(SqsJmsBrokerConfig("elasticmq", None), Some(StubServerConfig(sqsJmsBrokerConfig)),requestQueueName), new ResponseBuilder(stubData))
 
   override def beforeAll(): Unit = {
     stubServer.start.unsafeToFuture()

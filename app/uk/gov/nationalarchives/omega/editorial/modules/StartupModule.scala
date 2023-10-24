@@ -42,11 +42,6 @@ class StartupModule extends AbstractModule {
 
   @Provides
   @Singleton
-  def stubServerConfigProvider: StubServerConfig =
-    configProvider.stubServer.getOrElse(StubServerConfig(configProvider.sqsJmsBroker))
-
-  @Provides
-  @Singleton
   def defaultTimeProvider: TimeProvider =
     () => LocalDateTime.now()
 
