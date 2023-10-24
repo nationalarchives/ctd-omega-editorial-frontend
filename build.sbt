@@ -215,7 +215,8 @@ bashScriptExtraDefines ++= Seq(
   """addJava "-Dlogback.custom.targetPath=${app_home}/.."""",
   """addJava "-Dlogback.configurationFile=${app_home}/../etc/logback.xml"""",
   """addJava "-Dpidfile.path=${app_home}/../run/play.pid"""",
-  """addJava "-Dplay.http.secret.key=$(hostname)""""
+  """addJava "-Dplay.http.secret.key=$(hostname)"""",
+  """addJava "-Dhttps.port=9443""""
 )
 batScriptExtraDefines ++= Seq(
   """call :add_java "-Dconfig.file=%APP_HOME%\..\etc\settings.conf"""",
@@ -223,7 +224,8 @@ batScriptExtraDefines ++= Seq(
   """call :add_java "-Dlogback.custom.targetPath=%APP_HOME%\.."""",
   """call :add_java "-Dlogback.configurationFile=%APP_HOME%\..\etc\logback.xml"""",
   """call :add_java "-Dpidfile.path=%APP_HOME%\..\run\play.pid"""",
-  """call :add_java "-Dplay.http.secret.key=%COMPUTERNAME%""""
+  """call :add_java "-Dplay.http.secret.key=%COMPUTERNAME%"""",
+  """call :add_java "-Dhttps.port=9443""""
 )
 
 Linux / daemonUser := "ctd-omega-editorial-frontend"
