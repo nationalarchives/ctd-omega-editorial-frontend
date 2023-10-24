@@ -27,7 +27,7 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
     Defaults.itSettings,
     organization := "uk.gov.nationalarchives",
     name := "ctd-omega-editorial-frontend",
-    maintainer := "webmaster@nationalarchives.gov.uk",
+    maintainer := "cataloguingtaxonomyanddata@nationalarchives.gov.uk",
     scalaVersion := "2.13.10",
     licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT")),
     homepage := Some(
@@ -36,7 +36,7 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
     startYear := Some(2022),
     description := "Omega Editorial Frontend",
     organizationName := "The National Archives",
-    organizationHomepage := Some(url("http://nationalarchives.gov.uk")),
+    organizationHomepage := Some(url("https://nationalarchives.gov.uk")),
     scmInfo := Some(
       ScmInfo(
         url("https://github.com/nationalarchives/ctd-omega-editorial-frontend"),
