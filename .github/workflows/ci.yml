@@ -45,3 +45,24 @@ jobs:
         run: docker-compose down
       - name: Generate a coverage report
         run: sbt coverageReport
+
+  package:
+    name: Create Software Packages
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 8
+      - name: Coursier cache
+        uses: coursier/cache-action@v6
+      - name: Build Zip Package
+        run: sbt universal:packageBin
+      - name: Build TGZ Package
+        run: sbt universal:packageZipTarball
+      - name: Build RPM package
+        run: sbt rpm:packageBin

@@ -3,7 +3,8 @@ import sbt.url
 import de.heikoseeberger.sbtheader.FileType
 import play.twirl.sbt.Import.TwirlKeys
 import sbt.Keys.resolvers
-import ReleaseTransformations._
+import ReleaseTransformations.*
+import com.typesafe.sbt.packager.linux.LinuxSymlink
 
 val Slf4JVersion = "1.7.36"
 
@@ -21,6 +22,10 @@ IntegrationTestConfig / scalaSource := baseDirectory.value / "/it"
 lazy val root = Project("ctd-omega-editorial-frontend", file("."))
   .enablePlugins(PlayScala)
   .enablePlugins(BuildInfoPlugin)
+  .enablePlugins(JavaServerAppPackaging)
+  .enablePlugins(LinuxPlugin)
+  .enablePlugins(RpmPlugin)
+  .enablePlugins(SystemdPlugin)
   .enablePlugins(AutomateHeaderPlugin)
   .configs(IntegrationTest extend Test)
   .settings(
@@ -28,6 +33,10 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
     organization := "uk.gov.nationalarchives",
     name := "ctd-omega-editorial-frontend",
     maintainer := "cataloguingtaxonomyanddata@nationalarchives.gov.uk",
+    packageSummary := "Omega Editorial Frontend",
+    packageDescription := "Editorial Frontend for Project Omega",
+    rpmVendor := "The National Archives",
+    rpmLicense := Some("MIT License"),
     scalaVersion := "2.13.10",
     licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT")),
     homepage := Some(
@@ -185,6 +194,66 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
 
 // Adds additional packages into conf/routes
 // play.sbt.routes.RoutesKeys.routesImport += "uk.gov.nationalarchives.binders._"
+
+Universal / mappings ++= Seq(
+  file("LICENSE")                        -> "LICENSE",
+  file("README.md")                      -> "README.md",
+  file("src/main/package/settings.conf") -> "etc/settings.conf",
+  file("src/main/package/logback.xml")   -> "etc/logback.xml"
+)
+Universal / mappings := {
+  (Universal / mappings).value
+    .filter { case (file, path) => !(path.endsWith("conf/application.conf") || path.endsWith("conf/logback.xml")) }
+}
+Universal / packageZipTarball / universalArchiveOptions := Seq(
+  "--exclude",
+  "*.bat"
+) ++ (Universal / packageZipTarball / universalArchiveOptions).value
+bashScriptExtraDefines ++= Seq(
+  """addJava "-Dconfig.file=${app_home}/../etc/settings.conf"""",
+  """addJava "-Dmessage-store-base-dir=${app_home}/../"""",
+  """addJava "-Dlogback.custom.targetPath=${app_home}/.."""",
+  """addJava "-Dlogback.configurationFile=${app_home}/../etc/logback.xml"""",
+  """addJava "-Dpidfile.path=${app_home}/../run/play.pid"""",
+  """addJava "-Dplay.http.secret.key=$(hostname)""""
+)
+batScriptExtraDefines ++= Seq(
+  """call :add_java "-Dconfig.file=%APP_HOME%\..\etc\settings.conf"""",
+  """call :add_java "-Dmessage-store-base-dir=%APP_HOME%\..\"""",
+  """call :add_java "-Dlogback.custom.targetPath=%APP_HOME%\.."""",
+  """call :add_java "-Dlogback.configurationFile=%APP_HOME%\..\etc\logback.xml"""",
+  """call :add_java "-Dpidfile.path=%APP_HOME%\..\run\play.pid"""",
+  """call :add_java "-Dplay.http.secret.key=%COMPUTERNAME%""""
+)
+
+Linux / daemonUser := "ctd-omega-editorial-frontend"
+Linux / daemonGroup := "ctd-omega-editorial-frontend"
+Linux / serviceAutostart := false
+// change the symlink `<install>/logs` to `<install>/log`
+Linux / linuxPackageSymlinks := {
+  val pkg = packageName.value
+  // the `logs` symlink we want to replace
+  val logsLink = defaultLinuxInstallLocation.value + "/" + pkg + "/logs"
+  val currentLinuxPackageSymLinks = linuxPackageSymlinks.value
+  currentLinuxPackageSymLinks.map {
+    case LinuxSymlink(link, destination) if logsLink.equals(link) =>
+      // the `log` symlink we want instead of the `logs` symlink
+      val logLink = defaultLinuxInstallLocation.value + "/" + pkg + "/log"
+      LinuxSymlink(logLink, destination)
+    case linuxSymLink: LinuxSymlink =>
+      // preserve any other symlink
+      linuxSymLink
+  }
+}
+// add the symlink `<install>/run` to `/var/run/<pkg>`
+//Linux / linuxPackageMappings += packageTemplateMapping(s"/var/run/${(Linux / packageName).value}")()
+//  .withUser((Linux / daemonUser).value)
+//  .withGroup((Linux / daemonGroup).value)
+//  .withPerms("750")
+Linux / linuxPackageSymlinks += LinuxSymlink(
+  (Linux / defaultLinuxInstallLocation).value + "/" + (Linux / packageName).value + "/run",
+  "/var/run/" + (Linux / packageName).value
+)
 
 // Integration tests are automatically included, as the IntegrationTest config is extended from Test.
 Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
