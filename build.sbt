@@ -132,23 +132,28 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
       guice,
       "com.github.pureconfig"                         %% "pureconfig"                    % "0.17.4",
       "uk.gov.nationalarchives.thirdparty.dev.fpinbo" %% "jms4s-simple-queue-service"    % "0.5.0-TNA-OMG-0.2.0",
-      "org.typelevel"                                 %% "cats-core"                     % "2.9.0",
-      "org.typelevel"                                 %% "cats-effect"                   % "3.4.8",
-      "org.typelevel"                                 %% "cats-effect-kernel"            % "3.4.7",
-      "org.typelevel"                                 %% "log4cats-core"                 % "2.5.0",
-      "org.typelevel"                                 %% "log4cats-slf4j"                % "2.5.0",
+      "org.typelevel"                                 %% "cats-core"                     % "2.10.0",
+      "org.typelevel"                                 %% "cats-effect"                   % "3.5.2",
+      "org.typelevel"                                 %% "cats-effect-kernel"            % "3.5.2",
+      "org.typelevel"                                 %% "log4cats-core"                 % "2.6.0",
+      "org.typelevel"                                 %% "log4cats-slf4j"                % "2.6.0",
       "org.webjars.npm"                                % "govuk-frontend"                % "4.3.1",
       "uk.gov.hmrc"                                   %% "play-frontend-hmrc"            % "6.2.0-play-28",
       "com.lihaoyi"                                   %% "pprint"                        % "0.8.1",
-      "com.beachape"                                  %% "enumeratum-play-json"          % "1.7.2",
+      "com.beachape"                                  %% "enumeratum-play-json"          % "1.7.3",
       "org.scalatestplus.play"                        %% "scalatestplus-play"            % "5.1.0"   % Test,
-      "org.jsoup"                                      % "jsoup"                         % "1.15.4"  % Test,
+      "org.jsoup"                                      % "jsoup"                         % "1.16.2"  % Test,
       "org.typelevel"                                 %% "cats-effect-testing-scalatest" % "1.5.0"   % Test,
-      "org.mockito"                                   %% "mockito-scala-scalatest"       % "1.17.12" % Test,
-      "org.mockito"                                   %% "mockito-scala-cats"            % "1.17.12" % Test
+      "org.mockito"                                   %% "mockito-scala-scalatest"       % "1.17.27" % Test,
+      "org.mockito"                                   %% "mockito-scala-cats"            % "1.17.27" % Test,
+
+      "com.fasterxml.jackson.module"                  %% "jackson-module-scala"          % "2.15.3"  % Runtime
     ).map(_.exclude("org.slf4j", "*")),
     libraryDependencies ++= Seq(
-      "ch.qos.logback" % "logback-classic" % "1.3.5" // Java 8 compatible
+      "ch.qos.logback"             % "logback-classic"          % "1.2.12", // Java 8 compatible
+      "org.codehaus.janino"        % "janino"                   % "3.1.10" % Runtime, // NOTE(AR) required for conditions in `logback-classic`
+      "net.logstash.logback"       % "logstash-logback-encoder" % "7.4"    % Runtime, // NOTE(AR) required for JSON log files via `logback-classic`
+      "com.fasterxml.jackson.core" % "jackson-databind"         % "2.15.3" % Runtime, // NOTE(AR) required for JSON log files via `logback-classic`
     ),
     publishMavenStyle := true,
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
