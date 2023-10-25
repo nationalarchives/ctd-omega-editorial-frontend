@@ -247,11 +247,19 @@ Linux / linuxPackageSymlinks := {
       linuxSymLink
   }
 }
+
+// add the empty directory `<install>/target/dev-mode` needed for Play's self generated SSL cert
+Linux / linuxPackageMappings ++= Seq(
+  packageTemplateMapping(s"${(Linux / defaultLinuxInstallLocation).value}/${(Linux / packageName).value}/target")()
+    .withUser((Linux / daemonUser).value)
+    .withGroup((Linux / daemonGroup).value)
+    .withPerms("750"),
+  packageTemplateMapping(s"${(Linux / defaultLinuxInstallLocation).value}/${(Linux / packageName).value}/target/dev-mode")()
+    .withUser((Linux / daemonUser).value)
+    .withGroup((Linux / daemonGroup).value)
+    .withPerms("750"),
+)
 // add the symlink `<install>/run` to `/var/run/<pkg>`
-//Linux / linuxPackageMappings += packageTemplateMapping(s"/var/run/${(Linux / packageName).value}")()
-//  .withUser((Linux / daemonUser).value)
-//  .withGroup((Linux / daemonGroup).value)
-//  .withPerms("750")
 Linux / linuxPackageSymlinks += LinuxSymlink(
   (Linux / defaultLinuxInstallLocation).value + "/" + (Linux / packageName).value + "/run",
   "/var/run/" + (Linux / packageName).value
