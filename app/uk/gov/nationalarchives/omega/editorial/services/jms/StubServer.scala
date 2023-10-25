@@ -28,14 +28,14 @@ import jms4s.jms.MessageFactory
 import jms4s.JmsAcknowledgerConsumer.AckAction
 import jms4s.JmsClient
 import jms4s.sqs.simpleQueueService
-import jms4s.sqs.simpleQueueService.{ClientId, DirectAddress, Endpoint, HTTP, HTTPS}
+import jms4s.sqs.simpleQueueService.{ ClientId, DirectAddress, Endpoint, HTTP, HTTPS }
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
-import uk.gov.nationalarchives.omega.editorial.config.{Config, SqsJmsBrokerConfig, StubServerConfig}
+import uk.gov.nationalarchives.omega.editorial.config.{ Config, SqsJmsBrokerConfig, StubServerConfig }
 import uk.gov.nationalarchives.omega.editorial.connectors.messages.MessageProperties
 
 import scala.concurrent.duration.DurationInt
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 @Singleton
 class StubServer @Inject() (config: Config, responseBuilder: ResponseBuilder) {
@@ -111,10 +111,10 @@ class StubServer @Inject() (config: Config, responseBuilder: ResponseBuilder) {
     messageType.getOrElse("NOT FOUND")
   }
 
-  private def getEndpointConfigForSqs(sqsJmsBrokerConfig: SqsJmsBrokerConfig) = {
+  private def getEndpointConfigForSqs(sqsJmsBrokerConfig: SqsJmsBrokerConfig) =
     sqsJmsBrokerConfig.endpoint.flatMap { sqsJmsBrokerEndpoint =>
       val protocol = sqsJmsBrokerEndpoint.tls match {
-        case true => HTTPS
+        case true  => HTTPS
         case false => HTTP
       }
       val maybeDirectAddress: Option[DirectAddress] =
@@ -129,5 +129,4 @@ class StubServer @Inject() (config: Config, responseBuilder: ResponseBuilder) {
         None
       }
     }
-  }
 }

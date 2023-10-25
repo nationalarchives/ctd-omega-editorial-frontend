@@ -22,22 +22,22 @@
 package uk.gov.nationalarchives.omega.editorial.connectors
 
 import cats.effect.implicits.genSpawnOps
-import cats.effect.{Async, Resource}
+import cats.effect.{ Async, Resource }
 import jms4s.JmsAcknowledgerConsumer.AckAction
 import jms4s.config.QueueName
-import jms4s.jms.{JmsMessage, MessageFactory}
+import jms4s.jms.{ JmsMessage, MessageFactory }
 import jms4s.sqs.simpleQueueService
-import jms4s.sqs.simpleQueueService.{Credentials, DirectAddress, Endpoint, HTTP, HTTPS}
-import jms4s.{JmsClient, JmsProducer}
+import jms4s.sqs.simpleQueueService.{ Credentials, DirectAddress, Endpoint, HTTP, HTTPS }
+import jms4s.{ JmsClient, JmsProducer }
 import org.typelevel.log4cats.Logger
 import uk.gov.nationalarchives.omega.editorial.config.SqsJmsBrokerConfig
 import uk.gov.nationalarchives.omega.editorial.connectors.JmsRequestReplyClient.ReplyMessageHandler
-import uk.gov.nationalarchives.omega.editorial.connectors.messages.{MessageProperties, ReplyMessage, RequestMessage}
+import uk.gov.nationalarchives.omega.editorial.connectors.messages.{ MessageProperties, ReplyMessage, RequestMessage }
 
 import java.util.concurrent.ConcurrentHashMap
 import scala.annotation.unused
 import scala.concurrent.duration.DurationInt
-import scala.util.{Failure, Success, Try}
+import scala.util.{ Failure, Success, Try }
 
 /** A JMS Request-Reply client.
   *
@@ -131,7 +131,6 @@ object JmsRequestReplyClient {
     val clientIdResource: Resource[F, String] =
       Resource.liftK[F](customClientId.getOrElse(RandomClientIdGen.randomClientId[F]))
     val jmsClientResource: Resource[F, JmsClient[F]] = clientIdResource.flatMap { clientId =>
-
       val maybeEndpointConfig = getEndpointConfigForSqs(sqsJmsBrokerConfig)
       simpleQueueService.makeJmsClient[F](
         simpleQueueService.Config(
@@ -145,10 +144,10 @@ object JmsRequestReplyClient {
     create[F](jmsClientResource)(replyQueue)
   }
 
-  private def getEndpointConfigForSqs(sqsJmsBrokerConfig: SqsJmsBrokerConfig) = {
+  private def getEndpointConfigForSqs(sqsJmsBrokerConfig: SqsJmsBrokerConfig) =
     sqsJmsBrokerConfig.endpoint.flatMap { sqsJmsBrokerEndpoint =>
       val protocol = sqsJmsBrokerEndpoint.tls match {
-        case true => HTTPS
+        case true  => HTTPS
         case false => HTTP
       }
       val maybeDirectAddress: Option[DirectAddress] =
@@ -163,7 +162,6 @@ object JmsRequestReplyClient {
         None
       }
     }
-  }
 
   /** Create a JMS Request-Reply Client.
     *

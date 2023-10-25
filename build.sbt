@@ -155,14 +155,13 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
       "org.typelevel"                                 %% "cats-effect-testing-scalatest" % "1.5.0"   % Test,
       "org.mockito"                                   %% "mockito-scala-scalatest"       % "1.17.27" % Test,
       "org.mockito"                                   %% "mockito-scala-cats"            % "1.17.27" % Test,
-
       "com.fasterxml.jackson.module"                  %% "jackson-module-scala"          % "2.15.3"  % Runtime
     ).map(_.exclude("org.slf4j", "*")),
     libraryDependencies ++= Seq(
-      "ch.qos.logback"             % "logback-classic"          % "1.2.12", // Java 8 compatible
-      "org.codehaus.janino"        % "janino"                   % "3.1.10" % Runtime, // NOTE(AR) required for conditions in `logback-classic`
-      "net.logstash.logback"       % "logstash-logback-encoder" % "7.4"    % Runtime, // NOTE(AR) required for JSON log files via `logback-classic`
-      "com.fasterxml.jackson.core" % "jackson-databind"         % "2.15.3" % Runtime, // NOTE(AR) required for JSON log files via `logback-classic`
+      "ch.qos.logback" % "logback-classic" % "1.2.12", // Java 8 compatible
+      "org.codehaus.janino" % "janino" % "3.1.10" % Runtime, // NOTE(AR) required for conditions in `logback-classic`
+      "net.logstash.logback" % "logstash-logback-encoder" % "7.4" % Runtime, // NOTE(AR) required for JSON log files via `logback-classic`
+      "com.fasterxml.jackson.core" % "jackson-databind" % "2.15.3" % Runtime // NOTE(AR) required for JSON log files via `logback-classic`
     ),
     publishMavenStyle := true,
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
@@ -254,10 +253,12 @@ Linux / linuxPackageMappings ++= Seq(
     .withUser((Linux / daemonUser).value)
     .withGroup((Linux / daemonGroup).value)
     .withPerms("750"),
-  packageTemplateMapping(s"${(Linux / defaultLinuxInstallLocation).value}/${(Linux / packageName).value}/target/dev-mode")()
+  packageTemplateMapping(
+    s"${(Linux / defaultLinuxInstallLocation).value}/${(Linux / packageName).value}/target/dev-mode"
+  )()
     .withUser((Linux / daemonUser).value)
     .withGroup((Linux / daemonGroup).value)
-    .withPerms("750"),
+    .withPerms("750")
 )
 // add the symlink `<install>/run` to `/var/run/<pkg>`
 Linux / linuxPackageSymlinks += LinuxSymlink(

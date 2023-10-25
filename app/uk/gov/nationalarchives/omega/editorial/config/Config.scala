@@ -22,20 +22,20 @@
 package uk.gov.nationalarchives.omega.editorial.config
 
 case class Config(
-   sqsJmsBroker: SqsJmsBrokerConfig,
-   stubServer: Option[StubServerConfig],
-   defaultRequestQueueName: String,
-   legalStatusRequestQueueName: Option[String] = None,
-   agentSummaryRequestQueueName: Option[String] = None
+  sqsJmsBroker: SqsJmsBrokerConfig,
+  stubServer: Option[StubServerConfig],
+  defaultRequestQueueName: String,
+  legalStatusRequestQueueName: Option[String] = None,
+  agentSummaryRequestQueueName: Option[String] = None
 )
 
 case class SqsJmsBrokerConfig(awsRegion: String, endpoint: Option[SqsJmsBrokerEndpointConfig])
 
 case class SqsJmsBrokerEndpointConfig(
- tls: Boolean,
- host: Option[String],
- port: Option[Int],
- authentication: Option[AwsCredentialsAuthentication]
+  tls: Boolean,
+  host: Option[String],
+  port: Option[Int],
+  authentication: Option[AwsCredentialsAuthentication]
 )
 
 case class AwsCredentialsAuthentication(accessKey: String, secretKey: String)
