@@ -5,9 +5,6 @@ on:
       - main
   pull_request:
 
-env:
-  GITHUB_TOKEN: ${{ github.token }}
-
 jobs:
   test-workflows:
     name: Editorial Tests
@@ -29,14 +26,25 @@ jobs:
         run: sbt scalafmtCheck test:scalafmtCheck scalafmtSbtCheck
       - name: Run unit tests
         run: sbt -v +test
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Install docker (on macos, only)
-        run: brew install docker && brew install docker-compose && colima start && docker --version
+        run: brew install docker && brew install docker-compose && colima start --cpu 4 --memory 8 && docker --version 
+        if: ${{ matrix.os == 'macos-latest' }}
+      - name: Install earthly (on macos, only)
+        run: wget -O earthly 'https://github.com/earthly/earthly/releases/download/v0.7.2/earthly-darwin-amd64' && chmod +x ./earthly
         if: ${{ matrix.os == 'macos-latest' }}
       - name: Start docker compose
         run: docker-compose up -d && docker-compose ps
+      - name: Setup upterm session
+        uses: lhotari/action-upterm@v1
       - name: Run integration tests
-        run: sbt -v IntegrationTest/test
+        run: ./earthly -P --secret GITHUB_TOKEN="$GITHUB_TOKEN" +integration-test
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Shutdown docker compose
         run: docker-compose down
       - name: Generate a coverage report
         run: sbt coverageReport
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
