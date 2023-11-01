@@ -46,7 +46,7 @@ class ApiConnector @Inject() (
   private def createClientAndCloser: IO[(JmsRequestReplyClient[IO], IO[Unit])] =
     registerStopHook() *>
       logger.info(s"Attempting to subscribe to $replyQueueName...") *>
-      JmsRequestReplyClient.createForSqs[IO](config.broker, config.credentials)(replyQueueName).allocated
+      JmsRequestReplyClient.createForSqs[IO](config.sqsJmsBroker)(replyQueueName).allocated
 
   private def registerStopHook(): IO[Unit] = IO.delay {
     lifecycle.addStopHook { () =>

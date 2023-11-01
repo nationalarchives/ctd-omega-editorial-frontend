@@ -27,10 +27,10 @@ import jms4s.JmsAcknowledgerConsumer.AckAction
 import jms4s.config.QueueName
 import jms4s.jms.{ JmsMessage, MessageFactory }
 import jms4s.sqs.simpleQueueService
-import jms4s.sqs.simpleQueueService.{ Credentials, DirectAddress, HTTP }
+import jms4s.sqs.simpleQueueService.{ Credentials, DirectAddress, Endpoint, HTTP, HTTPS }
 import jms4s.{ JmsClient, JmsProducer }
 import org.typelevel.log4cats.Logger
-import uk.gov.nationalarchives.omega.editorial.config.{ HostBrokerEndpoint, UsernamePasswordCredentials }
+import uk.gov.nationalarchives.omega.editorial.config.SqsJmsBrokerConfig
 import uk.gov.nationalarchives.omega.editorial.connectors.JmsRequestReplyClient.ReplyMessageHandler
 import uk.gov.nationalarchives.omega.editorial.connectors.messages.{ MessageProperties, ReplyMessage, RequestMessage }
 
@@ -107,7 +107,6 @@ object JmsRequestReplyClient {
   private val defaultConsumerConcurrencyLevel = 1
   private val defaultConsumerPollingInterval = 50.millis
   private val defaultProducerConcurrencyLevel = 1
-  private val signingRegion = "elasticmq"
   private val initialCapacityOfMap = 16
   private val loadFactorForMap = 0.75f
 
@@ -126,18 +125,17 @@ object JmsRequestReplyClient {
     *   \- The resource for the JMS Request-Reply Client.
     */
   def createForSqs[F[_] : Async : Logger](
-    endpoint: HostBrokerEndpoint,
-    credentials: UsernamePasswordCredentials,
+    sqsJmsBrokerConfig: SqsJmsBrokerConfig,
     customClientId: Option[F[String]] = None
   )(replyQueue: String): Resource[F, JmsRequestReplyClient[F]] = {
     val clientIdResource: Resource[F, String] =
       Resource.liftK[F](customClientId.getOrElse(RandomClientIdGen.randomClientId[F]))
     val jmsClientResource: Resource[F, JmsClient[F]] = clientIdResource.flatMap { clientId =>
+      val maybeEndpointConfig = getEndpointConfigForSqs(sqsJmsBrokerConfig)
       simpleQueueService.makeJmsClient[F](
         simpleQueueService.Config(
-          endpoint =
-            simpleQueueService.Endpoint(Some(DirectAddress(HTTP, endpoint.host, Some(endpoint.port))), signingRegion),
-          credentials = Some(Credentials(credentials.username, credentials.password)),
+          sqsJmsBrokerConfig.awsRegion,
+          endpoint = maybeEndpointConfig,
           clientId = simpleQueueService.ClientId(clientId),
           numberOfMessagesToPrefetch = None
         )
@@ -145,6 +143,25 @@ object JmsRequestReplyClient {
     }
     create[F](jmsClientResource)(replyQueue)
   }
+
+  private def getEndpointConfigForSqs(sqsJmsBrokerConfig: SqsJmsBrokerConfig) =
+    sqsJmsBrokerConfig.endpoint.flatMap { sqsJmsBrokerEndpoint =>
+      val protocol = sqsJmsBrokerEndpoint.tls match {
+        case true  => HTTPS
+        case false => HTTP
+      }
+      val maybeDirectAddress: Option[DirectAddress] =
+        sqsJmsBrokerEndpoint.host.map(host => DirectAddress(protocol, host, sqsJmsBrokerEndpoint.port))
+      val maybeCredentials: Option[Credentials] =
+        sqsJmsBrokerEndpoint.authentication.map(awsCredentialsAuthentication =>
+          Credentials(awsCredentialsAuthentication.accessKey, awsCredentialsAuthentication.secretKey)
+        )
+      if (maybeDirectAddress.nonEmpty || maybeCredentials.nonEmpty) {
+        Some(Endpoint(maybeDirectAddress, maybeCredentials))
+      } else {
+        None
+      }
+    }
 
   /** Create a JMS Request-Reply Client.
     *

@@ -182,3 +182,10 @@ You'll find it in `/target/scala-2.13/scoverage-report/`.
 Remember to run `sbt fmtCheck`.
 
 For convenience, you can run [runBeforePushing.sh](./runBeforePushing.sh), which runs it after all of the tests; note that a coverage report is also generated.
+
+### Creating a package for Production
+An RPM package may be built by running:
+```
+sbt clean rpm:packageBin -DcoverageEnabled=false
+```
+the RPM file is then available in: `target/rpm/RPMS/`.

@@ -28,16 +28,19 @@ import jms4s.jms.MessageFactory
 import jms4s.JmsAcknowledgerConsumer.AckAction
 import jms4s.JmsClient
 import jms4s.sqs.simpleQueueService
-import jms4s.sqs.simpleQueueService._
+import jms4s.sqs.simpleQueueService.{ ClientId, DirectAddress, Endpoint, HTTP, HTTPS }
 import org.typelevel.log4cats.SelfAwareStructuredLogger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
+import uk.gov.nationalarchives.omega.editorial.config.{ Config, SqsJmsBrokerConfig, StubServerConfig }
 import uk.gov.nationalarchives.omega.editorial.connectors.messages.MessageProperties
 
 import scala.concurrent.duration.DurationInt
 import javax.inject.{ Inject, Singleton }
 
 @Singleton
-class StubServer @Inject() (responseBuilder: ResponseBuilder) {
+class StubServer @Inject() (config: Config, responseBuilder: ResponseBuilder) {
+
+  private val stubServerConfig = config.stubServer.getOrElse(StubServerConfig(config.sqsJmsBroker))
 
   private implicit val logger: SelfAwareStructuredLogger[IO] = Slf4jLogger.getLogger[IO]
 
@@ -47,14 +50,18 @@ class StubServer @Inject() (responseBuilder: ResponseBuilder) {
   private val consumerConcurrencyLevel = 1
   private val pollingInterval = 50.millis
 
-  private val jmsClient: Resource[IO, JmsClient[IO]] = simpleQueueService.makeJmsClient[IO](
-    Config(
-      endpoint = Endpoint(Some(DirectAddress(HTTP, "localhost", Some(9324))), "elasticmq"),
-      credentials = None,
-      clientId = ClientId("stub_server_1"),
-      None
+  private val jmsClient: Resource[IO, JmsClient[IO]] = {
+    val maybeEndpointConfig = getEndpointConfigForSqs(stubServerConfig.sqsJmsBroker)
+
+    simpleQueueService.makeJmsClient[IO](
+      simpleQueueService.Config(
+        stubServerConfig.sqsJmsBroker.awsRegion,
+        endpoint = maybeEndpointConfig,
+        clientId = ClientId("stub_server_1"),
+        None
+      )
     )
-  )
+  }
 
   def start: IO[Unit] = {
     val consumerResource = for {
@@ -104,4 +111,22 @@ class StubServer @Inject() (responseBuilder: ResponseBuilder) {
     messageType.getOrElse("NOT FOUND")
   }
 
+  private def getEndpointConfigForSqs(sqsJmsBrokerConfig: SqsJmsBrokerConfig) =
+    sqsJmsBrokerConfig.endpoint.flatMap { sqsJmsBrokerEndpoint =>
+      val protocol = sqsJmsBrokerEndpoint.tls match {
+        case true  => HTTPS
+        case false => HTTP
+      }
+      val maybeDirectAddress: Option[DirectAddress] =
+        sqsJmsBrokerEndpoint.host.map(host => DirectAddress(protocol, host, sqsJmsBrokerEndpoint.port))
+      val maybeCredentials: Option[simpleQueueService.Credentials] =
+        sqsJmsBrokerEndpoint.authentication.map(awsCredentialsAuthentication =>
+          simpleQueueService.Credentials(awsCredentialsAuthentication.accessKey, awsCredentialsAuthentication.secretKey)
+        )
+      if (maybeDirectAddress.nonEmpty || maybeCredentials.nonEmpty) {
+        Some(Endpoint(maybeDirectAddress, maybeCredentials))
+      } else {
+        None
+      }
+    }
 }

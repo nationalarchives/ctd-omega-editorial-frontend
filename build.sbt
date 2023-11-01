@@ -3,7 +3,8 @@ import sbt.url
 import de.heikoseeberger.sbtheader.FileType
 import play.twirl.sbt.Import.TwirlKeys
 import sbt.Keys.resolvers
-import ReleaseTransformations._
+import ReleaseTransformations.*
+import com.typesafe.sbt.packager.linux.LinuxSymlink
 
 val Slf4JVersion = "1.7.36"
 
@@ -21,13 +22,21 @@ IntegrationTestConfig / scalaSource := baseDirectory.value / "/it"
 lazy val root = Project("ctd-omega-editorial-frontend", file("."))
   .enablePlugins(PlayScala)
   .enablePlugins(BuildInfoPlugin)
+  .enablePlugins(JavaServerAppPackaging)
+  .enablePlugins(LinuxPlugin)
+  .enablePlugins(RpmPlugin)
+  .enablePlugins(SystemdPlugin)
   .enablePlugins(AutomateHeaderPlugin)
   .configs(IntegrationTest extend Test)
   .settings(
     Defaults.itSettings,
     organization := "uk.gov.nationalarchives",
     name := "ctd-omega-editorial-frontend",
-    maintainer := "webmaster@nationalarchives.gov.uk",
+    maintainer := "cataloguingtaxonomyanddata@nationalarchives.gov.uk",
+    packageSummary := "Omega Editorial Frontend",
+    packageDescription := "Editorial Frontend for Project Omega",
+    rpmVendor := "The National Archives",
+    rpmLicense := Some("MIT License"),
     scalaVersion := "2.13.10",
     licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT")),
     homepage := Some(
@@ -36,7 +45,7 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
     startYear := Some(2022),
     description := "Omega Editorial Frontend",
     organizationName := "The National Archives",
-    organizationHomepage := Some(url("http://nationalarchives.gov.uk")),
+    organizationHomepage := Some(url("https://nationalarchives.gov.uk")),
     scmInfo := Some(
       ScmInfo(
         url("https://github.com/nationalarchives/ctd-omega-editorial-frontend"),
@@ -131,24 +140,28 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
     libraryDependencies ++= Seq(
       guice,
       "com.github.pureconfig"                         %% "pureconfig"                    % "0.17.4",
-      "uk.gov.nationalarchives.thirdparty.dev.fpinbo" %% "jms4s-simple-queue-service"    % "0.5.0-TNA-OMG-0.1.0",
-      "org.typelevel"                                 %% "cats-core"                     % "2.9.0",
-      "org.typelevel"                                 %% "cats-effect"                   % "3.4.8",
-      "org.typelevel"                                 %% "cats-effect-kernel"            % "3.4.7",
-      "org.typelevel"                                 %% "log4cats-core"                 % "2.5.0",
-      "org.typelevel"                                 %% "log4cats-slf4j"                % "2.5.0",
+      "uk.gov.nationalarchives.thirdparty.dev.fpinbo" %% "jms4s-simple-queue-service"    % "0.5.0-TNA-OMG-0.2.0",
+      "org.typelevel"                                 %% "cats-core"                     % "2.10.0",
+      "org.typelevel"                                 %% "cats-effect"                   % "3.5.2",
+      "org.typelevel"                                 %% "cats-effect-kernel"            % "3.5.2",
+      "org.typelevel"                                 %% "log4cats-core"                 % "2.6.0",
+      "org.typelevel"                                 %% "log4cats-slf4j"                % "2.6.0",
       "org.webjars.npm"                                % "govuk-frontend"                % "4.3.1",
       "uk.gov.hmrc"                                   %% "play-frontend-hmrc"            % "6.2.0-play-28",
       "com.lihaoyi"                                   %% "pprint"                        % "0.8.1",
-      "com.beachape"                                  %% "enumeratum-play-json"          % "1.7.2",
+      "com.beachape"                                  %% "enumeratum-play-json"          % "1.7.3",
       "org.scalatestplus.play"                        %% "scalatestplus-play"            % "5.1.0"   % Test,
-      "org.jsoup"                                      % "jsoup"                         % "1.15.4"  % Test,
+      "org.jsoup"                                      % "jsoup"                         % "1.16.2"  % Test,
       "org.typelevel"                                 %% "cats-effect-testing-scalatest" % "1.5.0"   % Test,
-      "org.mockito"                                   %% "mockito-scala-scalatest"       % "1.17.12" % Test,
-      "org.mockito"                                   %% "mockito-scala-cats"            % "1.17.12" % Test
+      "org.mockito"                                   %% "mockito-scala-scalatest"       % "1.17.27" % Test,
+      "org.mockito"                                   %% "mockito-scala-cats"            % "1.17.27" % Test,
+      "com.fasterxml.jackson.module"                  %% "jackson-module-scala"          % "2.15.3"  % Runtime
     ).map(_.exclude("org.slf4j", "*")),
     libraryDependencies ++= Seq(
-      "ch.qos.logback" % "logback-classic" % "1.3.5" // Java 8 compatible
+      "ch.qos.logback" % "logback-classic" % "1.2.12", // Java 8 compatible
+      "org.codehaus.janino" % "janino" % "3.1.10" % Runtime, // NOTE(AR) required for conditions in `logback-classic`
+      "net.logstash.logback" % "logstash-logback-encoder" % "7.4" % Runtime, // NOTE(AR) required for JSON log files via `logback-classic`
+      "com.fasterxml.jackson.core" % "jackson-databind" % "2.15.3" % Runtime // NOTE(AR) required for JSON log files via `logback-classic`
     ),
     publishMavenStyle := true,
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
@@ -181,6 +194,78 @@ lazy val root = Project("ctd-omega-editorial-frontend", file("."))
 // Adds additional packages into conf/routes
 // play.sbt.routes.RoutesKeys.routesImport += "uk.gov.nationalarchives.binders._"
 
+Universal / mappings ++= Seq(
+  file("LICENSE")                        -> "LICENSE",
+  file("README.md")                      -> "README.md",
+  file("src/main/package/settings.conf") -> "etc/settings.conf",
+  file("src/main/package/logback.xml")   -> "etc/logback.xml"
+)
+Universal / mappings := {
+  (Universal / mappings).value
+    .filter { case (file, path) => !(path.endsWith("conf/application.conf") || path.endsWith("conf/logback.xml")) }
+}
+Universal / packageZipTarball / universalArchiveOptions := Seq(
+  "--exclude",
+  "*.bat"
+) ++ (Universal / packageZipTarball / universalArchiveOptions).value
+bashScriptExtraDefines ++= Seq(
+  """addJava "-Dconfig.file=${app_home}/../etc/settings.conf"""",
+  """addJava "-Dmessage-store-base-dir=${app_home}/../"""",
+  """addJava "-Dlogback.custom.targetPath=${app_home}/.."""",
+  """addJava "-Dlogback.configurationFile=${app_home}/../etc/logback.xml"""",
+  """addJava "-Dpidfile.path=${app_home}/../run/play.pid"""",
+  """addJava "-Dplay.http.secret.key=$(hostname)"""",
+  """addJava "-Dhttps.port=9443""""
+)
+batScriptExtraDefines ++= Seq(
+  """call :add_java "-Dconfig.file=%APP_HOME%\..\etc\settings.conf"""",
+  """call :add_java "-Dmessage-store-base-dir=%APP_HOME%\..\"""",
+  """call :add_java "-Dlogback.custom.targetPath=%APP_HOME%\.."""",
+  """call :add_java "-Dlogback.configurationFile=%APP_HOME%\..\etc\logback.xml"""",
+  """call :add_java "-Dpidfile.path=%APP_HOME%\..\run\play.pid"""",
+  """call :add_java "-Dplay.http.secret.key=%COMPUTERNAME%"""",
+  """call :add_java "-Dhttps.port=9443""""
+)
+
+Linux / daemonUser := "ctd-omega-editorial-frontend"
+Linux / daemonGroup := "ctd-omega-editorial-frontend"
+Linux / serviceAutostart := false
+// change the symlink `<install>/logs` to `<install>/log`
+Linux / linuxPackageSymlinks := {
+  val pkg = packageName.value
+  // the `logs` symlink we want to replace
+  val logsLink = defaultLinuxInstallLocation.value + "/" + pkg + "/logs"
+  val currentLinuxPackageSymLinks = linuxPackageSymlinks.value
+  currentLinuxPackageSymLinks.map {
+    case LinuxSymlink(link, destination) if logsLink.equals(link) =>
+      // the `log` symlink we want instead of the `logs` symlink
+      val logLink = defaultLinuxInstallLocation.value + "/" + pkg + "/log"
+      LinuxSymlink(logLink, destination)
+    case linuxSymLink: LinuxSymlink =>
+      // preserve any other symlink
+      linuxSymLink
+  }
+}
+
+// add the empty directory `<install>/target/dev-mode` needed for Play's self generated SSL cert
+Linux / linuxPackageMappings ++= Seq(
+  packageTemplateMapping(s"${(Linux / defaultLinuxInstallLocation).value}/${(Linux / packageName).value}/target")()
+    .withUser((Linux / daemonUser).value)
+    .withGroup((Linux / daemonGroup).value)
+    .withPerms("750"),
+  packageTemplateMapping(
+    s"${(Linux / defaultLinuxInstallLocation).value}/${(Linux / packageName).value}/target/dev-mode"
+  )()
+    .withUser((Linux / daemonUser).value)
+    .withGroup((Linux / daemonGroup).value)
+    .withPerms("750")
+)
+// add the symlink `<install>/run` to `/var/run/<pkg>`
+Linux / linuxPackageSymlinks += LinuxSymlink(
+  (Linux / defaultLinuxInstallLocation).value + "/" + (Linux / packageName).value + "/run",
+  "/var/run/" + (Linux / packageName).value
+)
+
 // Integration tests are automatically included, as the IntegrationTest config is extended from Test.
 Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
 
@@ -195,7 +280,7 @@ Test / parallelExecution := false
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
 
 // This will include coverage generation for both unit and integration tests.
-coverageEnabled := true
+coverageEnabled := sys.props.getOrElse("coverageEnabled", "true").toBoolean
 
 val packagesExcludedFromCoverageCheck = Seq(
   ".*Reverse.*",
