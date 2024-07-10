@@ -1,4 +1,4 @@
-# Pan-Archival Editorial Frontend Catalogue
+# Pan-Archival Catalogue Editorial Frontend
 
 [![Build Status](https://github.com/nationalarchives/ctd-omega-editorial-frontend/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/nationalarchives/ctd-omega-editorial-frontend/actions/workflows/ci.yml)
 [![Scala 2.13](https://img.shields.io/badge/scala-2.13-red.svg)](http://scala-lang.org)
