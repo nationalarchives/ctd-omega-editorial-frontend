@@ -35,6 +35,8 @@ import java.util.Locale
 
 class CoveringDateCalculatorSpec extends BaseSpec with TableDrivenPropertyChecks {
 
+  private val currentYear = LocalDate.now.getYear
+
   "CoveringDateCalculator" should {
 
     val validScenarioTestTable = Tables.Table(
@@ -59,7 +61,7 @@ class CoveringDateCalculatorSpec extends BaseSpec with TableDrivenPropertyChecks
       ),
       "1582 Oct 11"               -> defineTestCoveringDate("1582 Oct 11" -> "1582 Oct 11"),
       "1582 Oct 11 - 1582 Nov 29" -> defineTestCoveringDate("1582 Oct 11" -> "1582 Nov 29"),
-      "1 - 2023"                  -> defineTestCoveringDate("1 Jan 1" -> s"${LocalDate.now().getYear} Dec 31"),
+      s"1 - $currentYear"         -> defineTestCoveringDate("1 Jan 1" -> s"$currentYear Dec 31"),
       // Dates related to the switchover from the Julian to the Gregorian calendar.
       "1752 Aug"                  -> defineTestCoveringDate("1752 Aug 1" -> "1752 Aug 31"),
       "1752 Aug 1–1752 Aug 2"     -> defineTestCoveringDate("1752 Aug 1" -> "1752 Aug 2"),
